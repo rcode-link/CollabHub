@@ -1,0 +1,717 @@
+[
+  {
+    "parsed": {
+      "alarmCount": 0,
+      "eventCount": 1,
+      "freeBusyCount": 0,
+      "todoCount": 0,
+      "defaultSpan": 2,
+      "defaultTimeZone": "UTC",
+      "defaultWeekStart": "MO",
+      "skipRecurrence": false,
+      "disableCharacterReplacement": false,
+      "filterDaysBefore": null,
+      "filterDaysAfter": null,
+      "cal": {
+        "VCALENDAR": {
+          "VERSION": "2.0"
+        },
+        "VEVENT": [
+          {
+            "SUMMARY_array": [
+              [],
+              "New Event"
+            ],
+            "SUMMARY": "New Event",
+            "DESCRIPTION_array": [
+              [],
+              "This is a new event"
+            ],
+            "DESCRIPTION": "This is a new event",
+            "DTSTART_array": [
+              [],
+              "20220101T120000Z",
+              1641038400,
+              "20220101T120000Z"
+            ],
+            "DTSTART": "20220101T120000Z",
+            "DTEND_array": [
+              [],
+              "20220101T130000Z",
+              1641042000,
+              "20220101T130000Z"
+            ],
+            "DTEND": "20220101T130000Z",
+            "ATTENDEE_array": [
+              [],
+              "mailto:user1@example.com",
+              [],
+              "mailto:user2@example.com"
+            ],
+            "ATTENDEE": "mailto:user1@example.com,mailto:user2@example.com",
+            "ORGANIZER_array": [
+              [],
+              "mailto:organizer@example.com"
+            ],
+            "ORGANIZER": "mailto:organizer@example.com",
+            "DTSTART_tz": "20220101T120000",
+            "DTEND_tz": "20220101T130000"
+          }
+        ]
+      }
+    },
+    "raw": {
+      "id": 8,
+      "uri": "Kz6ZjHnKbIp0EiMd.ics",
+      "lastmodified": 1702495161,
+      "etag": "\"75705cc8ffb1a59b71488d27056e7822\"",
+      "size": 270,
+      "calendardata": "BEGIN:VCALENDAR\nVERSION:2.0\nBEGIN:VEVENT\nSUMMARY:New Event\nDESCRIPTION:This is a new event\nDTSTART:20220101T120000Z\nDTEND:20220101T130000Z\nATTENDEE:mailto:user1@example.com\nATTENDEE:mailto:user2@example.com\nORGANIZER:mailto:organizer@example.com\nEND:VEVENT\nEND:VCALENDAR",
+      "component": "vevent"
+    }
+  },
+  {
+    "parsed": {
+      "alarmCount": 0,
+      "eventCount": 1,
+      "freeBusyCount": 0,
+      "todoCount": 0,
+      "defaultSpan": 2,
+      "defaultTimeZone": "UTC",
+      "defaultWeekStart": "MO",
+      "skipRecurrence": false,
+      "disableCharacterReplacement": false,
+      "filterDaysBefore": null,
+      "filterDaysAfter": null,
+      "cal": {
+        "VCALENDAR": {
+          "VERSION": "2.0"
+        },
+        "VEVENT": [
+          {
+            "SUMMARY_array": [
+              [],
+              "My event"
+            ],
+            "SUMMARY": "My event",
+            "DESCRIPTION_array": [
+              [],
+              "Welcome"
+            ],
+            "DESCRIPTION": "Welcome",
+            "DTSTART_array": [
+              [],
+              "20231215T140420",
+              1702649060,
+              "20231215T140420"
+            ],
+            "DTSTART": "20231215T140420",
+            "DTEND_array": [
+              [],
+              "20231215T140420",
+              1702649060,
+              "20231215T140420"
+            ],
+            "DTEND": "20231215T140420",
+            "ATTENDEE_array": [
+              [],
+              "[{mailto:email@email.com}:{PARTSTAT:NEEDS-ACTION,CN:Radan,RSVP:false}}]"
+            ],
+            "ATTENDEE": "[{mailto:email@email.com}:{PARTSTAT:NEEDS-ACTION,CN:Radan,RSVP:false}}]",
+            "DTSTART_tz": "20231215T140420",
+            "DTEND_tz": "20231215T140420"
+          }
+        ]
+      }
+    },
+    "raw": {
+      "id": 9,
+      "uri": "23Yn30LCxUGFM1th.ics",
+      "lastmodified": 1702649060,
+      "etag": "\"8ef771af57da984dc459cd11f60addf2\"",
+      "size": 241,
+      "calendardata": "BEGIN:VCALENDAR\nVERSION:2.0\nBEGIN:VEVENT\nSUMMARY:My event\nDESCRIPTION:Welcome\nDTSTART:20231215T140420\nDTEND:20231215T140420\nATTENDEE:[{\"mailto:email@email.com}\":{\"PARTSTAT\":\"NEEDS-ACTION\",\"CN\":\"Radan\",\"RSVP\":false}}]\nEND:VEVENT\nEND:VCALENDAR",
+      "component": "vevent"
+    }
+  },
+  {
+    "parsed": {
+      "alarmCount": 0,
+      "eventCount": 1,
+      "freeBusyCount": 0,
+      "todoCount": 0,
+      "defaultSpan": 2,
+      "defaultTimeZone": "UTC",
+      "defaultWeekStart": "MO",
+      "skipRecurrence": false,
+      "disableCharacterReplacement": false,
+      "filterDaysBefore": null,
+      "filterDaysAfter": null,
+      "cal": {
+        "VCALENDAR": {
+          "VERSION": "2.0"
+        },
+        "VEVENT": [
+          {
+            "SUMMARY_array": [
+              [],
+              "My event"
+            ],
+            "SUMMARY": "My event",
+            "DESCRIPTION_array": [
+              [],
+              "Welcome"
+            ],
+            "DESCRIPTION": "Welcome",
+            "DTSTART_array": [
+              [],
+              "20231215T143235",
+              1702650755,
+              "20231215T143235"
+            ],
+            "DTSTART": "20231215T143235",
+            "DTEND_array": [
+              [],
+              "20231215T143235",
+              1702650755,
+              "20231215T143235"
+            ],
+            "DTEND": "20231215T143235",
+            "PARTSTAT_array": [
+              [],
+              "NEEDS-ACTION;CN:Radan;RSVP;mailto:email@email.com"
+            ],
+            "PARTSTAT": "NEEDS-ACTION;CN:Radan;RSVP;mailto:email@email.com",
+            "DTSTART_tz": "20231215T143235",
+            "DTEND_tz": "20231215T143235"
+          }
+        ]
+      }
+    },
+    "raw": {
+      "id": 10,
+      "uri": "wjS7EJ6rm8qtGKlD.ics",
+      "lastmodified": 1702650755,
+      "etag": "\"5865bd26e1554a40ed13ffa2a4117f55\"",
+      "size": 207,
+      "calendardata": "BEGIN:VCALENDAR\nVERSION:2.0\nBEGIN:VEVENT\nSUMMARY:My event\nDESCRIPTION:Welcome\nDTSTART:20231215T143235\nDTEND:20231215T143235\nPARTSTAT:NEEDS-ACTION;CN:Radan;RSVP;mailto:email@email.com\nEND:VEVENT\nEND:VCALENDAR",
+      "component": "vevent"
+    }
+  },
+  {
+    "parsed": {
+      "alarmCount": 0,
+      "eventCount": 1,
+      "freeBusyCount": 0,
+      "todoCount": 0,
+      "defaultSpan": 2,
+      "defaultTimeZone": "UTC",
+      "defaultWeekStart": "MO",
+      "skipRecurrence": false,
+      "disableCharacterReplacement": false,
+      "filterDaysBefore": null,
+      "filterDaysAfter": null,
+      "cal": {
+        "VCALENDAR": {
+          "VERSION": "2.0"
+        },
+        "VEVENT": [
+          {
+            "SUMMARY_array": [
+              [],
+              "My event 2222"
+            ],
+            "SUMMARY": "My event 2222",
+            "DESCRIPTION_array": [
+              [],
+              "Welcome"
+            ],
+            "DESCRIPTION": "Welcome",
+            "DTSTART_array": [
+              [],
+              "20231215T143513",
+              1702650913,
+              "20231215T143513"
+            ],
+            "DTSTART": "20231215T143513",
+            "DTEND_array": [
+              [],
+              "20231215T143513",
+              1702650913,
+              "20231215T143513"
+            ],
+            "DTEND": "20231215T143513",
+            "PARTSTAT_array": [
+              [],
+              "NEEDS-ACTION;CN:Radan 2;RSVP;mailto:email@email.com"
+            ],
+            "PARTSTAT": "NEEDS-ACTION;CN:Radan 2;RSVP;mailto:email@email.com",
+            "DTSTART_tz": "20231215T143513",
+            "DTEND_tz": "20231215T143513"
+          }
+        ]
+      }
+    },
+    "raw": {
+      "id": 11,
+      "uri": "jiNgPWiUdd6UF15m.ics",
+      "lastmodified": 1702650913,
+      "etag": "\"478c05008a25f4973494784a382e59f6\"",
+      "size": 214,
+      "calendardata": "BEGIN:VCALENDAR\nVERSION:2.0\nBEGIN:VEVENT\nSUMMARY:My event 2222\nDESCRIPTION:Welcome\nDTSTART:20231215T143513\nDTEND:20231215T143513\nPARTSTAT:NEEDS-ACTION;CN:Radan 2;RSVP;mailto:email@email.com\nEND:VEVENT\nEND:VCALENDAR",
+      "component": "vevent"
+    }
+  },
+  {
+    "parsed": {
+      "alarmCount": 0,
+      "eventCount": 1,
+      "freeBusyCount": 0,
+      "todoCount": 0,
+      "defaultSpan": 2,
+      "defaultTimeZone": "UTC",
+      "defaultWeekStart": "MO",
+      "skipRecurrence": false,
+      "disableCharacterReplacement": false,
+      "filterDaysBefore": null,
+      "filterDaysAfter": null,
+      "cal": {
+        "VCALENDAR": {
+          "VERSION": "2.0"
+        },
+        "VEVENT": [
+          {
+            "SUMMARY_array": [
+              [],
+              "My event 2222"
+            ],
+            "SUMMARY": "My event 2222",
+            "DESCRIPTION_array": [
+              [],
+              "Welcome"
+            ],
+            "DESCRIPTION": "Welcome",
+            "DTSTART_array": [
+              [],
+              "20231215T143643",
+              1702651003,
+              "20231215T143643"
+            ],
+            "DTSTART": "20231215T143643",
+            "DTEND_array": [
+              [],
+              "20231215T143643",
+              1702651003,
+              "20231215T143643"
+            ],
+            "DTEND": "20231215T143643",
+            "ATTENDEE_array": [
+              [],
+              "PARTSTAT:NEEDS-ACTION;CN:Radan 2;RSVP;mailto:email@email.com"
+            ],
+            "ATTENDEE": "PARTSTAT:NEEDS-ACTION;CN:Radan 2;RSVP;mailto:email@email.com",
+            "DTSTART_tz": "20231215T143643",
+            "DTEND_tz": "20231215T143643"
+          }
+        ]
+      }
+    },
+    "raw": {
+      "id": 12,
+      "uri": "WEdSyn8qLgHww1Bl.ics",
+      "lastmodified": 1702651003,
+      "etag": "\"73ba9371561fe2660f46e2680cbef1f4\"",
+      "size": 224,
+      "calendardata": "BEGIN:VCALENDAR\nVERSION:2.0\nBEGIN:VEVENT\nSUMMARY:My event 2222\nDESCRIPTION:Welcome\nDTSTART:20231215T143643\nDTEND:20231215T143643\nATTENDEE:PARTSTAT:NEEDS-ACTION;CN:Radan 2;RSVP;mailto:email@email.com\n\nEND:VEVENT\nEND:VCALENDAR",
+      "component": "vevent"
+    }
+  },
+  {
+    "parsed": {
+      "alarmCount": 0,
+      "eventCount": 1,
+      "freeBusyCount": 0,
+      "todoCount": 0,
+      "defaultSpan": 2,
+      "defaultTimeZone": "UTC",
+      "defaultWeekStart": "MO",
+      "skipRecurrence": false,
+      "disableCharacterReplacement": false,
+      "filterDaysBefore": null,
+      "filterDaysAfter": null,
+      "cal": {
+        "VCALENDAR": {
+          "VERSION": "2.0"
+        },
+        "VEVENT": [
+          {
+            "SUMMARY_array": [
+              [],
+              "My event 2222"
+            ],
+            "SUMMARY": "My event 2222",
+            "DESCRIPTION_array": [
+              [],
+              "Welcome"
+            ],
+            "DESCRIPTION": "Welcome",
+            "DTSTART_array": [
+              [],
+              "20231217T083700",
+              1702802220,
+              "20231217T083700"
+            ],
+            "DTSTART": "20231217T083700",
+            "DTEND_array": [
+              [],
+              "20231217T083700",
+              1702802220,
+              "20231217T083700"
+            ],
+            "DTEND": "20231217T083700",
+            "ATTENDEE_array": [
+              [],
+              "PARTSTAT:NEEDS-ACTION;CN:Radan 2;RSVP;mailto:email@email.com"
+            ],
+            "ATTENDEE": "PARTSTAT:NEEDS-ACTION;CN:Radan 2;RSVP;mailto:email@email.com",
+            "DTSTART_tz": "20231217T083700",
+            "DTEND_tz": "20231217T083700"
+          }
+        ]
+      }
+    },
+    "raw": {
+      "id": 13,
+      "uri": "iVJJYWTCK1qR02NC.ics",
+      "lastmodified": 1702802220,
+      "etag": "\"4a9b53315502d27fcca61fdf7e1efb4c\"",
+      "size": 224,
+      "calendardata": "BEGIN:VCALENDAR\nVERSION:2.0\nBEGIN:VEVENT\nSUMMARY:My event 2222\nDESCRIPTION:Welcome\nDTSTART:20231217T083700\nDTEND:20231217T083700\nATTENDEE:PARTSTAT:NEEDS-ACTION;CN:Radan 2;RSVP;mailto:email@email.com\n\nEND:VEVENT\nEND:VCALENDAR",
+      "component": "vevent"
+    }
+  },
+  {
+    "parsed": {
+      "alarmCount": 0,
+      "eventCount": 1,
+      "freeBusyCount": 0,
+      "todoCount": 0,
+      "defaultSpan": 2,
+      "defaultTimeZone": "UTC",
+      "defaultWeekStart": "MO",
+      "skipRecurrence": false,
+      "disableCharacterReplacement": false,
+      "filterDaysBefore": null,
+      "filterDaysAfter": null,
+      "cal": {
+        "VCALENDAR": {
+          "VERSION": "2.0"
+        },
+        "VEVENT": [
+          {
+            "SUMMARY_array": [
+              [],
+              "My event 2222"
+            ],
+            "SUMMARY": "My event 2222",
+            "DESCRIPTION_array": [
+              [],
+              "Welcome"
+            ],
+            "DESCRIPTION": "Welcome",
+            "DTSTART_array": [
+              [],
+              "20231217T083703",
+              1702802223,
+              "20231217T083703"
+            ],
+            "DTSTART": "20231217T083703",
+            "DTEND_array": [
+              [],
+              "20231217T083703",
+              1702802223,
+              "20231217T083703"
+            ],
+            "DTEND": "20231217T083703",
+            "ATTENDEE_array": [
+              [],
+              "PARTSTAT:NEEDS-ACTION;CN:Radan 2;RSVP;mailto:email@email.com"
+            ],
+            "ATTENDEE": "PARTSTAT:NEEDS-ACTION;CN:Radan 2;RSVP;mailto:email@email.com",
+            "DTSTART_tz": "20231217T083703",
+            "DTEND_tz": "20231217T083703"
+          }
+        ]
+      }
+    },
+    "raw": {
+      "id": 14,
+      "uri": "CsJICzxZPR652mjv.ics",
+      "lastmodified": 1702802223,
+      "etag": "\"1e8bb27567259ca2671482e476dace53\"",
+      "size": 224,
+      "calendardata": "BEGIN:VCALENDAR\nVERSION:2.0\nBEGIN:VEVENT\nSUMMARY:My event 2222\nDESCRIPTION:Welcome\nDTSTART:20231217T083703\nDTEND:20231217T083703\nATTENDEE:PARTSTAT:NEEDS-ACTION;CN:Radan 2;RSVP;mailto:email@email.com\n\nEND:VEVENT\nEND:VCALENDAR",
+      "component": "vevent"
+    }
+  },
+  {
+    "parsed": {
+      "alarmCount": 0,
+      "eventCount": 1,
+      "freeBusyCount": 0,
+      "todoCount": 0,
+      "defaultSpan": 2,
+      "defaultTimeZone": "UTC",
+      "defaultWeekStart": "MO",
+      "skipRecurrence": false,
+      "disableCharacterReplacement": false,
+      "filterDaysBefore": null,
+      "filterDaysAfter": null,
+      "cal": {
+        "VCALENDAR": {
+          "VERSION": "2.0"
+        },
+        "VEVENT": [
+          {
+            "SUMMARY_array": [
+              [],
+              "My event 2222"
+            ],
+            "SUMMARY": "My event 2222",
+            "DESCRIPTION_array": [
+              [],
+              "Welcome"
+            ],
+            "DESCRIPTION": "Welcome",
+            "DTSTART_array": [
+              [],
+              "20231217T084006",
+              1702802406,
+              "20231217T084006"
+            ],
+            "DTSTART": "20231217T084006",
+            "DTEND_array": [
+              [],
+              "20231217T084006",
+              1702802406,
+              "20231217T084006"
+            ],
+            "DTEND": "20231217T084006",
+            "ATTENDEE_array": [
+              [],
+              "PARTSTAT:NEEDS-ACTION;CN:Radan 2;RSVP;mailto:email@email.com"
+            ],
+            "ATTENDEE": "PARTSTAT:NEEDS-ACTION;CN:Radan 2;RSVP;mailto:email@email.com",
+            "DTSTART_tz": "20231217T084006",
+            "DTEND_tz": "20231217T084006"
+          }
+        ]
+      }
+    },
+    "raw": {
+      "id": 15,
+      "uri": "KwJVplzWSZXsFrV8.ics",
+      "lastmodified": 1702802406,
+      "etag": "\"72bb77c4e93eeaa9f70adc88b1df2fa8\"",
+      "size": 223,
+      "calendardata": "BEGIN:VCALENDAR\nVERSION:2.0\nBEGIN:VEVENT\nSUMMARY:My event 2222\nDESCRIPTION:Welcome\nDTSTART:20231217T084006\nDTEND:20231217T084006\nATTENDEE:PARTSTAT:NEEDS-ACTION;CN:Radan 2;RSVP;mailto:email@email.com\nEND:VEVENT\nEND:VCALENDAR",
+      "component": "vevent"
+    }
+  },
+  {
+    "parsed": {
+      "alarmCount": 0,
+      "eventCount": 1,
+      "freeBusyCount": 0,
+      "todoCount": 0,
+      "defaultSpan": 2,
+      "defaultTimeZone": "UTC",
+      "defaultWeekStart": "MO",
+      "skipRecurrence": false,
+      "disableCharacterReplacement": false,
+      "filterDaysBefore": null,
+      "filterDaysAfter": null,
+      "cal": {
+        "VCALENDAR": {
+          "VERSION": "2.0"
+        },
+        "VEVENT": [
+          {
+            "SUMMARY_array": [
+              [],
+              "My event 2222"
+            ],
+            "SUMMARY": "My event 2222",
+            "DESCRIPTION_array": [
+              [],
+              "Welcome"
+            ],
+            "DESCRIPTION": "Welcome",
+            "DTSTART_array": [
+              [],
+              "20231217T084009",
+              1702802409,
+              "20231217T084009"
+            ],
+            "DTSTART": "20231217T084009",
+            "DTEND_array": [
+              [],
+              "20231217T084009",
+              1702802409,
+              "20231217T084009"
+            ],
+            "DTEND": "20231217T084009",
+            "ATTENDEE_array": [
+              [],
+              "PARTSTAT:NEEDS-ACTION;CN:Radan 2;RSVP;mailto:email@email.com"
+            ],
+            "ATTENDEE": "PARTSTAT:NEEDS-ACTION;CN:Radan 2;RSVP;mailto:email@email.com",
+            "DTSTART_tz": "20231217T084009",
+            "DTEND_tz": "20231217T084009"
+          }
+        ]
+      }
+    },
+    "raw": {
+      "id": 16,
+      "uri": "r9FmHBoCSSGtlx6u.ics",
+      "lastmodified": 1702802409,
+      "etag": "\"f5e90bb9021b90c22dd213a4acdfb263\"",
+      "size": 223,
+      "calendardata": "BEGIN:VCALENDAR\nVERSION:2.0\nBEGIN:VEVENT\nSUMMARY:My event 2222\nDESCRIPTION:Welcome\nDTSTART:20231217T084009\nDTEND:20231217T084009\nATTENDEE:PARTSTAT:NEEDS-ACTION;CN:Radan 2;RSVP;mailto:email@email.com\nEND:VEVENT\nEND:VCALENDAR",
+      "component": "vevent"
+    }
+  },
+  {
+    "parsed": {
+      "alarmCount": 0,
+      "eventCount": 1,
+      "freeBusyCount": 0,
+      "todoCount": 0,
+      "defaultSpan": 2,
+      "defaultTimeZone": "UTC",
+      "defaultWeekStart": "MO",
+      "skipRecurrence": false,
+      "disableCharacterReplacement": false,
+      "filterDaysBefore": null,
+      "filterDaysAfter": null,
+      "cal": {
+        "VCALENDAR": {
+          "VERSION": "2.0"
+        },
+        "VEVENT": [
+          {
+            "SUMMARY_array": [
+              [],
+              "My event 2222"
+            ],
+            "SUMMARY": "My event 2222",
+            "DESCRIPTION_array": [
+              [],
+              "Welcome"
+            ],
+            "DESCRIPTION": "Welcome",
+            "DTSTART_array": [
+              [],
+              "20231217T084524",
+              1702802724,
+              "20231217T084524"
+            ],
+            "DTSTART": "20231217T084524",
+            "DTEND_array": [
+              [],
+              "20231217T084524",
+              1702802724,
+              "20231217T084524"
+            ],
+            "DTEND": "20231217T084524",
+            "ATTENDEE_array": [
+              [],
+              "PARTSTAT:NEEDS-ACTION;CN:Radan 2;RSVP;mailto:email@email.com",
+              [],
+              "PARTSTAT:NEEDS-ACTION;CN:Radan Stupar;RSVP;mailto:email_stupar@email.com"
+            ],
+            "ATTENDEE": "PARTSTAT:NEEDS-ACTION;CN:Radan 2;RSVP;mailto:email@email.com,PARTSTAT:NEEDS-ACTION;CN:Radan Stupar;RSVP;mailto:email_stupar@email.com",
+            "DTSTART_tz": "20231217T084524",
+            "DTEND_tz": "20231217T084524"
+          }
+        ]
+      }
+    },
+    "raw": {
+      "id": 17,
+      "uri": "GuKiXjBQYAi2DOml.ics",
+      "lastmodified": 1702802724,
+      "etag": "\"6688630de59622f63f7e82289728b026\"",
+      "size": 305,
+      "calendardata": "BEGIN:VCALENDAR\nVERSION:2.0\nBEGIN:VEVENT\nSUMMARY:My event 2222\nDESCRIPTION:Welcome\nDTSTART:20231217T084524\nDTEND:20231217T084524\nATTENDEE:PARTSTAT:NEEDS-ACTION;CN:Radan 2;RSVP;mailto:email@email.com\nATTENDEE:PARTSTAT:NEEDS-ACTION;CN:Radan Stupar;RSVP;mailto:email_stupar@email.com\nEND:VEVENT\nEND:VCALENDAR",
+      "component": "vevent"
+    }
+  },
+  {
+    "parsed": {
+      "alarmCount": 0,
+      "eventCount": 1,
+      "freeBusyCount": 0,
+      "todoCount": 0,
+      "defaultSpan": 2,
+      "defaultTimeZone": "UTC",
+      "defaultWeekStart": "MO",
+      "skipRecurrence": false,
+      "disableCharacterReplacement": false,
+      "filterDaysBefore": null,
+      "filterDaysAfter": null,
+      "cal": {
+        "VCALENDAR": {
+          "VERSION": "2.0"
+        },
+        "VEVENT": [
+          {
+            "SUMMARY_array": [
+              [],
+              "My event 2222"
+            ],
+            "SUMMARY": "My event 2222",
+            "DESCRIPTION_array": [
+              [],
+              "Welcome"
+            ],
+            "DESCRIPTION": "Welcome",
+            "DTSTART_array": [
+              [],
+              "20231217T084527",
+              1702802727,
+              "20231217T084527"
+            ],
+            "DTSTART": "20231217T084527",
+            "DTEND_array": [
+              [],
+              "20231217T084527",
+              1702802727,
+              "20231217T084527"
+            ],
+            "DTEND": "20231217T084527",
+            "ATTENDEE_array": [
+              [],
+              "PARTSTAT:NEEDS-ACTION;CN:Radan 2;RSVP;mailto:email@email.com",
+              [],
+              "PARTSTAT:NEEDS-ACTION;CN:Radan Stupar;RSVP;mailto:email_stupar@email.com"
+            ],
+            "ATTENDEE": "PARTSTAT:NEEDS-ACTION;CN:Radan 2;RSVP;mailto:email@email.com,PARTSTAT:NEEDS-ACTION;CN:Radan Stupar;RSVP;mailto:email_stupar@email.com",
+            "DTSTART_tz": "20231217T084527",
+            "DTEND_tz": "20231217T084527"
+          }
+        ]
+      }
+    },
+    "raw": {
+      "id": 18,
+      "uri": "Z89f5pgdKeoBYZuU.ics",
+      "lastmodified": 1702802727,
+      "etag": "\"933d74a87cc8e978c6170139a90386af\"",
+      "size": 305,
+      "calendardata": "BEGIN:VCALENDAR\nVERSION:2.0\nBEGIN:VEVENT\nSUMMARY:My event 2222\nDESCRIPTION:Welcome\nDTSTART:20231217T084527\nDTEND:20231217T084527\nATTENDEE:PARTSTAT:NEEDS-ACTION;CN:Radan 2;RSVP;mailto:email@email.com\nATTENDEE:PARTSTAT:NEEDS-ACTION;CN:Radan Stupar;RSVP;mailto:email_stupar@email.com\nEND:VEVENT\nEND:VCALENDAR",
+      "component": "vevent"
+    }
+  }
+]

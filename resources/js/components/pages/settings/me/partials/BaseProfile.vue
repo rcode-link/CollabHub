@@ -1,0 +1,38 @@
+<script setup>
+
+import Label from "../../../../shared/Label.vue";
+import Text from "../../../../shared/Text.vue";
+import Errors from "../../../../shared/Errors.vue";
+import {reactive, watch} from "vue";
+import {useUserStore} from "../../../../../store/user.js";
+import Button from "../../../../shared/Button.vue";
+
+const userStore = useUserStore();
+const form = reactive({
+    user: {}
+})
+
+watch(() => userStore.user, () => {
+    form.user = userStore.user;
+}, {
+    deep: true,
+    immediate: true
+})
+
+
+</script>
+<template>
+    <form class="w-full grid gap-6">
+        <div>
+            <Label :forInput="'email'">Email</Label>
+            <Text type="text" v-model="form.user.email" :name="'email'" form="'login'" placeholder="Email"/>
+            <Errors name="email"/>
+        </div>
+        <div>
+            <Label :forInput="'email'">Name</Label>
+            <Text type="text" v-model="form.user.name" :name="'email'" form="'login'" placeholder="Email"/>
+            <Errors name="email"/>
+        </div>
+        <Button type="submit">Save</Button>
+    </form>
+</template>
