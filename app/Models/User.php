@@ -2,10 +2,10 @@
 
 namespace App\Models;
 
+use App\Events\ManagePermissionsEvent;
 use Database\Factories\UserFactory;
 use Eloquent;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -15,6 +15,9 @@ use Illuminate\Notifications\DatabaseNotification;
 use Illuminate\Notifications\DatabaseNotificationCollection;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Gate;
 use Laravel\Sanctum\HasApiTokens;
 use Laravel\Sanctum\PersonalAccessToken;
@@ -41,7 +44,6 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media;
  * @property-read int|null $media_count
  * @property-read DatabaseNotificationCollection<int, DatabaseNotification> $notifications
  * @property-read int|null $notifications_count
- * @property-read Collection<int, Permission> $permissions
  * @property-read int|null $permissions_count
  * @property-read Collection<int, PersonalAccessToken> $tokens
  * @property-read int|null $tokens_count
@@ -58,6 +60,8 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media;
  * @method static Builder|User whereRememberToken($value)
  * @method static Builder|User whereRole($value)
  * @method static Builder|User whereUpdatedAt($value)
+ * @property-read Collection<int, \App\Models\Role> $roles
+ * @property-read int|null $roles_count
  * @mixin Eloquent
  */
 class User extends Authenticatable implements HasMedia
@@ -95,9 +99,16 @@ class User extends Authenticatable implements HasMedia
         'password' => 'hashed',
     ];
 
-    public function permissions(): HasMany
+    public function permissions(): Collection
     {
-        return $this->hasMany(Permission::class);
+        $data = Cache::get('permissions');
+
+
+        if($data->count()){
+            ManagePermissionsEvent::dispatch();
+        }
+
+        return $data->filter(fn($obj) => $obj['users']->contains($this->id));
     }
 
 
@@ -119,8 +130,7 @@ class User extends Authenticatable implements HasMedia
 
     public function hasPermission($model, $action): int
     {
-        return $this->permissions()
-            ->where('permission', $action . '.' . $model->id)->count();
+        return $this->permissions()->contains($action . '.' . $model->id);
     }
 
     public function registerMediaCollections(): void
@@ -130,6 +140,11 @@ class User extends Authenticatable implements HasMedia
             ->singleFile()
             ->useFallbackUrl('storage/images/avatar.png')
             ->useFallbackPath(public_path('storage/images/avatar.png'));
+    }
+
+    public function roles(): BelongsToMany
+    {
+        return $this->belongsToMany(Role::class, 'user_role');
     }
 
 }

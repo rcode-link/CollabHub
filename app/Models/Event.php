@@ -36,6 +36,8 @@ use Illuminate\Support\Facades\Auth;
  * @method static \Illuminate\Database\Eloquent\Builder|Event whereFreq($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Event whereFreqSettings($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Event whereFreqUntil($value)
+ * @property-read \App\Models\User|null $creator
+ * @property-read int|null $user_count
  * @mixin \Eloquent
  */
 class Event extends Model

@@ -7,6 +7,7 @@ import {FwbButton, FwbInput, FwbTab, FwbTabs} from "flowbite-vue";
 import Users from "./partials/Users.vue";
 import {useBreadcrumbStore} from "../../../../store/breadcrumb.js";
 import InteractiveToast from "../../../shared/InteractiveToast.vue";
+import Resource from "./partials/Resource.vue";
 
 
 const roleStore = useRoleStore();
@@ -91,6 +92,9 @@ const deleteRole = () => {
                 </fwb-tab>
                 <fwb-tab name="permissions" title="Permissisons">
                     <Permissions/>
+                </fwb-tab>
+                <fwb-tab name="resources" title="Resources">
+                    <Resource/>
                 </fwb-tab>
             </fwb-tabs>
         </div>

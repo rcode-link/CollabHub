@@ -28,7 +28,7 @@ class PermissionController extends Controller
 
     public function myPermissions()
     {
-        return response()->json(Permission::where('user_id', Auth::id())->get()->pluck('permission'));
+        return response()->json(Auth::user()->permissions()->pluck('permissions')->flatten());
     }
 
     /**

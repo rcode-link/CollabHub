@@ -2,9 +2,19 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\ManagePermissionsEvent;
+use App\Helpers\Enums\PermissionsScopes;
+use App\Http\Requests\RoleAddResourceRequest;
 use App\Http\Requests\StoreRoleRequest;
 use App\Http\Requests\UpdateRoleRequest;
+use App\Models\Company;
+use App\Models\Permission;
+use App\Models\Project;
 use App\Models\Role;
+use App\Models\RoleResource;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class RoleController extends Controller
 {
@@ -45,6 +55,7 @@ class RoleController extends Controller
         $data = $request->validated();
         unset($data['users']);
         unset($data['permissions']);
+        unset($data['resource']);
         $role->update($data);
 
         if ($request->has('users')) {
@@ -53,8 +64,58 @@ class RoleController extends Controller
         if ($request->has('permissions')) {
             $role->definitions()->sync($request->get('permissions'));
         }
+
+        ManagePermissionsEvent::dispatch();
+
         return $role;
         //
+    }
+
+    public function addResource(RoleAddResourceRequest $request, Role $role): \Illuminate\Http\Response
+    {
+
+        RoleResource::updateOrCreate([
+            'role_id' => $role->id,
+            'resourcable_id' => $request->get('resource'),
+            'resourcable_type' => $request->get('resource_type') === PermissionsScopes::Project->value ? Project::class : Company::class
+        ], []);
+
+        ManagePermissionsEvent::dispatch();
+
+        return response()->noContent();
+    }
+
+    public function getAllResources($role)
+    {
+
+        return RoleResource::whereRoleId($role)->with('resourcable')->get();
+    }
+
+    public function getResource(Request $request)
+    {
+
+        $permission = [];
+        switch ($request->get('resource_type')) {
+            case PermissionsScopes::Project->value:
+                $projectIds = Auth::user()->permissions()->filter(fn($obj) => $obj['model']['type'] === Project::class)->pluck('model.id');
+                $permission = Project::whereIn('id', $projectIds)->get()->map(function (Project $project) {
+                    return [
+                        'value' => $project->id,
+                        'name' => $project->name
+                    ];
+                });
+                break;
+            case PermissionsScopes::Company->value:
+                $permission = Auth::user()->permissions()->filter(fn($obj) => $obj['model']['type'] === Company::class)->map(function ($permission) {
+                        return [
+                            'value' => $permission['model']['id'],
+                            'name' => $permission['model']['name']
+                        ];
+                    });
+                break;
+        }
+
+        return $permission;
     }
 
     /**
@@ -65,6 +126,8 @@ class RoleController extends Controller
         $role->users()->sync([]);
         $role->definitions()->sync([]);
         $role->delete();
+
+        ManagePermissionsEvent::dispatch();
         //
     }
 }

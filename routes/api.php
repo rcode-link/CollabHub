@@ -75,6 +75,9 @@ Route::middleware(['auth:sanctum', 'throttle:100,1'])->group(function () {
     Route::put('/sprints/{sprint}/activate', [SprintController::class, 'activate']);
     Route::apiResource('/sprints', SprintController::class);
     Route::apiResource('/files', FileController::class);
+    Route::get('/role/resources', [RoleController::class, 'getResource']);
+    Route::get('/role/resources/{role}', [RoleController::class, 'getAllResources']);
+    Route::post('/role/resources/{role}', [RoleController::class, 'addResource']);
     Route::apiResource('/roles', RoleController::class);
 
     Route::apiResource('/time-sheet', TimeSheetController::class);

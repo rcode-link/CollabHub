@@ -4,6 +4,9 @@ use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\CalendarController;
 use App\Http\Controllers\VideoCallController;
 use App\Http\Middleware\SignedRouteMiddleware;
+use App\Models\Company;
+use App\Models\PermissionDefinition;
+use App\Models\RoleResource;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Sabre\DAV;
@@ -34,6 +37,12 @@ Route::match(['PROPFIND', 'GET', "POST"], '/caldav/{path?}', function () {
 | be assigned to the "web" middleware group. Make something great!
 |
 */
+
+
+Route::get('/test', function () {
+    \App\Events\ManagePermissionsEvent::dispatch();
+//    dd($data->count());
+});
 
 Route::get('/storage/{media}/{slug}', function (Request $request, \Spatie\MediaLibrary\MediaCollections\Models\Media $media) {
     return response()->file($media->getPath(), ["Content-Type" => $media->mime_type]);

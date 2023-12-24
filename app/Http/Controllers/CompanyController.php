@@ -16,22 +16,19 @@ class CompanyController extends Controller
      */
     public function index()
     {
-        $permission = Auth::user()->permissions()->where('permission', 'like', 'can-view-company.%')
-            ->with('resourceable')
-            ->first();
+        $permission = Auth::user()->permissions()->filter(fn($obj)=> $obj['model']['type'] == Company::class)->pluck('model.id')->flatten();
 
-        return array_merge($permission->resourceable->toArray(),
+        $comapny = Company::whereIn('id', $permission)->first();
+        return array_merge($comapny->toArray(),
             [
-                'avatar' => $permission->resourceable->getFirstMediaUrl('avatar')
+                'avatar' => $comapny->getFirstMediaUrl('avatar')
             ]
         );
     }
 
     public function getKeys(Request $request)
     {
-        $projectIds = Auth::user()->permissions()->select('resourceable_id')->where('resourceable_type', Project::class)->get();
-
-        return Project::select('key')->whereIn('id', $projectIds->toArray())->get();
+        return Auth::user()->permissions()->filter(fn($obj) => $obj['model']['type'] === Project::class)->map(fn($obj) => $obj['model']['key'])->flatten()->toArray();
     }
 
     /**
