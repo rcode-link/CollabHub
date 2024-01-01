@@ -60,7 +60,7 @@ class TaskResource extends JsonResource
             'description' => $this->description,
             'status' => $this->whenLoaded('taskSprintData', function () {
                 $mapped = $this->taskSprintData->map(fn($obj) => array_merge($obj->status->toArray(), ['sprint' => $obj?->sprint]));
-                if (\request()->has('board_id') || \request()->has('sprint_id')) {
+                if ((\request()->has('board_id') || \request()->has('sprint_id')) && !\request()->has('fullList')) {
                     return $mapped->first();
                 }
                 return $mapped;

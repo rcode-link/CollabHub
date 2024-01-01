@@ -9,7 +9,6 @@ const items = [];
 
 export const useConvertTextToLink = () => {
     const textToLinkStore = useTextToLinkStore();
-    const router = useRouter();
     const convertTextToLink = Extension.create({
         name: 'convertTextToLink',
         addStorage(){
@@ -42,9 +41,10 @@ export const useConvertTextToLink = () => {
     const findLink = (doc) => {
         const decorations = [];
         doc.descendants((node, pos) => {
-            const regex = new RegExp(textToLinkStore.items.map(obj => `${obj.key}-\\d+|${obj.key}-D-\\d+`).join("|"), 'g');
+            const regex = new RegExp(textToLinkStore.items.map(obj => `${obj}-\\d+|${obj}-D-\\d+`).join("|"), 'g');
             for (const obj of Array.from(node.text?.matchAll(regex) ?? [])) {
                 const text = obj[0];
+
                 const index = obj.index || 0
                 const from = pos + index;
                 const to = from + text.length;

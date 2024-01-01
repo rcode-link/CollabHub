@@ -3,6 +3,7 @@ import Modal from "../../../../shared/Modal.vue";
 import {FwbButton, FwbCheckbox} from "flowbite-vue";
 import {ref, watch} from "vue";
 import {useRoleStore} from "../../../../../store/roleStore.js";
+import {toast} from "vue3-toastify";
 const roleStore = useRoleStore();
 
 const permissions = ref([]);
@@ -19,6 +20,8 @@ const save = () => {
     }).then(() => {
         modalRef.value.toggleModal();
         roleStore.loadRoleData();
+        toast.success(`Permissions updated for ${roleStore.role.title} role`, {theme: localStorage.getItem('color-theme') ?? 'light'})
+
     })
 }
 
@@ -40,12 +43,12 @@ watch(() =>  roleStore.role, () => {
             <fwb-button size="xs" @click="load">Manage permissions</fwb-button>
         </template>
         <template #body>
-            <div class="mb-1 " v-for="obj in permissions">
+            <div class="mb-1 " v-for="(obj, key) in permissions">
                 <div class="uppercase border-b mb-2">
-                    {{ obj.name }}
+                    {{ key }}
                 </div>
                 <ul>
-                    <li v-for="def in obj.definition" class="hover:underline">
+                    <li v-for="def in obj" class="hover:underline">
                         <fwb-checkbox :label="def.name" v-model="selected[def.id]"/>
                     </li>
                 </ul>

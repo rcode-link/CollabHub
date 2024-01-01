@@ -7,6 +7,7 @@ import UserIcon from "../../../../shared/UserIcon.vue";
 import InteractiveToast from "../../../../shared/InteractiveToast.vue";
 import Modal from "../../../../shared/Modal.vue";
 import {useRoleStore} from "../../../../../store/roleStore.js";
+import {toast} from "vue3-toastify";
 const roleStore = useRoleStore();
 
 const userForm = ref(null);
@@ -18,6 +19,8 @@ const save = () => {
         users: usersToBeAdded.value.map(obj => obj.id)
     }).then(() => {
         modalRef.value.toggleModal();
+        toast.success(`Users added to role ${roleStore.role.title}`, {theme: localStorage.getItem('color-theme') ?? 'light'})
+
         roleStore.loadRoleData();
     })
 }

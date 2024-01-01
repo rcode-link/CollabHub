@@ -16,7 +16,6 @@ return new class extends Migration
             $table->string('scope');
             $table->string('name');
             $table->string('slug');
-            $table->foreignId('group_id');
             $table->timestamps();
         });
     }

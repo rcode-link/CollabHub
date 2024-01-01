@@ -7,6 +7,8 @@ import 'tippy.js/dist/tippy.css';
 import VueTippy from "vue-tippy";
 import {abilitiesPlugin} from '@casl/vue';
 import ability from "./functions/ability.js";
+import 'vue3-toastify/dist/index.css';
+
 const app = createApp(App);
 const pinia = createPinia()
 app.use(abilitiesPlugin, ability)

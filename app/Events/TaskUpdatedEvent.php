@@ -4,13 +4,13 @@ namespace App\Events;
 
 use App\Http\Resources\TaskResource;
 use App\Models\Task;
-use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithBroadcasting;
 use Illuminate\Broadcasting\InteractsWithSockets;
-use Illuminate\Broadcasting\PresenceChannel;
 use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
-use Illuminate\Database\Eloquent\BroadcastsEvents;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
@@ -26,7 +26,15 @@ class TaskUpdatedEvent implements ShouldBroadcast
      */
     public function __construct(private readonly Task $data, public int|null $oldStatus = 0)
     {
-        $this->task = new TaskResource($this->data);
+        $this->task = new TaskResource($this->data->load([
+            'taskSprintData' => function (HasMany $builder) {
+                $builder
+                    ->with([
+                        'status' => fn(HasOne $query) => $query->select('id', 'title', 'board_id'),
+                        'status.board' => fn(BelongsTo $query) => $query->select('id', 'title'),
+                        'sprint' => fn(HasOne $query) => $query->select('id', 'title')
+                    ]);
+            }]));
         //
     }
 

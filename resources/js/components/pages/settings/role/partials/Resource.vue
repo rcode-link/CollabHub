@@ -6,6 +6,7 @@ import Label from "../../../../shared/Label.vue";
 import {reactive, ref, watch} from "vue";
 import {useRoute} from "vue-router";
 import {useRoleStore} from "../../../../../store/roleStore.js";
+import {toast} from "vue3-toastify";
 
 const roleStore = useRoleStore();
 const model = reactive({
@@ -32,7 +33,9 @@ const load = () => {
     axios.get(`/api/v1/role/resources/${roleStore.activeRole}`).then(res => list.value = res.data);
 }
 const save = () => {
-    axios.post(`/api/v1/role/resources/${roleStore.activeRole}`, model)
+    axios.post(`/api/v1/role/resources/${roleStore.activeRole}`, model).then(() => {
+        toast.success(`New resource added to ${roleStore.role.title} role`, {theme: localStorage.getItem('color-theme') ?? 'light'})
+    })
 }
 
 load();

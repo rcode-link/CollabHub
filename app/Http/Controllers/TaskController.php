@@ -91,8 +91,6 @@ class TaskController extends Controller
     public function store(StoreTaskRequest $request)
     {
         Auth::user()->authorize('can-create-task', Project::whereId($request->get('project_id'))->firstOrFail());
-        \DB::beginTransaction();
-        try {
 
             $data = $request->validated();
             unset($data['related_tasks']);
@@ -107,12 +105,8 @@ class TaskController extends Controller
                 $model->addMedia($file)->toMediaCollection('default');
             }
             TaskCreatedEvent::dispatch($model);
-            \DB::commit();
             return new TaskResource($model);
-        } catch (\Exception $exception) {
-            \DB::rollBack();
-            throw new \Exception($exception);
-        }
+
     }
 
     public function addTaskToSprint(Request $request)
@@ -246,7 +240,7 @@ class TaskController extends Controller
                 'task_status_id' => $request->get('status_id')
             ]);
 
-        $task = Task::whereId($request->get('task_id'))->with('media', 'owner', 'createdBy', 'taskSprintData', 'type', 'chat')->first();
+        $task = Task::whereId($request->get('task_id'))->with('media', 'owner', 'createdBy', 'type', 'chat')->first();
         TaskUpdatedEvent::dispatch($task, null);
         return response()->noContent();
     }

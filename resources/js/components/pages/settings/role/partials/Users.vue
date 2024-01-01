@@ -13,14 +13,16 @@ import UserIcon from "../../../../shared/UserIcon.vue";
 import AddUserToRoleModal from "./AddUserToRoleModal.vue";
 import InteractiveToast from "../../../../shared/InteractiveToast.vue";
 import {useRoleStore} from "../../../../../store/roleStore.js";
+import {toast} from "vue3-toastify";
 const roleStore = useRoleStore();
 
-const save = (index) => {
-    roleStore.role.users.splice(index, 1)
-    let users =  roleStore.role.users.map(obj => obj.id);
-    axios.put(`/api/v1/roles/${roleStore.role.id}`, {
-        users: users.length === 0 ? [] : users
+const save = (id) => {
+    let users =  roleStore.role.users.find(obj => obj.id);
+    axios.put(`/api/v1/roles/detach/users/${roleStore.role.id}`, {
+        user: id
     }).then(() => {
+        toast.success(`User ${users.name} removed from role ${roleStore.role.title}`, {theme: localStorage.getItem('color-theme') ?? 'light'})
+
         roleStore.loadRoleData();
     })
 }
@@ -63,7 +65,7 @@ const save = (index) => {
                             </div>
                         </template>
                         <template #actions>
-                            <fwb-button color="red" size="xs" @click="() => save(index)">Yes, remove it!</fwb-button>
+                            <fwb-button color="red" size="xs" @click="() => save(obj.id)">Yes, remove it!</fwb-button>
                         </template>
                     </interactive-toast>
                 </fwb-table-cell>

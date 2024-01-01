@@ -6,6 +6,7 @@ import Errors from "../../../../shared/Errors.vue";
 import {reactive, watch} from "vue";
 import {useUserStore} from "../../../../../store/user.js";
 import Button from "../../../../shared/Button.vue";
+import {toast} from "vue3-toastify";
 
 const userStore = useUserStore();
 const form = reactive({
@@ -19,10 +20,14 @@ watch(() => userStore.user, () => {
     immediate: true
 })
 
+const save = () => {
+    axios.put('/api/v1/user', form.user).then(() => toast.success('Profile updated', {theme: localStorage.getItem('color-theme') ?? 'light'}))
+}
+
 
 </script>
 <template>
-    <form class="w-full grid gap-6">
+    <form @submit.prevent="save" class="w-full grid gap-6">
         <div>
             <Label :forInput="'email'">Email</Label>
             <Text type="text" v-model="form.user.email" :name="'email'" form="'login'" placeholder="Email"/>

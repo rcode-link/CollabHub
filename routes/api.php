@@ -40,6 +40,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::middleware(['auth:sanctum', 'throttle:100,1'])->group(function () {
     Route::get('/user', [ProfileController::class, 'view']);
+    Route::put('/user', [ProfileController::class, 'update']);
     Route::get('/dashboard/messages', [DashboardController::class, 'unreadMessages']);
     Route::get('/dashboard/tasks', [DashboardController::class, 'openTasks']);
     Route::get('/get-organization-keys', [CompanyController::class, 'getKeys']);
@@ -78,6 +79,7 @@ Route::middleware(['auth:sanctum', 'throttle:100,1'])->group(function () {
     Route::get('/role/resources', [RoleController::class, 'getResource']);
     Route::get('/role/resources/{role}', [RoleController::class, 'getAllResources']);
     Route::post('/role/resources/{role}', [RoleController::class, 'addResource']);
+    Route::put('/roles/detach/users/{role}', [RoleController::class, 'removeUserFromRole']);
     Route::apiResource('/roles', RoleController::class);
 
     Route::apiResource('/time-sheet', TimeSheetController::class);
@@ -89,39 +91,5 @@ Route::middleware(['auth:sanctum', 'throttle:100,1'])->group(function () {
 });
 Route::post('/register', RegisterController::class);
 Route::post('/login', LoginController::class);
-
-//Route::get('/calendar/ics', function (Request $request) {
-//    Log::info('calendar ics', [$request, $request->all()]);
-//    return response((new CalDavHelper())->getMyCalendars(), 200, [
-//        'Content-Type' => 'application/xml'
-//    ]);
-//});
-//
-//Route::any('*', function (Request $request) {
-//    Log::info('calendar ics', [$request, $request->all()]);
-//    return response((new CalDavHelper())->getMyCalendars(), 200, [
-//        'Content-Type' => 'application/xml'
-//    ]);
-//});
-
-
-
-//
 Route::get('/video-call/{video}/join', [VideoCallController::class, 'getVideoCallToken']);
 Route::put('/video-call/{video}/join', [VideoCallController::class, 'getVideoCallToken']);
-//
-//
-//Route::post('/collaboration/{documentId}', function (Request $request, $documentId) {
-//    \App\Events\EditorCollabEvent::dispatch($request->all(), $documentId);
-//    return response()->noContent();
-//})->middleware(['auth:sanctum', 'throttle:1000,1']);
-//
-//Route::post('/webhook', [PusherController::class, 'webhook']);
-//
-//Route::post('/hook', function (Request $request) {
-//
-//    Log::info('slack', $request->toArray());
-//    return response()->json([
-//        'data' => 'ok'
-//    ]);
-//});

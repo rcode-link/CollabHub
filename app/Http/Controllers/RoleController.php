@@ -59,7 +59,7 @@ class RoleController extends Controller
         $role->update($data);
 
         if ($request->has('users')) {
-            $role->users()->sync($request->get('users'));
+            $role->users()->attach($request->get('users'));
         }
         if ($request->has('permissions')) {
             $role->definitions()->sync($request->get('permissions'));
@@ -69,6 +69,14 @@ class RoleController extends Controller
 
         return $role;
         //
+    }
+
+    public function removeUserFromRole(Request $request, Role $role){
+        $request->validate([
+            'user' => ['exists:users,id']
+        ]);
+        $role->users()->detach([$request->get('user')]);
+        return $request->all();
     }
 
     public function addResource(RoleAddResourceRequest $request, Role $role): \Illuminate\Http\Response

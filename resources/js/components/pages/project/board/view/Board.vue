@@ -30,16 +30,6 @@ onMounted(() => {
         boardState.updateTask(oldStatus, task);
       })
 })
-//
-// watch(() => route.params.board, (value, oldValue, onCleanup) => {
-//   if (value !== oldValue) {
-//     boardState.loadBoards();
-//
-//   }
-// }, {
-//   deep: true
-// })
-
 
 function manageBreadcrumb() {
     if (_.findIndex(breadcrumbStore.links, {'title': boardState.activeBoard.title}) === -1) {

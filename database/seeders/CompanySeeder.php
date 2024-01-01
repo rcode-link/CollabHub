@@ -3,10 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\Company;
-use App\Models\Permission;
 use App\Models\PermissionDefinition;
-use App\Models\User;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
 class CompanySeeder extends Seeder
@@ -28,7 +25,5 @@ class CompanySeeder extends Seeder
                     'resourceable_type' => Company::class,
                 ];
             });
-
-        Permission::insert($permissions->toArray());
     }
 }

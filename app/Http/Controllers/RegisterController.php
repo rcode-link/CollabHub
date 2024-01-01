@@ -28,17 +28,6 @@ class RegisterController extends Controller
                 'company_id' => $invitation->company_id
             ]);
 
-            $user->permissions()->create([
-                'permission' => 'can-view-company.' . $invitation->company_id,
-                'resourceable_id' => $invitation->company_id,
-                'resourceable_type' => Company::class,
-            ]);
-            $user->permissions()->create([
-                    'permission' => 'can-view-users.' . $invitation->company_id,
-                    'resourceable_id' => $invitation->company_id,
-                    'resourceable_type' => Company::class,
-                ]
-            );
             $invitation->update([
                 'registered' => array_merge($invitation->registered ?? [], [$data['email']])
             ]);

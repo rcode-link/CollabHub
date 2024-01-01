@@ -5,6 +5,7 @@ import {useUserStore} from "../../../../../store/user.js";
 import Button from "../../../../shared/Button.vue";
 import {useObjectUrl} from "@vueuse/core";
 import useInit from "../../../../../functions/useInit.js";
+import {toast} from "vue3-toastify";
 
 const userStore = useUserStore();
 const form = reactive({
@@ -26,6 +27,7 @@ const submit = () => {
   }
 
   axios.post(`/api/v1/user/update-profile-picture`, formData).then(() => {
+      toast.success(`Profile picture updated`, {theme: localStorage.getItem('color-theme') ?? 'light'})
     useInit();
   })
 

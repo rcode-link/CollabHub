@@ -17,6 +17,10 @@ import {useRoute} from "vue-router";
 import EditorHeader from "./EditorHeader.vue";
 import hljs from 'highlight.js';
 import MobileMenu from "./MobileMenu.vue";
+import Mention from "@tiptap/extension-mention";
+import suggestion from "../../../functions/editor/mention/suggestion";
+import {SmilieReplacer} from "../../../functions/smilieReplacer";
+import {useConvertTextToLink} from "../../../functions/editor/convertTextToLink";
 
 
 const props = withDefaults(defineProps<{
@@ -36,6 +40,7 @@ const route = useRoute();
 const emit = defineEmits(['update:modelValue', 'submitted'])
 
 const pressedKeys = ref([]);
+const textToLink = useConvertTextToLink();
 
 const editor = useEditor({
   content: props.modelValue,
@@ -58,10 +63,12 @@ const editor = useEditor({
   },
   extensions: [
     StarterKit,
-    // Cursors.configure({}),
-    // Collaboration.configure({
-    //   documentId: route.params.id
-    // }),
+      Mention.configure({
+          HTMLAttributes: {
+              class: 'mention',
+          },
+          suggestion,
+      }),
     Link.configure({}),
     CodeBlockLowlight.configure({
       lowlight,
@@ -73,7 +80,9 @@ const editor = useEditor({
     }),
     TableRow,
     TableHeader,
-    TableCell
+      TableCell,
+      SmilieReplacer,
+      textToLink.convertTextToLink
 
   ],
   onUpdate() {

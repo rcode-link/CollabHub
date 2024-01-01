@@ -6,8 +6,6 @@ use App\Http\Requests\StorePermissionRequest;
 use App\Http\Requests\UpdatePermissionRequest;
 use App\Models\Permission;
 use App\Models\PermissionDefinition;
-use App\Models\PermissionGroup;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -22,7 +20,7 @@ class PermissionController extends Controller
             return PermissionDefinition::whereIn('scope', $request->get('scope'))->get();
         }
 
-        return PermissionGroup::with('definition')->get();
+        return PermissionDefinition::query()->get()->groupBy('scope');
     }
 
 

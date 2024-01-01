@@ -47,6 +47,7 @@ class ChatResource extends JsonResource
     {
         $response = $this->getChatTypeAndTitle();
 
+
         return [
             'id' => $this->id,
             'title' => $response['title'],
@@ -55,10 +56,25 @@ class ChatResource extends JsonResource
             'item_key' => $this->whenLoaded('chatable', $this->getChattableKey()),
             'unreadMessages' => $this->number_of_unread_messages_count,
             'message' => $this->whenLoaded('last_message', function () {
-                return [
-                    'text' => (new Editor())->setContent($this->last_message->message ?? ['content' => ''])->getText([
+
+                $message = '';
+                if ($this->last_message->message) {
+                    $message = (new Editor())->setContent($this->last_message->message)->getText([
                         'blockSeparator' => "\n",
-                    ]),
+                    ]);
+                }
+
+                if($message === '' && $this->last_message->videocalls){
+                    $message = 'Call';
+                }
+
+                if($message === '' && $this->last_message->media){
+                    $message = 'Media';
+                }
+
+
+                return [
+                    'text' => $message,
                     'created_at' => $this->last_message->created_at,
                     'user' => $this->last_message->user->name
                 ];

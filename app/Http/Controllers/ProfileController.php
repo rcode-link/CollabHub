@@ -4,17 +4,25 @@ namespace App\Http\Controllers;
 
 use App\Http\Resources\UserResource;
 use Illuminate\Http\Request;
-use App\Http\Requests\ProfileUpdateRequest;
-use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Redirect;
-use Illuminate\View\View;
 
 class ProfileController extends Controller
 {
     public function view(Request $request)
     {
         return new UserResource($request->user());
+    }
+
+    public function update(Request $request)
+    {
+        $request->validate([
+            'name' => ['string', 'required'],
+            'email' => ['email', 'unique:users,email,' . Auth::id()]
+        ]);
+
+        \auth()->user()->update($request->only('name', 'email'));
+
+        return response()->noContent();
     }
 
     public function updateProfilePicture(Request $request)

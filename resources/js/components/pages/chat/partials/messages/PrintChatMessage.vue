@@ -47,6 +47,7 @@
                 </fwb-badge>
             </div>
         </div>
+        <MessageOptions :message="message"/>
     </div>
 </template>
 <script setup>
@@ -54,25 +55,17 @@ import Editor from "../../../../shared/Editor.vue";
 import PrintFiles from "../../../../shared/PrintFiles.vue";
 import {FwbBadge, FwbP} from "flowbite-vue";
 import {DateTime} from "luxon";
-import {chatDetails} from "../../../../../store/chatStore.js";
 import {computed} from "vue";
 import _ from "lodash";
 import ArrowUpCurvedIcon from "../../../../shared/icons/ArrowUpCurvedIcon.vue";
 import PhoneIcon from "../../../../shared/icons/PhoneIcon.vue";
-
-const messagesState = chatDetails();
+import MessageOptions from "./MessageOptions.vue";
 
 const props = defineProps({
     message: {}
 })
 
 const reactions = computed(() => _.groupBy(props.message.reactions, 'reaction'));
-const answerVideoCall = () => {
-    axios.put(`/api/v1/video-call/${props.message.videocall.id}/join`).then(token => {
-        messagesState.setVideoCallToken(token.data.token);
-    })
-}
-
 </script>
 <style scoped>
 

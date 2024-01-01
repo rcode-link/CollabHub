@@ -8,6 +8,7 @@ import Users from "./partials/Users.vue";
 import {useBreadcrumbStore} from "../../../../store/breadcrumb.js";
 import InteractiveToast from "../../../shared/InteractiveToast.vue";
 import Resource from "./partials/Resource.vue";
+import {toast} from "vue3-toastify";
 
 
 const roleStore = useRoleStore();
@@ -54,6 +55,7 @@ const shouldDeleteButtonBeDisabled = computed(() => {
 
 const deleteRole = () => {
     axios.delete(`/api/v1/roles/${roleStore.role.id}`).then(() => {
+        toast.success(`Role ${roleStore.role.title} deleted`, {theme: localStorage.getItem('color-theme') ?? 'light'})
         roleStore.loadRoles();
     })
 }

@@ -64,7 +64,7 @@ class BroadcastCustom
             return preg_match('/' . $obj->chanelNameRegex . '/', $chanelData->chanelName);
         });
 
-        abort_if(!count($chanel), Response::HTTP_FORBIDDEN);
+        abort_if(!count($chanel), Response::HTTP_FORBIDDEN, 'A');
 
         $chanel = $chanel[array_key_first($chanel)];
 
@@ -94,7 +94,7 @@ class BroadcastCustom
             return $pusher->authorizePresenceChannel($request->get('channel_name'), $socket_id, $user->id, $isUserAuthorized);
         }
 
-        abort(Response::HTTP_FORBIDDEN);
+        abort(Response::HTTP_FORBIDDEN, 'B');
     }
 
     private function parseChanel($channel_name): ChanelInfo

@@ -163,7 +163,7 @@ const updateTask = (params) => {
             <div>
               Status
             </div>
-            <TaskPrintStatus :status="data.status"/>
+            <TaskPrintStatus :status="data.status" :taskId="data.id"/>
           </Label>
           <Label>Assigned to
             <UsersSelectInput :show-clean-input="false" v-model="activeUser"/>

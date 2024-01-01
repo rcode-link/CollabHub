@@ -3,7 +3,7 @@
 import Modal from "../../../shared/Modal.vue";
 import {useTasksStore} from "../../../../store/tasksStore.js";
 import {FwbBadge, FwbButton, FwbCheckbox, FwbFileInput, FwbSelect} from "flowbite-vue";
-import {reactive, ref, watch} from "vue";
+import {h, reactive, ref, watch} from "vue";
 import {useRoute} from "vue-router";
 import Errors from "../../../shared/Errors.vue";
 import Label from "../../../shared/Label.vue";
@@ -17,6 +17,8 @@ import DatePicker from "../../../shared/DatePicker.vue";
 import {DateTime} from "luxon";
 import EditorHeader from "../../../shared/advancedEditor/EditorHeader.vue";
 import _ from "lodash";
+import {toast} from "vue3-toastify";
+import router from "../../../../router/router.js";
 
 const createTasks = useTasksStore();
 const errorsStore = useErrorsStore();
@@ -160,10 +162,17 @@ const createNewTask = () => {
   form.files.forEach((obj, index) => {
     data.append(`file.${index}`, obj);
   })
-  axios.post('/api/v1/tasks', data).then(() => {
+  axios.post('/api/v1/tasks', data).then((task) => {
     resetForm();
     if (!createMore.value) {
       createTasks.toggleCreateTaskModal();
+        toast.success(`<p>Task ${task.data.name} created. </p><small>click to open</small>`, {
+            theme: localStorage.getItem('color-theme') ?? 'light',
+            dangerouslyHTMLString: true,
+            onClick: () => {
+                router.push(`/open/${task.data.data.task_id}`)
+            }
+        })
     }
   }).catch((error) => {
     if (error.response.status === 422) {

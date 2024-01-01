@@ -6,6 +6,7 @@ import Label from "../../../../shared/Label.vue";
 import Text from "../../../../shared/Text.vue";
 import {reactive, ref} from "vue";
 import {useRoleStore} from "../../../../../store/roleStore.js";
+import {toast} from "vue3-toastify";
 
 const roleStore = useRoleStore();
 
@@ -17,6 +18,8 @@ const form = reactive({
 const submit = () => {
     axios.post('/api/v1/roles', form).then(() => {
         modalRef.value.toggleModal();
+        toast.success(`Role created`, {theme: localStorage.getItem('color-theme') ?? 'light'})
+
         roleStore.loadRoles()
     })
 }

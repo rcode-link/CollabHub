@@ -4,29 +4,9 @@ use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\CalendarController;
 use App\Http\Controllers\VideoCallController;
 use App\Http\Middleware\SignedRouteMiddleware;
-use App\Models\Company;
-use App\Models\PermissionDefinition;
-use App\Models\RoleResource;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use Sabre\DAV;
 
-Route::match(['PROPFIND', 'GET', "POST"], '/caldav/{path?}', function () {
-    // Specify your data directory
-    $dataDir = storage_path('app/caldav_data');
-    $principalBackend = new Sabre\DAVACL\PrincipalBackend\PDO(DB::getPdo());
-    // Initialize the CalDAV server
-    $server = new DAV\Server([
-        new DAV\FS\Directory($dataDir),
-    ]);
-
-    // Enable the CalDAV plugin
-    $calDav = new Sabre\CalDAV\Plugin();
-    $server->addPlugin($calDav);
-
-    // Execute the server
-    $server->exec();
-});
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -66,7 +46,7 @@ Route::middleware([\App\Http\Middleware\FrontendEnv::class])->group(function () 
     Route::view('/login', 'welcome')->name('login');
 
 
-    Route::view('*', 'welcome');
+//    Route::view('*', 'welcome');
     Route::fallback(function () {
         return view('welcome');
     });

@@ -58,7 +58,7 @@ class CompanyController extends Controller
      */
     public function update(UpdateCompanyRequest $request, Company $company)
     {
-        $this->authorize('update', $company);
+        $request->user()->authorize('can-update-company', $company);
 
         $company->update([
             'name' => $request->get('name')

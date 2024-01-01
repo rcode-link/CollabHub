@@ -22,7 +22,8 @@
             />
             <div class="flex gap-2 absolute right-1 bottom-1">
                 <Emoji @select="onSelectEmoji"/>
-                <input type="file" class="hidden" id="addFile" @change="chatMessageStore.addFiles" multiple/>
+                <input type="file" class="hidden" id="addFile"
+                       @change="(value) => chatMessageStore.addFiles(value.target.files)" multiple/>
                 <label for="addFile"
                        class="font-medium rounded-full cursor-pointer text-center text-sm p-2">
                     <svg class="w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
@@ -43,13 +44,12 @@
     </form>
 </template>
 <script setup>
-import {FwbButton, FwbInput} from "flowbite-vue";
+import {FwbButton} from "flowbite-vue";
 import FilesComponent from "./FilesComponent.vue";
 import {chatDetails} from "../../../../../store/chatStore.js";
 import {useRoute} from "vue-router";
 import Editor from "../../../../shared/Editor.vue";
 import {computed, ref} from "vue";
-import EmojiPicker from 'vue3-emoji-picker'
 
 // import css
 import 'vue3-emoji-picker/css'

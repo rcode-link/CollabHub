@@ -22,8 +22,15 @@ const open = (obj) => {
        </div>
    </teleport>
     <template v-for="obj in media">
-        <fwb-img @click="() => open(obj.path)" v-if="obj.type.indexOf('image/') > -1" class="w-36 shadow p-2 h-auto"
-                 :src="obj.path" :alt="obj.name"/>
+        <template v-if="obj.type.indexOf('image/') > -1">
+           <div>
+               <fwb-img @click="() => open(obj.path)" class="w-36 shadow p-2 h-auto"
+                        :src="obj.path" :alt="obj.name"/>
+               <p class="text-xs">
+                   {{ obj.name }}
+               </p>
+           </div>
+        </template>
         <a v-else :class="{
                   'flex py-2 px-2 my-4 flex-1 gap-4 items-center border rounded-xl': true,
                  'w-fit': !full,

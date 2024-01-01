@@ -4,6 +4,7 @@
     <UserIcon v-if="['user', 'group'].indexOf(obj.type) > -1" :user="obj" class="min-w-10"/>
     <template v-else>
       <Task v-if="obj.type === 'app\\models\\task'" class="w-10 h-10"/>
+        <fwb-avatar v-if="obj.type === 'app\\models\\company'" class="w-10 h-10" :img="userStore.company.avatar"/>
     </template>
     <div class="col-span-5 text-gray-900 dark:text-white">
       <div class="flex">
@@ -35,12 +36,14 @@
 </template>
 <script setup>
 import {DateTime} from "luxon";
-import Editor from "../../../shared/Editor.vue";
 import {computed} from "vue";
 import {useRoute} from "vue-router";
 import UserIcon from "../../../shared/UserIcon.vue";
 import Task from "../../../shared/icons/Task.vue";
+import {FwbAvatar} from "flowbite-vue";
+import {useUserStore} from "../../../../store/user.js";
 
+const userStore = useUserStore();
 const route = useRoute();
 const props = defineProps({
   obj: {}

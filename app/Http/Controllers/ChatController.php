@@ -44,7 +44,7 @@ class ChatController extends Controller
                     $builder->whereNot('user_id', Auth::id())->limit(2);
                 },
             ])
-            ->with(['last_message', 'last_message.user', 'chatable'])
+            ->with(['last_message', 'last_message.videocalls', 'last_message.media', 'last_message.user', 'chatable'])
             ->whereHas('users', function ($query) {
                 $query->where('user_id', Auth::id());
             })

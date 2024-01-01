@@ -64,7 +64,7 @@ export const chatDetails = defineStore('chatDetails', {
             this.previousDate = date
         },
         addFiles(value) {
-            this.files.push(...value.target.files);
+            this.files.push(...value);
         },
         setVideoCallToken(token) {
             this.videoCallToken = token;

@@ -33,10 +33,14 @@ class ChatUpdate implements ShouldBroadcast
     public function __construct(private readonly array $users, ?ChatMessage $message)
     {
         $this->chatId = $message->chat_id;
-        $this->message = [
-            'text' =>  (new Editor())->setContent($message?->message ?? ['content' => ''])->getText([
+        $messageData = '';
+        if ($this->message) {
+            $messageData = (new Editor())->setContent($this->message)->getText([
                 'blockSeparator' => "\n",
-            ]),
+            ]);
+        }
+        $this->message = [
+            'text' => $messageData,
             'created_at' => $message?->created_at,
             'user' => $message?->user?->name
         ];

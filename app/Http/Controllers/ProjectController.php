@@ -21,6 +21,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Symfony\Component\HttpFoundation\Response;
+use function PHPUnit\Framework\throwException;
 
 class ProjectController extends Controller
 {
@@ -29,11 +30,9 @@ class ProjectController extends Controller
      */
     public function index(Request $request)
     {
-        $projectIds = Auth::user()->permissions()->select('resourceable_id')->where('resourceable_type', Project::class)
-            ->when($request->get('can-create-task'), function (Builder $builder) {
-                $builder->where('permission', 'like', 'can-create-task.%');
-            });
-        $project = Project::whereIn('id', $projectIds->get()->toArray())->paginate(50);
+        $projectIds = Auth::user()->permissions()->filter(fn($obj) => $obj['model']['type'] === Project::class)
+            ->map(fn($obj) => $obj['model']['id'])->flatten()->toArray();
+        $project = Project::whereIn('id', $projectIds)->paginate(50);
         return ProjectResource::collection($project);
 
     }
@@ -47,11 +46,8 @@ class ProjectController extends Controller
         ]);
 
 
-        $users = Permission::query()
-            ->select('user_id')
-            ->where('resourceable_type', Project::class)
-            ->where('resourceable_id', $request->get('project_id'))
-            ->where('permission', 'like', 'can-view-project.%')->get()->pluck('user_id');
+        $users = Auth::user()->permissions()->filter(fn($obj) => $obj['model']['type'] === Project::class && $obj['model']['id'] == $request->get('project_id'))->map(fn($obj) => $obj['users'])->flatten();
+
 
         $list = User::query()
             ->whereIn('id', $users->toArray())
@@ -68,12 +64,21 @@ class ProjectController extends Controller
      */
     public function store(StoreProjectRequest $request)
     {
+        DB::beginTransaction();
+        try {
+
         Auth::user()->authorize('can-create-project', Auth::user()->company()->first());
         $data = $request->validated();
         $data['key'] = Str::upper(Str::slug($data['key']));
         $project = Project::create($data);
         ProjectCreated::dispatch($project);
+            DB::commit();
         return response()->json($project);
+        } catch (\Exception $exception) {
+            DB::rollBack();
+            throwException($exception);
+            return response()->json([]);
+        }
     }
 
     /**

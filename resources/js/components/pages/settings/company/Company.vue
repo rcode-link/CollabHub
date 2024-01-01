@@ -13,6 +13,7 @@ import {FwbToast} from "flowbite-vue";
 import {useUserStore} from "../../../../store/user.js";
 import useInit from "../../../../functions/useInit.js";
 import {useAbility} from "@casl/vue";
+import {toast} from "vue3-toastify";
 const { can, rules } = useAbility()
 
 const userStore = useUserStore();
@@ -66,7 +67,7 @@ const submit = () => {
     }
 
     axios.post(`/api/v1/companies/${form.company.id}`, formData).then(() => {
-        showToast.value = true;
+        toast.success('Company updated', {theme: localStorage.getItem('color-theme') ?? 'light'})
         useInit();
     })
 
@@ -75,9 +76,6 @@ const submit = () => {
 
 <template>
     <Settings>
-        <fwb-toast v-show="showToast"  @close="() => showToast = false" closable type="success" class="fixed bottom-6 right-6 shadow">
-            Company updated!
-        </fwb-toast>
         <Card class="col-span-2 flex flex-col gap-4 w-full">
             <form @submit.prevent="submit" class="w-full grid gap-6">
                 <div>

@@ -2,6 +2,7 @@
 
 use App\Helpers\Socket\BroadcastCustom;
 use App\Models\Chat;
+use App\Models\User;
 
 /*
 |--------------------------------------------------------------------------
@@ -14,13 +15,10 @@ use App\Models\Chat;
 |
 */
 
-BroadcastCustom::getInstance()->channel('user.*', function ($user, $companyId) {
-    $isUserInCompany = \App\Models\Company::query()->where('id', $companyId)
-        ->whereHas('users', function ($query) use ($user) {
-            $query->where('user_id', $user->id);
-        })->count();
+BroadcastCustom::getInstance()->channel('user.*', function (User $user, $companyId) {
+    $isUserInCompany = $user->permissions()->pluck('permissions')->flatten()->contains('can-view-company.' . $companyId);
 
-    if ($isUserInCompany > 0) {
+    if ($isUserInCompany) {
         return ['id' => $user->id];
     }
 });
@@ -38,22 +36,22 @@ BroadcastCustom::getInstance()->channel('chat.*', function ($user, $chatId) {
 });
 
 
-BroadcastCustom::getInstance()->channel('start-call.*', function ($user, $chatId) {
+BroadcastCustom::getInstance()->channel('start-call.*', function (User $user, $chatId) {
     return true;
 });
 
-BroadcastCustom::getInstance()->channel('collaboration.*', function ($user, $documentId) {
+BroadcastCustom::getInstance()->channel('collaboration.*', function (User $user, $documentId) {
     return $user->toArray();
 });
 
-BroadcastCustom::getInstance()->channel('task-updated.task.*', function ($user, $chatId) {
+BroadcastCustom::getInstance()->channel('task-updated.task.*', function (User $user, $chatId) {
     return true;
 });
 
-BroadcastCustom::getInstance()->channel('task-updated.*', function ($user, $project) {
-    return $user->permissions()->where('permission', "can-view-project.$project")->count();
+BroadcastCustom::getInstance()->channel('task-updated.*', function (User $user, $project) {
+    return $user->permissions()->pluck('permissions')->flatten()->contains("can-view-project.$project");
 });
 
-BroadcastCustom::getInstance()->channel('UpdateChatForUser.*', function ($user, $userId) {
+BroadcastCustom::getInstance()->channel('UpdateChatForUser.*', function (User $user, $userId) {
     return $user->id === (int)$userId;
 });
