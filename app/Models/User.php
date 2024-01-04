@@ -214,8 +214,8 @@ class User extends Authenticatable implements HasMedia
         $this
             ->addMediaCollection('avatar')
             ->singleFile()
-            ->useFallbackUrl('storage/images/avatar.png')
-            ->useFallbackPath(public_path('storage/images/avatar.png'));
+            ->useFallbackUrl('storage/public/images/avatar.png')
+            ->useFallbackPath(public_path('storage/public/images/avatar.png'));
     }
 
     public function roles(): BelongsToMany

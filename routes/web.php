@@ -18,12 +18,6 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-
-Route::get('/test', function () {
-    \App\Events\ManagePermissionsEvent::dispatch();
-//    dd($data->count());
-});
-
 Route::get('/storage/{media}/{slug}', function (Request $request, \Spatie\MediaLibrary\MediaCollections\Models\Media $media) {
     return response()->file($media->getPath(), ["Content-Type" => $media->mime_type]);
 });
@@ -45,8 +39,6 @@ Route::middleware([\App\Http\Middleware\FrontendEnv::class])->group(function () 
     Route::post('/register/company', \App\Http\Controllers\RegisterController::class)->name('register');
     Route::view('/login', 'welcome')->name('login');
 
-
-//    Route::view('*', 'welcome');
     Route::fallback(function () {
         return view('welcome');
     });
