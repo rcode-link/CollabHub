@@ -17,7 +17,6 @@ export const initAxios = () => {
         return error;
     });
     instance.interceptors.response.use(function (response) {
-        console.log({res: response})
         return response;
     }, function (error) {
         if (error.response.status === 401 && location.pathname !== '/login') {
