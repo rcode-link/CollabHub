@@ -8,6 +8,7 @@ use Illuminate\Broadcasting\InteractsWithBroadcasting;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
@@ -33,7 +34,10 @@ class TaskUpdatedEvent implements ShouldBroadcast
                         'status' => fn(HasOne $query) => $query->select('id', 'title', 'board_id'),
                         'status.board' => fn(BelongsTo $query) => $query->select('id', 'title'),
                         'sprint' => fn(HasOne $query) => $query->select('id', 'title')
-                    ]);
+                    ])
+                    ->when(request()->has('sprint_id') && !request()->has('fullList'), function (Builder $builder) {
+                        $builder->where('sprint_id', request()->get('sprint_id'));
+                    });
             }]));
         //
     }

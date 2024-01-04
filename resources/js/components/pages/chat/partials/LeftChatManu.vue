@@ -46,7 +46,6 @@ watch(() => route.query.type, (value, oldValue, onCleanup) => {
 onMounted(() => {
   Echo.private('UpdateChatForUser.' + userState.user.id)
       .listen('ChatUpdate', (data) => {
-        // chatState.setChatOnTopOfTheList(data.id);
         chatState.updateChatListMessage(data);
       });
 })

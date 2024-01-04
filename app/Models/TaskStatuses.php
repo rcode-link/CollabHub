@@ -41,9 +41,33 @@ use Illuminate\Support\Carbon;
 class TaskStatuses extends Model
 {
     use HasFactory;
+    protected $fillable = [
+        'order',
+        'id',
+        'title',
+        'open',
+        'project_id',
+        'board_id',
+        'sprint_id',
+    ];
 
     public function board(): BelongsTo
     {
         return $this->belongsTo(Board::class);
+    }
+
+    public function updateOrder($order): bool
+    {
+        TaskStatuses::query()
+            ->where('project_id', $this->project_id)
+            ->where('board_id', $this->board_id)
+            ->where('order', $order)
+            ->update([
+                'order' => $this->order
+            ]);
+        $this->update([
+            'order' => $order
+        ]);
+        return true;
     }
 }

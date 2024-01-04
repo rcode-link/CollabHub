@@ -14,13 +14,14 @@ class DashboardController extends Controller
     public function unreadMessages()
     {
         $numberOfUnreadMessage = Chat::query()
-            ->with(['last_message', 'last_message.user'])
+            ->with(['last_message', 'last_message.user', 'users'])
             ->whereHas('users', function ($query) {
                 $query->where('user_id', Auth::id());
             })
             ->withCount('users')
             ->withCount('numberOfUnreadMessages')
             ->having('number_of_unread_messages_count', '!=', 0)
+            ->limit(5)
             ->get();
 
         return ChatResource::collection($numberOfUnreadMessage);
@@ -35,7 +36,7 @@ class DashboardController extends Controller
             ->whereHas('taskSprintData', function (Builder $builder){
                 $builder->whereHas('status', fn (Builder $query) => $query->where('open', true));
             })
-            ->paginate();
+            ->paginate(4);
 
         return TaskResource::collection($tasks);
     }

@@ -13,7 +13,7 @@ const chatStore = chatDetails()
 
 onMounted(() => {
     chatLogic.chatId.value = props.chatId;
-    chatLogic.listenForMessages();
+    chatLogic.listenForMessages(props.chatId);
     chatLogic.resetMessages();
     chatLogic.loadMessages();
 })

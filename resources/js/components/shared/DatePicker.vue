@@ -27,7 +27,8 @@ const emit = defineEmits(['update:modelValue']);
                    time_24hr: true,
                    dateFormat: 'Z',
                    formatDate: (date, format, locale) => {
-                            return DateTime.fromISO(date.toISOString()).toLocaleString(DateTime.DATETIME_SHORT);
+                       const formatData = enableTime ? DateTime.DATETIME_SHORT : DateTime.DATE_SHORT;
+                            return DateTime.fromISO(date.toISOString()).toLocaleString(formatData);
                    },
                    onClose: (dates, currentDateString, self, data) => {
                        emit('update:modelValue', dates[0].toISOString());

@@ -17,11 +17,11 @@ class ChatMessageCreated implements ShouldBroadcast
     use InteractsWithBroadcasting;
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
-    public $message;
+    public ChatMessageResource $message;
     /**
      * Create a new event instance.
      */
-    public function __construct(private readonly object $data)
+    public function __construct(private readonly ChatMessage $data)
     {
 
         $this->message = new ChatMessageResource($data);

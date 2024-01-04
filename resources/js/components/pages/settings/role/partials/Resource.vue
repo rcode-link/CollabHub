@@ -62,7 +62,7 @@ load();
                 />
             </div>
             <div class="mb-4">
-                <Label>Type</Label>
+                <Label>Resource</Label>
                 <fwb-select
                     v-model="model.resource"
                     :options="resources"

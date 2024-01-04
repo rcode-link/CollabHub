@@ -17,19 +17,19 @@ export default () => {
         Echo.leave(`chat.${chatId.value}`);
         Echo.join(`chat.${chatId.value}`)
             .listen('ChatMessageCreated', (data) => {
-                chatStore.addMessage(data.message)
-                router.push({
-                    query: route.query,
-                    hash: `#message-${data.message.id}`
+                setTimeout(() => {
+                    chatStore.addMessage(data.message)
+                    router.push({
+                        query: route.query,
+                        hash: `#message-${data.message.id}`
+                    })
                 })
             })
             .listen('ChatMessageUpdated', (data) => {
-                if(!_.indexOf(chatStore.messages, {id: _.toNumber(data.data.id)})){
-                    chatStore.updateMessage(data.data);
-                }
+                setTimeout(() => chatStore.updateMessage(data.data));
             })
             .listen('ChatMessageDeleted', (data) => {
-                chatStore.deleteMessage(data);
+                setTimeout(() => chatStore.deleteMessage(data));
             })
     }
 

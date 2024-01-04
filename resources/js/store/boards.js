@@ -37,6 +37,10 @@ export const useBoardsState =
 
 
         function updateTask(oldStatusId, task) {
+
+            if (!route.params.sprint) {
+                return;
+            }
             const statusTitle = {
                 title: ''
             }
@@ -54,9 +58,14 @@ export const useBoardsState =
             if(index === -1){
                 return;
             }
+            let status = task.status;
+            if (_.isArray(task.status)) {
+                status = _.find(status, (obj) => {
+                    return obj.sprint.id === _.toNumber(route.params.sprint);
+                })
+            }
             boardTasks.value[statusTitle.title].splice(index, 1);
-
-            boardTasks.value[task.status.title].push(task)
+            boardTasks.value[status.title].push(task)
         }
 
         function setDraggedTaskId(val) {
@@ -93,6 +102,12 @@ export const useBoardsState =
         })
 
         watch(() => [activeBoard.value], () => {
+            const data = _.find(activeBoard.value.sprint, obj => obj.id === _.toNumber(route.params.sprint));
+
+            if (route.params.sprint && data) {
+                activeSprint.value = _.find(activeBoard.value.sprint, obj => obj.id === _.toNumber(route.params.sprint));
+                return;
+            }
             let sprintToBeActive = _.find(activeBoard.value.sprint, obj => obj.is_active);
             if (!sprintToBeActive) {
                 return;
@@ -111,7 +126,8 @@ export const useBoardsState =
             }
             activeSprint.value = _.find(activeBoard.value.sprint, obj => obj.id === _.toNumber(route.params.sprint));
         }, {
-            immediate: true
+            immediate: true,
+            deep: true
         })
 
         const loadBoards = () => {

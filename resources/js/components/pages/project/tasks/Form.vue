@@ -3,7 +3,7 @@
 import Modal from "../../../shared/Modal.vue";
 import {useTasksStore} from "../../../../store/tasksStore.js";
 import {FwbBadge, FwbButton, FwbCheckbox, FwbFileInput, FwbSelect} from "flowbite-vue";
-import {h, reactive, ref, watch} from "vue";
+import {reactive, ref, watch} from "vue";
 import {useRoute} from "vue-router";
 import Errors from "../../../shared/Errors.vue";
 import Label from "../../../shared/Label.vue";
@@ -63,6 +63,7 @@ const loadData = () => {
       form.description = data.description;
       form.user_id = data.user.id;
       form.project_id = route.params.project;
+        form.type_id = data.type.id;
         form.tags = data.tags ?? [];
       form.due_date = data.due_date === null ? null : DateTime.fromISO(data.due_date).toLocaleString(DateTime.DATE_FULL);
     }).finally(() => {
@@ -88,7 +89,7 @@ const resetForm = () => {
   form.name = '';
   form.description = '';
   form.user_id = null;
-  form.project_id = '';
+    form.project_id = route.params.project ?? '';
   form.type_id = 3;
   form.status_id = null;
   form.due_date = null;
@@ -164,9 +165,10 @@ const createNewTask = () => {
   })
   axios.post('/api/v1/tasks', data).then((task) => {
     resetForm();
+      console.log(task)
     if (!createMore.value) {
       createTasks.toggleCreateTaskModal();
-        toast.success(`<p>Task ${task.data.name} created. </p><small>click to open</small>`, {
+        toast.success(`<p>Task ${task.data.data.name} created. </p><small>click to open</small>`, {
             theme: localStorage.getItem('color-theme') ?? 'light',
             dangerouslyHTMLString: true,
             onClick: () => {

@@ -19,8 +19,7 @@ defineProps({
               ({{ obj.sprint.title }})
           </template>
       </div>
-
-
+        <TaskStatusDropdown :obj="obj" :taskId="taskId"/>
     </div>
     <div>
         <TaskStatusDropdown v-if="!_.isArray(status)" :obj="status" :taskId="taskId"/>

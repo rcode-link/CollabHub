@@ -63,7 +63,7 @@ const deleteRole = () => {
 
 <template>
     <Settings>
-        <div class="w-full">
+        <div class="w-full" :key="roleStore.role.title">
             <div class="flex justify-between items-center">
                 <h1 class="base-item text-lg">{{ roleStore.role.title }}</h1>
                 <interactive-toast ref="deleteRoleToastRef">

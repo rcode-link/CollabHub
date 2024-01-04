@@ -28,8 +28,11 @@ watch(() => route.params.chatId, (value, oldValue, onCleanup) => {
     if (oldValue) {
         Echo.leave(`chat.${oldValue}`)
     }
+    if (!route.params.chatId) {
+        return;
+    }
     chatLogic.chatId.value = route.params.chatId;
-    chatLogic.listenForMessages();
+    chatLogic.listenForMessages(route.params.chatId);
     chatLogic.resetMessages();
     chatLogic.page.value = 1;
     axios.get(`/api/v1/chats/${route.params.chatId}`).then((response) => {
@@ -40,8 +43,9 @@ watch(() => route.params.chatId, (value, oldValue, onCleanup) => {
     immediate: true
 })
 
-onUnmounted(() => {
-    Echo.leave(`chat.${route.params.chatId}`)
+onUnmounted(async () => {
+    await Echo.leave(`chat.${chatLogic.chatId.value}`)
+    chatLogic.chatId.value = null;
 })
 
 const messages = computed(() => {

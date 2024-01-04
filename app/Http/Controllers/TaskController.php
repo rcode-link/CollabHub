@@ -14,13 +14,13 @@ use App\Models\Sprint;
 use App\Models\Task;
 use App\Models\TaskRelation;
 use App\Models\TaskSprint;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Log;
 
 class TaskController extends Controller
 {
@@ -94,7 +94,9 @@ class TaskController extends Controller
 
             $data = $request->validated();
             unset($data['related_tasks']);
-
+            if (isset($data['due_date'])) {
+                $data['due_date'] = Carbon::parse($data['due_date']);
+            }
             $project = Project::query()->where('id', $data['project_id'])->firstOrFail();
             $data['description'] = json_decode($data['description']);
             $data['task_id'] = $project->key . '-' . Task::query()->where('project_id', $project->id)->count() + 1;
@@ -194,7 +196,6 @@ class TaskController extends Controller
             ])
             ->where('task_id', $task_id);
 
-        Log::info('task details', $task->firstOrFail()->toArray());
         return new TaskResource($task->firstOrFail());
     }
 
@@ -204,10 +205,13 @@ class TaskController extends Controller
     public function update(UpdateTaskRequest $request, $task_id)
     {
         $task = Task::query()->where('task_id', $task_id)->firstOrFail();
-        $oldStatusId = $task->status_id;
         $data = $request->validated();
         unset($data['related_tasks']);
         unset($data['sprint_id']);
+        if (isset($data['due_date'])) {
+            $data['due_date'] = Carbon::parse($data['due_date']);
+        }
+
         $task->update($data);
         if ($request->get('name')) {
             $task->chat()->update(['title' => $request->get('name')]);
@@ -221,7 +225,7 @@ class TaskController extends Controller
             ->where('task_id', $task_id)
             ->with('media', 'owner', 'createdBy', 'type', 'taskSprintData', 'chat')
             ->first();
-        TaskUpdatedEvent::dispatch($sendTask, $oldStatusId);
+        TaskUpdatedEvent::dispatch($sendTask, null);
 
         return response()->json($sendTask);
     }

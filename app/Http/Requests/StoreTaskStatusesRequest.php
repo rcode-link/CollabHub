@@ -11,7 +11,7 @@ class StoreTaskStatusesRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +22,9 @@ class StoreTaskStatusesRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'title' => ['string'],
+            'project_id' => ['exists:projects,id'],
+            'board_id' => ['exists:boards,id'],
         ];
     }
 }

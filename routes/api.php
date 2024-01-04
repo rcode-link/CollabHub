@@ -15,6 +15,7 @@ use App\Http\Controllers\{BoardController,
     PermissionController,
     ProfileController,
     ProjectController,
+    PusherController,
     RegisterController,
     RoleController,
     SprintController,
@@ -38,7 +39,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware(['auth:sanctum', 'throttle:100,1'])->group(function () {
+Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('/user', [ProfileController::class, 'view']);
     Route::put('/user', [ProfileController::class, 'update']);
     Route::get('/dashboard/messages', [DashboardController::class, 'unreadMessages']);
@@ -93,3 +94,4 @@ Route::post('/register', RegisterController::class);
 Route::post('/login', LoginController::class);
 Route::get('/video-call/{video}/join', [VideoCallController::class, 'getVideoCallToken']);
 Route::put('/video-call/{video}/join', [VideoCallController::class, 'getVideoCallToken']);
+Route::post('/webhook', [PusherController::class, 'webhook']);

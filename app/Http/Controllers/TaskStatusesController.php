@@ -26,7 +26,10 @@ class TaskStatusesController extends Controller
      */
     public function store(StoreTaskStatusesRequest $request)
     {
-        //
+        TaskStatuses::create($request->validated());
+
+        return response()->noContent();
+
     }
 
     /**
@@ -40,9 +43,21 @@ class TaskStatusesController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateTaskStatusesRequest $request, TaskStatuses $taskStatuses)
+    public function update(UpdateTaskStatusesRequest $request, TaskStatuses $tasks_status)
     {
-        //
+
+        $data = $request->validated();
+
+        if(isset($data['order'])){
+           $success =  $tasks_status->updateOrder($data['order']);
+        }
+
+
+        if(!isset($data['order'])){
+            $success =  $tasks_status->update($data);
+        }
+
+       return response()->noContent();
     }
 
     /**

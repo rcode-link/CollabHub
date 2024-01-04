@@ -11,7 +11,7 @@ class UpdateTaskStatusesRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +22,9 @@ class UpdateTaskStatusesRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'order' => 'int',
+            'title' => ['string'],
+            'open' => ['bool']
         ];
     }
 }

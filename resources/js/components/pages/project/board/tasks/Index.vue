@@ -104,7 +104,7 @@ onMounted(() => {
     form.in_sprint = route.query.in_sprint;
     load();
 
-    breadcrumbStore.addEntry([
+    const breadcrumItems = [
         {
             link: {
                 name: 'project.board.view',
@@ -114,8 +114,12 @@ onMounted(() => {
                 },
             },
             title: boardsState.activeBoard.title
-        },
-        {
+        }
+    ];
+
+    if (boardsState.activeSprint.title) {
+
+        breadcrumItems.push({
             link: {
                 name: 'project.board.view',
                 params: {
@@ -124,10 +128,14 @@ onMounted(() => {
                 },
             },
             title: boardsState.activeSprint.title
-        }, {
-            title: 'Add tasks'
-        }
-    ])
+        });
+    }
+
+    breadcrumItems.push({
+        title: 'Add tasks'
+    });
+
+    breadcrumbStore.addEntry(breadcrumItems)
 })
 
 onBeforeUnmount(() => {

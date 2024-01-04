@@ -39,7 +39,8 @@
               </fwb-list-group-item>
               <fwb-list-group-item>
                   <router-link :to="{
-                                      name: 'project.board.settings'
+                                      name: 'project.board.settings',
+                                      params: route.params
                                     }">
                       Board settings
                   </router-link>
