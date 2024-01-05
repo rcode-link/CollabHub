@@ -9,6 +9,7 @@ import Card from "../shared/Card.vue";
 import Label from '../shared/Label.vue'
 import Button from "../shared/Button.vue";
 import DangerAlert from "../shared/DangerAlert.vue";
+import {FwbCheckbox, FwbToggle} from "flowbite-vue";
 
 const router = useRouter();
 const route = useRoute();
@@ -73,6 +74,20 @@ const register = () => {
             <Text type="password" v-model="form.password" :name="'password'" id="password" form="'login'"
                   placeholder="New Password"/>
             <Errors name="password"/>
+              <ul class="mt-2">
+                  <li>
+                      <fwb-checkbox label="Min 8. characters" disabled :model-value="form.password?.length >= 8"/>
+                  </li>
+                  <li>
+                      <fwb-checkbox label="At least one uppercase letter" disabled :model-value="/[A-Z]/.test(form.password)" />
+                  </li>
+                  <li>
+                      <fwb-checkbox label="At least one numeric character" disabled :model-value="/[0-9]/.test(form.password)" />
+                  </li>
+                  <li>
+                      <fwb-checkbox label="At least one special character (@$!%*#?_&)" disabled :model-value="/[@$!%*#?_&]/.test(form.password)" />
+                  </li>
+              </ul>
           </div>
           <div>
             <Label :forInput="'password_confirmation'">Confirm Password</Label>
