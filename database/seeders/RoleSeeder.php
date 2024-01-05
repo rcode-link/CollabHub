@@ -18,7 +18,8 @@ class RoleSeeder extends Seeder
     public function run(): void
     {
         $admin = Role::create([
-            'title' => 'Admin'
+            'title' => 'Admin',
+            'can_be_changed' => false
         ]);
 
         $company = Company::create([
