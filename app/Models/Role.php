@@ -27,6 +27,10 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
  * @method static \Illuminate\Database\Eloquent\Builder|Role whereTitle($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Role whereUpdatedAt($value)
  * @property-read \App\Models\RoleResource|null $resources
+ * @property int $can_be_changed
+ * @property int $is_visible
+ * @method static Builder|Role whereCanBeChanged($value)
+ * @method static Builder|Role whereIsVisible($value)
  * @mixin \Eloquent
  */
 class Role extends Model

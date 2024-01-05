@@ -27,7 +27,6 @@ use Illuminate\Database\Eloquent\Builder;
  * @method static \Illuminate\Database\Eloquent\Builder|RoleResource whereUpdatedAt($value)
  * @property-read Model|\Eloquent $resourcable
  * @property-read \App\Models\Role|null $role
- *
  * @mixin \Eloquent
  */
 class RoleResource extends Model
