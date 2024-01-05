@@ -5,10 +5,13 @@ import {ref} from "vue";
 import {TailwindPagination} from "laravel-vue-pagination";
 import Card from "../../shared/Card.vue";
 import Editor from "../../shared/Editor.vue";
+import {FwbAlert} from "flowbite-vue";
 
 const breadcrumb = useBreadcrumbStore();
 
-const projects = ref({});
+const projects = ref({
+  data: []
+});
 
 breadcrumb.setLinks([
     {
@@ -39,7 +42,7 @@ load();
 
 <template>
     <Auth>
-        <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
+      <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4" v-if="projects.data.length">
             <router-link class="flex-1 h-full" v-for="obj in projects.data" :to="{
                          name: 'project-details',
                          params: {
@@ -60,7 +63,10 @@ load();
                 </Card>
             </router-link>
         </div>
-        <TailwindPagination
+      <fwb-alert type="warning" v-else>
+        You don't have any projects
+      </fwb-alert>
+      <TailwindPagination
             class=""
             :limit="3"
             :data="projects"

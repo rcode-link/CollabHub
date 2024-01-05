@@ -161,6 +161,14 @@ export default [
       component: () => import('../components/pages/video/Index.vue')
     },
     {
+        name: 'user.details',
+        path: '/user/:id',
+        component: () => import('../components/pages/user/Index.vue'),
+        meta: {
+            middleware: auth,
+        },
+    },
+    {
         name: 'not-found',
         path: '/404',
         component: () => import('../components/pages/404.vue')

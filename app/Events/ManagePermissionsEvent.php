@@ -23,6 +23,9 @@ class ManagePermissionsEvent
         $permissions = collect([]);
 
         foreach ($data as $role) {
+            if ($role->resourcable === null) {
+                continue;
+            }
             $roleType = $role->resourcable_type === Company::class ? \App\Helpers\Enums\PermissionsScopes::Company->value : \App\Helpers\Enums\PermissionsScopes::Project->value;
             $permissions->push([
                 'permissions' => $role->role->definitions

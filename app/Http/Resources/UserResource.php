@@ -18,7 +18,12 @@ class UserResource extends JsonResource
             'id' => $this->id,
             'name' => $this->name,
             'email' => $this->email,
-            'avatar' => $this->getFirstMediaUrl('avatar')
+            'avatar' => $this->getFirstMediaUrl('avatar'),
+            'view_profile' => $this->when(\request()->routeIs('apiusers.show'), function () {
+                return [
+                    'newItem' => true
+                ];
+            })
         ];
     }
 }

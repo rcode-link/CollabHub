@@ -73,7 +73,7 @@ load();
     </Card>
 
     <Card v-for="obj in list">
-        {{ obj.resourcable.name }}
+        {{ obj.resourcable?.name }}
     </Card>
 </template>
 

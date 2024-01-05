@@ -53,6 +53,7 @@ class ChatResource extends JsonResource
             'title' => $response['title'],
             'type' => $response['type'],
             'avatar' => $response['avatar'],
+            'chatable_id' => $response['chatable_id'],
             'item_key' => $this->whenLoaded('chatable', $this->getChattableKey()),
             'unreadMessages' => $this->number_of_unread_messages_count,
             'message' => $this->whenLoaded('last_message', function () {
@@ -90,14 +91,16 @@ class ChatResource extends JsonResource
             return [
                 'title' => $user?->name,
                 'type' => ChatTypes::USER->value,
-                'avatar' => $user?->getFirstMediaUrl('avatar')
+                'avatar' => $user?->getFirstMediaUrl('avatar'),
+                'chatable_id' => $user->id,
             ];
         }
 
         return [
             'title' => $this->title,
             'type' => $this->chatable_type === User::class ? ChatTypes::GROUP->value : Str::lower(\Str::replace('\\App\\Models\\', '', $this->chatable_type)),
-            'avatar' => ''
+            'avatar' => '',
+            'chatable_id' => null
         ];
     }
 

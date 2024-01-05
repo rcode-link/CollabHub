@@ -24,6 +24,7 @@ use App\Http\Controllers\{BoardController,
     TaskStatusesController,
     TaskTypeController,
     TimeSheetController,
+    UserController,
     VideoCallController};
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -88,6 +89,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('/calendar', [CalendarController::class, 'insertCalendarItem']);
     Route::put('/calendar/{event}', [CalendarController::class, 'update']);
     Route::delete('/calendar/{event}', [CalendarController::class, 'destroy']);
+    Route::apiResource('/users', UserController::class);
     \App\Helpers\Socket\BroadcastCustom::route();
 });
 Route::post('/register', RegisterController::class);

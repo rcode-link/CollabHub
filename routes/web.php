@@ -18,7 +18,11 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/storage/{media}/{slug}', function (Request $request, \Spatie\MediaLibrary\MediaCollections\Models\Media $media) {
+Route::get('/storage/{media}/{slug}', function (Request $request, $media) {
+    if($media === 'images'){
+        return response()->file(storage_path('/app/public/images/avatar.png'));
+    }
+    $media = Spatie\MediaLibrary\MediaCollections\Models\Media::find($media);
     return response()->file($media->getPath(), ["Content-Type" => $media->mime_type]);
 });
 

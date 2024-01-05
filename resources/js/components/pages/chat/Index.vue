@@ -25,7 +25,6 @@ breadcrumb.setLinks([
 ])
 
 watch(() => route.params.chatId, (value, oldValue, onCleanup) => {
-    console.log(value, oldValue, onCleanup)
     showListInMobile.value = false;
 })
 

@@ -41,7 +41,6 @@ const isVideoDisabled = computed(() => {
 <template>
     <div class="flex-1 relative player">
         <template v-for="(track) in filterTracks" :key="track.sid">
-            <transition>
                 <component
                     v-if="!track.isMuted"
                     :is="track.kind"
@@ -49,7 +48,6 @@ const isVideoDisabled = computed(() => {
                     class="w-full"
                     playsInline="true"
                     :srcObject="track.mediaStream"/>
-            </transition>
         </template>
         <div
             v-if="isVideoDisabled"
@@ -67,15 +65,7 @@ const isVideoDisabled = computed(() => {
 <style scoped>
 .player {
     aspect-ratio: 16/9;
-    max-height: 50vh;
-}
-.v-enter-active,
-.v-leave-active {
-    transition: all 5s ease;
+    max-height: 100%;
 }
 
-.v-enter-from,
-.v-leave-to {
-    width: 0px;
-}
 </style>

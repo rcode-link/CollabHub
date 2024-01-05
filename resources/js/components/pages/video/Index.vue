@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import {chatDetails} from "../../../store/chatStore";
-import {useRoute} from "vue-router";
+import {useRoute, useRouter} from "vue-router";
 import '../../declaration'
 import {useUserStore} from '../../../store/user';
 import {useLiveKit} from "../../../functions/liveKit";
@@ -13,11 +13,12 @@ import MicrophoneSlashIcon from "../../shared/icons/MicrophoneSlashIcon.vue";
 import PhoneIcon from "../../shared/icons/PhoneEndIcon.vue";
 import CogsIcon from "../../shared/icons/CogsIcon.vue";
 import DispleyIcon from "../../shared/icons/DispleyIcon.vue";
-import {Track} from "livekit-client";
+import {LocalTrack, Track} from "livekit-client";
 import {reactive, watch} from "vue";
 import Label from "../../shared/Label.vue";
 import Text from "../../shared/Text.vue";
 
+const router = useRouter();
 const messages = chatDetails();
 const route = useRoute();
 const userState = useUserStore();
@@ -39,8 +40,8 @@ const load = () => {
 
 // load();
 
-const endTheCall = () => {
-    window.close()
+const endTheCall = async () => {
+    window.location = '/';
 }
 
 
@@ -151,11 +152,12 @@ watch(() => model.token, async () => {
                 </template>
             </fwb-dropdown>
         </div>
-        <div :class="{
+        <TransitionGroup tag="div" name="calls" :class="{
             'track-container': true,
             'grid': liveKit.videoShareTrack.value.length === 0,
             'screen-share': liveKit.videoShareTrack.value.length > 0
         }">
+
             <TrackHandler
 
                 v-for="item in Object.keys(liveKit.tracks.value)"
@@ -175,25 +177,38 @@ watch(() => model.token, async () => {
                 v-if="liveKit.videoShareTrack.value.length"
                 user-image="https://imgs.search.brave.com/GrTMprW4fg05XTsfzacsNofnbaMJuXlbLIXZqUAn9vg/rs:fit:860:0:0/g:ce/aHR0cHM6Ly90NC5m/dGNkbi5uZXQvanBn/LzAwLzY0LzY3LzI3/LzM2MF9GXzY0Njcy/NzM2X1U1a3BkR3M5/a2VVbGw4Q1JRM3Az/WWFFdjJNNnFrVlk1/LmpwZw"
                 :tracks="liveKit.videoShareTrack.value.filter((obj:Track) => obj.kind === Track.Kind.Video)"/>
-        </div>
+        </TransitionGroup>
     </div>
 </template>
 <style scoped>
-.track-container * {
-    transition: all 4s;
-}
 .grid {
-    @apply flex flex-wrap justify-center h-screen items-center;
+    @apply flex flex-wrap justify-center h-screen items-center gap-1;
 }
 
 .screen-share {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    @apply justify-center h-screen items-center;
+    @apply justify-center h-screen items-center gap-1;
 }
 
 .big {
     grid-row: 1/3;
     grid-column: 1/4;
 }
+
+.calls-enter-active,
+.calls-leave-active {
+    opacity: 1;
+    transition: all 0.1s ease;
+}
+
+.calls-enter-from,
+.calls-leave-to {
+    opacity: 0;
+}
+
+.calls-leave-active {
+    position: absolute;
+}
+
 </style>

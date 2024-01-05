@@ -2,32 +2,16 @@
 
 namespace App\Http\Controllers;
 
-use Agence104\LiveKit\AccessToken;
-use Agence104\LiveKit\AccessTokenOptions;
-use Agence104\LiveKit\VideoGrant;
-use App\Events\ChatMessageCreated;
-use App\Events\ChatMessageDeleted;
-use App\Events\StartVideoCall;
 use App\Helpers\Enums\ChatTypes;
-use App\Http\Requests\ChatMessageCreateRequest;
 use App\Http\Requests\StoreChatRequest;
 use App\Http\Requests\UpdateChatRequest;
-use App\Http\Resources\ChatMessageResource;
 use App\Http\Resources\ChatResource;
 use App\Models\Chat;
 use App\Models\ChatMessage;
-use App\Models\MessageReaction;
 use App\Models\User;
-use App\Models\VideoCalls;
-use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Log;
 
 
 class ChatController extends Controller
@@ -111,6 +95,7 @@ class ChatController extends Controller
                 'users' => function ($builder) {
                     $builder->whereNot('user_id', Auth::id())->limit(2);
                 },
+            'chatable'
             ])
             ->loadCount('users');
         return new ChatResource($chat);

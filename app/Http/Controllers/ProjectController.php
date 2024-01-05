@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\ManagePermissionsEvent;
 use App\Events\ProjectCreated;
 use App\Http\Requests\ProjectAddUserRequest;
 use App\Http\Requests\StoreProjectRequest;
@@ -13,6 +14,7 @@ use App\Models\File;
 use App\Models\Permission;
 use App\Models\PermissionDefinition;
 use App\Models\Project;
+use App\Models\RoleResource;
 use App\Models\Task;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Builder;
@@ -72,6 +74,8 @@ class ProjectController extends Controller
         $data['key'] = Str::upper(Str::slug($data['key']));
         $project = Project::create($data);
         ProjectCreated::dispatch($project);
+            ManagePermissionsEvent::dispatch();
+        
             DB::commit();
         return response()->json($project);
         } catch (\Exception $exception) {
@@ -140,6 +144,11 @@ class ProjectController extends Controller
             })->delete();
             $project->delete();
 
+            RoleResource::query()
+                ->where('resourcable_type', $project::class)
+                ->where('resourcable_id', $project->id)
+                ->delete();
+            ManagePermissionsEvent::dispatch();
             DB::commit();
             return response()->noContent();
         } catch (\Throwable $e) {

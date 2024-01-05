@@ -23,7 +23,7 @@ export const initAxios = () => {
             localStorage.removeItem('token');
             window.location.href = '/login';
         }
-        return error;
+        return Promise.reject(error);
     });
     window.axios = instance;
 }

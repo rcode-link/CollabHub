@@ -110,6 +110,14 @@ class User extends Authenticatable implements HasMedia
 
         self::created(function (User $user) {
             // create sendbox chat for new user
+            $role = Role::create([
+                'title' => $user->name,
+                'is_visible' => false,
+                'can_be_changed' => false
+            ]);
+
+            $role->users()->attach($user->id);
+
             $company = Company::first();
             if ($company) {
                 $chat = Chat::create([
@@ -119,6 +127,7 @@ class User extends Authenticatable implements HasMedia
                 ]);
 
                 $chat->users()->attach($user);
+
             }
 
 
@@ -214,8 +223,8 @@ class User extends Authenticatable implements HasMedia
         $this
             ->addMediaCollection('avatar')
             ->singleFile()
-            ->useFallbackUrl('storage/public/images/avatar.png')
-            ->useFallbackPath(public_path('storage/public/images/avatar.png'));
+            ->useFallbackUrl(config('app.url') . '/storage/images/avatar.png')
+            ->useFallbackPath(public_path('storage/images/avatar.png'));
     }
 
     public function roles(): BelongsToMany

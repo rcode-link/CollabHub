@@ -4,9 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasOne;
-use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
+use Illuminate\Database\Eloquent\Builder;
 
 /**
  * App\Models\RoleResource
@@ -28,6 +27,7 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
  * @method static \Illuminate\Database\Eloquent\Builder|RoleResource whereUpdatedAt($value)
  * @property-read Model|\Eloquent $resourcable
  * @property-read \App\Models\Role|null $role
+ *
  * @mixin \Eloquent
  */
 class RoleResource extends Model
@@ -40,6 +40,8 @@ class RoleResource extends Model
         'resourcable_type',
         'resourcable_id',
     ];
+
+
 
     public function resourcable(): MorphTo
     {
