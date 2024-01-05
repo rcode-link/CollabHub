@@ -13,7 +13,7 @@ const roleStore = useRoleStore();
         <div class="flex justify-between items-center m-2">
             <h1>List of permissions in role</h1>
 
-            <div>
+            <div v-if="roleStore.role.can_be_changed">
                 <AddPermissionsModal />
             </div>
         </div>

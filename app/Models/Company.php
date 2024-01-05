@@ -52,7 +52,7 @@ class Company extends Model implements HasMedia
         $this
             ->addMediaCollection('avatar')
             ->singleFile()
-            ->useFallbackUrl('storage/images/avatar.png')
+            ->useFallbackUrl(config('app.url') . '/storage/images/avatar.png')
             ->useFallbackPath(public_path('storage/images/avatar.png'));
     }
 

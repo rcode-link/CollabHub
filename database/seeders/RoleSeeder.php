@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Events\ManagePermissionsEvent;
 use App\Models\Chat;
 use App\Models\Company;
 use App\Models\PermissionDefinition;
@@ -37,6 +38,7 @@ class RoleSeeder extends Seeder
             'resourcable_type' => $company::class
         ], []);
 
+        ManagePermissionsEvent::dispatch();
         $users->each(function (User $user) use ($company) {
             $chat = Chat::create([
                 'title' => 'Sandbox',
@@ -46,6 +48,8 @@ class RoleSeeder extends Seeder
 
             $chat->users()->attach($user);
         });
+
+
 
     }
 }

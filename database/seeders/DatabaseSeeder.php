@@ -15,9 +15,9 @@ class DatabaseSeeder extends Seeder
         User::factory()->create([
             'email' => 'admin@admin.com'
         ]);
+        $this->call(PermissionSeeder::class);
         $this->call(TaskTypeSeeder::class);
         $this->call(TaskStatusesSeeder::class);
-        $this->call(PermissionSeeder::class);
         $this->call(RoleSeeder::class);
 
     }

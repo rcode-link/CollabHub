@@ -49,10 +49,10 @@ const showMenu = computed(() => {
                             {{ can(`can-update-company.${userStore.company.id}`) ? 'settings' : '' }}
                         </router-link>
                     </fwb-list-group-item>
-                    <fwb-list-group-item>
+                    <fwb-list-group-item v-if="can(`can-view-users.${userStore.company.id}`)">
                         <router-link :to="{name: 'settings.users'}">Users</router-link>
                     </fwb-list-group-item>
-                    <fwb-list-group-item class="flex-col !items-start">
+                    <fwb-list-group-item v-if="can(`can-manage-roles.${userStore.company.id}`)" class="flex-col !items-start">
                         <div class="flex justify-between items-center w-full show-plus-on-hover">
                             <router-link :to="{name: 'settings.roles'}">Roles</router-link>
                             <fwb-button v-if="route.name === 'settings.roles'" @click="() => createRoleModalRef.modalRef.toggleModal()" class="m-2"

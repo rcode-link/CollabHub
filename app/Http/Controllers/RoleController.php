@@ -15,6 +15,7 @@ use App\Models\RoleResource;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Symfony\Component\HttpFoundation\Response;
 
 class RoleController extends Controller
 {
@@ -56,12 +57,14 @@ class RoleController extends Controller
         unset($data['users']);
         unset($data['permissions']);
         unset($data['resource']);
-        $role->update($data);
+        if($role->can_be_changed){
+            $role->update($data);
+        }
 
         if ($request->has('users')) {
             $role->users()->attach($request->get('users'));
         }
-        if ($request->has('permissions')) {
+        if ($request->has('permissions') && $role->can_be_changed) {
             $role->definitions()->sync($request->get('permissions'));
         }
 
@@ -76,6 +79,7 @@ class RoleController extends Controller
             'user' => ['exists:users,id']
         ]);
         $role->users()->detach([$request->get('user')]);
+        ManagePermissionsEvent::dispatch();
         return $request->all();
     }
 
@@ -131,11 +135,12 @@ class RoleController extends Controller
      */
     public function destroy(Role $role)
     {
+        abort_if(!$role->can_be_changed, Response::HTTP_FORBIDDEN);
         $role->users()->sync([]);
         $role->definitions()->sync([]);
         $role->delete();
 
         ManagePermissionsEvent::dispatch();
-        //
+        return response()->noContent();
     }
 }

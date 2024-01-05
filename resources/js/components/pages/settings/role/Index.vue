@@ -66,7 +66,7 @@ const deleteRole = () => {
         <div class="w-full" :key="roleStore.role.title">
             <div class="flex justify-between items-center">
                 <h1 class="base-item text-lg">{{ roleStore.role.title }}</h1>
-                <interactive-toast ref="deleteRoleToastRef">
+                <interactive-toast ref="deleteRoleToastRef" v-if="roleStore.role.can_be_changed">
                     <template #trigger>
                         <fwb-button color="red">Delete role</fwb-button>
                     </template>

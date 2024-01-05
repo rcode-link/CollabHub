@@ -37,6 +37,11 @@ class PermissionSeeder extends Seeder
                 'slug' => Str::slug('Can Create project'),
             ],
             [
+                'scope' => PermissionsScopes::Company->value,
+                'name' => 'Can Manage Roles',
+                'slug' => Str::slug('Can Manage Roles'),
+            ],
+            [
                 'scope' => PermissionsScopes::Project->value,
                 'name' => 'Can View project',
                 'slug' => Str::slug('Can View project'),
