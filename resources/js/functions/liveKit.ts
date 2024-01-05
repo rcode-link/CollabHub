@@ -31,7 +31,7 @@ export function useLiveKit() {
     const token = ref<string>('');
     const audioDevices = ref<any[]>([]);
     const videoDevices = ref<any[]>([]);
-    const videoShareTrack = ref<any[]>([]);
+    const videoShareTrack = ref<Track[]>([]);
     const myDevicesState = reactive<{
         isCameraEnabled: boolean,
         isMicrophoneEnabled: boolean
@@ -123,12 +123,7 @@ export function useLiveKit() {
                                      participant: LocalParticipant) {
 
         if(track.source === 'screen_share'){
-            videoShareTrack.value.push({
-                track: track.track,
-                speaking: false,
-                isMicEnabled: false,
-                isCameraEnabled: false,
-            });
+            videoShareTrack.value.push(track.track);
             return;
         }
 

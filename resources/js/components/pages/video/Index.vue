@@ -176,7 +176,7 @@ watch(() => model.token, async () => {
                 :enableAudio="false"
                 v-if="liveKit.videoShareTrack.value.length"
                 user-image="https://imgs.search.brave.com/GrTMprW4fg05XTsfzacsNofnbaMJuXlbLIXZqUAn9vg/rs:fit:860:0:0/g:ce/aHR0cHM6Ly90NC5m/dGNkbi5uZXQvanBn/LzAwLzY0LzY3LzI3/LzM2MF9GXzY0Njcy/NzM2X1U1a3BkR3M5/a2VVbGw4Q1JRM3Az/WWFFdjJNNnFrVlk1/LmpwZw"
-                :tracks="liveKit.videoShareTrack.value.filter((obj:Track) => obj.kind === Track.Kind.Video)"/>
+                :tracks="liveKit.videoShareTrack.value.filter((obj:Track) => obj.kind === Track.Kind.Video) as Track[]"/>
         </TransitionGroup>
     </div>
 </template>
