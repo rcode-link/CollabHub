@@ -1,5 +1,5 @@
-import {toast} from "vue3-toastify";
-import {useErrorsStore} from "./store/errors.js";
+import { toast } from "vue3-toastify";
+import { useErrorsStore } from "./store/errors.js";
 
 export const initAxios = () => {
     const errors = useErrorsStore();
@@ -31,11 +31,10 @@ export const initAxios = () => {
             window.location.href = '/login';
         }
         if (error.response.status === 422) {
-            errorsStore.setErrors(error.response.data.errors, 'login')
-            return;
+            errorsStore.setErrors(error.response.data.errors, '')
         }
-        if(error.response.status === 403){
-            toast.error('You are not authorized to preform this action', {theme: localStorage.getItem('color-theme') ?? 'light'})
+        if (error.response.status === 403) {
+            toast.error('You are not authorized to preform this action', { theme: localStorage.getItem('color-theme') ?? 'light' })
         }
         return Promise.reject(error);
     });
