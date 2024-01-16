@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 import { useBreadcrumbStore } from "../../store/breadcrumb.js";
 import { FwbBreadcrumb, FwbButton } from "flowbite-vue";
 import { watch } from "vue";
@@ -10,7 +10,7 @@ const store = useBreadcrumbStore();
   <fwb-breadcrumb solid class="space-x-1 md:space-x-1">
     <template v-for="(obj, index) in store.getLinks" :key="index">
       <router-link to="/">
-        <HomeIcon v-if="index === 0" class="w-3 h-3 mr-2.5" />
+        <HomeIcon v-if="index === 0" class="w-5 h-5" />
       </router-link>
       <svg
         v-if="index > 0"

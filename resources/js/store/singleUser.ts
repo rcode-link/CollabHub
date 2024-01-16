@@ -1,34 +1,30 @@
-import {defineStore} from "pinia";
-import {ref} from "vue";
-import {useRoute} from "vue-router";
-import {useBreadcrumbStore} from "./breadcrumb.js";
-import {toast} from "vue3-toastify";
+import { defineStore } from "pinia";
+import { ref } from "vue";
+import { useRoute } from "vue-router";
+import { useBreadcrumbStore } from "./breadcrumb.js";
+import { toast } from "vue3-toastify";
+import { UserResource } from "../types/models/UserResource.js";
 
 export const useSingleUserStore =
     defineStore('singleUserStore', () => {
 
         const route = useRoute();
-        const loading = ref(true);
-        const user = ref({
-            name: '',
-            manager: {
-                id: null
-            }
-        });
-//
+        const loading = ref<boolean>(true);
+        const user = ref<UserResource>();
+        //
         const breadcrumb = useBreadcrumbStore();
         const manager = ref();
 
         const load = () => {
             loading.value = true;
-            axios.get(`/api/v1/users/${route.params.id}`).then(res => {
+            window.axios.get(`/api/v1/users/${route.params.id}`).then(res => {
                 user.value = res.data.data;
+                loading.value = false;
                 if (!user.value.manager) {
                     user.value.manager = {
                         id: null
-                    }
+                    } as UserResource
                 }
-                loading.value = false;
                 breadcrumb.setLinks([
                     {
                         link: '/',
@@ -47,7 +43,7 @@ export const useSingleUserStore =
         }
 
         const deleteUser = () => {
-            axios
+            window.axios
                 .delete(`/api/v1/users/${user.value.id}`, {
                     params: {
                         type: 'delete'
@@ -61,7 +57,7 @@ export const useSingleUserStore =
                 })
         }
         const deactivateUser = () => {
-            axios
+            window.axios
                 .delete(`/api/v1/users/${user.value.id}`, {
                     params: {
                         type: 'deactivate'
@@ -75,7 +71,7 @@ export const useSingleUserStore =
                 })
         }
         const restoreUser = () => {
-            axios
+            window.axios
                 .delete(`/api/v1/users/${user.value.id}`, {
                     params: {
                         type: 'restore'
@@ -90,7 +86,7 @@ export const useSingleUserStore =
         }
 
         const updateManager = (manager) => {
-            axios.put(`/api/v1/users/${user.value.id}`, {
+            window.axios.put(`/api/v1/users/${user.value.id}`, {
                 'manager_id': manager.id
             }).then(res => {
                 user.value = res.data.data;

@@ -37,7 +37,7 @@
         </template>
     </InteractiveToast>
 </template>
-<script setup>
+<script setup lang="ts">
 import {FwbButton} from "flowbite-vue";
 import InteractiveToast from "../../../../shared/InteractiveToast.vue";
 import {chatDetails} from "../../../../../store/chatStore.js";

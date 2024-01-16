@@ -1,9 +1,9 @@
-import {chatDetails} from "../store/chatStore.js";
-import _ from "lodash";
-import {useProgressBarStore} from "../store/progressBarStore.js";
-import {useUserStore} from "../store/user.js";
-import {ref} from "vue";
-import {useRoute, useRouter} from "vue-router";
+import { chatDetails } from "../store/chatStore.js";
+import { toNumber } from "lodash";
+import { useProgressBarStore } from "../store/progressBarStore.js";
+import { useUserStore } from "../store/user.js";
+import { ref } from "vue";
+import { useRoute, useRouter } from "vue-router";
 
 export default () => {
     const chatStore = chatDetails()
@@ -14,8 +14,8 @@ export default () => {
     const router = useRouter();
     const chatId = ref(0);
     const listenForMessages = () => {
-        Echo.leave(`chat.${chatId.value}`);
-        Echo.join(`chat.${chatId.value}`)
+        window.Echo.leave(`chat.${chatId.value}`);
+        window.Echo.join(`chat.${chatId.value}`)
             .listen('ChatMessageCreated', (data) => {
                 setTimeout(() => {
                     chatStore.addMessage(data.message)
@@ -35,7 +35,7 @@ export default () => {
 
     const loadMessages = () => {
         progressBar.start();
-        axios.get(`/api/v1/chats/${chatId.value}/messages?page=${page.value}`).then((response) => {
+        window.axios.get(`/api/v1/chats/${chatId.value}/messages?page=${page.value}`).then((response) => {
             if (response.data.data.length > 0) {
                 router.push({
                     query: route.query,
@@ -46,7 +46,7 @@ export default () => {
 
             chatStore.addMessages(response.data.data);
             progressBar.finish();
-            const numOfUnread = chatStore.chatList.find(obj => obj.id === _.toNumber(route.params.chatId));
+            const numOfUnread = chatStore.chatList.find(obj => obj.id === toNumber(route.params.chatId));
 
             if (numOfUnread) {
                 userStore.subtractFromNewMessages(numOfUnread.unreadMessages);

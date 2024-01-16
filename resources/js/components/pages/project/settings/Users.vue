@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 
 import {FwbTable, FwbTableBody, FwbTableCell, FwbTableHead, FwbTableHeadCell, FwbTableRow} from "flowbite-vue";
 import UserIcon from "../../../shared/UserIcon.vue";

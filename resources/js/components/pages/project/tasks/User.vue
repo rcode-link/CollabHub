@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 
 import UserIcon from "../../../shared/UserIcon.vue";
 

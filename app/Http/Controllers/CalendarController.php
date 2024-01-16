@@ -65,16 +65,18 @@ class CalendarController extends Controller
 
     public function destroy(Event $event)
     {
+        $userId = \Auth::id();
         abort_if(\Auth::id() != $event->user_id, Response::HTTP_FORBIDDEN);
         $event->videocalls()->delete();
         $event->chat()->delete();
+        $event->user()->sync([]);
         $event->delete();
 
         return response()->noContent();
 
     }
 
-    public function insertCalendarItem(CreateEventRequest $request,)
+    public function insertCalendarItem(CreateEventRequest $request)
     {
         $data = $request->validated();
         $data['user_id'] = \Auth::id();

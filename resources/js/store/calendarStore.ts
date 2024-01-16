@@ -1,17 +1,28 @@
-import {defineStore} from "pinia";
-import {computed, reactive, ref, watch} from "vue";
-import {DateTime} from "luxon";
-import {useErrorsStore} from "./errors.js";
+import { defineStore } from "pinia";
+import { computed, reactive, ref, watch } from "vue";
+import { DateTime } from "luxon";
+import { useErrorsStore } from "./errors.js";
+import { EventResource } from "../types/index.js";
 
 export const useCalendarStore =
     defineStore('calendarStore', () => {
         const calendar = ref([]);
         const isModalVisible = ref(false);
         const selectedYear = ref(DateTime.now().year);
-        const selectedMonth = ref(DateTime.now().set({year: selectedYear.value}).month);
+        const selectedMonth = ref(DateTime.now().set({ year: selectedYear.value }).month);
         const errorsStore = useErrorsStore();
         const showAdvancedSettings = ref(false);
         const videoCall = ref({});
+        const calendarItemType = [
+            {
+                value: 'event',
+                name: 'Event'
+            },
+            {
+                value: 'vacation',
+                name: 'Vacation'
+            }
+        ];
         const byDay = [
             {
                 'value': 'MO',
@@ -65,13 +76,13 @@ export const useCalendarStore =
         });
 
         const currentDate = computed(() => {
-            return DateTime.now().set({year: selectedYear.value, month: selectedMonth.value})
+            return DateTime.now().set({ year: selectedYear.value, month: selectedMonth.value })
         })
 
         const load = () => {
             errorsStore.setErrors([], '')
             calendar.value = [];
-            axios.get('/api/v1/calendar', {
+            window.axios.get('/api/v1/calendar', {
                 params: {
                     year: selectedYear.value,
                     month: selectedMonth.value
@@ -103,9 +114,9 @@ export const useCalendarStore =
             data.users = data.users.map(obj => obj.id);
 
             if (form.id) {
-                request = axios.put(`/api/v1/calendar/${form.id}`, data)
+                request = window.axios.put(`/api/v1/calendar/${form.id}`, data)
             } else {
-                request = axios.post(`/api/v1/calendar`, data);
+                request = window.axios.post(`/api/v1/calendar`, data);
             }
             errorsStore.setErrors([], '')
             await request.then(() => {
@@ -144,12 +155,12 @@ export const useCalendarStore =
             form.users = obj.attendance;
             videoCall.value = obj.videocall;
 
-            if(obj.freq){
+            if (obj.freq) {
                 showAdvancedSettings.value = true;
             }
         }
 
-        const getRepeatingEventData = (obj) => {
+        const getRepeatingEventData = (obj: EventResource) => {
             const start_date = DateTime.fromISO(obj.start_time);
             const end_date = DateTime.fromISO(obj.freq_until ?? obj.end_time);
 
@@ -163,12 +174,12 @@ export const useCalendarStore =
 
             const item = {
                 ...obj,
-                has_video: !!obj.videocalls,
+                has_video: !!obj.videocall,
                 dates: []
             }
 
             for (let i = 1; i <= currentDate.value.endOf('month').day; i++) {
-                const currentDay = currentDate.value.set({day: i}).toUTC().startOf('day');
+                const currentDay = currentDate.value.set({ day: i }).toUTC().startOf('day');
                 if (obj.freq === 'WEEKLY' && obj.freq_settings.indexOf(byDay[currentDay.weekday - 1].value) === -1) {
                     continue;
                 }
@@ -197,6 +208,7 @@ export const useCalendarStore =
             videoCall,
             byDay,
             showAdvancedSettings,
+            calendarItemType,
             load,
             setItem,
             save,

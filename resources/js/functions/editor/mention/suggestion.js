@@ -1,14 +1,14 @@
-import {VueRenderer} from '@tiptap/vue-3'
-import {tippy} from 'vue-tippy'
+import { VueRenderer } from '@tiptap/vue-3'
+import { tippy } from 'vue-tippy'
 
 import MentionList from './MentionList.vue'
-import {useUserStore} from "../../../store/user.js";
+import { useUserStore } from "../../../store/user";
 
 export default function useSuggestion() {
 
     const userState = useUserStore();
     const plugin = {
-        items: async ({query}) => {
+        items: async ({ query }) => {
             return await axios.get(`/api/v1/company/users/${userState.company.id}`, {
                 params: {
                     'user': query,

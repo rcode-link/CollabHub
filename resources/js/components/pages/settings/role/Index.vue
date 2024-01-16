@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 import {computed, onMounted, ref, watch} from "vue";
 import Settings from "../../../layouts/Settings.vue";
 import {useRoleStore} from "../../../../store/roleStore.js";

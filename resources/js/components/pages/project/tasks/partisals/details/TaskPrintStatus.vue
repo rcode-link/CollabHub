@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 
 import _ from "lodash";
 import TaskStatusDropdown from "./TaskStatusDropdown.vue";

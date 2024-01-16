@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 
 import KanbanIcon from "../../../../shared/icons/KanbanIcon.vue";
 import ScrumIcon from "../../../../shared/icons/ScrumIcon.vue";

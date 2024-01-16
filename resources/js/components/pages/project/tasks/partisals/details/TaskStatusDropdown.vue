@@ -12,7 +12,7 @@
         </fwb-list-group>
     </fwb-dropdown>
 </template>
-<script setup>
+<script setup lang="ts">
 import {FwbDropdown, FwbListGroup, FwbListGroupItem, FwbBadge} from "flowbite-vue";
 import {ref} from "vue";
 import {useRoute} from "vue-router";

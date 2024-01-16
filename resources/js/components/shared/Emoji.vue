@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 
 import EmojiPicker from "vue3-emoji-picker";
 import {ref} from "vue";

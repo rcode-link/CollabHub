@@ -1,7 +1,7 @@
-<script setup>
+<script setup lang="ts">
 
 import {onMounted, reactive, watch} from "vue";
-import {useUserStore} from "../../../../../store/user.js";
+import {useUserStore} from "../../../../../store/user";
 import Button from "../../../../shared/Button.vue";
 import {useObjectUrl} from "@vueuse/core";
 import useInit from "../../../../../functions/useInit.js";

@@ -1,9 +1,9 @@
-<script setup>
+<script setup lang="ts">
 
 import {FwbTable, FwbTableBody, FwbTableCell, FwbTableHead, FwbTableHeadCell, FwbTableRow} from "flowbite-vue";
 import {useAbility} from "@casl/vue";
 import {useBreadcrumbStore} from "../../../../../store/breadcrumb.js";
-import {useUserStore} from "../../../../../store/user.js";
+import {useUserStore} from "../../../../../store/user";
 import {ref, watch} from "vue";
 import UserIcon from "../../../../shared/UserIcon.vue";
 

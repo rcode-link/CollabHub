@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 import { computed, onUnmounted, reactive, ref, watch } from "vue";
 import { chatDetails } from "../../../store/chatStore.js";
 import Footer from "./partials/messages/Footer.vue";

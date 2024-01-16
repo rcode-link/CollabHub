@@ -1,7 +1,7 @@
-<script setup>
+<script setup lang="ts">
 
 import {FwbAvatar} from "flowbite-vue";
-import {useUserStore} from "../../store/user.js";
+import {useUserStore} from "../../store/user";
 const userState = useUserStore();
 
 const props = defineProps({

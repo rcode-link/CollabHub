@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 
 import {computed, onBeforeUnmount, onMounted} from "vue";
 import useChatLogic from "../../../../../../functions/useChatLogic.js";

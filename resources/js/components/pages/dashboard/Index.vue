@@ -13,7 +13,7 @@
       </div>
     </Auth>
 </template>
-<script setup>
+<script setup lang="ts">
 
 import Auth from "../../layouts/Auth.vue";
 import {useBreadcrumbStore} from "@/store/breadcrumb.js";

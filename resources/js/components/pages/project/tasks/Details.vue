@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 import { FwbBadge, FwbButton, FwbModal, FwbTab, FwbTabs } from "flowbite-vue";
 import { useRoute, useRouter } from "vue-router";
 import { onMounted, ref, watch } from "vue";

@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 
 import {FwbButton, FwbP} from "flowbite-vue";
 import InteractiveToast from "../../../../shared/InteractiveToast.vue";

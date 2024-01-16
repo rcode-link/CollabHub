@@ -1,18 +1,17 @@
-<script setup>
-
+<script setup lang="ts">
 import Auth from "../layouts/Auth.vue";
 </script>
 
 <template>
-    <Auth>
-        <h1 class="font-bold not-found">404</h1>
-    </Auth>
+  <Auth>
+    <h1 class="font-bold not-found">404</h1>
+  </Auth>
 </template>
 
 <style scoped>
 .not-found {
-    font-size: 15rem;
-    text-align: center;
-    margin-top: 5%;
+  font-size: 15rem;
+  text-align: center;
+  margin-top: 5%;
 }
 </style>

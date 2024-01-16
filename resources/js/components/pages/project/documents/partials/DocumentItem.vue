@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 
 import DocumentPrintTree from "./DocumentPrintTree.vue";
 import Card from "../../../../shared/Card.vue";

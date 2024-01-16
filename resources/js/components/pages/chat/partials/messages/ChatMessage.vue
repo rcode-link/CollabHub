@@ -1,6 +1,6 @@
-<script setup>
+<script setup lang="ts">
 import { FwbAvatar, FwbP } from "flowbite-vue";
-import { useUserStore } from "../../../../../store/user.js";
+import { useUserStore } from "../../../../../store/user";
 import { ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import PrintChatMessage from "./PrintChatMessage.vue";

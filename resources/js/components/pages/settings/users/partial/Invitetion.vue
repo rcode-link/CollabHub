@@ -1,10 +1,10 @@
-<script setup>
+<script setup lang="ts">
 
 import InviteModal from "./InviteModal.vue";
 import {useAbility} from "@casl/vue";
 
 const {can, rules} = useAbility()
-import {useUserStore} from "../../../../../store/user.js";
+import {useUserStore} from "../../../../../store/user";
 import {useBreadcrumbStore} from "../../../../../store/breadcrumb.js";
 import {onMounted, ref} from "vue";
 import {

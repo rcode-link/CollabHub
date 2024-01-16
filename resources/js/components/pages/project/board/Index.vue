@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 
 import Card from "../../../shared/Card.vue";
 import {onMounted, ref, watch} from "vue";

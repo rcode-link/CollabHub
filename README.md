@@ -33,12 +33,15 @@ Vue3 application is standalone integrated in laravel blade. For authentication i
 - [ ] Project dashboard
 - [x] Company dashboard
 - [ ] Invoicing 
-- [ ] Customer companies
+- [x] Customer companies
 - [ ] Users in customer companies
 - [ ] Documents live update and cursors
 - [ ] Webhooks
 - [ ] Git integration
 - [x] Calendar
+- [ ] Calendar event invitation accept/decline
+- [ ] Calendar event preview
+- [x] Calendar vacations
 - [ ] Mutiliselect tasks on board with options for status change option
 
 

@@ -3,15 +3,17 @@
     "type": "module",
     "scripts": {
         "dev": "vite",
-        "build": "vite build"
+        "build": "vite build",
+        "openapi": "openapi -i http://localhost/docs/api.json --output resources/js/types"
     },
     "devDependencies": {
         "@tailwindcss/forms": "^0.5.2",
-        "@types/luxon": "^3.4.0",
+        "@types/luxon": "^3.4.1",
         "alpinejs": "^3.4.2",
         "autoprefixer": "^10.4.2",
         "axios": "^1.1.2",
         "laravel-vite-plugin": "^0.8.0",
+        "openapi-typescript-codegen": "^0.27.0",
         "postcss": "^8.4.6",
         "tailwindcss": "^3.1.0",
         "vite": "^4.0.0"

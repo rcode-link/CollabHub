@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 
 import Settings from "../../../layouts/Settings.vue";
 import {useObjectUrl} from '@vueuse/core'
@@ -10,7 +10,7 @@ import Text from "../../../shared/Text.vue";
 import Errors from "../../../shared/Errors.vue";
 import {reactive, ref, watch} from "vue";
 import {FwbToast} from "flowbite-vue";
-import {useUserStore} from "../../../../store/user.js";
+import {useUserStore} from "../../../../store/user";
 import useInit from "../../../../functions/useInit.js";
 import {useAbility} from "@casl/vue";
 import {toast} from "vue3-toastify";

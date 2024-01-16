@@ -3,7 +3,7 @@
     {{ obj.name }}
   </router-link>
 </template>
-<script setup>
+<script setup lang="ts">
 const props = defineProps({
     obj: {}
 })

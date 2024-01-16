@@ -1,12 +1,12 @@
 import './bootstrap';
-import {createApp} from "vue";
+import { createApp } from "vue";
 import router from "./router/router.js";
-import {createPinia} from "pinia";
+import { createPinia } from "pinia";
 import App from "./components/App.vue";
 import 'tippy.js/dist/tippy.css';
 import VueTippy from "vue-tippy";
-import {abilitiesPlugin} from '@casl/vue';
-import ability from "./functions/ability.js";
+import { abilitiesPlugin } from '@casl/vue';
+import ability from "./functions/ability";
 import 'vue3-toastify/dist/index.css';
 
 const app = createApp(App);

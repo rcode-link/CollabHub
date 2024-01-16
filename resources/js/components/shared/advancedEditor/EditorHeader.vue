@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 
 import OrderedListIcon from "../icons/OrderedListIcon.vue";
 import QuoteIcon from "../icons/QuoteIcon.vue";

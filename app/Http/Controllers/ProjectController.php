@@ -43,7 +43,8 @@ class ProjectController extends Controller
     {
         $this->validate($request, [
             'project_id' => [
-                'required', 'exists:projects,id'
+                'required',
+                'exists:projects,id'
             ]
         ]);
 
@@ -69,15 +70,15 @@ class ProjectController extends Controller
         DB::beginTransaction();
         try {
 
-        Auth::user()->authorize('can-create-project', Auth::user()->company()->first());
-        $data = $request->validated();
-        $data['key'] = Str::upper(Str::slug($data['key']));
-        $project = Project::create($data);
-        ProjectCreated::dispatch($project);
+            Auth::user()->authorize('can-create-project', Auth::user()->company()->first());
+            $data = $request->validated();
+            $data['key'] = Str::upper(Str::slug($data['key']));
+            $project = Project::create($data);
+            ProjectCreated::dispatch($project);
             ManagePermissionsEvent::dispatch();
 
             DB::commit();
-        return response()->json($project);
+            return response()->json($project);
         } catch (\Exception $exception) {
             DB::rollBack();
             throwException($exception);
@@ -112,9 +113,12 @@ class ProjectController extends Controller
         Auth::user()->authorize('can-delete-project', $project);
         DB::beginTransaction();
         try {
-            Chat::whereHasMorph('chatable', Task::class, function (Builder $builder) use ($project) {
+            $chat = Chat::whereHasMorph('chatable', Task::class, function (Builder $builder) use ($project) {
                 return $builder->where('project_id', $project->id);
-            })->delete();
+            })->first();
+            $chat->users()->sync([]);
+            $chat->messages()->delete();
+            $chat->delete();
             Task::whereProjectId($project->id)->delete();
             File::whereHasMorph('entity', Project::class, function (Builder $builder) use ($project) {
                 return $builder->where('id', $project->id);

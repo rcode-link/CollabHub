@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 
 import Text from "./Text.vue";
 import {ref, watch} from "vue";

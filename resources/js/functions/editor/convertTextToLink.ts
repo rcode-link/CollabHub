@@ -1,8 +1,8 @@
-import {Extension} from "@tiptap/vue-3";
-import {Plugin} from "@tiptap/pm/state";
-import {Decoration, DecorationSet} from '@tiptap/pm/view'
-import {useTextToLinkStore} from "../../store/textToLinkStore.js";
-import {useRouter} from "vue-router";
+import { Extension } from "@tiptap/vue-3";
+import { Plugin } from "@tiptap/pm/state";
+import { Decoration, DecorationSet } from '@tiptap/pm/view'
+import { useTextToLinkStore } from "../../store/textToLinkStore";
+import { useRouter } from "vue-router";
 
 
 const items = [];
@@ -11,7 +11,7 @@ export const useConvertTextToLink = () => {
     const textToLinkStore = useTextToLinkStore();
     const convertTextToLink = Extension.create({
         name: 'convertTextToLink',
-        addStorage(){
+        addStorage() {
             return {
                 links: []
             }
@@ -37,15 +37,23 @@ export const useConvertTextToLink = () => {
             ]
         }
     });
-
+    interface Match {
+        0: string;
+        groups?: undefined;
+        index: number;
+        input: string;
+        length: number;
+    }
     const findLink = (doc) => {
         const decorations = [];
         doc.descendants((node, pos) => {
             const regex = new RegExp(textToLinkStore.items.map(obj => `${obj}-\\d+|${obj}-D-\\d+`).join("|"), 'g');
+
             for (const obj of Array.from(node.text?.matchAll(regex) ?? [])) {
+                const item: Match = obj as Match;
                 const text = obj[0];
 
-                const index = obj.index || 0
+                const index = item.index || 0
                 const from = pos + index;
                 const to = from + text.length;
                 const decoration = Decoration.inline(from, to, {

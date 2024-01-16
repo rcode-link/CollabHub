@@ -30,12 +30,12 @@
     </template>
   </Modal>
 </template>
-<script setup>
+<script setup lang="ts">
 import Modal from "../../../../shared/Modal.vue";
 import {FwbAlert, FwbButton} from "flowbite-vue";
 import Label from "../../../../shared/Label.vue";
 import {reactive, ref, watch} from "vue";
-import {useUserStore} from "../../../../../store/user.js";
+import {useUserStore} from "../../../../../store/user";
 import Button from "../../../../shared/Button.vue";
 import useClipboard from 'vue-clipboard3'
 import 'flatpickr/dist/flatpickr.css';

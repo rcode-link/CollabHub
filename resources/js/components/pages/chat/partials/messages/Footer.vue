@@ -43,7 +43,7 @@
         </div>
     </form>
 </template>
-<script setup>
+<script setup lang="ts">
 import {FwbButton} from "flowbite-vue";
 import FilesComponent from "./FilesComponent.vue";
 import {chatDetails} from "../../../../../store/chatStore.js";

@@ -1,10 +1,10 @@
-<script setup>
+<script setup lang="ts">
 
 import Label from "../../../../shared/Label.vue";
 import Text from "../../../../shared/Text.vue";
 import Errors from "../../../../shared/Errors.vue";
 import {reactive, watch} from "vue";
-import {useUserStore} from "../../../../../store/user.js";
+import {useUserStore} from "../../../../../store/user";
 import Button from "../../../../shared/Button.vue";
 import {toast} from "vue3-toastify";
 

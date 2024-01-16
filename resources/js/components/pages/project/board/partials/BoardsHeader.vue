@@ -67,7 +67,7 @@
     </Modal>
   </div>
 </template>
-<script setup>
+<script setup lang="ts">
 import {FwbButton, FwbDropdown, FwbListGroup, FwbListGroupItem} from "flowbite-vue";
 import {useRoute, useRouter} from "vue-router";
 import KanbanIcon from "../../../../shared/icons/KanbanIcon.vue";

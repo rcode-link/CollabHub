@@ -16,14 +16,18 @@ class PermissionController extends Controller
      */
     public function index(Request $request)
     {
-        if($request->has('scope')){
+        if ($request->has('scope')) {
             return PermissionDefinition::whereIn('scope', $request->get('scope'))->get();
         }
 
         return PermissionDefinition::query()->get()->groupBy('scope');
     }
 
-
+    /**
+     * List available todo items.
+     *
+     * @response array{string}
+     */
     public function myPermissions()
     {
         return response()->json(Auth::user()->permissions()->pluck('permissions')->flatten());

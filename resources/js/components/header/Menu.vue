@@ -96,7 +96,7 @@
               <div class="flex gap-4 justify-between w-full">
                 <tippy
                   content="Light theme"
-                  @click="() => changeTheme('light')"
+                  @click="() => changeTheme(themeData.light)"
                 >
                   <fwb-button
                     :color="
@@ -106,7 +106,10 @@
                     <SunIcon class="w-4 h-4" />
                   </fwb-button>
                 </tippy>
-                <tippy content="Dark theme" @click="() => changeTheme('dark')">
+                <tippy
+                  content="Dark theme"
+                  @click="() => changeTheme(themeData.light)"
+                >
                   <fwb-button
                     :color="currentTheme === 'dark' ? 'default' : 'alternative'"
                   >
@@ -115,7 +118,7 @@
                 </tippy>
                 <tippy
                   content="Computer theme"
-                  @click="() => changeTheme('auto')"
+                  @click="() => changeTheme(themeData.auto)"
                 >
                   <fwb-button
                     :color="currentTheme === 'auto' ? 'default' : 'alternative'"
@@ -126,7 +129,7 @@
               </div>
             </fwb-list-group-item>
             <fwb-list-group-item
-              v-if="can(`can-create-project.${userStore.company.id}`)"
+              v-if="can(`can-create-project.${userStore.company.id}`, '')"
               @click="() => (hideModal = !hideModal)"
             >
               <div
@@ -194,7 +197,7 @@
   </Modal>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import {
   FwbAvatar,
   FwbButton,
@@ -204,7 +207,7 @@ import {
   FwbNavbar,
   FwbNavbarCollapse,
 } from "flowbite-vue";
-import { useUserStore } from "../../store/user.js";
+import { useUserStore } from "../../store/user";
 import { useRouter } from "vue-router";
 import { ref } from "vue";
 import { Tippy } from "vue-tippy";
@@ -224,6 +227,12 @@ import ArchiveBoxIcon from "../shared/icons/ArchiveBoxIcon.vue";
 const createTasks = useTasksStore();
 const { can, rules } = useAbility();
 
+const themeData = {
+  light: "light",
+  dark: "dark",
+  auto: "auto",
+};
+
 const userStore = useUserStore();
 const textToLinkStore = useTextToLinkStore();
 
@@ -232,9 +241,9 @@ const useText = ref(false);
 const hideModal = ref(null);
 const createProjectRef = ref(null);
 
-const logout = (e) => {
+const logout = (e: MouseEvent) => {
   e.preventDefault();
-  Echo.disconnect();
+  window.Echo.disconnect();
   localStorage.removeItem("token");
   router.push({
     name: "login",

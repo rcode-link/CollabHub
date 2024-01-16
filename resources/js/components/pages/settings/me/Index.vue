@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 
 import Settings from "../../../layouts/Settings.vue";
 import Card from "../../../shared/Card.vue";

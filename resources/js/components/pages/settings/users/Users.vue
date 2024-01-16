@@ -1,10 +1,10 @@
-<script setup>
+<script setup lang="ts">
 
 import Settings from "../../../layouts/Settings.vue";
 import {FwbTab, FwbTabs} from "flowbite-vue";
 import {ref} from "vue";
 import List from "./partial/List.vue";
-import {useUserStore} from "../../../../store/user.js";
+import {useUserStore} from "../../../../store/user";
 
 import Invitetion from "./partial/Invitetion.vue";
 import {useAbility} from "@casl/vue";

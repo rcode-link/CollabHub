@@ -25,7 +25,7 @@ class BoardController extends Controller
      */
     public function store(StoreBoardRequest $request)
     {
-        \Auth::user()->authorize('can-create-board', \Auth::user()->company()->first());
+        \Auth::user()->authorize('can-create-board', $request->get('project_id'));
         $board = Board::create($request->validated());
 
         BoardCreatedEvent::dispatch($board);

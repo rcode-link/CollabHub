@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 import {useProjectDocumentsStore} from "../../../../../store/projectDocumentsStore.js";
 import DocumentItem from "./DocumentItem.vue";
 
