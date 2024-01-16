@@ -12,6 +12,7 @@ use App\Models\User;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Response;
 
 
 class ChatController extends Controller
@@ -83,6 +84,8 @@ class ChatController extends Controller
                 'user_id' => $str
             ];
         }));
+
+        return response()->noContent();
         //
     }
 

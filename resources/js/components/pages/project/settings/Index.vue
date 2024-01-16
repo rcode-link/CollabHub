@@ -13,7 +13,6 @@ import {
 import UserIcon from "../../../shared/UserIcon.vue";
 import {useRoute, useRouter} from "vue-router";
 import {useBreadcrumbStore} from "../../../../store/breadcrumb.js";
-import AddUserToProject from "./AddUserToProject.vue";
 import InteractiveToast from "../../../shared/InteractiveToast.vue";
 import Card from "../../../shared/Card.vue";
 

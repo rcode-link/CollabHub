@@ -5,6 +5,7 @@
     <template v-else>
       <Task v-if="obj.type === 'app\\models\\task'" class="w-10 h-10"/>
         <fwb-avatar v-if="obj.type === 'app\\models\\company'" class="w-10 h-10" :img="userStore.company.avatar"/>
+        <EarthIcon v-if="obj.type === 'app\\models\\event'" class="w-10 h-10"/>
     </template>
     <div class="col-span-5 text-gray-900 dark:text-white">
       <div class="flex">
@@ -42,6 +43,7 @@ import UserIcon from "../../../shared/UserIcon.vue";
 import Task from "../../../shared/icons/Task.vue";
 import {FwbAvatar} from "flowbite-vue";
 import {useUserStore} from "../../../../store/user.js";
+import EarthIcon from "../../../shared/icons/EarthIcon.vue";
 
 const userStore = useUserStore();
 const route = useRoute();

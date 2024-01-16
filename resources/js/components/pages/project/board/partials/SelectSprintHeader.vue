@@ -11,10 +11,13 @@ import {reactive, ref, watch} from "vue";
 import {useRoute, useRouter} from "vue-router";
 import {useBoardsState} from "../../../../../store/boards.js";
 import {DateTime} from "luxon";
+import {useAbility} from "@casl/vue";
 
 const route = useRoute();
 const router = useRouter();
 const boardsState = useBoardsState();
+const { can, rules } = useAbility()
+
 //
 const createSprintRef = ref(null);
 const form = reactive({
@@ -63,7 +66,7 @@ const setActiveSprint = (obj) => {
             Open
           </router-link>
         </fwb-list-group-item>
-        <fwb-list-group-item>
+        <fwb-list-group-item v-if="can(`can-create-board.${route.params.project}`)">
           <div class="flex gap-1 items-center cursor-pointer"
                @click="() => createSprintRef.toggleModal()"
           >

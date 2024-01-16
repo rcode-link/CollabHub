@@ -1,7 +1,8 @@
 <?php
 
 use App\Helpers\CalDavHelper;
-use App\Http\Controllers\{BoardController,
+use App\Http\Controllers\{
+    BoardController,
     CalendarController,
     ChatController,
     ChatMessageController,
@@ -25,8 +26,9 @@ use App\Http\Controllers\{BoardController,
     TaskTypeController,
     TimeSheetController,
     UserController,
-    VideoCallController};
-use Illuminate\Http\Request;
+    VacationRequestController,
+    VideoCallController
+};
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -61,7 +63,6 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('/video-call/{chat}/start', [VideoCallController::class, 'startVideoCall']);
     Route::apiResource('/messages/reactions', MessageReactionController::class);
     Route::apiResource('/chats', ChatController::class);
-    Route::put('/projects/{project}/add-user', [ProjectController::class, 'addUsers']);
     Route::apiResource('/projects', ProjectController::class);
     Route::apiResource('/task-types', TaskTypeController::class);
     Route::get('/task/load/{task}/relations/', [TaskController::class, 'getRelations']);
@@ -88,8 +89,11 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('/calendar', [CalendarController::class, 'getMyEvents']);
     Route::post('/calendar', [CalendarController::class, 'insertCalendarItem']);
     Route::put('/calendar/{event}', [CalendarController::class, 'update']);
+    Route::get('/event/{event}', [CalendarController::class, 'view']);
     Route::delete('/calendar/{event}', [CalendarController::class, 'destroy']);
     Route::apiResource('/users', UserController::class);
+    Route::put('/user/change-password', [UserController::class, 'updatePassword']);
+    Route::put('/vacation/{event}', VacationRequestController::class);
     \App\Helpers\Socket\BroadcastCustom::route();
 });
 Route::post('/register', RegisterController::class);

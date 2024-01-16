@@ -1,0 +1,32 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    /**
+     * Run the migrations.
+     */
+    public function up(): void
+    {
+        Schema::table('video_calls', function (Blueprint $table) {
+            $table->dropColumn('chat_message_id');
+            $table->morphs('callable');
+            $table->boolean('is_active')->default(true);
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     */
+    public function down(): void
+    {
+        Schema::table('video_calls', function (Blueprint $table) {
+            $table->foreignId('chat_message_id');
+            $table->dropMorphs('callable');
+            $table->dropColumn('is_active');
+        });
+    }
+};

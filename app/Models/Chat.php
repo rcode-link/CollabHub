@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Events\ChatMessageCreated;
+use App\Events\ChatUpdate;
 use Database\Factories\ChatFactory;
 use Eloquent;
 use Illuminate\Database\Eloquent\Builder;
@@ -54,7 +56,7 @@ class Chat extends Model
 
     public function users(): BelongsToMany
     {
-        return $this->belongsToMany(User::class);
+        return $this->belongsToMany(User::class)->withTrashed();
     }
 
     public function chatable()
@@ -65,6 +67,18 @@ class Chat extends Model
     public function messages(): HasMany
     {
         return $this->hasMany(ChatMessage::class, 'chat_id')->orderByDesc('created_at');
+    }
+
+    public function sendMessage(array $message): void
+    {
+        $message = ChatMessage::create([
+            'message' => $message,
+            'chat_id' => $this->id,
+            'user_id' => Auth::id(),
+        ]);
+
+        ChatUpdate::dispatch($this->users->toArray(), $message);
+        ChatMessageCreated::dispatch($message);
     }
 
     public function messageReactions(): HasManyThrough

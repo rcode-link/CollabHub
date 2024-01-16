@@ -3,8 +3,11 @@
 import InteractiveToast from "../../../shared/InteractiveToast.vue";
 import {FwbButton} from "flowbite-vue";
 import {useRoute, useRouter} from "vue-router";
+import {useAbility} from "@casl/vue";
 const route = useRoute();
 const router = useRouter()
+const { can, rules } = useAbility()
+
 const deleteProject = () => {
     axios.delete(`/api/v1/projects/${route.params.project}`)
         .then(() => {
@@ -18,7 +21,7 @@ const deleteProject = () => {
 
 <template>
 
-  <InteractiveToast>
+  <InteractiveToast v-if="can(`can-delete-project.${route.params.project}`)">
     <template #trigger>
       <fwb-button color="red">Delete project</fwb-button>
     </template>

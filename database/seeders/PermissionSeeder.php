@@ -15,7 +15,7 @@ class PermissionSeeder extends Seeder
     public function run(): void
     {
 
-        PermissionDefinition::insert([
+        $roles = collect([
             [
                 'scope' => PermissionsScopes::Company->value,
                 'name' => 'Can View company',
@@ -116,7 +116,20 @@ class PermissionSeeder extends Seeder
                 'name' => 'Can View Users',
                 'slug' => Str::slug('Can View Users'),
             ],
-
+            [
+                'scope' => PermissionsScopes::Company->value,
+                'name' => 'Can View Users',
+                'slug' => Str::slug('Can View Users'),
+            ],
+            [
+                'scope' => PermissionsScopes::Company->value,
+                'name' => 'Can Approve Vacation',
+                'slug' => Str::slug('Can Approve Vacation'),
+            ],
         ]);
+
+        PermissionDefinition::insert($roles->whereNotIn('slug', PermissionDefinition::pluck('slug'))->toArray());
+
+
     }
 }

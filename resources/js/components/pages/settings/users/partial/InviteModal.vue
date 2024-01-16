@@ -74,7 +74,8 @@ watch(() => data, () => {
 const submit = () => {
   axios.post('/api/v1/company/users/invite', {
     company: userData.company.id,
-    until: data.until
+      until: data.until,
+      number_of_invitations: data.number_of_invitations
   }).then(res => {
     link.value = res.data
     emit('update:list')

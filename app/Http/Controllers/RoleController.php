@@ -57,7 +57,7 @@ class RoleController extends Controller
         unset($data['users']);
         unset($data['permissions']);
         unset($data['resource']);
-        if($role->can_be_changed){
+        if ($role->can_be_changed) {
             $role->update($data);
         }
 
@@ -74,7 +74,8 @@ class RoleController extends Controller
         //
     }
 
-    public function removeUserFromRole(Request $request, Role $role){
+    public function removeUserFromRole(Request $request, Role $role)
+    {
         $request->validate([
             'user' => ['exists:users,id']
         ]);
@@ -119,11 +120,11 @@ class RoleController extends Controller
                 break;
             case PermissionsScopes::Company->value:
                 $permission = Auth::user()->permissions()->filter(fn($obj) => $obj['model']['type'] === Company::class)->map(function ($permission) {
-                        return [
-                            'value' => $permission['model']['id'],
-                            'name' => $permission['model']['name']
-                        ];
-                    });
+                    return [
+                        'value' => $permission['model']['id'],
+                        'name' => $permission['model']['name']
+                    ];
+                });
                 break;
         }
 

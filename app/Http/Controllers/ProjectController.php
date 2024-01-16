@@ -75,7 +75,7 @@ class ProjectController extends Controller
         $project = Project::create($data);
         ProjectCreated::dispatch($project);
             ManagePermissionsEvent::dispatch();
-        
+
             DB::commit();
         return response()->json($project);
         } catch (\Exception $exception) {
@@ -104,35 +104,12 @@ class ProjectController extends Controller
         //
     }
 
-    public function addUsers(ProjectAddUserRequest $request, Project $project)
-    {
-
-        $data = $request->validated();
-        $permissions = [];
-        foreach ($data as $arr) {
-            $tmpPermission = PermissionDefinition::query()
-                ->whereIn('id', $arr['permissions'])->pluck('slug')
-                ->map(function ($obj) use ($arr, $project) {
-                    return [
-                        'permission' => $obj . '.' . $project->id,
-                        'user_id' => $arr['userId'],
-                        'resourceable_id' => $project->id,
-                        'resourceable_type' => $project::class,
-                    ];
-                });
-
-            $permissions = array_merge($permissions, $tmpPermission->toArray());
-        }
-        Permission::insert($permissions);
-
-        return response()->json($permissions);
-    }
-
     /**
      * Remove the specified resource from storage.
      */
     public function destroy(Project $project)
     {
+        Auth::user()->authorize('can-delete-project', $project);
         DB::beginTransaction();
         try {
             Chat::whereHasMorph('chatable', Task::class, function (Builder $builder) use ($project) {

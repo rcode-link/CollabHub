@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Helpers\HasChat;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -38,11 +39,18 @@ use Illuminate\Support\Facades\Auth;
  * @method static \Illuminate\Database\Eloquent\Builder|Event whereFreqUntil($value)
  * @property-read \App\Models\User|null $creator
  * @property-read int|null $user_count
+ * @property-read \App\Models\VideoCalls|null $videocalls
+ * @property int $approved
+ * @property string $type
+ * @method static Builder|Event whereApproved($value)
+ * @method static Builder|Event whereType($value)
+ * @property-read \App\Models\Chat|null $chat
  * @mixin \Eloquent
  */
 class Event extends Model
 {
     use HasFactory;
+    use HasChat;
 
     protected $fillable = [
         'summary',
@@ -54,6 +62,8 @@ class Event extends Model
         'freq',
         'freq_settings',
         'freq_until',
+        'approved',
+        'type',
     ];
 
     protected $casts = [
@@ -66,11 +76,16 @@ class Event extends Model
         return $this->belongsTo(User::class, 'user_id');
     }
 
+    public function videocalls(): \Illuminate\Database\Eloquent\Relations\MorphOne
+    {
+        return $this->morphOne(VideoCalls::class, 'callable');
+    }
+
     public static function convertToICalendarFormat(): string
     {
 
         $events = Event::query()
-            ->with(['creator', 'user'])
+            ->with(['creator', 'user', 'videocalls'])
             ->where(function (Builder $query) {
                 $query->where('user_id', \Auth::id())
                     ->orWhereHas('user', fn(Builder $builder) => $builder->where('user_id', \Auth::id()));
@@ -84,16 +99,17 @@ class Event extends Model
                 $builder->whereHas('status', fn (Builder $query) => $query->where('open', true));
             })->get();
         $icalendar = "BEGIN:VCALENDAR\r\n";
-
-
-
         $alarm = "BEGIN:VALARM\r\nTRIGGER:-PT15M\r\nDESCRIPTION:Reminder\r\nACTION:DISPLAY\r\nEND:VALARM\r\n";
 
         foreach ($events as $event) {
+            $videoCallLink = '';
+            if ($event->videocalls) {
+                $videoCallLink = '<a href="' . config('app.url') . '/call/' . $event->videocalls->slug . '">Start call</a>';
+            }
             $icalendar .= "BEGIN:VEVENT\r\n";
             $icalendar .= "UID:" . \Str::slug(config('app.url') . ' ' . Event::class) . $event->id . "\r\n";;
             $icalendar .= "SUMMARY:" . $event['summary'] . "\r\n";
-            $icalendar .= "DESCRIPTION:" .  str_replace("\n", "\\n", $event['description']) . "\r\n";
+            $icalendar .= "DESCRIPTION:" . str_replace("\n", "\\n", $event['description']) . $videoCallLink . "\r\n";
             $icalendar .= "DTSTART:" . date('Ymd\THis', strtotime($event['start_time'])) . "\r\n";
             $icalendar .= "DTEND:" . date('Ymd\THis', strtotime($event['end_time'])) . "\r\n";
             if ($event->freq) {
@@ -111,14 +127,11 @@ class Event extends Model
                 $icalendar .= "ATTENDEE;CN=" . $user->name . ':mailto:' . $user->email . "\r\n";
             }
 
-
             $icalendar .= "ORGANIZER;CN=" . $event->creator->name . ":mailto:john.doe@example.com\r\n";
             $icalendar .= $alarm;
-
             if ($event->creator->id != Auth::id()) {
                 $icalendar .= "COLOR:#FF5733\r\n";
             }
-
             $icalendar .= "END:VEVENT\r\n";
         }
 

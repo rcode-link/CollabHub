@@ -10,7 +10,9 @@ use Eloquent;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\DatabaseNotification;
 use Illuminate\Notifications\DatabaseNotificationCollection;
@@ -62,11 +64,23 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media;
  * @method static Builder|User whereUpdatedAt($value)
  * @property-read Collection<int, \App\Models\Role> $roles
  * @property-read int|null $roles_count
+ * @property string|null $start_work_time
+ * @property string|null $end_work_time
+ * @property int|null $manager_id
+ * @method static Builder|User whereEndWorkTime($value)
+ * @method static Builder|User whereManagerId($value)
+ * @method static Builder|User whereStartWorkTime($value)
+ * @property-read User|null $manager
+ * @property Carbon|null $deleted_at
+ * @method static Builder|User onlyTrashed()
+ * @method static Builder|User whereDeletedAt($value)
+ * @method static Builder|User withTrashed()
+ * @method static Builder|User withoutTrashed()
  * @mixin Eloquent
  */
 class User extends Authenticatable implements HasMedia
 {
-    use HasApiTokens, HasFactory, Notifiable, InteractsWithMedia;
+    use HasApiTokens, HasFactory, Notifiable, InteractsWithMedia, SoftDeletes;
 
     /**
      * The attributes that are mass assignable.
@@ -77,6 +91,11 @@ class User extends Authenticatable implements HasMedia
         'name',
         'email',
         'password',
+        'email_verified_at',
+        'role',
+        'start_work_time',
+        'end_work_time',
+        'manager_id',
     ];
 
     /**
@@ -87,6 +106,7 @@ class User extends Authenticatable implements HasMedia
     protected $hidden = [
         'password',
         'remember_token',
+
     ];
 
     /**
@@ -138,32 +158,32 @@ class User extends Authenticatable implements HasMedia
                 ->whereHas('users', fn(Builder $builder) => $builder->whereNot('user_id', $user->id))
                 ->get();
 
-            $messageContent = '{
-                    "type": "doc",
-                    "content": [
-                        {
-                            "type": "paragraph",
-                            "content": [
-                                {
-                                    "type": "mention",
-                                    "attrs": {
-                                        "id": ' . $user->id . ',
-                                        "label": "' . $user->name . '"
-                                    }
-                                },
-                                {
-                                    "type": "text",
-                                    "text": " just joined your company"
-                                }
+            $messageContent = [
+                    "type"=> "doc",
+                    "content"=> [
+                        [
+                            "type"=> "paragraph",
+                            "content"=> [
+                                [
+                                    "type"=> "mention",
+                                    "attrs"=> [
+                                        "id"=> $user->id,
+                                        "label"=> $user->name
+                                    ]
+                                ],
+                                [
+                                    "type"=> "text",
+                                    "text"=> " just joined your company"
+                                ]
                             ]
-                        }
+                        ]
                     ]
-            }';
+            ];
 
             // send messages to other users
             foreach ($chats as $chat) {
                 $message = ChatMessage::create([
-                    'message' => json_decode($messageContent),
+                    'message' => $messageContent,
                     'user_id' => $chat->users->first()->id,
                     'chat_id' => $chat->id
                 ]);
@@ -187,13 +207,16 @@ class User extends Authenticatable implements HasMedia
     public function permissions(): Collection
     {
         $data = Cache::get('permissions');
-
-
         if (!$data || !$data->count()) {
             ManagePermissionsEvent::dispatch();
         }
 
         return $data->filter(fn($obj) => $obj['users']->contains($this->id));
+    }
+
+    public function manager(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'manager_id');
     }
 
 
@@ -230,6 +253,24 @@ class User extends Authenticatable implements HasMedia
     public function roles(): BelongsToMany
     {
         return $this->belongsToMany(Role::class, 'user_role');
+    }
+
+    public function events()
+    {
+        return $this->hasMany(Event::class);
+    }
+
+    public function todayMeetings()
+    {
+        $events = $this->events()->whereBetween('start_time', [now()->startOfDay(), now()->endOfDay()])
+            ->orWhere('freq_until', '>=', now()->startOfDay())
+            ->get();
+        return $events->map(function ($obj) {
+            return [
+                'from' => $obj->start_time,
+                'to' => $obj->end_time
+            ];
+        });
     }
 
 }

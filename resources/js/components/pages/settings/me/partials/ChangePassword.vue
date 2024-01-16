@@ -3,17 +3,23 @@
 import Label from "../../../../shared/Label.vue";
 import Text from "../../../../shared/Text.vue";
 import Errors from "../../../../shared/Errors.vue";
-import {onMounted, reactive} from "vue";
-import {useUserStore} from "../../../../../store/user.js";
+import {reactive} from "vue";
 import Button from "../../../../shared/Button.vue";
+import {toast} from "vue3-toastify";
 
 const form = reactive({
     current_password: '',
     password: '',
-    password_confirmed: ''
+    password_confirmation: ''
 })
 
 const submit = () => {
+    axios.put('/api/v1/user/change-password', form).then(() => {
+        form.current_password = '';
+        form.password = '';
+        form.password_confirmation = '';
+        toast.success('Password changed');
+    });
 }
 
 </script>
@@ -26,13 +32,14 @@ const submit = () => {
         </div>
         <div>
             <Label :forInput="'password'">New Password</Label>
-            <Text type="text" v-model="form.password" :name="'password'" form="'login'" placeholder="New Password"/>
+            <Text type="password" v-model="form.password" :name="'password'" form="'login'" placeholder="New Password"/>
             <Errors name="password"/>
         </div>
         <div>
-            <Label :forInput="'password_confirmed'">Confirm new Password</Label>
-            <Text type="text" v-model="form.password_confirmed" :name="'password_confirmed'" form="'login'" placeholder="Confirm Password"/>
-            <Errors name="password_confirmed"/>
+            <Label :forInput="'password_confirmation'">Confirm new Password</Label>
+            <Text type="password" v-model="form.password_confirmation" :name="'password_confirmation'" form="'login'"
+                  placeholder="Confirm Password"/>
+            <Errors name="password_confirmation"/>
         </div>
         <Button type="submit">Save</Button>
     </form>

@@ -1,15 +1,15 @@
 <script setup>
 
-import {computed, onUnmounted, reactive, ref, watch} from "vue";
-import {chatDetails} from "../../../store/chatStore.js";
+import { computed, onUnmounted, reactive, ref, watch } from "vue";
+import { chatDetails } from "../../../store/chatStore.js";
 import Footer from "./partials/messages/Footer.vue";
-import {useRoute, useRouter} from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import ChatMessage from "./partials/messages/ChatMessage.vue";
 import Header from "./partials/messages/Header.vue";
 import ShowDate from "./partials/messages/ShowDate.vue";
 import useChatLogic from "../../../functions/useChatLogic.js";
 import _ from "lodash";
-import {DateTime} from "luxon";
+import { DateTime } from "luxon";
 
 const chatStore = chatDetails()
 const route = useRoute();
@@ -57,21 +57,17 @@ const messages = computed(() => {
 
 <template>
     <div class="chat-details">
-        <Header/>
-        <main @scroll="chatLogic.scrolled"
-              class="overflow-auto pb-2"
-        >
+        <Header />
+        <main @scroll="chatLogic.scrolled" class="overflow-auto pb-2">
 
             <div v-for="(msg, index) in messages">
-                <show-date :created-at="index"/>
-                <ChatMessage
-                    v-for="(obj, ind) in msg"
-                    :hide-user="ind > 0 && chatStore.messages[ind-1]?.user?.id === obj.user.id"
-                    :key="obj"
-                    :id="`message-${obj.id}`" :message="obj"/>
+                <show-date :created-at="index" />
+                <ChatMessage v-for="(obj, ind) in msg"
+                    :hide-user="ind > 0 && chatStore.messages[ind - 1]?.user?.id === obj.user.id" :key="obj"
+                    :id="`message-${obj.id}`" :message="obj" />
             </div>
         </main>
-        <Footer/>
+        <Footer />
     </div>
 </template>
 
@@ -83,5 +79,4 @@ const messages = computed(() => {
     grid-template-rows: 64px 1fr auto;
     height: 75vh;
 }
-
 </style>

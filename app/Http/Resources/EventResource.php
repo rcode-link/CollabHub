@@ -18,6 +18,9 @@ use Illuminate\Http\Resources\Json\JsonResource;
  * @property string|null $freq
  * @property string|null $freq_settings
  * @property string|null $freq_until
+ * @property-read \App\Models\VideoCalls|null $videocalls
+ * @property int $approved
+ * @property string $type
  */
 class EventResource extends JsonResource
 {
@@ -37,6 +40,14 @@ class EventResource extends JsonResource
             'description' => $this->description,
             'freq_settings' => $this->freq_settings,
             'freq_until' => $this->freq_until,
+            'type' => $this->type,
+            'approved' => $this->approved,
+            'videocall' => $this->whenLoaded('videocalls', function() {
+                return [
+                  'slug' => $this->videocalls->slug
+                ];
+            }),
+            'creator' => $this->whenLoaded('creator', fn()=> new UserResource($this->creator)),
             'attendance' => $this->whenLoaded('user', function () {
                 return $this->user->map(fn($obj) => ['name' => $obj->name,'email' => $obj->email, 'id' => $obj->id, 'avatar' => $obj->getFirstMediaUrl('avatar'), 'attending' => $obj->pivot->attending]);
             })

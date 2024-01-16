@@ -17,13 +17,15 @@
           <ScrumIcon class="w-4 h-4" v-if="obj.type === 'scrum'"/>
           {{ obj.title }}
         </fwb-list-group-item>
-        <fwb-list-group-item @click="() => boardModalRef.toggleModal()">
+        <fwb-list-group-item v-if="can(`can-create-board.${route.params.project}`)" @click="() => boardModalRef.toggleModal()">
           <PlusSquare class="w-6 h-6"/> Add new board
         </fwb-list-group-item>
       </fwb-list-group>
     </fwb-dropdown>
     <SelectSprintHeader v-if="shouldSprintSelectionBeVisible"/>
-      <fwb-dropdown class="ml-auto" text="Bottom" placement="left">
+      <fwb-dropdown class="ml-auto" text="Bottom" placement="left"
+                    v-if="can(`can-update-board.${route.params.project}`)"
+      >
           <template #trigger>
               <CogsIcon class="w-4 h-4 hover:text-blue-300"/>
           </template>
@@ -79,6 +81,7 @@ import Modal from "../../../../shared/Modal.vue";
 import BoardForm from "./Form.vue";
 import CogsIcon from "../../../../shared/icons/CogsIcon.vue";
 import _ from 'lodash';
+import {useAbility} from "@casl/vue";
 
 
 const route = useRoute();
@@ -86,6 +89,7 @@ const router = useRouter();
 const boardsState = useBoardsState();
 const boardFormRef = ref(null);
 const boardModalRef = ref(null);
+const { can, rules } = useAbility()
 
 const shouldSprintSelectionBeVisible = computed(() => boardsState.getActiveBoard.type === 'scrum')
 const setActiveBoard = ({id}) => {

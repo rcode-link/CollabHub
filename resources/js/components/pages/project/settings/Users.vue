@@ -2,7 +2,6 @@
 
 import {FwbTable, FwbTableBody, FwbTableCell, FwbTableHead, FwbTableHeadCell, FwbTableRow} from "flowbite-vue";
 import UserIcon from "../../../shared/UserIcon.vue";
-import AddUserToProject from "./AddUserToProject.vue";
 import {onMounted, ref} from "vue";
 import {useRoute} from "vue-router";
 
@@ -12,13 +11,13 @@ const users = ref({
 })
 
 const load = () => {
-  axios.get(`/api/v1/users/project`, {
-    params: {
-      'project_id': route.params.project
-    }
-  }).then(res => {
-    users.value = res.data;
-  });
+  // axios.get(`/api/v1/users/project`, {
+  //   params: {
+  //     'project_id': route.params.project
+  //   }
+  // }).then(res => {
+  //   users.value = res.data;
+  // });
 }
 onMounted(() => {
   load();
@@ -31,7 +30,7 @@ onMounted(() => {
       <fwb-table-head-cell></fwb-table-head-cell>
       <fwb-table-head-cell>Name</fwb-table-head-cell>
       <fwb-table-head-cell>Email</fwb-table-head-cell>
-      <fwb-table-head-cell class="text-right"><AddUserToProject @update="load"/></fwb-table-head-cell>
+      <fwb-table-head-cell class="text-right"></fwb-table-head-cell>
     </fwb-table-head>
     <fwb-table-body>
       <fwb-table-row v-for="obj in users.data" :key="obj.id">

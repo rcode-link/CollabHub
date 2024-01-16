@@ -84,8 +84,10 @@ const location = window.location.href;
             <div v-for="day in 7">
                 {{ DateTime.now().startOf('week').plus({day: day - 1}).toFormat('EEE') }}
             </div>
+
             <div v-for="n in calendar.currentDate.startOf('month').weekday - 1"/>
             <WeekDay v-for="n in calendar.currentDate.endOf('month').day" :day="n"
+                     :isToday=" DateTime.now().set({year: calendar.selectedYear, month: calendar.selectedMonth, day: n}).startOf('day').diff(DateTime.now().startOf('day'),['days']).toObject().days === 0"
                      :events="calendar.calendar.filter(obj => obj.dates.indexOf(n) > -1)"/>
         </div>
     </Card>

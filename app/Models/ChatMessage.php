@@ -60,7 +60,7 @@ class ChatMessage extends Model implements HasMedia
 
     public function user(): BelongsTo
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class)->withTrashed();
     }
 
     public function scopeRelations(): Builder
@@ -73,9 +73,9 @@ class ChatMessage extends Model implements HasMedia
         return $this->belongsTo(ChatMessage::class, 'parent_id');
     }
 
-    public function videocalls(): HasOne
+    public function videocalls(): \Illuminate\Database\Eloquent\Relations\MorphOne
     {
-        return $this->hasOne(VideoCalls::class);
+        return $this->morphOne(VideoCalls::class, 'callable');
     }
 
 

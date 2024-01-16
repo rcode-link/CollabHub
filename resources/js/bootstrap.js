@@ -25,6 +25,17 @@ if(!currentTheme){
 }
 document.getElementsByTagName('html')[0].classList.add(currentTheme);
 
+if (window.matchMedia && window.matchMedia("(prefers-color-scheme:dark)").matches && currentTheme === 'auto') {
+    document.getElementsByTagName('html')[0].classList.add('dark');
+}else{
+    document.getElementsByTagName('html')[0].classList.add('light');
+}
+window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', event => {
+    document.getElementsByTagName('html')[0].classList.remove('dark');
+    document.getElementsByTagName('html')[0].classList.remove('light');
+    document.getElementsByTagName('html')[0].classList.add(event.matches ? 'dark' : 'light');
+});
+
 export function initEcho() {
     window.Echo = new Echo({
         broadcaster: 'pusher',

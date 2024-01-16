@@ -17,6 +17,8 @@ import {LocalTrack, Track} from "livekit-client";
 import {reactive, watch} from "vue";
 import Label from "../../shared/Label.vue";
 import Text from "../../shared/Text.vue";
+import {DateTime} from "luxon";
+import {toast} from "vue3-toastify";
 
 const router = useRouter();
 const messages = chatDetails();
@@ -32,15 +34,23 @@ const model = reactive({
 });
 const load = () => {
     window.axios.put(`/api/v1/video-call/${route.params.slug}/join`, {
-        name: model.name
+        name: model.name,
+        currentTime: DateTime.now().toISO()
     }).then(token => {
         model.token = token.data.token;
+    }).catch((error) => {
+        toast.error(error.response.data.message, {
+            onClick: () => {
+                window.location = '/';
+            }
+        })
     });
 }
 
 // load();
 
 const endTheCall = async () => {
+    await liveKit.room.value.disconnect();
     window.location = '/';
 }
 

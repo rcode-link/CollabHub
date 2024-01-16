@@ -5,7 +5,6 @@ services:
             dockerfile: Dockerfile
             args:
                 WWWGROUP: '${WWWGROUP}'
-                XDEBUG: '${XDEBUG}'
                 XDEBUG_PORT: '${XDEBUG_PORT}'
         image: sail-8.2/app
         extra_hosts:
@@ -27,12 +26,6 @@ services:
         depends_on:
             - mysql
             - redis
-    sabrephp:
-        image: 'ckulka/baikal'
-        ports:
-            - 9000:80
-        networks:
-            - sail
     mysql:
         image: 'mysql/mysql-server:8.0'
         ports:

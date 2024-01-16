@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Helpers\HasChat;
 use Database\Factories\TaskFactory;
 use Eloquent;
 use Illuminate\Database\Eloquent\Builder;
@@ -72,6 +73,7 @@ class Task extends Model implements HasMedia
 {
     use InteractsWithMedia;
     use HasFactory;
+    use HasChat;
 
     protected $guarded = [];
 
@@ -109,11 +111,6 @@ class Task extends Model implements HasMedia
     public function project(): BelongsTo
     {
         return $this->belongsTo(Project::class);
-    }
-
-    public function chat(): MorphOne
-    {
-        return $this->morphOne(Chat::class, 'chatable');
     }
 
     public function parents(): BelongsToMany

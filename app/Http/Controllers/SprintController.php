@@ -23,6 +23,7 @@ class SprintController extends Controller
     public function store(StoreSprintRequest $request)
     {
 
+        \Auth::user()->authorize('can-create-board', \Auth::user()->company()->first());
         $sprint = Sprint::create($request->validated());
 
         if ($request->get('is_active', false)) {
@@ -35,6 +36,7 @@ class SprintController extends Controller
 
     public function activate(Request $request, Sprint $sprint)
     {
+        \Auth::user()->authorize('can-create-board', \Auth::user()->company()->first());
         $sprint->activate();
         return $sprint;
     }

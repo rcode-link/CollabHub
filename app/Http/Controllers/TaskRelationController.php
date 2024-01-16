@@ -7,6 +7,7 @@ use App\Http\Requests\UpdateTaskRelationRequest;
 use App\Http\Resources\TaskRelationResource;
 use App\Models\TaskRelation;
 
+
 class TaskRelationController extends Controller
 {
     /**
@@ -14,7 +15,7 @@ class TaskRelationController extends Controller
      */
     public function index()
     {
-return TaskRelationResource::collection(TaskRelation::all());
+        return TaskRelationResource::collection(TaskRelation::all());
     }
 
     /**

@@ -17,6 +17,7 @@ import useSuggestion from "../../functions/editor/mention/suggestion";
 import {SmilieReplacer} from "../../functions/smilieReplacer";
 import {useConvertTextToLink} from "../../functions/editor/convertTextToLink";
 import {chatDetails} from "../../store/chatStore";
+import vacation from '../shared/vacationPlugin/vacation';
 
 const chatStore = chatDetails();
 const props = withDefaults(defineProps<{
@@ -44,6 +45,7 @@ hljs.listLanguages().forEach(async (lang) => {
 
 const suggestion = useSuggestion();
 
+console.log(props.model ?? props.modelValue)
 const editor = useEditor({
     content: props.model ?? props.modelValue,
     editable: props.editable,
@@ -80,6 +82,7 @@ const editor = useEditor({
         CodeBlockLowlight.configure({
             lowlight,
         }),
+        vacation,
         drawIoExtension.configure({openDialog: 'dblclick'}),
         tableExtension.configure({
             resizable: true,

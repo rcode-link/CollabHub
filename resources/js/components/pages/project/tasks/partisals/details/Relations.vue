@@ -9,7 +9,11 @@ const relations = ref({
   data:[]
 });
 const load = () => {
-  axios.get(`/api/v1/task/load/${route.query.task}/relations`).then(res => relations.value = res.data)
+  axios.get(`/api/v1/task/load/${route.query.task}/relations`, {
+      params: {
+          project_id: route.params.project
+      }
+  }).then(res => relations.value = res.data)
 }
 load();
 </script>

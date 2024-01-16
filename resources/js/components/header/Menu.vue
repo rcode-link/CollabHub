@@ -80,6 +80,28 @@
                               </div>
                             </div>
                         </fwb-list-group-item>
+                    <fwb-list-group-item>
+                        <div class="flex gap-4 justify-between w-full">
+                            <tippy content="Light theme" @click="() => changeTheme('light')">
+                                <fwb-button :color="currentTheme === 'light' ? 'default' : 'alternative'">
+                                    <SunIcon class="w-4 h-4"/>
+                                </fwb-button>
+
+                            </tippy>
+                            <tippy content="Dark theme" @click="() => changeTheme('dark')">
+                                <fwb-button :color="currentTheme === 'dark' ? 'default' : 'alternative'">
+                                    <MoonIcon class="w-4 h-4"/>
+                                </fwb-button>
+
+                            </tippy>
+                            <tippy content="Computer theme" @click="() => changeTheme('auto')">
+                                <fwb-button :color="currentTheme === 'auto' ? 'default' : 'alternative'">
+                                    <ComputerIcon class="w-4 h-4"/>
+                                </fwb-button>
+
+                            </tippy>
+                        </div>
+                    </fwb-list-group-item>
                   <fwb-list-group-item v-if="can(`can-create-project.${userStore.company.id}`)"
                                        @click="() => hideModal = !hideModal">
                         <div
@@ -141,13 +163,13 @@
 
 <script setup>
 import {
-  FwbAvatar,
-  FwbButton,
-  FwbDropdown,
-  FwbListGroup,
-  FwbListGroupItem,
-  FwbNavbar,
-  FwbNavbarCollapse
+    FwbAvatar,
+    FwbButton,
+    FwbDropdown,
+    FwbListGroup,
+    FwbListGroupItem,
+    FwbNavbar,
+    FwbNavbarCollapse
 } from 'flowbite-vue'
 import {useUserStore} from "../../store/user.js";
 import {useRouter} from "vue-router";
@@ -158,6 +180,9 @@ import Modal from "../shared/Modal.vue";
 import {useTasksStore} from "../../store/tasksStore.js";
 import {useTextToLinkStore} from "../../store/textToLinkStore.js";
 import {useAbility} from "@casl/vue";
+import SunIcon from "../shared/icons/SunIcon.vue";
+import MoonIcon from "../shared/icons/MoonIcon.vue";
+import ComputerIcon from "../shared/icons/ComputerIcon.vue";
 
 const createTasks = useTasksStore();
 const {can, rules} = useAbility()
@@ -183,6 +208,20 @@ const logout = (e) => {
 const submitForm = () => {
   createProjectRef.value.submit();
   textToLinkStore.load();
+}
+const html = document.getElementsByTagName('html')[0];
+const currentTheme = ref(localStorage.getItem('color-theme'));
+
+const changeTheme = (theme) => {
+
+    html.classList.remove(currentTheme.value);
+
+    currentTheme.value = theme;
+
+    if (theme !== 'auto') {
+        html.classList.add(currentTheme.value);
+    }
+    localStorage.setItem('color-theme', currentTheme.value);
 
 }
 </script>

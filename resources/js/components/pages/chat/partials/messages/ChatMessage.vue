@@ -34,7 +34,9 @@ watch(() => route.hash, () => {
 
 <template>
     <div ref="messageContainer" class="flex flex-col mx-4 mt-2">
-        <div v-if="!hideUser"
+        <router-link v-if="!hideUser"
+                     :to="`/user/${message.user.id}`"
+                     tag="div"
              :class="{'mb-1 flex gap-1 items-center': true}">
             <fwb-avatar :img="message.user.avatar"/>
             <fwb-p class="font-bold">
@@ -45,7 +47,7 @@ watch(() => route.hash, () => {
                     {{ message.user.email }}
                 </div>
             </fwb-p>
-        </div>
+        </router-link>
         <PrintChatMessage :message="message"/>
     </div>
 </template>
