@@ -4,8 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
+return new class extends Migration {
     /**
      * Run the migrations.
      */
@@ -13,9 +12,9 @@ return new class extends Migration
     {
         Schema::create('task_task', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('parent_id');
-            $table->foreignId('task_id');
-            $table->foreignId('task_relation_id');
+            $table->foreignId('parent_id')->references('id')->on('tasks');
+            $table->foreignId('task_id')->constrained();
+            $table->foreignId('task_relation_id')->constrained();
             $table->timestamps();
         });
     }

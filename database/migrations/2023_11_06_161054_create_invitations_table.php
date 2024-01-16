@@ -12,7 +12,7 @@ return new class extends Migration {
     {
         Schema::create('invitations', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('company_id');
+            $table->foreignId('company_id')->constrained();
             $table->integer('number_of_invitations')->default(1);
             $table->json('registered')->nullable();
             $table->string('key');

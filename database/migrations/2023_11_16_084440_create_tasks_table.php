@@ -14,10 +14,10 @@ return new class extends Migration {
             $table->id();
             $table->text('name');
             $table->longText('description')->nullable();
-            $table->foreignId('user_id');
+            $table->foreignId('user_id')->constrained();
             $table->foreignId('created_by');
-            $table->foreignId('project_id');
-            $table->foreignId('type_id');
+            $table->foreignId('project_id')->constrained();
+            $table->foreignId('type_id')->references('id')->on('task_types');
             $table->foreignId('status_id');
             $table->foreignId('task_status_id')->nullable();
             $table->timestamps();
