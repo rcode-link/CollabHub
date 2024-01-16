@@ -48,7 +48,6 @@
         <router-link
           alt=" "
           class="flex justify-center items-center relative navbar-link"
-          image-url="/images/logo.svg"
           :to="{ name: 'projects' }"
         >
           <tippy content="Projects">
@@ -60,7 +59,9 @@
           class="flex justify-center items-center relative navbar-link"
           :to="{ name: 'projects' }"
         >
-          <ChartPieIcon class="w-6 h-6" />
+          <tippy content="Reports">
+            <ChartPieIcon class="w-6 h-6" />
+          </tippy>
         </router-link>
         <fwb-button @click="createTasks.toggleCreateTaskModal" size="xs">
           Add new task
