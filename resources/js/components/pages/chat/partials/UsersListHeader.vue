@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup>
 import CreateChat from "./CreateChat.vue";
 import Card from "../../../shared/Card.vue";
 import { FwbButton } from "flowbite-vue";

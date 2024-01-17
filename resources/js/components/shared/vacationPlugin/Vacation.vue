@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup>
 import {NodeViewWrapper} from "@tiptap/vue-3";
 import {computed, onMounted, ref} from "vue";
 import {FwbButton, FwbHeading, FwbTable, FwbTableCell, FwbTableHeadCell, FwbTableRow} from "flowbite-vue";

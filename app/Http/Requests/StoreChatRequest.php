@@ -25,7 +25,7 @@ class StoreChatRequest extends FormRequest
         return [
             'user_id.*' => ['exists:users,id'],
             'title' => [
-                Rule::requiredIf(fn() => count(request()->get('user_id')) > 1)
+                Rule::requiredIf(fn() => count(request()->get('user_id', [])) > 1)
             ],
         ];
     }

@@ -30,7 +30,7 @@
     </template>
   </Modal>
 </template>
-<script setup lang="ts">
+<script setup>
 import Modal from "../../../../shared/Modal.vue";
 import {FwbAlert, FwbButton} from "flowbite-vue";
 import Label from "../../../../shared/Label.vue";

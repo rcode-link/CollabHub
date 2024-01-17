@@ -95,8 +95,8 @@ class Event extends Model
             ->where('user_id', Auth::id())
             ->with('type', 'owner', 'project')
             ->whereNotNull('due_date')
-            ->whereHas('taskSprintData', function (Builder $builder){
-                $builder->whereHas('status', fn (Builder $query) => $query->where('open', true));
+            ->whereHas('taskSprintData', function (Builder $builder) {
+                $builder->whereHas('status', fn(Builder $query) => $query->where('open', true));
             })->get();
         $icalendar = "BEGIN:VCALENDAR\r\n";
         $alarm = "BEGIN:VALARM\r\nTRIGGER:-PT15M\r\nDESCRIPTION:Reminder\r\nACTION:DISPLAY\r\nEND:VALARM\r\n";
@@ -107,7 +107,8 @@ class Event extends Model
                 $videoCallLink = '<a href="' . config('app.url') . '/call/' . $event->videocalls->slug . '">Start call</a>';
             }
             $icalendar .= "BEGIN:VEVENT\r\n";
-            $icalendar .= "UID:" . \Str::slug(config('app.url') . ' ' . Event::class) . $event->id . "\r\n";;
+            $icalendar .= "UID:" . \Str::slug(config('app.url') . ' ' . Event::class) . $event->id . "\r\n";
+            ;
             $icalendar .= "SUMMARY:" . $event['summary'] . "\r\n";
             $icalendar .= "DESCRIPTION:" . str_replace("\n", "\\n", $event['description']) . $videoCallLink . "\r\n";
             $icalendar .= "DTSTART:" . date('Ymd\THis', strtotime($event['start_time'])) . "\r\n";
@@ -124,7 +125,8 @@ class Event extends Model
             }
             foreach ($event->user as $user) {
 
-                $icalendar .= "ATTENDEE;CN=" . $user->name . ':mailto:' . $user->email . "\r\n";
+                $status = $user->pivot->attending ? 'ACCEPTED' : 'DECLINED';
+                $icalendar .= "ATTENDEE;PARTSTAT=" . $status . ";CN=" . $user->name . ':mailto:' . $user->email . "\r\n";
             }
 
             $icalendar .= "ORGANIZER;CN=" . $event->creator->name . ":mailto:john.doe@example.com\r\n";
@@ -137,9 +139,10 @@ class Event extends Model
 
         foreach ($tasks as $task) {
 
-            $taskUrl = config('app.url') . '/projects/'. $task->project_id .'/backlog?task=' . $task->task_id;
+            $taskUrl = config('app.url') . '/projects/' . $task->project_id . '/backlog?task=' . $task->task_id;
             $icalendar .= "BEGIN:VEVENT\r\n";
-            $icalendar .= "UID:" . \Str::slug(config('app.url') . ' ' . Task::class) . $task->id . "\r\n";;
+            $icalendar .= "UID:" . \Str::slug(config('app.url') . ' ' . Task::class) . $task->id . "\r\n";
+            ;
             $icalendar .= "SUMMARY:" . $task->name . "\r\n";
             $icalendar .= "DESCRIPTION: For more details click <a href='" . $taskUrl . "'>Here</a>\r\n";
             $icalendar .= "DTSTART:" . date('Ymd\THis', strtotime($task->due_date)) . "\r\n";

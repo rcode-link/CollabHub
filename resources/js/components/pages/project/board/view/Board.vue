@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup>
 
 
 import {useBoardsState} from "../../../../../store/boards.js";

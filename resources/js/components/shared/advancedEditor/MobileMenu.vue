@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup>
 
 import TextBold from "../icons/TextBold.vue";
 import {FwbButton, FwbDropdown, FwbListGroup, FwbListGroupItem} from "flowbite-vue";

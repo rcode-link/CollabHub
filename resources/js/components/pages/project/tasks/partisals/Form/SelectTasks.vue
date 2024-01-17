@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup>
 
 import AutoComplete from "../../../../../shared/AutoComplete.vue";
 import {ref, watch} from "vue";

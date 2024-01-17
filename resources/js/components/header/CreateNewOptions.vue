@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup>
 
 import {FwbButton, FwbDropdown, FwbListGroup, FwbListGroupItem} from "flowbite-vue";
 import Modal from "../shared/Modal.vue";

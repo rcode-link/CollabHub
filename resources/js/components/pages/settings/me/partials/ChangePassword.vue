@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup>
 
 import Label from "../../../../shared/Label.vue";
 import Text from "../../../../shared/Text.vue";

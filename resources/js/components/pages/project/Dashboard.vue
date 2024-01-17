@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup>
 
 import Card from "../../shared/Card.vue";
 import {useBreadcrumbStore} from "../../../store/breadcrumb.js";

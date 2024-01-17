@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup>
 import Text from "../../shared/Text.vue";
 import Label from "../../shared/Label.vue";
 import Errors from "../../shared/Errors.vue";
@@ -15,15 +15,14 @@ const form = reactive({
   name: "",
   key: "",
   image: "",
-  description: null,
+  description: "",
 });
 
-errorsStore.setErrors({});
+errorsStore.setErrors({}, "");
 const submit = () => {
-  axios
+  window.axios
     .post("/api/v1/projects", form)
     .then((response) => {
-      console.log(response.data.id);
       router.push({
         name: "project-details",
         params: { project: response.data.id },
@@ -47,10 +46,13 @@ watch(
       form.key = "";
       return;
     }
-    form.key = form.name
-      .match(/\b(\w)/g)
-      .join("")
-      .toUpperCase();
+    if (form.name != null) {
+      const name = form.name.match(/\b(\w)/g);
+      if (name == null) {
+        return;
+      }
+      form.key = name.join("").toUpperCase();
+    }
   },
   {
     deep: true,
@@ -64,9 +66,6 @@ defineExpose({
 
 <template>
   <form @submit.prevent="submit">
-    <!--    <DangerAlert v-if="globalErrorMessage !== ''">-->
-    <!--        {{ globalErrorMessage}}-->
-    <!--    </DangerAlert>-->
     <div>
       <Label :forInput="'name'">Name</Label>
       <Text

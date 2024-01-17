@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup>
 import Menu from "../header/Menu.vue";
 import Breadcrumb from "../header/Breadcrumb.vue";
 import { FwbProgress } from "flowbite-vue";

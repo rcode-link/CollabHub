@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup>
 
 import _ from "lodash";
 import AddPermissionsModal from "./AddPermissionsModal.vue";

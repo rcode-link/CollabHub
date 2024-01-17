@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup>
 import Card from "../../../shared/Card.vue";
 import { onMounted } from "vue";
 import { DateTime } from "luxon";
@@ -10,7 +10,7 @@ import {
   FwbListGroup,
   FwbListGroupItem,
 } from "flowbite-vue";
-import { useCalendarStore } from "../../../../store/calendarStore.js";
+import { useCalendarStore } from "../../../../store/calendarStore";
 import Form from "./calendar/Form.vue";
 import PlusSquare from "../../../shared/icons/PlusSquare.vue";
 import ArrowLeft from "../../../shared/icons/ArrowLeft.vue";
@@ -125,7 +125,7 @@ const location = window.location.href;
       />
       <WeekDay
         v-for="n in calendar.currentDate.endOf('month').day"
-        :day="n"
+        :day="n.toString()"
         :key="n"
         :isToday="
           DateTime.now()

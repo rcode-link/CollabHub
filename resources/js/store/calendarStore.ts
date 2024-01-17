@@ -2,17 +2,48 @@ import { defineStore } from "pinia";
 import { computed, reactive, ref, watch } from "vue";
 import { DateTime } from "luxon";
 import { useErrorsStore } from "./errors.js";
-import { EventResource } from "../types/index.js";
+import { EventResource, UserResource } from "../types/index.js";
+import '../declaration.js'
+export type EventAttendance = {
+    name: string;
+    id: number;
+    email: string;
+    avatar: string;
+    attending: boolean;
+};
 
+export type EventType = {
+    summary: string;
+    id: number | null;
+    start_time: string;
+    end_time: string;
+    freq?: string | null;
+    description: string | null;
+    freq_settings?: string | object | null;
+    has_video: boolean;
+    user_id: number | null;
+    freq_until?: string | null;
+    users: any[]
+    type: string;
+    approved: boolean;
+    videocall?: {
+        slug: string | null;
+    };
+    attendance?: EventAttendance;
+};
 export const useCalendarStore =
     defineStore('calendarStore', () => {
-        const calendar = ref([]);
-        const isModalVisible = ref(false);
+        const calendar = ref<any[]>([]);
+        const isModalVisible = ref<boolean>(false);
+        const showDetails = ref<boolean>(false);
         const selectedYear = ref(DateTime.now().year);
         const selectedMonth = ref(DateTime.now().set({ year: selectedYear.value }).month);
         const errorsStore = useErrorsStore();
         const showAdvancedSettings = ref(false);
-        const videoCall = ref({});
+        const videoCall = ref<{
+            slug: string | null;
+        }>();
+
         const calendarItemType = [
             {
                 value: 'event',
@@ -53,16 +84,17 @@ export const useCalendarStore =
                 'label': 'Sunday'
             },
         ]
-        const form = reactive({
-            summary: null,
-            description: null,
-            start_time: null,
-            end_time: null,
+        const form = reactive<EventType>({
+            summary: '',
+            description: '',
+            start_time: '',
+            end_time: '',
             id: null,
-            freq_until: null,
+            freq_until: '',
+            approved: false,
             has_video: false,
             type: 'event',
-            freq: null,
+            freq: '',
             user_id: null,
             freq_settings: {},
             users: []
@@ -96,12 +128,11 @@ export const useCalendarStore =
 
         const save = async () => {
             let request;
-            const data = Object.assign({}, form);
-            if (form.freq === 'WEEKLY') {
-                console.log('its weekly')
+            const data: EventType = Object.assign({}, form);
+            if (form.freq === 'WEEKLY' && form.freq_settings) {
                 data.freq_settings = Object.keys(form.freq_settings).join(',')
             }
-            if (form.freq === 'DAILY') {
+            if (form.freq === 'DAILY' && form.freq_settings) {
                 delete data.freq_settings;
             }
 
@@ -130,13 +161,15 @@ export const useCalendarStore =
         }
 
         const closeModal = () => {
-            form.summary = null;
+            form.summary = '';
             form.description = null;
-            form.start_time = null;
-            form.end_time = null;
+            form.start_time = '';
+            form.end_time = '';
             form.id = null;
             form.has_video = false;
-            videoCall.value = {};
+            videoCall.value = {
+                slug: null
+            };
             isModalVisible.value = false;
         }
 
@@ -163,24 +196,23 @@ export const useCalendarStore =
         const getRepeatingEventData = (obj: EventResource) => {
             const start_date = DateTime.fromISO(obj.start_time);
             const end_date = DateTime.fromISO(obj.freq_until ?? obj.end_time);
-
             const startOfTheMonth = DateTime.now().set({
                 'year': selectedYear.value,
                 'month': selectedMonth.value
             }).startOf('month').startOf('day');
 
-            const differenceInDays = Math.ceil(start_date.startOf('day').diff(startOfTheMonth, ['days']).toObject().days);
+            const differenceInDays = Math.ceil(start_date.startOf('day').diff(startOfTheMonth, ['days']).toObject().days ?? 0);
 
 
             const item = {
                 ...obj,
                 has_video: !!obj.videocall,
-                dates: []
+                dates: [] as any[]
             }
 
             for (let i = 1; i <= currentDate.value.endOf('month').day; i++) {
                 const currentDay = currentDate.value.set({ day: i }).toUTC().startOf('day');
-                if (obj.freq === 'WEEKLY' && obj.freq_settings.indexOf(byDay[currentDay.weekday - 1].value) === -1) {
+                if (obj.freq === 'WEEKLY' && obj.freq_settings?.indexOf(byDay[currentDay.weekday - 1].value) === -1) {
                     continue;
                 }
                 if (i > differenceInDays && end_date.toUTC().startOf('day').diff(currentDay, ['days']).days >= 0) {
@@ -192,7 +224,7 @@ export const useCalendarStore =
         }
 
         const deleteEvent = () => {
-            axios.delete(`/api/v1/calendar/${form.id}`).then(() => {
+            window.axios.delete(`/api/v1/calendar/${form.id}`).then(() => {
                 isModalVisible.value = false;
                 closeModal();
                 load();
@@ -209,6 +241,7 @@ export const useCalendarStore =
             byDay,
             showAdvancedSettings,
             calendarItemType,
+            showDetails,
             load,
             setItem,
             save,

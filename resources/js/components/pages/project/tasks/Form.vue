@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup>
 import Modal from "../../../shared/Modal.vue";
 import { useTasksStore } from "../../../../store/tasksStore.js";
 import {
@@ -13,44 +13,31 @@ import { useRoute } from "vue-router";
 import Errors from "../../../shared/Errors.vue";
 import Label from "../../../shared/Label.vue";
 import Text from "../../../shared/Text.vue";
-import Editor from "../../../shared/Editor.vue";
+import Editor from "./partisals/Form/Editor.vue";
 import UsersSelectInput from "../../../shared/SelectUsersInProject.vue";
 import Button from "../../../shared/Button.vue";
 import { useErrorsStore } from "../../../../store/errors";
 import SelectTasks from "./partisals/Form/SelectTasks.vue";
 import DatePicker from "../../../shared/DatePicker.vue";
 import { DateTime } from "luxon";
-import EditorHeader from "../../../shared/advancedEditor/EditorHeader.vue";
 import _ from "lodash";
-import { ToastTheme, toast } from "vue3-toastify";
+import { toast } from "vue3-toastify";
 import router from "../../../../router/router.js";
-import { TaskResource } from "../../../../types";
+import { setFormData } from "./formLogic";
+import Tags from "./partisals/Form/Tags.vue";
 
-const createTasks = useTasksStore();
 const errorsStore = useErrorsStore();
+const createTasks = useTasksStore();
 const taskTypesList = ref([]);
 const createMore = ref(false);
-const editorRef = ref(null);
 const route = useRoute();
-const updateEditor = ref(Math.random());
-const form = reactive<{
-  description: string | null;
-  name: string;
-  project_id: string;
-  type_id: number;
-  files?: any[];
-  status_id: number | null;
-  user_id: number | null;
-  due_date: string | null;
-  related_tasks: any[];
-  tags: any[];
-}>({
+const form = reactive({
   project_id: "",
   name: "",
   description: "",
-  type_id: 3,
+  type_id: "2",
   files: [],
-  status_id: null,
+  status_id: "",
   user_id: null,
   due_date: null,
   related_tasks: [],
@@ -58,12 +45,9 @@ const form = reactive<{
 });
 
 const showForm = ref(false);
-const statuses = ref([]);
+const statuses = ref();
 const tasksStore = useTasksStore();
-const projects = ref({
-  data: [],
-});
-const users = ref([]);
+const projects = ref();
 const loadData = () => {
   window.axios.get("/api/v1/projects?can-create-task=true").then((res) => {
     projects.value = res.data;
@@ -75,13 +59,13 @@ const loadData = () => {
   if (route.query.task) {
     window.axios
       .get(`/api/v1/tasks/${route.query.task}`)
-      .then((res: { data: { data: any } }) => {
+      .then((res) => {
         const data = res.data.data;
         form.name = data.name;
         form.status_id = data.status?.id;
         form.description = data.description;
-        form.user_id = data.user.id;
-        form.project_id = route.params.project as string;
+        form.user_id = data.user?.id ?? null;
+        form.project_id = route.params.project;
         form.type_id = data.type.id;
         form.tags = data.tags ?? [];
         form.due_date =
@@ -93,7 +77,6 @@ const loadData = () => {
       })
       .finally(() => {
         showForm.value = true;
-        updateEditor.value = Math.random();
       });
 
     window.axios
@@ -116,9 +99,9 @@ const resetForm = () => {
   form.name = "";
   form.description = "";
   form.user_id = null;
-  form.project_id = (route.params.project as string) ?? "";
-  form.type_id = 3;
-  form.status_id = null;
+  form.project_id = route.params.project ?? "";
+  form.type_id = "2";
+  form.status_id = "";
   form.due_date = null;
   form.related_tasks = [];
   form.tags = [];
@@ -142,7 +125,7 @@ watch(
 watch(
   () => route.params.project,
   () => {
-    form.project_id = route.params.project as string;
+    form.project_id = route.params.project;
   },
   {
     immediate: true,
@@ -173,34 +156,9 @@ const submit = () => {
   }
 };
 const createNewTask = () => {
-  errorsStore.setErrors({});
-  const data = new FormData();
-  data.append("project_id", form.project_id);
-  data.append("name", form.name);
-  data.append("description", JSON.stringify(form.description));
-  form.related_tasks.map((obj, index) => {
-    data.append(`related_tasks[${index}][task_id]`, obj.task.id);
-    data.append(
-      `related_tasks[${index}][task_relation_id]`,
-      obj.task_relation_id
-    );
-  });
+  errorsStore.setErrors({}, "");
 
-  form.tags.map((str, index) => {
-    data.append(`tags[${index}]`, str);
-  });
-
-  if (form.due_date) {
-    data.append("due_date", form.due_date);
-  }
-  if (form.user_id) {
-    data.append("user_id", form.user_id.toString());
-  }
-  data.append("type_id", form.type_id.toString());
-
-  form.files?.forEach((obj, index) => {
-    data.append(`file.${index}`, obj);
-  });
+  const data = setFormData(form);
   window.axios
     .post("/api/v1/tasks", data)
     .then((task) => {
@@ -211,9 +169,7 @@ const createNewTask = () => {
         toast.success(
           `<p>Task ${task.data.data.name} created. </p><small>click to open</small>`,
           {
-            theme:
-              (localStorage.getItem("color-theme") as ToastTheme) ??
-              ("light" as ToastTheme),
+            theme: localStorage.getItem("color-theme") ?? "light",
             dangerouslyHTMLString: true,
             onClick: () => {
               router.push(`/open/${task.data.data.task_id}`);
@@ -229,16 +185,24 @@ const createNewTask = () => {
     });
 };
 
-const addTags = (e) => {
-  if (form.tags.indexOf(e.target.value) === -1) {
-    form.tags.push(e.target.value);
-    e.target.value = "";
+const projectList = () => {
+  if (!projects.value) {
+    return [{}];
   }
+  return projects.value.data.map((obj) => {
+    return {
+      value: obj.id.toString(),
+      name: obj.name,
+    };
+  });
 };
 </script>
 
 <template>
-  <Teleport to="body">
+  <fwb-button @click="createTasks.toggleCreateTaskModal" size="xs">
+    Add new task
+  </fwb-button>
+  <Teleport to="#append-container">
     <Modal
       :hide-modal="createTasks.showCreateTasksModal"
       @closed="createTasks.toggleCreateTaskModal"
@@ -252,14 +216,7 @@ const addTags = (e) => {
             <fwb-select
               :key="form.project_id"
               v-model="form.project_id"
-              :options="
-                projects.data.map((obj) => {
-                  return {
-                    value: obj.id,
-                    name: obj.name,
-                  };
-                })
-              "
+              :options="projectList()"
               placeholder="Select project for task"
               label="Project"
             />
@@ -267,9 +224,9 @@ const addTags = (e) => {
             <fwb-select
               v-model="form.type_id"
               :options="
-                taskTypesList.map((obj) => {
+                taskTypesList?.map((obj) => {
                   return {
-                    value: obj.id,
+                    value: obj.id.toString(),
                     name: obj.title,
                   };
                 })
@@ -284,9 +241,9 @@ const addTags = (e) => {
             <fwb-select
               v-model="form.status_id"
               :options="
-                statuses.map((obj) => {
+                statuses?.map((obj) => {
                   return {
-                    value: obj.id,
+                    value: obj.id.toString(),
                     name: obj.title,
                   };
                 })
@@ -305,21 +262,15 @@ const addTags = (e) => {
             />
             <Errors name="name" />
           </div>
-          <div class="mb-4" :key="updateEditor.toString()">
+          <div class="mb-4">
             <Label :forInput="'description'">Description</Label>
-            <EditorHeader v-if="editorRef" :editor="editorRef.editor" />
-            <Editor
-              ref="editorRef"
-              v-model="form.description"
-              @submitted="submit"
-              css-class="input big-input"
-            />
+            <Editor v-model="form.description" />
             <Errors name="description" />
           </div>
           <div class="mb-4" v-if="!route.query.task">
             <fwb-file-input v-model="form.files" label="Upload file" multiple />
             <div
-              v-if="form.files.length !== 0"
+              v-if="form.files?.length !== 0"
               class="mt-4 border-[1px] border-gray-300 dark:border-gray-600 dark:text-white p-2 rounded-md"
             >
               <div v-for="file in form.files" :key="file">
@@ -334,17 +285,7 @@ const addTags = (e) => {
           </div>
           <div class="mb-4">
             <Label :forInput="'due_date'">Tags</Label>
-            <Text @keydown.enter.prevent="addTags" />
-            <div class="flex gap-1 mt-2 flex-wrap">
-              <fwb-badge v-for="(str, index) in form.tags"
-                >{{ str }}
-                <span
-                  @click="() => form.tags.splice(index, 1)"
-                  class="ml-2 cursor-pointer"
-                  >x</span
-                >
-              </fwb-badge>
-            </div>
+            <Tags v-model="form.tags" />
             <Errors name="description" />
           </div>
           <div class="mb-4">
@@ -365,7 +306,7 @@ const addTags = (e) => {
             <Errors name="related_tasks" />
           </div>
 
-          <button type="hidden"></button>
+          <button class="hidden"></button>
         </form>
       </template>
       <template #footer>

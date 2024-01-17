@@ -63,9 +63,7 @@
             <ChartPieIcon class="w-6 h-6" />
           </tippy>
         </router-link>
-        <fwb-button @click="createTasks.toggleCreateTaskModal" size="xs">
-          Add new task
-        </fwb-button>
+        <CreateTaskForm />
 
         <fwb-dropdown text="Bottom" placement="left" class="z-20 w-auto">
           <template #trigger>
@@ -197,7 +195,7 @@
   </Modal>
 </template>
 
-<script setup lang="ts">
+<script setup>
 import {
   FwbAvatar,
   FwbButton,
@@ -214,7 +212,7 @@ import { Tippy } from "vue-tippy";
 import CreateProject from "../pages/project/Create.vue";
 import Modal from "../shared/Modal.vue";
 import { useTasksStore } from "../../store/tasksStore.js";
-import { useTextToLinkStore } from "../../store/textToLinkStore.js";
+import { useTextToLinkStore } from "../../store/textToLinkStore";
 import { useAbility } from "@casl/vue";
 import SunIcon from "../shared/icons/SunIcon.vue";
 import MoonIcon from "../shared/icons/MoonIcon.vue";
@@ -223,6 +221,7 @@ import ChartPieIcon from "../shared/icons/ChartPieIcon.vue";
 import HomeIcon from "../shared/icons/HomeIcon.vue";
 import ChatIcon from "../shared/icons/ChatIcon.vue";
 import ArchiveBoxIcon from "../shared/icons/ArchiveBoxIcon.vue";
+import CreateTaskForm from "../pages/project/tasks/Form.vue";
 
 const createTasks = useTasksStore();
 const { can, rules } = useAbility();
@@ -241,7 +240,7 @@ const useText = ref(false);
 const hideModal = ref(null);
 const createProjectRef = ref(null);
 
-const logout = (e: MouseEvent) => {
+const logout = (e) => {
   e.preventDefault();
   window.Echo.disconnect();
   localStorage.removeItem("token");

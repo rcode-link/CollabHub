@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup>
 import { computed, onUnmounted, reactive, ref, watch } from "vue";
 import { chatDetails } from "../../../store/chatStore.js";
 import Footer from "./partials/messages/Footer.vue";
@@ -6,7 +6,7 @@ import { useRoute, useRouter } from "vue-router";
 import ChatMessage from "./partials/messages/ChatMessage.vue";
 import Header from "./partials/messages/Header.vue";
 import ShowDate from "./partials/messages/ShowDate.vue";
-import useChatLogic from "../../../functions/useChatLogic.js";
+import useChatLogic from "../../../functions/useChatLogic";
 import _ from "lodash";
 import { DateTime } from "luxon";
 

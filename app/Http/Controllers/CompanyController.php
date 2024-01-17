@@ -16,16 +16,22 @@ class CompanyController extends Controller
      */
     public function index()
     {
-        $permission = Auth::user()->permissions()->filter(fn($obj)=> $obj['model']['type'] == Company::class)->pluck('model.id')->flatten();
+        $permission = Auth::user()->permissions()->filter(fn($obj) => $obj['model']['type'] == Company::class)->pluck('model.id')->flatten();
 
         $comapny = Company::whereIn('id', $permission)->first();
-        return array_merge($comapny->toArray(),
+        return array_merge(
+            $comapny->toArray(),
             [
                 'avatar' => $comapny->getFirstMediaUrl('avatar')
             ]
         );
     }
 
+    /**
+     * Returns list of keys for editor to autocomplete
+     *
+     * @response array{string}
+     */
     public function getKeys(Request $request)
     {
         return Auth::user()->permissions()->filter(fn($obj) => $obj['model']['type'] === Project::class)->map(fn($obj) => $obj['model']['key'])->flatten()->toArray();
@@ -47,10 +53,12 @@ class CompanyController extends Controller
     public function show(Company $company)
     {
         $this->authorize('view', $company);
-        return array_merge($company->toArray(),
+        return array_merge(
+            $company->toArray(),
             [
                 'avatar' => $company->getFirstMediaUrl('avatar')
-            ]);
+            ]
+        );
     }
 
     /**

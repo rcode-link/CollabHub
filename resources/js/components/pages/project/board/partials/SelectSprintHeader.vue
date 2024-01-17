@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup>
 
 import Modal from "../../../../shared/Modal.vue";
 import PlusSquare from "../../../../shared/icons/PlusSquare.vue";

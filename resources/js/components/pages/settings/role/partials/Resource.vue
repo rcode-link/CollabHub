@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup>
 
 import Card from "../../../../shared/Card.vue";
 import {FwbButton, FwbHeading, FwbSelect} from "flowbite-vue";

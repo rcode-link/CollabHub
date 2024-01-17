@@ -8,10 +8,11 @@ import { OpenAPI } from '../core/OpenAPI';
 import { request as __request } from '../core/request';
 export class CompanyService {
     /**
+     * Returns list of keys for editor to autocomplete
      * @returns string
      * @throws ApiError
      */
-    public static companyGetKeys(): CancelablePromise<string> {
+    public static companyGetKeys(): CancelablePromise<Array<string>> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/v1/get-organization-keys',

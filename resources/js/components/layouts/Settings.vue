@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup>
 import Auth from "./Auth.vue";
 import { useAbility } from "@casl/vue";
 import { useUserStore } from "../../store/user";

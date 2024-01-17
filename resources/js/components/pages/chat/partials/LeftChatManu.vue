@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup>
 import { useAbility } from "@casl/vue";
 import { onMounted, ref, watch } from "vue";
 import { useUserStore } from "../../../../store/user";

@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup>
 import Auth from "../../layouts/Auth.vue";
 import { onMounted } from "vue";
 import { FwbHeading, FwbImg, FwbP } from "flowbite-vue";

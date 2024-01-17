@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup>
 import { computed, ref, watch } from "vue";
 import { useErrorsStore } from "../../store/errors";
 import _ from "lodash";
@@ -121,7 +121,8 @@ watch(
         />
       </div>
       <div
-        v-for="obj in users.data"
+        v-for="(obj, index) in users.data"
+        :key="index"
         @click="() => handleItemClick(obj)"
         class="flex gap-3 items-center text-gray-900 dark:text-white w-full px-4 py-2 border-b border-gray-200 dark:border-gray-600 hover:bg-gray-200 hover:dark:bg-gray-500 cursor-pointer"
       >

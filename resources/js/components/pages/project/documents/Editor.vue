@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup>
 import {ref} from "vue";
 import AdvancedEditor from '../../../shared/advancedEditor/Index.vue';
 import {useRoute, useRouter} from "vue-router";

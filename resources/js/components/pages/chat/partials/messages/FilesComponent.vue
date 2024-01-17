@@ -33,7 +33,7 @@
     </InteractiveToast>
   </div>
 </template>
-<script setup lang="ts">
+<script setup>
 import InteractiveToast from "../../../../shared/InteractiveToast.vue";
 import {FwbButton} from "flowbite-vue";
 import FileImage from "../../../../shared/icons/FileImage.vue";

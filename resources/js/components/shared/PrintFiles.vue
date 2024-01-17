@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup>
 
 import FileImage from "./icons/FileImage.vue";
 import {FwbImg, FwbP} from "flowbite-vue";

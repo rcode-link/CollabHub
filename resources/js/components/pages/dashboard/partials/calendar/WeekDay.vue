@@ -1,14 +1,11 @@
-<script setup lang="ts">
-import { useCalendarStore } from "../../../../../store/calendarStore.js";
-import { EventResource } from "../../../../../types/index";
+<script setup>
 import CalendarItem from "./CalendarItem.vue";
-const calendar = useCalendarStore();
-interface Props {
-  day: string;
-  isToday: boolean;
-  events: EventResource[];
-}
-defineProps<Props>();
+
+defineProps({
+  day: "",
+  isToday: false,
+  events: [],
+});
 </script>
 
 <template>

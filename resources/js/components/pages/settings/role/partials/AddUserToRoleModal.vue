@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup>
 
 import {FwbButton} from "flowbite-vue";
 import SelectUsersInCompany from "../../../../shared/SelectUsersInCompany.vue";

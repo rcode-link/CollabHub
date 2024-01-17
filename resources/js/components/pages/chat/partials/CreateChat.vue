@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup>
 import Modal from "../../../shared/Modal.vue";
 import { computed, ref, watch } from "vue";
 import UserIcon from "../../../shared/UserIcon.vue";

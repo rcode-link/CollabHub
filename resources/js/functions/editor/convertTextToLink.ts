@@ -45,11 +45,14 @@ export const useConvertTextToLink = () => {
         length: number;
     }
     const findLink = (doc) => {
-        const decorations = [];
+        const decorations: Decoration[] = [];
         doc.descendants((node, pos) => {
+            if (!textToLinkStore.items) {
+                return;
+            }
             const regex = new RegExp(textToLinkStore.items.map(obj => `${obj}-\\d+|${obj}-D-\\d+`).join("|"), 'g');
 
-            for (const obj of Array.from(node.text?.matchAll(regex) ?? [])) {
+            for (const obj of Array.from(node.text?.matchAll(regex) ?? []) as any[]) {
                 const item: Match = obj as Match;
                 const text = obj[0];
 

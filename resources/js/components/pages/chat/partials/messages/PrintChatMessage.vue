@@ -50,7 +50,7 @@
         <MessageOptions :message="message"/>
     </div>
 </template>
-<script setup lang="ts">
+<script setup>
 import Editor from "../../../../shared/Editor.vue";
 import PrintFiles from "../../../../shared/PrintFiles.vue";
 import {FwbBadge, FwbP} from "flowbite-vue";

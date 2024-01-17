@@ -50,7 +50,7 @@
     </div>
   </router-link>
 </template>
-<script setup lang="ts">
+<script setup>
 import { DateTime } from "luxon";
 import { computed } from "vue";
 import { useRoute } from "vue-router";

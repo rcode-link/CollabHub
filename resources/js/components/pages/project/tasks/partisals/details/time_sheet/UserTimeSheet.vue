@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup>
 
 import {DateTime} from "luxon";
 import {FwbAccordionContent, FwbAccordionHeader, FwbButton, FwbSelect} from "flowbite-vue";

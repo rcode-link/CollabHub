@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup>
 import { onMounted, reactive, ref } from "vue";
 import Text from "../shared/Text.vue";
 import { useErrorsStore } from "../../store/errors";

@@ -37,19 +37,20 @@ class EventResource extends JsonResource
             'start_time' => Carbon::parse($this->start_time),
             'end_time' => Carbon::parse($this->end_time),
             'freq' => $this->freq,
+            'user_id' => $this->user_id,
             'description' => $this->description,
             'freq_settings' => $this->freq_settings,
             'freq_until' => $this->freq_until,
             'type' => $this->type,
             'approved' => $this->approved,
-            'videocall' => $this->whenLoaded('videocalls', function() {
+            'videocall' => $this->whenLoaded('videocalls', function () {
                 return [
-                  'slug' => $this->videocalls->slug
+                    'slug' => $this->videocalls->slug
                 ];
             }),
-            'creator' => $this->whenLoaded('creator', fn()=> new UserResource($this->creator)),
+            'creator' => $this->whenLoaded('creator', fn() => new UserResource($this->creator)),
             'attendance' => $this->whenLoaded('user', function () {
-                return $this->user->map(fn($obj) => ['name' => $obj->name,'email' => $obj->email, 'id' => $obj->id, 'avatar' => $obj->getFirstMediaUrl('avatar'), 'attending' => $obj->pivot->attending]);
+                return $this->user->map(fn($obj) => ['name' => $obj->name, 'email' => $obj->email, 'id' => $obj->id, 'avatar' => $obj->getFirstMediaUrl('avatar'), 'attending' => $obj->pivot->attending]);
             })
         ];
     }

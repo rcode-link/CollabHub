@@ -30,14 +30,14 @@
   </fwb-toast>
 </template>
 
-<script setup lang="ts">
+<script setup>
 import { FwbToast } from "flowbite-vue";
 import { ref, watch } from "vue";
-import { useTimer } from "../../functions/timer.js";
+import { useTimer } from "../../functions/timer.ts";
 
-defineProps<{
-  type: string;
-}>();
+defineProps({
+  type: "",
+});
 const showToast = ref(false);
 const timer = useTimer();
 const showToastFn = () => {
@@ -62,6 +62,7 @@ defineExpose({
   showToast,
 });
 </script>
+
 <style scoped>
 @keyframes changeWidth {
   from {

@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup>
 
 import PlusSquare from "../../../../shared/icons/PlusSquare.vue";
 import {FwbButton, FwbDropdown, FwbListGroup, FwbListGroupItem, FwbSelect} from "flowbite-vue";

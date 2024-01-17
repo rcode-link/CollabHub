@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup>
 
 import {FwbAvatar, FwbButton} from "flowbite-vue";
 import {chatDetails} from "../../../../../store/chatStore.js";

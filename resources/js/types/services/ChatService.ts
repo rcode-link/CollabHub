@@ -35,14 +35,21 @@ export class ChatService {
     }
     /**
      * Create new chat
-     * ⚠️Cannot generate request documentation: count(): Argument #1 ($value) must be of type Countable|array, null given
+     * @param requestBody
      * @returns void
      * @throws ApiError
      */
-    public static apichatsStore(): CancelablePromise<void> {
+    public static apichatsStore(
+        requestBody?: {
+            title?: string;
+            user_id?: Array<number>;
+        },
+    ): CancelablePromise<void> {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/v1/chats',
+            body: requestBody,
+            mediaType: 'application/json',
             errors: {
                 403: `Authorization error`,
                 422: `Validation error`,

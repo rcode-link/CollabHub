@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup>
 import { useUserStore } from "../../store/user";
 import { computed, onMounted, ref, watch } from "vue";
 import { useErrorsStore } from "../../store/errors";

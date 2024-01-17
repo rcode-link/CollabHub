@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup>
 import {useRoute} from "vue-router";
 import ListItem from "../ListItem.vue";
 import {ref} from "vue";

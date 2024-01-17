@@ -1,9 +1,14 @@
-<script setup lang="ts">
+<script setup>
+//@ts-ignore
 import Modal from "../../../../shared/Modal.vue";
+//@ts-ignore
 import Label from "../../../../shared/Label.vue";
+//@ts-ignore
 import Text from "../../../../shared/Text.vue";
+//@ts-ignore
 import DatePicker from "../../../../shared/DatePicker.vue";
-import { useCalendarStore } from "../../../../../store/calendarStore.js";
+import { useCalendarStore } from "../../../../../store/calendarStore";
+//@ts-ignore
 import {
   FwbButton,
   FwbCheckbox,
@@ -15,14 +20,19 @@ import {
   FwbTableHeadCell,
   FwbTableRow,
 } from "flowbite-vue";
+//@ts-ignore
 import Errors from "../../../../shared/Errors.vue";
+//@ts-ignore
 import SelectUsersInCompany from "../../../../shared/SelectUsersInCompany.vue";
+//@ts-ignore
 import UserIcon from "../../../../shared/UserIcon.vue";
 import TrashIcon from "../../../../shared/icons/TrashIcon.vue";
 import { onUpdated, ref, watch } from "vue";
 import { useErrorsStore } from "../../../../../store/errors";
 import { useRouter } from "vue-router";
+//@ts-ignore
 import InteractiveToast from "../../../../shared/InteractiveToast.vue";
+//@ts-ignore
 import TimePicker from "../../../../shared/TimePicker.vue";
 import { DateTime } from "luxon";
 import { useUserStore } from "../../../../../store/user";
@@ -33,7 +43,7 @@ const router = useRouter();
 const userStore = useUserStore();
 
 function openCall() {
-  window.open(`/call/${calendar.videoCall.slug}`, "_blank");
+  window.open(`/call/${calendar.videoCall?.slug}`, "_blank");
 }
 
 onUpdated(() => {
@@ -167,6 +177,7 @@ watch(
               <fwb-table-head-cell></fwb-table-head-cell>
               <fwb-table-head-cell>Name</fwb-table-head-cell>
               <fwb-table-head-cell>Email</fwb-table-head-cell>
+              <fwb-table-head-cell>Status</fwb-table-head-cell>
               <fwb-table-head-cell class="text-right"></fwb-table-head-cell>
             </fwb-table-head>
             <fwb-table-body>
@@ -183,6 +194,10 @@ watch(
                 <fwb-table-cell>
                   {{ obj.email }}
                 </fwb-table-cell>
+                <fwb-table-cell>
+                  {{ obj.attending ? "Attending" : "Not attending" }}
+                </fwb-table-cell>
+
                 <fwb-table-cell>
                   <fwb-button
                     color="red"

@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup>
 
 import Label from "../../../../../../shared/Label.vue";
 import DatePicker from "../../../../../../shared/DatePicker.vue";

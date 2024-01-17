@@ -37,7 +37,7 @@
     </div>
   </div>
 </template>
-<script setup lang="ts">
+<script setup>
 import { onMounted, reactive, ref } from "vue";
 import Text from "../shared/Text.vue";
 import { useErrorsStore } from "../../store/errors";
@@ -47,7 +47,7 @@ import Card from "../shared/Card.vue";
 import Label from "../shared/Label.vue";
 import Button from "../shared/Button.vue";
 import DangerAlert from "../shared/DangerAlert.vue";
-import useInit from "../../functions/useInit.js";
+import useInit from "../../functions/useInit";
 
 const router = useRouter();
 

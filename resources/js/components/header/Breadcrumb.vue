@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup>
 import { useBreadcrumbStore } from "../../store/breadcrumb.js";
 import { FwbBreadcrumb, FwbButton } from "flowbite-vue";
 import { watch } from "vue";

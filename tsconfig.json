@@ -20,7 +20,10 @@
         "strict": true,
         "noUnusedLocals": true,
         "noUnusedParameters": true,
-        "noFallthroughCasesInSwitch": true
+        "noFallthroughCasesInSwitch": true,
+         "paths": {
+            "ziggy-js": ["./vendor/tightenco/ziggy"]
+        }
     },
     "include": [
         "src/**/*.ts",

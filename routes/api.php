@@ -1,6 +1,4 @@
 <?php
-
-use App\Helpers\CalDavHelper;
 use App\Http\Controllers\{
     BoardController,
     CalendarController,
@@ -27,7 +25,8 @@ use App\Http\Controllers\{
     TimeSheetController,
     UserController,
     VacationRequestController,
-    VideoCallController
+    VideoCallController,
+    EventController
 };
 use Illuminate\Support\Facades\Route;
 
@@ -90,6 +89,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('/calendar', [CalendarController::class, 'insertCalendarItem']);
     Route::put('/calendar/{event}', [CalendarController::class, 'update']);
     Route::get('/event/{event}', [CalendarController::class, 'view']);
+    Route::put('/event/{event}', EventController::class);
     Route::delete('/calendar/{event}', [CalendarController::class, 'destroy']);
     Route::apiResource('/users', UserController::class);
     Route::put('/user/change-password', [UserController::class, 'updatePassword']);

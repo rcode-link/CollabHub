@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup>
 
 import {FwbTable, FwbTableBody, FwbTableCell, FwbTableHead, FwbTableHeadCell, FwbTableRow} from "flowbite-vue";
 import {useAbility} from "@casl/vue";

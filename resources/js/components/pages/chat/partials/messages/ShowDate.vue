@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup>
 
 import {FwbBadge, FwbCard} from "flowbite-vue";
 

@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup>
 import Auth from "../../layouts/Auth.vue";
 import {useBreadcrumbStore} from "../../../store/breadcrumb.js";
 import {ref} from "vue";

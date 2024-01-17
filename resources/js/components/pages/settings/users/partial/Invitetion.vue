@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup>
 
 import InviteModal from "./InviteModal.vue";
 import {useAbility} from "@casl/vue";

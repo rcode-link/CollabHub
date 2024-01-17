@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup>
 
 import {DateTime} from "luxon";
 import UserIcon from "../../../../shared/UserIcon.vue";

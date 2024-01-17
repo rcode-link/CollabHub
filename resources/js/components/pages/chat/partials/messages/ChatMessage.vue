@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup>
 import { FwbAvatar, FwbP } from "flowbite-vue";
 import { useUserStore } from "../../../../../store/user";
 import { ref, watch } from "vue";

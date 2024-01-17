@@ -1,6 +1,5 @@
-<script setup lang="ts">
+<script setup>
 import { useErrorsStore } from "../../store/errors";
-
 const errors = useErrorsStore();
 defineProps({
   forInput: "",
