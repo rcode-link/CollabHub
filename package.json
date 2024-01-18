@@ -58,6 +58,7 @@
         "prosemirror-view": "^1.32.4",
         "pusher-js": "^8.3.0",
         "uuid": "^9.0.1",
+        "volar-service-vetur": "^0.0.17",
         "vue": "^3.3.7",
         "vue-clipboard3": "^2.0.0",
         "vue-flatpickr-component": "^11.0.3",

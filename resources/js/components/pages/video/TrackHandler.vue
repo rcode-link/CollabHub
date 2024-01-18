@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { FwbButton } from "flowbite-vue";
+//@ts-ignore
+import { FwbButton, FwbBadge } from "flowbite-vue";
 import MicrophoneSlashIcon from "../../shared/icons/MicrophoneSlashIcon.vue";
 import { computed } from "vue";
 import { Track } from "livekit-client";
@@ -8,6 +9,7 @@ const props = defineProps<{
   tracks: Track[];
   userImage?: string;
   enableAudio: boolean;
+  name: string;
 }>();
 const filterTracks = computed(() => {
   if (!props.enableAudio) {
@@ -60,6 +62,9 @@ const isVideoDisabled = computed(() => {
     >
       <MicrophoneSlashIcon class="w-4 h-4" />
     </fwb-button>
+    <div class="username bg-white absolute bottom-1 left-1 px-2 rounded">
+      {{ name }}
+    </div>
   </div>
 </template>
 <style scoped>

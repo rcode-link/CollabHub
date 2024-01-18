@@ -76,12 +76,12 @@ export const useLiveKit = defineStore("liveKitStore", () => {
             });
         }
 
-        if (!tracks.value[participant.identity]) {
+        if (!tracks.value[participant.name ?? participant.identity]) {
             return;
         }
 
-        tracks.value[participant.identity] = tracks.value[
-            participant.identity
+        tracks.value[participant.name ?? participant.identity] = tracks.value[
+            participant.name ?? participant.identity
         ].map((obj) => {
             if (obj.sid === track.track.sid) {
                 return track.track;
@@ -97,16 +97,22 @@ export const useLiveKit = defineStore("liveKitStore", () => {
         publication: RemoteTrackPublication,
         participant: RemoteParticipant
     ) {
-        if (!tracks.value.hasOwnProperty(participant.identity)) {
-            tracks.value[participant.identity] = [];
+        if (
+            !tracks.value.hasOwnProperty(
+                participant.name ?? participant.identity
+            )
+        ) {
+            tracks.value[participant.name ?? participant.identity] = [];
         }
+
+        console.log({ participant: participant.name });
 
         if (track.source === "screen_share") {
             videoShareTrack.value.push(track);
             return;
         }
 
-        tracks.value[participant.identity].push(track);
+        tracks.value[participant.name ?? participant.identity].push(track);
 
         handleMuteAndUnMute(publication, participant);
     }
@@ -122,14 +128,14 @@ export const useLiveKit = defineStore("liveKitStore", () => {
             return;
         }
 
-        tracks.value[participant.identity] = tracks.value[
-            participant.identity
+        tracks.value[participant.name ?? participant.identity] = tracks.value[
+            participant.name ?? participant.identity
         ].filter((obj) => {
             return obj.sid !== track.sid;
         });
 
-        if (!tracks.value[participant.identity].length) {
-            delete tracks.value[participant.identity];
+        if (!tracks.value[participant.name ?? participant.identity].length) {
+            delete tracks.value[participant.name ?? participant.identity];
         }
     }
 
