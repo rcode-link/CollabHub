@@ -55,8 +55,8 @@ RUN mv composer.phar /usr/local/bin/composer
 COPY . .
 RUN rm storage/logs/laravel.log
 RUN composer install
-RUN #rm -rf public/build
-RUN #npm ci && npm run build
+RUN rm -rf public/build
+RUN npm ci && npm run build
 ADD deploy/prod/supervisord.conf /etc/
 RUN mkdir -p /var/log/supervisor
 EXPOSE 80
