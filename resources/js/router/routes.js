@@ -158,12 +158,12 @@ export default [
         ],
     },
     {
-        path: "/costumers",
-        name: "costumer.index",
+        path: "/invoices",
+        name: "invoices.index",
         meta: {
             middleware: auth,
         },
-        component: () => import("../components/pages/customers/Index.vue"),
+        component: () => import("../components/pages/invoices/Index.vue"),
     },
     {
         path: "/open/:slug",
