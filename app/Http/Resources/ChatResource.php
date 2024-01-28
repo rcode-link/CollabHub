@@ -65,11 +65,11 @@ class ChatResource extends JsonResource
                     ]);
                 }
 
-                if($message === '' && $this->last_message->videocalls){
+                if ($message === '' && $this->last_message->videocalls) {
                     $message = 'Call';
                 }
 
-                if($message === '' && $this->last_message->media){
+                if ($message === '' && $this->last_message->media) {
                     $message = 'Media';
                 }
 
@@ -85,8 +85,10 @@ class ChatResource extends JsonResource
 
     public function getChatTypeAndTitle(): array
     {
-        if ($this->chatable_type === User::class &&
-            $this->users_count <= $this->NUMBER_OF_USERS_IN_PRIVATE_CHAT) {
+        if (
+            $this->chatable_type === User::class &&
+            $this->users_count <= $this->NUMBER_OF_USERS_IN_PRIVATE_CHAT
+        ) {
             $user = $this->users->first();
             return [
                 'title' => $user?->name,
@@ -107,7 +109,7 @@ class ChatResource extends JsonResource
     private function getChattableKey(): string
     {
 
-        if($this->chatable_type === Task::class){
+        if ($this->chatable_type === Task::class && $this->chatable) {
             return $this->chatable->task_id;
         }
 
