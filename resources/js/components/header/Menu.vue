@@ -57,6 +57,14 @@
         </router-link>
         <router-link
           class="flex justify-center items-center relative navbar-link"
+          :to="{ name: 'costumer.index' }"
+        >
+          <tippy content="Customers">
+            <BanknotesIcon class="w-6 h-6" />
+          </tippy>
+        </router-link>
+        <router-link
+          class="flex justify-center items-center relative navbar-link"
           :to="{ name: 'projects' }"
         >
           <tippy content="Reports">
@@ -221,6 +229,7 @@ import ChartPieIcon from "../shared/icons/ChartPieIcon.vue";
 import HomeIcon from "../shared/icons/HomeIcon.vue";
 import ChatIcon from "../shared/icons/ChatIcon.vue";
 import ArchiveBoxIcon from "../shared/icons/ArchiveBoxIcon.vue";
+import BanknotesIcon from "../shared/icons/BanknotesIcon.vue";
 import CreateTaskForm from "../pages/project/tasks/Form.vue";
 
 const createTasks = useTasksStore();
