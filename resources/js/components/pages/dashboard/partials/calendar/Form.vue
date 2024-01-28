@@ -54,8 +54,8 @@ const date = ref("");
 
 watch(
   () => calendar.form.start_time,
-  () => {
-    if (calendar.form.end_time) {
+  (newVal, oldVal) => {
+    if (oldVal === "") {
       return;
     }
     calendar.form.end_time = DateTime.fromISO(calendar.form.start_time)
