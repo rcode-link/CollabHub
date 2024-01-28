@@ -33,10 +33,10 @@ class FileController extends Controller
         switch ($data['entity_type']) {
             case 'project':
                 $data['entity_type'] = Project::class;
-                $numberOfFilesInProject = File::where('entity_id', $request->get('entity_id'))
-                    ->where('entity_type', Project::class)->where('type', 'file')->count() + 1;
+                $numberOfFilesInProject = File::select('id')->where('entity_id', $request->get('entity_id'))
+                    ->where('entity_type', Project::class)->where('type', 'file')->orderByDesc('id')->first();
                 $projectKey = Project::whereId($request->get('entity_id'))->select('key')->firstOrFail();
-                $data['file_id'] = $projectKey->key . '-D-' . $numberOfFilesInProject;
+                $data['file_id'] = $projectKey->key . '-D-' . ($numberOfFilesInProject->id + 1);
                 break;
             default:
 
@@ -71,7 +71,7 @@ class FileController extends Controller
     public function update(UpdateFilesRequest $request, $file)
     {
         $data = $request->validated();
-        File::whereFileId($file)->update($data);
+        File::whereId($file)->update($data);
 
         return response()->noContent();
     }
