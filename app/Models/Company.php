@@ -38,6 +38,24 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media;
  * @method static Builder|Company whereUpdatedAt($value)
  * @property-read Collection<int, \App\Models\Permission> $permissions
  * @property-read int|null $permissions_count
+ * @property string|null $address
+ * @property string|null $city
+ * @property string|null $zip
+ * @property string|null $country
+ * @property string|null $billing_address
+ * @property string|null $billing_city
+ * @property string|null $billing_zip
+ * @property string|null $billing_country
+ * @property int $is_costumer_company
+ * @method static Builder|Company whereAddress($value)
+ * @method static Builder|Company whereBillingAddress($value)
+ * @method static Builder|Company whereBillingCity($value)
+ * @method static Builder|Company whereBillingCountry($value)
+ * @method static Builder|Company whereBillingZip($value)
+ * @method static Builder|Company whereCity($value)
+ * @method static Builder|Company whereCountry($value)
+ * @method static Builder|Company whereIsCostumerCompany($value)
+ * @method static Builder|Company whereZip($value)
  * @mixin Eloquent
  */
 class Company extends Model implements HasMedia
@@ -45,7 +63,16 @@ class Company extends Model implements HasMedia
     use HasFactory, InteractsWithMedia;
 
     protected $fillable = [
-        'name'
+        'name',
+        'address',
+        'city',
+        'zip',
+        'country',
+        'billing_address',
+        'billing_city',
+        'billing_zip',
+        'billing_country',
+        'is_costumer_company'
     ];
 
     /**
@@ -75,14 +102,5 @@ class Company extends Model implements HasMedia
     public function users(): BelongsToMany
     {
         return $this->belongsToMany(User::class, 'user_company');
-    }
-
-    public function permissions(): MorphMany
-    {
-        return $this->morphMany(Permission::class, 'resourceable');
-    }
-
-    public function projects(){
-
     }
 }

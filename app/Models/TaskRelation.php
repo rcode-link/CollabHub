@@ -26,6 +26,8 @@ use Illuminate\Support\Carbon;
  * @method static Builder|TaskRelation whereUpdatedAt($value)
  * @property int $can_parent_be_closed
  * @method static Builder|TaskRelation whereCanParentBeClosed($value)
+ * @property int|null $project_id
+ * @method static Builder|TaskRelation whereProjectId($value)
  * @mixin Eloquent
  */
 class TaskRelation extends Model

@@ -76,6 +76,8 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media;
  * @method static Builder|User whereDeletedAt($value)
  * @method static Builder|User withTrashed()
  * @method static Builder|User withoutTrashed()
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Event> $events
+ * @property-read int|null $events_count
  * @mixin Eloquent
  */
 class User extends Authenticatable implements HasMedia
@@ -159,25 +161,25 @@ class User extends Authenticatable implements HasMedia
                 ->get();
 
             $messageContent = [
-                    "type"=> "doc",
-                    "content"=> [
-                        [
-                            "type"=> "paragraph",
-                            "content"=> [
-                                [
-                                    "type"=> "mention",
-                                    "attrs"=> [
-                                        "id"=> $user->id,
-                                        "label"=> $user->name
-                                    ]
-                                ],
-                                [
-                                    "type"=> "text",
-                                    "text"=> " just joined your company"
+                "type" => "doc",
+                "content" => [
+                    [
+                        "type" => "paragraph",
+                        "content" => [
+                            [
+                                "type" => "mention",
+                                "attrs" => [
+                                    "id" => $user->id,
+                                    "label" => $user->name
                                 ]
+                            ],
+                            [
+                                "type" => "text",
+                                "text" => " just joined your company"
                             ]
                         ]
                     ]
+                ]
             ];
 
             // send messages to other users
@@ -225,9 +227,9 @@ class User extends Authenticatable implements HasMedia
         Gate::authorize('check-permission', [$model, $action]);
     }
 
-    public function company(): BelongsToMany
+    public function company(): BelongsTo
     {
-        return $this->belongsToMany(Company::class, 'user_company');
+        return $this->belongsTo(Company::class, 'user_company')->where('is_costumer_company', false);
     }
 
 
