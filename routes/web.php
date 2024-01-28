@@ -19,7 +19,7 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/storage/{media}/{slug}', function (Request $request, $media) {
-    if($media === 'images'){
+    if ($media === 'images') {
         return response()->file(storage_path('/app/public/images/avatar.png'));
     }
     $media = Spatie\MediaLibrary\MediaCollections\Models\Media::find($media);
@@ -29,6 +29,10 @@ Route::get('/storage/{media}/{slug}', function (Request $request, $media) {
 Route::match(['PROPFIND', 'GET'], '/calendar', [CalendarController::class, 'calDav'])->middleware('auth.basic');
 
 Route::get('/video-call/{video}/join', [VideoCallController::class, 'getVideoCallToken']);
+
+Route::post('/login', function () {
+
+});
 
 Route::middleware([\App\Http\Middleware\FrontendEnv::class])->group(function () {
     Route::view('/', 'welcome');

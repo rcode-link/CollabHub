@@ -80,7 +80,7 @@ class BroadcastCustom
             Log::error('Pusher', $e);
         }
 
-//       Middleware check is not working
+        //       Middleware check is not working
 //        abort_if(count($chanel->middleware) > 0 && !Auth::check($chanel->middleware), Response::HTTP_FORBIDDEN);
 //
 
@@ -117,7 +117,7 @@ class BroadcastCustom
     {
         Route::post('/pusher/auth', function (Request $request) {
             return BroadcastCustom::getInstance()->check($request);
-        });
+        })->name('api.pusher.auth');
     }
 
 }
