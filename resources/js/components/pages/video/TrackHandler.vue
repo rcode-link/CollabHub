@@ -5,12 +5,18 @@ import MicrophoneSlashIcon from "../../shared/icons/MicrophoneSlashIcon.vue";
 import { computed } from "vue";
 import { Track } from "livekit-client";
 
-const props = defineProps<{
-  tracks: Track[];
-  userImage?: string;
-  enableAudio: boolean;
-  name: string;
-}>();
+const props = withDefaults(
+  defineProps<{
+    tracks: Track[];
+    userImage?: string;
+    enableAudio: boolean;
+    name: string;
+  }>(),
+  {
+    userImage:
+      "https://imgs.search.brave.com/GrTMprW4fg05XTsfzacsNofnbaMJuXlbLIXZqUAn9vg/rs:fit:860:0:0/g:ce/aHR0cHM6Ly90NC5m/dGNkbi5uZXQvanBn/LzAwLzY0LzY3LzI3/LzM2MF9GXzY0Njcy/NzM2X1U1a3BkR3M5/a2VVbGw4Q1JRM3Az/WWFFdjJNNnFrVlk1/LmpwZw",
+  }
+);
 const filterTracks = computed(() => {
   if (!props.enableAudio) {
     return props.tracks.filter((obj) => obj.kind !== Track.Kind.Audio);

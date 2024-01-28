@@ -1,9 +1,7 @@
 import {
     createLocalTracks,
     LocalParticipant,
-    LocalTrack,
     LocalTrackPublication,
-    ParticipantEvent,
     RemoteParticipant,
     RemoteTrack,
     RemoteTrackPublication,
@@ -14,9 +12,9 @@ import {
     VideoPresets,
 } from "livekit-client";
 import { defineStore } from "pinia";
-import { reactive, ref } from "vue";
+import { computed, reactive, ref } from "vue";
 import * as _ from "lodash";
-
+import "../declaration";
 export interface iTrack {
     track: Track;
     speaking: boolean;
@@ -35,6 +33,7 @@ export interface LocalParticipantModel {
     enableCamera: boolean;
     token: string | null;
 }
+
 export const useLiveKit = defineStore("liveKitStore", () => {
     const tracks = ref<{
         [key: string]: Track[];
@@ -55,24 +54,22 @@ export const useLiveKit = defineStore("liveKitStore", () => {
     });
 
     const handleMuteAndUnMute = (
-        track:
-            | LocalTrackPublication
-            | RemoteTrackPublication
-            | TrackPublication,
-        participant: LocalParticipant | RemoteParticipant
+        publication: TrackPublication,
+        participant: any
     ) => {
+        const track = publication.track;
         if (
             _.find(
                 localTracks.value,
-                (obj: Track) => obj.sid === track.trackSid
+                (obj: Track) => obj.sid === publication.trackSid
             )
         ) {
-            localTracks.value = localTracks.value.map((obj) => {
-                if (obj.sid === track.track.sid) {
-                    return track.track;
+            localTracks.value = localTracks.value?.map((obj) => {
+                if (obj.sid === track?.sid) {
+                    return track as Track;
                 }
 
-                return obj;
+                return obj as Track;
             });
         }
 
@@ -83,8 +80,8 @@ export const useLiveKit = defineStore("liveKitStore", () => {
         tracks.value[participant.name ?? participant.identity] = tracks.value[
             participant.name ?? participant.identity
         ].map((obj) => {
-            if (obj.sid === track.track.sid) {
-                return track.track;
+            if (obj.sid === track?.sid) {
+                return track as Track;
             }
 
             return obj;
@@ -153,7 +150,7 @@ export const useLiveKit = defineStore("liveKitStore", () => {
             return;
         }
 
-        localTracks.value.push(track.track);
+        localTracks.value?.push(track.track as Track);
     }
 
     function handleLocalTrackUnPublished(
@@ -164,7 +161,7 @@ export const useLiveKit = defineStore("liveKitStore", () => {
             videoShareTrack.value = [];
             return;
         }
-        localTracks.value = localTracks.value.filter((obj) => {
+        localTracks.value = localTracks.value?.filter((obj) => {
             return obj.sid !== track.trackSid;
         });
     }
@@ -273,5 +270,13 @@ export const useLiveKit = defineStore("liveKitStore", () => {
         loadDevices,
         switchDevice,
         videoShareTrack,
+        getLocalTracks: computed((): Track[] | undefined => {
+            return localTracks.value;
+        }),
+        getVideoShareTracks: (): Track[] => {
+            return videoShareTrack.value.filter(
+                (obj) => obj.kind === Track.Kind.Video
+            ) as Track[];
+        },
     };
 });
