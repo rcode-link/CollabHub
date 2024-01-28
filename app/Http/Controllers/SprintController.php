@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreSprintRequest;
 use App\Http\Requests\UpdateSprintRequest;
+use App\Models\Board;
 use App\Models\Sprint;
 use Illuminate\Http\Request;
 
@@ -23,7 +24,8 @@ class SprintController extends Controller
     public function store(StoreSprintRequest $request)
     {
 
-        \Auth::user()->authorize('can-create-board', \Auth::user()->company()->first());
+        $board = Board::query()->select('project_id')->whereId($request->get('board_id'))->first();
+        \Auth::user()->authorize('can-create-board', $board->project_id);
         $sprint = Sprint::create($request->validated());
 
         if ($request->get('is_active', false)) {
@@ -36,7 +38,8 @@ class SprintController extends Controller
 
     public function activate(Request $request, Sprint $sprint)
     {
-        \Auth::user()->authorize('can-create-board', \Auth::user()->company()->first());
+        $sprint->load('board');
+        \Auth::user()->authorize('can-create-board', $sprint->board->project_id);
         $sprint->activate();
         return $sprint;
     }
