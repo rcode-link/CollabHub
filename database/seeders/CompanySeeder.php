@@ -13,7 +13,10 @@ class CompanySeeder extends Seeder
      */
     public function run(): void
     {
-        $company = Company::create(['name' => 'My company']);
+        $company = Company::create([
+            'name' => 'My company',
+            'is_costumer_company' => false
+        ]);
 
 
         $permissions = PermissionDefinition::all()
