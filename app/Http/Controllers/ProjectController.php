@@ -116,9 +116,9 @@ class ProjectController extends Controller
             $chat = Chat::whereHasMorph('chatable', Task::class, function (Builder $builder) use ($project) {
                 return $builder->where('project_id', $project->id);
             })->first();
-            $chat->users()->sync([]);
-            $chat->messages()->delete();
-            $chat->delete();
+            $chat?->users()->sync([]);
+            $chat?->messages()->delete();
+            $chat?->delete();
             Task::whereProjectId($project->id)->delete();
             File::whereHasMorph('entity', Project::class, function (Builder $builder) use ($project) {
                 return $builder->where('id', $project->id);
