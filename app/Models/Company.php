@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Support\Carbon;
@@ -56,6 +57,8 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media;
  * @method static Builder|Company whereCountry($value)
  * @method static Builder|Company whereIsCostumerCompany($value)
  * @method static Builder|Company whereZip($value)
+ * @property-read \App\Models\Invoice|null $invoices
+ * @property-read \App\Models\Payment|null $payments
  * @mixin Eloquent
  */
 class Company extends Model implements HasMedia
@@ -102,5 +105,14 @@ class Company extends Model implements HasMedia
     public function users(): BelongsToMany
     {
         return $this->belongsToMany(User::class, 'user_company');
+    }
+
+    public function invoices(): BelongsTo
+    {
+        return $this->belongsTo(Invoice::class);
+    }
+    public function payments(): BelongsTo
+    {
+        return $this->belongsTo(Payment::class);
     }
 }

@@ -12,7 +12,7 @@ export class ChatMessageService {
      * @returns any Paginated set of `ChatMessageResource`
      * @throws ApiError
      */
-    public static chatMessageIndex(
+    public static apiapiMessagesIndex(
         chat: number,
     ): CancelablePromise<{
         data: Array<ChatMessageResource>;
@@ -69,7 +69,7 @@ export class ChatMessageService {
      * @returns void
      * @throws ApiError
      */
-    public static chatMessageStore(
+    public static apiapiMessagesStore(
         chat: number,
         requestBody?: {
             message: string;
@@ -98,7 +98,7 @@ export class ChatMessageService {
      * @returns void
      * @throws ApiError
      */
-    public static chatMessageDestroy(
+    public static apiapiMessagesDestroy(
         id: string,
         requestBody?: Record<string, any>,
     ): CancelablePromise<void> {

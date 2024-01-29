@@ -13,7 +13,7 @@ export class SprintService {
      * @returns Sprint `Sprint`
      * @throws ApiError
      */
-    public static sprintActivate(
+    public static apiapiActivate(
         sprint: number,
         requestBody?: Record<string, any>,
     ): CancelablePromise<Sprint> {

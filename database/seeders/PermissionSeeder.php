@@ -42,6 +42,21 @@ class PermissionSeeder extends Seeder
                 'slug' => Str::slug('Can Manage Roles'),
             ],
             [
+                'scope' => PermissionsScopes::Company->value,
+                'name' => 'Can view billing info',
+                'slug' => Str::slug('can-view-billing-info'),
+            ],
+            [
+                'scope' => PermissionsScopes::Company->value,
+                'name' => 'Can manage customer companies',
+                'slug' => Str::slug('Can manage customer companies'),
+            ],
+            [
+                'scope' => PermissionsScopes::Company->value,
+                'name' => 'Can create invoice',
+                'slug' => Str::slug('Can create invoice'),
+            ],
+            [
                 'scope' => PermissionsScopes::Project->value,
                 'name' => 'Can View project',
                 'slug' => Str::slug('Can View project'),

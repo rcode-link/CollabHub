@@ -13,7 +13,7 @@ export class LoginService {
      * @returns any
      * @throws ApiError
      */
-    public static login(
+    public static apiapiLogin(
         requestBody?: {
             email: string;
             password: string;

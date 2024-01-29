@@ -12,7 +12,7 @@ export class CompanyUsersService {
      * @returns any Array of `UserResource`
      * @throws ApiError
      */
-    public static companyUsersIndex(
+    public static apiapiIndex(
         company: number,
     ): CancelablePromise<{
         data: Array<UserResource>;
@@ -33,7 +33,7 @@ export class CompanyUsersService {
      * @returns string
      * @throws ApiError
      */
-    public static companyUsersInvite(
+    public static apiapiInvite(
         requestBody?: Record<string, any>,
     ): CancelablePromise<string> {
         return __request(OpenAPI, {

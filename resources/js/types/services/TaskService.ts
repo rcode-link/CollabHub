@@ -12,7 +12,7 @@ export class TaskService {
      * @returns any Array of `TaskResource`
      * @throws ApiError
      */
-    public static taskGetRelations(
+    public static apiapiGetRelations(
         taskId: string,
     ): CancelablePromise<{
         data: Array<TaskResource>;
@@ -30,7 +30,7 @@ export class TaskService {
      * @returns void
      * @throws ApiError
      */
-    public static taskAddTaskToSprint(
+    public static apiapiAddTaskToSprint(
         requestBody?: {
             task_id: number;
             sprint_id: number;
@@ -51,7 +51,7 @@ export class TaskService {
      * @returns void
      * @throws ApiError
      */
-    public static taskRemoveFromSPrint(
+    public static apiapiRemoveFromSPrint(
         requestBody?: {
             task_id: number;
             sprint_id: number;
@@ -73,7 +73,7 @@ export class TaskService {
      * @returns any Array of `TaskResource`
      * @throws ApiError
      */
-    public static taskTasksForSprint(
+    public static apiapiTasksForSprint(
         sprintId: number,
         projectId: number,
     ): CancelablePromise<{
@@ -96,7 +96,7 @@ export class TaskService {
      * @returns void
      * @throws ApiError
      */
-    public static taskChangeTaskStatus(
+    public static apiapiChangeTaskStatus(
         requestBody?: {
             task_id: number;
             sprint_id?: number;
@@ -117,7 +117,7 @@ export class TaskService {
      * @returns any Array of `TaskResource`
      * @throws ApiError
      */
-    public static taskSearch(): CancelablePromise<{
+    public static apiapiSearch(): CancelablePromise<{
         data: Array<TaskResource>;
     }> {
         return __request(OpenAPI, {

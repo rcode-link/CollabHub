@@ -57,7 +57,7 @@
         </router-link>
         <router-link
           class="flex justify-center items-center relative navbar-link"
-          :to="{ name: 'invoices.index' }"
+          :to="{ name: 'invoices' }"
         >
           <tippy content="Customers">
             <BanknotesIcon class="w-6 h-6" />

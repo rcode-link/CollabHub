@@ -159,11 +159,26 @@ export default [
     },
     {
         path: "/invoices",
-        name: "invoices.index",
+        name: "invoices",
         meta: {
             middleware: auth,
         },
-        component: () => import("../components/pages/invoices/Index.vue"),
+        component: () => import("../components/pages/invoices/Router.vue"),
+        children: [
+            {
+                path: "index",
+                default: true,
+                name: "invoices.index",
+                component: () =>
+                    import("../components/pages/invoices/Index.vue"),
+            },
+            {
+                path: ":id",
+                name: "invoices.details",
+                component: () =>
+                    import("../components/pages/invoices/details/Index.vue"),
+            },
+        ],
     },
     {
         path: "/open/:slug",

@@ -12,7 +12,7 @@ export class CalendarService {
      * @returns any Array of `EventResource`
      * @throws ApiError
      */
-    public static calendarGetMyEvents(): CancelablePromise<{
+    public static apiapiGetMyEvents(): CancelablePromise<{
         data: Array<EventResource>;
     }> {
         return __request(OpenAPI, {
@@ -25,7 +25,7 @@ export class CalendarService {
      * @returns any
      * @throws ApiError
      */
-    public static calendarInsertCalendarItem(
+    public static apiapiInsertCalendarItem(
         requestBody?: {
             summary: string;
             description?: string | null;
@@ -56,7 +56,7 @@ export class CalendarService {
      * @returns string
      * @throws ApiError
      */
-    public static calendarUpdate(
+    public static apiapiCalendarUpdate(
         event: number,
         requestBody?: {
             summary: string;
@@ -92,7 +92,7 @@ export class CalendarService {
      * @returns void
      * @throws ApiError
      */
-    public static calendarDestroy(
+    public static apiapiDestroy(
         event: number,
         requestBody?: Record<string, any>,
     ): CancelablePromise<void> {
@@ -114,7 +114,7 @@ export class CalendarService {
      * @returns any `EventResource`
      * @throws ApiError
      */
-    public static calendarView(
+    public static apiapiEventView(
         event: number,
     ): CancelablePromise<{
         data: EventResource;

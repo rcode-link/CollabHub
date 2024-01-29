@@ -11,7 +11,7 @@ export class PusherService {
      * @returns any
      * @throws ApiError
      */
-    public static pusherWebhook(
+    public static apiapiWebhook(
         requestBody?: Record<string, any>,
     ): CancelablePromise<{
         data: string;

@@ -12,7 +12,7 @@ export class VideoCallService {
      * @returns string
      * @throws ApiError
      */
-    public static videoCallStartVideoCall(
+    public static apiapiStartVideoCall(
         chat: string,
         requestBody?: Record<string, any>,
     ): CancelablePromise<string> {
@@ -32,7 +32,7 @@ export class VideoCallService {
      * @returns any
      * @throws ApiError
      */
-    public static videoCallGetVideoCallToken0(
+    public static apiapiGetGetVideoCallToken(
         id: string,
         name: string,
     ): CancelablePromise<{
@@ -59,7 +59,7 @@ export class VideoCallService {
      * @returns any
      * @throws ApiError
      */
-    public static videoCallGetVideoCallToken1(
+    public static apiapiPutGetVideoCallToken(
         id: string,
         requestBody?: {
             name: string;

@@ -121,7 +121,7 @@ export class ProjectService {
      * @returns any Array of `UserResource`
      * @throws ApiError
      */
-    public static projectGetProjectUsers(
+    public static apiapiGetProjectUsers(
         projectId: number,
     ): CancelablePromise<{
         data: Array<UserResource>;

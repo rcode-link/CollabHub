@@ -12,7 +12,7 @@ export class RoleService {
      * @returns string
      * @throws ApiError
      */
-    public static roleGetResource(): CancelablePromise<string> {
+    public static apiapiGetResource(): CancelablePromise<string> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/v1/role/resources',
@@ -23,7 +23,7 @@ export class RoleService {
      * @returns string
      * @throws ApiError
      */
-    public static roleGetAllResources(
+    public static apiapiGetAllResources(
         role: string,
     ): CancelablePromise<string> {
         return __request(OpenAPI, {
@@ -40,7 +40,7 @@ export class RoleService {
      * @returns void
      * @throws ApiError
      */
-    public static roleAddResource(
+    public static apiapiAddResource(
         role: number,
         requestBody?: {
             resource_type?: PermissionsScopes;
@@ -68,7 +68,7 @@ export class RoleService {
      * @returns string
      * @throws ApiError
      */
-    public static roleRemoveUserFromRole(
+    public static apiapiRemoveUserFromRole(
         role: number,
         requestBody?: {
             user?: number;

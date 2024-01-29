@@ -12,7 +12,7 @@ export class VacationRequestService {
      * @returns string
      * @throws ApiError
      */
-    public static vacationRequest(
+    public static apiapiVacationEvent(
         event: number,
         requestBody?: {
             status?: 'accept' | 'decline';

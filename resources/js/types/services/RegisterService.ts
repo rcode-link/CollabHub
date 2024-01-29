@@ -11,7 +11,7 @@ export class RegisterService {
      * @returns any
      * @throws ApiError
      */
-    public static register(
+    public static apiapiRegister(
         requestBody?: {
             email: string;
             name: string;

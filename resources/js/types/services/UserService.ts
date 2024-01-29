@@ -111,7 +111,7 @@ export class UserService {
      * @returns void
      * @throws ApiError
      */
-    public static userUpdatePassword(
+    public static apiapiUpdatePassword(
         requestBody?: {
             current_password: string;
             password: string;

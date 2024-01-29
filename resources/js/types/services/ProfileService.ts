@@ -11,7 +11,7 @@ export class ProfileService {
      * @returns any `UserResource`
      * @throws ApiError
      */
-    public static profileView(): CancelablePromise<{
+    public static apiapiView(): CancelablePromise<{
         data: UserResource;
     }> {
         return __request(OpenAPI, {
@@ -24,7 +24,7 @@ export class ProfileService {
      * @returns void
      * @throws ApiError
      */
-    public static profileUpdate(
+    public static apiapiUpdate(
         requestBody?: {
             name: string;
             email?: string;
@@ -45,7 +45,7 @@ export class ProfileService {
      * @returns any
      * @throws ApiError
      */
-    public static profileUpdateProfilePicture(
+    public static apiapiUpdateProfilePicture(
         requestBody?: Record<string, any>,
     ): CancelablePromise<{
         data: string;

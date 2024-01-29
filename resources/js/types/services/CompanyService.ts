@@ -12,7 +12,7 @@ export class CompanyService {
      * @returns string
      * @throws ApiError
      */
-    public static companyGetKeys(): CancelablePromise<Array<string>> {
+    public static apiapiGetKeys(): CancelablePromise<Array<string>> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/v1/get-organization-keys',
@@ -130,7 +130,7 @@ export class CompanyService {
      * @returns Company `Company`
      * @throws ApiError
      */
-    public static companyUpdate3(
+    public static apiapiCompaniesUpdate(
         company: number,
         formData?: {
             name?: string;

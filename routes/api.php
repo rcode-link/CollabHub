@@ -26,7 +26,8 @@ use App\Http\Controllers\{
     UserController,
     VacationRequestController,
     VideoCallController,
-    EventController
+    EventController,
+    CustomerCompanyController
 };
 use Illuminate\Support\Facades\Route;
 
@@ -110,6 +111,9 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::apiResource('/users', UserController::class);
     Route::put('/user/change-password', [UserController::class, 'updatePassword'])->name('api.updatePassword');
     Route::put('/vacation/{event}', VacationRequestController::class)->name('api.vacation.event');
+
+    Route::apiResource('/customers', CustomerCompanyController::class);
+
     \App\Helpers\Socket\BroadcastCustom::route();
 });
 Route::post('/register', RegisterController::class)->name('api.register');

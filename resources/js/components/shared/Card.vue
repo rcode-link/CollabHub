@@ -1,17 +1,22 @@
-<script setup>
-
-defineProps({
-    color: 'bg-white'
-})
-
+<script>
+export default {
+  setup({ color }) {
+    return {
+      color,
+    };
+  },
+};
 </script>
 
 <template>
-<div :class="`flex p-6 border border-gray-200 rounded-lg shadow dark:border-gray-700 ${color ?? 'bg-white dark:bg-gray-800'}`">
+  <div
+    :class="`flex p-6 border border-gray-200 rounded-lg shadow dark:border-gray-700 ${
+      color ?? 'bg-white dark:bg-gray-800'
+    }`"
+  >
     <slot></slot>
-</div>
+  </div>
 </template>
 
 <style scoped>
-
 </style>

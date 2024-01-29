@@ -12,7 +12,7 @@ export class DashboardService {
      * @returns any Array of `ChatResource`
      * @throws ApiError
      */
-    public static dashboardUnreadMessages(): CancelablePromise<{
+    public static apiapiUnreadMessages(): CancelablePromise<{
         data: Array<ChatResource>;
     }> {
         return __request(OpenAPI, {
@@ -24,7 +24,7 @@ export class DashboardService {
      * @returns any Array of `TaskResource`
      * @throws ApiError
      */
-    public static dashboardOpenTasks(): CancelablePromise<{
+    public static apiapiOpenTasks(): CancelablePromise<{
         data: Array<TaskResource>;
     }> {
         return __request(OpenAPI, {

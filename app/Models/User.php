@@ -227,9 +227,9 @@ class User extends Authenticatable implements HasMedia
         Gate::authorize('check-permission', [$model, $action]);
     }
 
-    public function company(): BelongsTo
+    public function company(): BelongsToMany
     {
-        return $this->belongsTo(Company::class, 'user_company')->where('is_costumer_company', false);
+        return $this->belongsToMany(Company::class, 'user_company')->where('is_costumer_company', false);
     }
 
 

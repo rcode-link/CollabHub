@@ -11,7 +11,7 @@ export class PermissionService {
      * @returns string
      * @throws ApiError
      */
-    public static permissionMyPermissions(): CancelablePromise<Array<string>> {
+    public static apiapiMyPermissions(): CancelablePromise<Array<string>> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/v1/permissions/my',

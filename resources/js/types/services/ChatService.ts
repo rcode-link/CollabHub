@@ -11,7 +11,7 @@ export class ChatService {
      * @returns any
      * @throws ApiError
      */
-    public static chatGetNumberOfUnreadMessages(): CancelablePromise<{
+    public static apiapiGetNumberOfUnreadMessages(): CancelablePromise<{
         messages: string;
         total: string;
     }> {

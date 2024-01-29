@@ -22,6 +22,8 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder|Payment whereInvoiceId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Payment whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Payment whereValue($value)
+ * @property int $company_id
+ * @method static \Illuminate\Database\Eloquent\Builder|Payment whereCompanyId($value)
  * @mixin \Eloquent
  */
 class Payment extends Model
