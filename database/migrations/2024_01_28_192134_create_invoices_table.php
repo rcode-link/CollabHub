@@ -13,7 +13,9 @@ return new class extends Migration {
         Schema::create('invoices', function (Blueprint $table) {
             $table->id();
             $table->foreignId('company_id')->references('id')->on('companies');
+            $table->dateTimeTz('date');
             $table->dateTimeTz('due_date');
+            $table->string('number');
             $table->boolean('sent');
             $table->longText('note');
             $table->integer('total');

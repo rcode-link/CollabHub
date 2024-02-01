@@ -1,6 +1,5 @@
 <script lang="ts">
 import { ref } from "vue";
-import "../../../declaration";
 import Form from "./Form.vue";
 //@ts-ignore
 import { TailwindPagination } from "laravel-vue-pagination";

@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import "../../../declaration";
 import { useLiveKit, LocalParticipantModel } from "../../../functions/liveKit";
 //@ts-ignore
 import { reactive } from "vue";

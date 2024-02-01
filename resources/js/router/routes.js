@@ -43,9 +43,15 @@ export default [
             },
             {
                 name: "settings.roles",
-                path: "roles",
+                path: "roles/:id",
                 component: () =>
                     import("../components/pages/settings/role/Index.vue"),
+            },
+            {
+                name: "settings.invoice-items",
+                path: "invoice/items",
+                component: () =>
+                    import("../components/pages/settings/invoice/Item.vue"),
             },
         ],
     },
@@ -177,6 +183,14 @@ export default [
                 name: "invoices.details",
                 component: () =>
                     import("../components/pages/invoices/details/Index.vue"),
+            },
+            {
+                path: ":id/invoice/:inv_id",
+                name: "invoices.form",
+                component: () =>
+                    import(
+                        "../components/pages/invoices/details/partials/invoice/View.vue"
+                    ),
             },
         ],
     },

@@ -11,7 +11,7 @@ class UpdateInvoiceRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +22,11 @@ class UpdateInvoiceRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'number' => ['nullable', 'unique:invoices,number'],
+            'date' => ['nullable', 'date'],
+            'due_date' => ['nullable', 'date'],
+            'note' => ['nullable', 'string'],
+            'sent' => ['nullable', 'bool']
         ];
     }
 }

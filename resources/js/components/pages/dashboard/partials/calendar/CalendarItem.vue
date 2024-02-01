@@ -5,8 +5,9 @@
     :content="`
 Title
 <p class='text-lg'>${obj.summary}</p>
-Description:
-<p class='max-h-40 overflow-auto'>${obj.description}</p>
+<p class='max-h-40 overflow-auto'>
+Description: <br />
+  ${obj.description ?? '<br/>'}</p>
 Start time: ${DateTime.fromISO(obj.start_time).toLocaleString(
       DateTime.DATETIME_SHORT
     )} <br /> End time: ${DateTime.fromISO(obj.end_time).toLocaleString(

@@ -30,9 +30,39 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder|Invoice whereSent($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Invoice whereTotal($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Invoice whereUpdatedAt($value)
+ * @property string $number
+ * @method static \Illuminate\Database\Eloquent\Builder|Invoice whereNumber($value)
+ * @property string $date
+ * @method static \Illuminate\Database\Eloquent\Builder|Invoice whereDate($value)
+ * @property-read \App\Models\Company $company
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\InvoiceItem> $items
+ * @property-read int|null $items_count
  * @mixin \Eloquent
  */
 class Invoice extends Model
 {
     use HasFactory;
+    protected $fillable = [
+        'id',
+        'company_id',
+        'due_date',
+        'sent',
+        'note',
+        'total',
+        'discont',
+        'number',
+        'date',
+    ];
+
+
+    public function company()
+    {
+        return $this->belongsTo(Company::class);
+    }
+
+    public function items()
+    {
+        return $this->hasMany(InvoiceItem::class);
+    }
+
 }

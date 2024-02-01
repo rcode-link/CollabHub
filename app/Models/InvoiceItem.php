@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Events\InvoiceItemsUpdate;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -28,9 +29,51 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder|InvoiceItem whereQty($value)
  * @method static \Illuminate\Database\Eloquent\Builder|InvoiceItem whereTotal($value)
  * @method static \Illuminate\Database\Eloquent\Builder|InvoiceItem whereUpdatedAt($value)
+ * @property int|null $unit
+ * @property-read \App\Models\BillingItem $billingItem
+ * @method static \Illuminate\Database\Eloquent\Builder|InvoiceItem whereUnit($value)
  * @mixin \Eloquent
  */
 class InvoiceItem extends Model
 {
     use HasFactory;
+
+
+    protected $fillable = [
+        'price',
+        'qty',
+        'total',
+        'billing_item_id',
+    ];
+
+
+    static function invoiceItemAddedOrUpdated(InvoiceItem $invoiceItem)
+    {
+        $invoiceSum = Invoice::whereId($invoiceItem->invoice_id)->withSum('items', 'total')->firstOrFail();
+        $invoiceSum->update([
+            'total' => $invoiceSum->items_sum_total ?? 0
+        ]);
+        InvoiceItemsUpdate::dispatch($invoiceItem->invoice_id);
+    }
+
+    protected static function booted()
+    {
+        parent::booted();
+
+        self::created(fn(InvoiceItem $invoiceItem) => InvoiceItem::invoiceItemAddedOrUpdated($invoiceItem));
+
+        self::updated(fn(InvoiceItem $invoiceItem) => InvoiceItem::invoiceItemAddedOrUpdated($invoiceItem));
+
+        self::deleted(fn(InvoiceItem $invoiceItem) => InvoiceItem::invoiceItemAddedOrUpdated($invoiceItem));
+    }
+
+    public function billingItem()
+    {
+        return $this->belongsTo(BillingItem::class);
+    }
+
+    public function invoice()
+    {
+        $this->belongsTo(Invoice::class);
+    }
 }

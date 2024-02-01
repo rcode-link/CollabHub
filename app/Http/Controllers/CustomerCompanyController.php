@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\CustomerCompanyRequest;
 use App\Http\Resources\CustomerResource;
 use App\Models\Company;
 use Illuminate\Http\Request;
@@ -20,9 +21,9 @@ class CustomerCompanyController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(CustomerCompanyRequest $request)
     {
-        $data = $request->all();
+        $data = $request->validated();
         $data['is_costumer_company'] = true;
         Company::create($data);
     }
@@ -32,7 +33,7 @@ class CustomerCompanyController extends Controller
      */
     public function show(string $id)
     {
-        return new CustomerResource(Company::whereId($id)->with(['invoices', 'payments'])->firstOrFail());
+        return new CustomerResource(Company::whereId($id)->firstOrFail());
     }
 
     /**

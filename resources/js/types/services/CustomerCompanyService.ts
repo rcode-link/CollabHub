@@ -27,13 +27,28 @@ export class CustomerCompanyService {
      * @throws ApiError
      */
     public static apicustomersStore(
-        requestBody?: Record<string, any>,
+        requestBody?: {
+            name: string;
+            prefix: string;
+            address: string;
+            city: string;
+            zip: string;
+            country: string;
+            billing_address?: string | null;
+            billing_city?: string | null;
+            billing_zip?: string | null;
+            billing_country?: string | null;
+        },
     ): CancelablePromise<string> {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/v1/customers',
             body: requestBody,
             mediaType: 'application/json',
+            errors: {
+                403: `Authorization error`,
+                422: `Validation error`,
+            },
         });
     }
     /**

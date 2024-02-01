@@ -15,6 +15,7 @@ return new class extends Migration {
             $table->integer('price');
             $table->integer('qty');
             $table->integer('total');
+            $table->unsignedBigInteger('unit')->nullable();
             $table->foreignId('billing_item_id')->references('id')->on('billing_items');
             $table->foreignId('invoice_id')->references('id')->on('invoices');
             $table->timestamps();

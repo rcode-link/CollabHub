@@ -130,6 +130,14 @@ use Kalnoy\Nestedset\QueryBuilder;
  * @method static Collection<int, static> get($columns = ['*'])
  * @method static Collection<int, static> all($columns = ['*'])
  * @method static Collection<int, static> get($columns = ['*'])
+ * @method static Collection<int, static> all($columns = ['*'])
+ * @method static Collection<int, static> get($columns = ['*'])
+ * @method static Collection<int, static> all($columns = ['*'])
+ * @method static Collection<int, static> get($columns = ['*'])
+ * @method static Collection<int, static> all($columns = ['*'])
+ * @method static Collection<int, static> get($columns = ['*'])
+ * @method static Collection<int, static> all($columns = ['*'])
+ * @method static Collection<int, static> get($columns = ['*'])
  * @mixin Eloquent
  */
 class File extends Model

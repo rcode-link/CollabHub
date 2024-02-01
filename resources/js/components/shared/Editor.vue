@@ -17,7 +17,7 @@ import { SmilieReplacer } from "../../functions/smilieReplacer";
 import { useConvertTextToLink } from "../../functions/editor/convertTextToLink";
 import { chatDetails } from "../../store/chatStore";
 import vacation from "../shared/vacationPlugin/vacation";
-
+import { Markdown } from "tiptap-markdown";
 const chatStore = chatDetails();
 const props = defineProps({
   modelValue: "",
@@ -90,6 +90,7 @@ const editor = useEditor({
     TableCell,
     SmilieReplacer,
     textToLink.convertTextToLink,
+    Markdown,
   ],
   onUpdate() {
     emit("update:modelValue", editor.value?.getJSON());

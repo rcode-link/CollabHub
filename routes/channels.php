@@ -47,11 +47,14 @@ BroadcastCustom::getInstance()->channel('collaboration.*', function (User $user,
 BroadcastCustom::getInstance()->channel('task-updated.task.*', function (User $user, $chatId) {
     return true;
 });
+BroadcastCustom::getInstance()->channel('update-invoice.*', function (User $user, $chatId) {
+    return true;
+});
 
 BroadcastCustom::getInstance()->channel('task-updated.*', function (User $user, $project) {
     return $user->permissions()->pluck('permissions')->flatten()->contains("can-view-project.$project");
 });
 
 BroadcastCustom::getInstance()->channel('UpdateChatForUser.*', function (User $user, $userId) {
-    return $user->id === (int)$userId;
+    return $user->id === (int) $userId;
 });

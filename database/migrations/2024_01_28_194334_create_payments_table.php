@@ -13,8 +13,8 @@ return new class extends Migration {
         Schema::create('payments', function (Blueprint $table) {
             $table->id();
             $table->foreignId('invoice_id')->references('id')->on('invoices');
-            $table->foreignId('company_id')->references('id')->on('companies');
             $table->integer('value');
+            $table->dateTimeTz('date');
             $table->timestamps();
         });
     }

@@ -1,35 +1,67 @@
-<script setup>
+<script lang="ts">
 import Text from "./Text.vue";
 import { ref, watch } from "vue";
 
-const data = ref({});
-const showItems = ref(false);
-const timeOutRef = ref(null);
-const inputValue = ref("");
-const activeItem = ref(-1);
-const emit = defineEmits(["selected", "search"]);
-const props = defineProps({
-  items: [],
-});
+interface iItems {
+  items: {
+    value: any;
+    label: string;
+  };
+}
+export default {
+  components: {
+    Text,
+  },
+  props: ["items"],
+  setup({ items }: iItems, { emit }) {
+    const data = ref([]);
+    const showItems = ref(false);
+    const timeOutRef = ref<number | undefined>();
+    const inputValue = ref("");
+    const activeItem = ref(-1);
 
-const handleItemClick = (obj) => {
-  emit("selected", obj);
-  showItems.value = false;
-  inputValue.value = "";
-};
+    const handleItemClick = (obj: any) => {
+      emit("selected", obj);
+      showItems.value = false;
+      inputValue.value = "";
+    };
 
-watch(inputValue, () => {
-  clearTimeout(timeOutRef);
-  timeOutRef.value = setTimeout(() => {
-    emit("search", inputValue.value);
-  }, 300);
-});
-const handleUp = () => {};
-const handleDown = () => {
-  activeItem.value = activeItem.value + 1;
-  if (activeItem.value >= props.items.length) {
-    activeItem.value = 0;
-  }
+    watch(inputValue, () => {
+      clearTimeout(timeOutRef.value);
+      timeOutRef.value = setTimeout(() => {
+        emit("search", inputValue.value);
+      }, 300);
+    });
+    const handleUp = () => {};
+    const handleDown = () => {
+      activeItem.value = activeItem.value + 1;
+      //@ts-ignore
+      if (activeItem.value >= items.length) {
+        activeItem.value = 0;
+      }
+    };
+
+    watch(
+      () => items,
+      () => {
+        console.log({ items });
+      },
+      { deep: true }
+    );
+
+    return {
+      data,
+      showItems,
+      timeOutRef,
+      inputValue,
+      activeItem,
+      items,
+      handleItemClick,
+      handleUp,
+      handleDown,
+      emit,
+    };
+  },
 };
 </script>
 
@@ -64,7 +96,7 @@ const handleDown = () => {
         {{ obj.label }}
       </div>
       <div
-        v-if="items.length === 0"
+        v-if="!items || items.length === 0"
         class="flex gap-3 items-center text-gray-900 dark:text-white w-full px-4 py-2 border-b border-gray-200 dark:border-gray-600 hover:bg-gray-200 hover:dark:bg-gray-500 cursor-pointer"
       >
         No items found

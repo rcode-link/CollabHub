@@ -16,5 +16,7 @@ export type Company = {
     is_costumer_company: boolean;
     created_at: string | null;
     updated_at: string | null;
+    currency_id: number | null;
+    prefix: string | null;
 };
 

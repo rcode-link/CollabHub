@@ -6,7 +6,6 @@ import { TaskStatusResource } from "../types/models/TaskStatusResource";
 import { MediaResource } from "../types/models/MediaResource";
 import { TaskType } from "../types/models/TaskType";
 import { UserResource } from "../types/models/UserResource";
-import "../declaration";
 
 export interface iTask {
     id: number;

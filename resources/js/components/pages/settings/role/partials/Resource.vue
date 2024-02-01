@@ -1,42 +1,52 @@
-<script setup>
-
+<script setup lang="ts">
 import Card from "../../../../shared/Card.vue";
-import {FwbButton, FwbHeading, FwbSelect} from "flowbite-vue";
+import { FwbButton, FwbHeading, FwbSelect } from "flowbite-vue";
 import Label from "../../../../shared/Label.vue";
-import {reactive, ref, watch} from "vue";
-import {useRoute} from "vue-router";
-import {useRoleStore} from "../../../../../store/roleStore.js";
-import {toast} from "vue3-toastify";
+import { reactive, ref, watch } from "vue";
+import { useRoleStore } from "../../../../../store/roleStore";
+import { toast } from "vue3-toastify";
 
 const roleStore = useRoleStore();
 const model = reactive({
-    'resource_type': null,
-    'resource': null
-})
-
+    resource_type: null,
+    resource: null,
+});
 
 const resources = ref();
 const list = ref();
 
 const loadCompany = () => {
-    axios.get('/api/v1/role/resources', {
-        params: model
-    }).then(obj => resources.value = obj.data);
-}
+    axios
+        .get("/api/v1/role/resources", {
+            params: model,
+        })
+        .then((obj) => (resources.value = obj.data));
+};
 
-watch(() => model.resource_type, () => {
-    loadCompany();
-}, {
-    deep: true
-})
+watch(
+    () => model.resource_type,
+    () => {
+        loadCompany();
+    },
+    {
+        deep: true,
+    }
+);
 const load = () => {
-    axios.get(`/api/v1/role/resources/${roleStore.activeRole}`).then(res => list.value = res.data);
-}
+    window.axios
+        .get(`/api/v1/role/resources/${roleStore.activeRole}`)
+        .then((res) => (list.value = res.data));
+};
 const save = () => {
-    axios.post(`/api/v1/role/resources/${roleStore.activeRole}`, model).then(() => {
-        toast.success(`New resource added to ${roleStore.role.title} role`, {theme: localStorage.getItem('color-theme') ?? 'light'})
-    })
-}
+    window.axios
+        .post(`/api/v1/role/resources/${roleStore.activeRole}`, model)
+        .then(() => {
+            toast.success(
+                `New resource added to ${roleStore.role.title} role`,
+                { theme: localStorage.getItem("color-theme") ?? "light" }
+            );
+        });
+};
 
 load();
 </script>
@@ -52,21 +62,18 @@ load();
                     :options="[
                         {
                             name: 'Company',
-                            value: 'company'
+                            value: 'company',
                         },
-                         {
+                        {
                             name: 'Project',
-                            value: 'project'
-                        }
+                            value: 'project',
+                        },
                     ]"
                 />
             </div>
             <div class="mb-4">
                 <Label>Resource</Label>
-                <fwb-select
-                    v-model="model.resource"
-                    :options="resources"
-                />
+                <fwb-select v-model="model.resource" :options="resources" />
             </div>
             <fwb-button>Save</fwb-button>
         </form>
@@ -77,6 +84,4 @@ load();
     </Card>
 </template>
 
-<style scoped>
-
-</style>
+<style scoped></style>

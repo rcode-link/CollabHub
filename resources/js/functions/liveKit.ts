@@ -14,7 +14,6 @@ import {
 import { defineStore } from "pinia";
 import { computed, reactive, ref } from "vue";
 import * as _ from "lodash";
-import "../declaration";
 export interface iTrack {
     track: Track;
     speaking: boolean;

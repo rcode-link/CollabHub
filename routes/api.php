@@ -27,8 +27,11 @@ use App\Http\Controllers\{
     VacationRequestController,
     VideoCallController,
     EventController,
-    CustomerCompanyController
+    CustomerCompanyController,
+    InvoiceController,
 };
+use App\Http\Controllers\BillingItemController;
+use App\Http\Controllers\InvoiceItemController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -113,6 +116,10 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::put('/vacation/{event}', VacationRequestController::class)->name('api.vacation.event');
 
     Route::apiResource('/customers', CustomerCompanyController::class);
+    Route::apiResource('/invoices-items', InvoiceItemController::class);
+    Route::get('/invoices/{invoice}/download', [InvoiceController::class, 'download']);
+    Route::apiResource('/invoices', InvoiceController::class);
+    Route::apiResource('/billing-items', BillingItemController::class);
 
     \App\Helpers\Socket\BroadcastCustom::route();
 });

@@ -2,9 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\InvoiceItemsUpdate;
 use App\Http\Requests\StoreInvoiceRequest;
 use App\Http\Requests\UpdateInvoiceRequest;
+use App\Http\Resources\InvoiceResource;
+use App\Models\Company;
 use App\Models\Invoice;
+use Carbon\Carbon;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class InvoiceController extends Controller
 {
@@ -13,7 +18,8 @@ class InvoiceController extends Controller
      */
     public function index()
     {
-        //
+        $data = Invoice::whereCompanyId(request()->get('company_id'));
+        return InvoiceResource::collection($data->paginate());
     }
 
     /**
@@ -21,7 +27,16 @@ class InvoiceController extends Controller
      */
     public function store(StoreInvoiceRequest $request)
     {
-        //
+        $data = $request->validated();
+        $data['date'] = Carbon::parse($data['date']);
+        $data['due_date'] = Carbon::parse($data['due_date']);
+        $data['sent'] = false;
+        $data['note'] = '';
+        $data['total'] = 0;
+        $data['discont'] = 0;
+        $invoice = Invoice::create($data);
+
+        return new InvoiceResource($invoice);
     }
 
     /**
@@ -29,6 +44,9 @@ class InvoiceController extends Controller
      */
     public function show(Invoice $invoice)
     {
+
+        $invoice->load('company', 'items', 'items.billingItem');
+        return new InvoiceResource($invoice);
         //
     }
 
@@ -37,7 +55,17 @@ class InvoiceController extends Controller
      */
     public function update(UpdateInvoiceRequest $request, Invoice $invoice)
     {
-        //
+        $invoice->update($request->validated());
+        InvoiceItemsUpdate::dispatch($invoice->id);
+
+    }
+
+    public function download(Invoice $invoice)
+    {
+        $invoice->load('items', 'items.billingItem', 'company');
+        $company = Company::whereIsCostumerCompany(false)->firstOrFail();
+        $pdf = Pdf::loadView('pdf.invoice', ['model' => $invoice, 'company' => $company]);
+        return $pdf->stream('document.pdf');
     }
 
     /**

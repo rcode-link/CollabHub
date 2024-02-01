@@ -17,6 +17,10 @@ return new class extends Migration {
             $table->string('format');
             $table->timestamps();
         });
+
+        Schema::table('companies', function (Blueprint $blueprint) {
+            $blueprint->foreignId('currency_id')->nullable();
+        });
     }
 
     /**

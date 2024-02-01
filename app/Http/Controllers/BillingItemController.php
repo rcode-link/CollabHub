@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreBillingItemRequest;
 use App\Http\Requests\UpdateBillingItemRequest;
 use App\Models\BillingItem;
+use App\Http\Resources\BillingItemResource;
 
 class BillingItemController extends Controller
 {
@@ -13,7 +14,7 @@ class BillingItemController extends Controller
      */
     public function index()
     {
-        //
+        return BillingItemResource::collection(BillingItem::all());
     }
 
     /**
@@ -21,7 +22,7 @@ class BillingItemController extends Controller
      */
     public function store(StoreBillingItemRequest $request)
     {
-        //
+        BillingItem::create($request->validated());
     }
 
     /**
@@ -46,5 +47,6 @@ class BillingItemController extends Controller
     public function destroy(BillingItem $billingItem)
     {
         //
+        $billingItem->delete();
     }
 }

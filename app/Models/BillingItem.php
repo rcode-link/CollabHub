@@ -22,9 +22,32 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder|BillingItem wherePrice($value)
  * @method static \Illuminate\Database\Eloquent\Builder|BillingItem whereTitle($value)
  * @method static \Illuminate\Database\Eloquent\Builder|BillingItem whereUpdatedAt($value)
+ * @property int $user_id
+ * @method static \Illuminate\Database\Eloquent\Builder|BillingItem whereUserId($value)
  * @mixin \Eloquent
  */
 class BillingItem extends Model
 {
     use HasFactory;
+
+    protected $fillable = [
+        'title',
+        'price'
+    ];
+
+
+    protected static function booted()
+    {
+        parent::booted();
+
+        self::creating(function (BillingItem $billingItem) {
+            $billingItem->price = $billingItem->price * 100;
+        });
+
+        self::updating(function (BillingItem $billingItem) {
+            $billingItem->price = $billingItem->price * 100;
+        });
+    }
+
+
 }

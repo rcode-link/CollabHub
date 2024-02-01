@@ -21,6 +21,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
  * @property string|null $billing_city
  * @property string|null $billing_zip
  * @property string|null $billing_country
+ * @property string|null $prefix
  * @property-read \App\Models\Invoice|null $invoices
  * @property-read \App\Models\Payment|null $payments
  */
@@ -37,21 +38,18 @@ class CustomerResource extends JsonResource
             [
                 'id' => $this->id,
                 'name' => $this->name,
+                'prefix' => $this->prefix,
                 'logo' => $this->getFirstMediaUrl('avatar'),
-                ...$this->when(!request()->routeIs('apicustomers.index'), [
-                    'created_at' => $this->created_at,
-                    'updated_at' => $this->updated_at,
-                    'address' => $this->address,
-                    'city' => $this->city,
-                    'zip' => $this->zip,
-                    'country' => $this->country,
-                    'billing_address' => $this->billing_address,
-                    'billing_city' => $this->billing_city,
-                    'billing_zip' => $this->billing_zip,
-                    'billing_country' => $this->billing_country,
-                    'invoices' => $this->whenLoaded('invoices', fn() => InvoiceResource::collection($this->invoices)) ?? [],
-                    'payments' => $this->whenLoaded('payments', fn() => InvoiceResource::collection($this->payments)) ?? []
-                ], [])
+                'created_at' => $this->when(!request()->routeIs('apicustomers.index'), $this->created_at),
+                'updated_at' => $this->when(!request()->routeIs('apicustomers.index'), $this->updated_at),
+                'address' => $this->when(!request()->routeIs('apicustomers.index'), $this->address),
+                'city' => $this->when(!request()->routeIs('apicustomers.index'), $this->city),
+                'zip' => $this->when(!request()->routeIs('apicustomers.index'), $this->zip),
+                'country' => $this->when(!request()->routeIs('apicustomers.index'), $this->country),
+                'billing_address' => $this->when(!request()->routeIs('apicustomers.index'), $this->billing_address),
+                'billing_city' => $this->when(!request()->routeIs('apicustomers.index'), $this->billing_city),
+                'billing_zip' => $this->when(!request()->routeIs('apicustomers.index'), $this->billing_zip),
+                'billing_country' => $this->when(!request()->routeIs('apicustomers.index'), $this->billing_country),
             ];
     }
 }

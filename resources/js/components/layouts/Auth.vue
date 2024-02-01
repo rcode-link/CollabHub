@@ -1,9 +1,24 @@
-<script setup>
+<script lang="ts">
+//@ts-ignore
 import Menu from "../header/Menu.vue";
+//@ts-ignore
 import Breadcrumb from "../header/Breadcrumb.vue";
 import { FwbProgress } from "flowbite-vue";
 import { useProgressBarStore } from "../../store/progressBarStore.js";
-const progressBar = useProgressBarStore();
+
+export default {
+  components: {
+    Menu,
+    Breadcrumb,
+    FwbProgress,
+  },
+  setup() {
+    const progressBar = useProgressBarStore();
+    return {
+      progressBar,
+    };
+  },
+};
 </script>
 
 <template>

@@ -1,5 +1,4 @@
-<script setup>
-
+<script setup lang="ts">
 import {
     FwbButton,
     FwbTable,
@@ -7,25 +6,30 @@ import {
     FwbTableCell,
     FwbTableHead,
     FwbTableHeadCell,
-    FwbTableRow
+    FwbTableRow,
 } from "flowbite-vue";
 import UserIcon from "../../../../shared/UserIcon.vue";
 import AddUserToRoleModal from "./AddUserToRoleModal.vue";
 import InteractiveToast from "../../../../shared/InteractiveToast.vue";
-import {useRoleStore} from "../../../../../store/roleStore.js";
-import {toast} from "vue3-toastify";
+import { useRoleStore } from "../../../../../store/roleStore";
+import { toast } from "vue3-toastify";
 const roleStore = useRoleStore();
 
 const save = (id) => {
-    let users =  roleStore.role.users.find(obj => obj.id);
-    axios.put(`/api/v1/roles/detach/users/${roleStore.role.id}`, {
-        user: id
-    }).then(() => {
-        toast.success(`User ${users.name} removed from role ${roleStore.role.title}`, {theme: localStorage.getItem('color-theme') ?? 'light'})
+    let users = roleStore.role.users.find((obj: any) => obj.id);
+    window.axios
+        .put(`/api/v1/roles/detach/users/${roleStore.role.id}`, {
+            user: id,
+        })
+        .then(() => {
+            toast.success(
+                `User ${users.name} removed from role ${roleStore.role.title}`,
+                { theme: localStorage.getItem("color-theme") ?? "light" }
+            );
 
-        roleStore.loadRoleData();
-    })
-}
+            roleStore.loadRoleData();
+        });
+};
 </script>
 
 <template>
@@ -35,13 +39,13 @@ const save = (id) => {
             <fwb-table-head-cell>Name</fwb-table-head-cell>
             <fwb-table-head-cell>Email</fwb-table-head-cell>
             <fwb-table-head-cell class="text-right">
-                <AddUserToRoleModal/>
+                <AddUserToRoleModal />
             </fwb-table-head-cell>
         </fwb-table-head>
         <fwb-table-body>
-            <fwb-table-row v-for="(obj, index) in roleStore.role?.users" :key="obj.id">
+            <fwb-table-row v-for="obj in roleStore.role?.users" :key="obj.id">
                 <fwb-table-cell>
-                    <UserIcon :user="obj"/>
+                    <UserIcon :user="obj" />
                 </fwb-table-cell>
 
                 <fwb-table-cell>
@@ -60,12 +64,18 @@ const save = (id) => {
                         </template>
                         <template #content>
                             <div class="text-left">
-                                You are about to remove user <b>{{ obj.name }}</b> from role
+                                You are about to remove user
+                                <b>{{ obj.name }}</b> from role
                                 <b>{{ roleStore.role?.title }}</b>
                             </div>
                         </template>
                         <template #actions>
-                            <fwb-button color="red" size="xs" @click="() => save(obj.id)">Yes, remove it!</fwb-button>
+                            <fwb-button
+                                color="red"
+                                size="xs"
+                                @click="() => save(obj.id)"
+                                >Yes, remove it!</fwb-button
+                            >
                         </template>
                     </interactive-toast>
                 </fwb-table-cell>
@@ -74,6 +84,4 @@ const save = (id) => {
     </fwb-table>
 </template>
 
-<style scoped>
-
-</style>
+<style scoped></style>

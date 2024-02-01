@@ -4,8 +4,13 @@ use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\CalendarController;
 use App\Http\Controllers\VideoCallController;
 use App\Http\Middleware\SignedRouteMiddleware;
+use App\Models\Company;
+use App\Models\Invoice;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+
+use Spatie\Browsershot\Browsershot;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 /*
 |--------------------------------------------------------------------------
@@ -33,8 +38,15 @@ Route::get('/video-call/{video}/join', [VideoCallController::class, 'getVideoCal
 Route::post('/login', function () {
 
 });
+Route::get('/generate-pdf-v2', function () {
+    $invoice = Invoice::whereId(2)->with(['items', 'items.billingItem', 'company'])->firstOrFail();
+    $company = Company::whereIsCostumerCompany(false)->firstOrFail();
+    $pdf = Pdf::loadView('pdf.invoice', ['model' => $invoice, 'company' => $company]);
+    return $pdf->stream('document.pdf');
+});
 
 Route::middleware([\App\Http\Middleware\FrontendEnv::class])->group(function () {
+
     Route::view('/', 'welcome');
 
     Route::resource('/auth', AuthenticatedSessionController::class)->except('index', 'show');

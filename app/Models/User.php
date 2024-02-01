@@ -249,7 +249,7 @@ class User extends Authenticatable implements HasMedia
             ->addMediaCollection('avatar')
             ->singleFile()
             ->useFallbackUrl(config('app.url') . '/storage/images/avatar.png')
-            ->useFallbackPath(public_path('storage/images/avatar.png'));
+            ->useFallbackPath(public_path('storage/images/asailvatar.png'));
     }
 
     public function roles(): BelongsToMany

@@ -9,4 +9,5 @@ export interface iCustomer {
     billing_city: string | null;
     billing_zip: number | null;
     billing_country: string | null;
+    prefix: string | null;
 }

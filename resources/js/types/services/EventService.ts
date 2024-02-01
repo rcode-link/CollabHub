@@ -12,7 +12,7 @@ export class EventService {
      * @returns string
      * @throws ApiError
      */
-    public static api(
+    public static event(
         id: string,
         requestBody?: Record<string, any>,
     ): CancelablePromise<string> {

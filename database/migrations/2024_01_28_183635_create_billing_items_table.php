@@ -14,6 +14,7 @@ return new class extends Migration {
             $table->id();
             $table->string('title');
             $table->integer('price');
+            $table->foreignId('user_id')->nullable(); // reference not added since it's nullable
             $table->timestamps();
         });
     }
