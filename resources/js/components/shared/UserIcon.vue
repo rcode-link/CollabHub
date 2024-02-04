@@ -18,7 +18,7 @@ const props = withDefaults(
 );
 
 const getUserStatus = () => {
-    return userState.onlineUsers.filter((obj) => obj.id === props.user.id)
+    return userState.onlineUsers.filter((obj) => obj.id === props.user?.id)
         .length;
 };
 </script>

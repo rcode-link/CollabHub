@@ -1,11 +1,12 @@
 import { defineStore } from "pinia";
 import { computed, ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
-import _ from "lodash";
+import { findIndex, toNumber, find, isArray } from "lodash";
 import { TaskStatusResource } from "../types/models/TaskStatusResource";
 import { MediaResource } from "../types/models/MediaResource";
 import { TaskType } from "../types/models/TaskType";
 import { UserResource } from "../types/models/UserResource";
+import { Sprint } from "@/types";
 
 export interface iTask {
     id: number;
@@ -52,7 +53,9 @@ export const useBoardsState = defineStore("boards", () => {
     const boards = ref<iBoard[]>([]);
     const activeBoard = ref<iBoard>();
     const activeSprint = ref<iSprint>();
-    const boardTasks = ref({});
+    const boardTasks = ref<{
+        [key: string]: iTask[];
+    }>({});
     const taskStatuses = ref<TaskStatusResource[]>([]);
     const isLoading = ref(true);
 
@@ -60,7 +63,7 @@ export const useBoardsState = defineStore("boards", () => {
     const router = useRouter();
     const route = useRoute();
 
-    function changeTaskStatus(status) {
+    function changeTaskStatus(status: any) {
         if (!draggedTask.value) {
             return;
         }
@@ -76,13 +79,14 @@ export const useBoardsState = defineStore("boards", () => {
         boardTasks.value[status.title].push(draggedTask.value);
     }
 
-    function addSprintToBoard(sprint) {
-        const indexOfBoard = _.findIndex(boards.value, {
-            id: _.toNumber(activeBoard.value?.id),
+    function addSprintToBoard(sprint: Sprint) {
+        const indexOfBoard = findIndex(boards.value, {
+            id: toNumber(activeBoard.value?.id),
         });
         boards.value[indexOfBoard].sprint.push(sprint);
     }
 
+    //@ts-ignore
     function updateTask(oldStatusId, task) {
         if (!route.params.sprint) {
             return;
@@ -92,8 +96,8 @@ export const useBoardsState = defineStore("boards", () => {
         };
         taskStatuses.value.forEach((status) => {
             if (
-                _.find(boardTasks.value[status.title], {
-                    id: _.toNumber(task.id),
+                find(boardTasks.value[status.title], {
+                    id: toNumber(task.id),
                 })
             ) {
                 statusTitle.title = status.title;
@@ -102,30 +106,31 @@ export const useBoardsState = defineStore("boards", () => {
         if (statusTitle.title === "") {
             return;
         }
-        const index = _.findIndex(boardTasks.value[statusTitle.title], {
+        const index = findIndex(boardTasks.value[statusTitle.title], {
             id: task.id,
         });
         if (index === -1) {
             return;
         }
         let status = task.status;
-        if (_.isArray(task.status)) {
-            status = _.find(status, (obj) => {
-                return obj.sprint.id === _.toNumber(route.params.sprint);
+        if (isArray(task.status)) {
+            status = find(status, (obj) => {
+                return obj.sprint.id === toNumber(route.params.sprint);
             });
         }
         boardTasks.value[statusTitle.title].splice(index, 1);
         boardTasks.value[status.title].push(task);
     }
 
-    function setDraggedTaskId(val) {
+    function setDraggedTaskId(val: iTask) {
         draggedTask.value = val;
     }
 
-    function setStatuses(statuses) {
+    function setStatuses(statuses: TaskStatusResource[]) {
         taskStatuses.value = statuses;
     }
 
+    //@ts-ignore
     function setTasks(status, tasks, page) {
         if (page === 1) {
             boardTasks.value[status] = tasks;
@@ -134,6 +139,7 @@ export const useBoardsState = defineStore("boards", () => {
         boardTasks.value[status].push(...tasks);
     }
 
+    //@ts-ignore
     function setBoards(list, form = null) {
         boards.value = list;
     }
@@ -144,8 +150,8 @@ export const useBoardsState = defineStore("boards", () => {
             if (!boards.value.length || !route.params.board) {
                 return;
             }
-            activeBoard.value = _.find(boards.value, {
-                id: _.toNumber(route.params.board),
+            activeBoard.value = find(boards.value, {
+                id: toNumber(route.params.board),
             });
         },
         {
@@ -157,16 +163,16 @@ export const useBoardsState = defineStore("boards", () => {
     watch(
         () => [activeBoard.value],
         () => {
-            const data = _.find(
+            const data = find(
                 activeBoard.value?.sprint,
-                (obj) => obj.id === _.toNumber(route.params.sprint)
+                (obj) => obj.id === toNumber(route.params.sprint)
             );
 
             if (route.params.sprint && data) {
                 activeSprint.value = data;
                 return;
             }
-            let sprintToBeActive = (_.find(
+            let sprintToBeActive = (find(
                 activeBoard.value?.sprint,
                 (obj) => obj.is_active
             ) ?? activeBoard.value?.sprint[0]) as iSprint;
@@ -189,9 +195,9 @@ export const useBoardsState = defineStore("boards", () => {
             if (!route.params.sprint) {
                 return;
             }
-            const sprint = _.find(
+            const sprint = find(
                 activeBoard.value?.sprint,
-                (obj) => obj.id === _.toNumber(route.params.sprint)
+                (obj) => obj.id === toNumber(route.params.sprint)
             );
             if (sprint) {
                 activeSprint.value = sprint;
