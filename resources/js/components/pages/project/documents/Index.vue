@@ -1,36 +1,33 @@
 <script setup>
-
 import Card from "../../../shared/Card.vue";
 import DocumentsHeader from "./partials/DocumentsHeader.vue";
-import {useProjectDocumentsStore} from "../../../../store/projectDocumentsStore.js";
+import { useProjectDocumentsStore } from "../../../../store/projectDocumentsStore.js";
 import DocumentPrintTree from "./partials/DocumentPrintTree.vue";
-import {useBreadcrumbStore} from "../../../../store/breadcrumb.js";
-import {useRoute} from "vue-router";
-import {onMounted} from "vue";
+import { useBreadcrumbStore } from "../../../../store/breadcrumb";
+import { useRoute } from "vue-router";
+import { onMounted } from "vue";
 
 const documentsStore = useProjectDocumentsStore();
 const breadcrumbStore = useBreadcrumbStore();
 const route = useRoute();
 
 breadcrumbStore.addEntry([
-{
-    title: 'Documents'
-  }
-])
+    {
+        title: "Documents",
+    },
+]);
 
 onMounted(() => {
-  documentsStore.loadDocuments();
-})
+    documentsStore.loadDocuments();
+});
 </script>
 
 <template>
     <Card class="flex-col">
-        <DocumentsHeader/>
+        <DocumentsHeader />
     </Card>
 
-    <DocumentPrintTree :parent_id="null"/>
+    <DocumentPrintTree :parent_id="null" />
 </template>
 
-<style scoped>
-
-</style>
+<style scoped></style>

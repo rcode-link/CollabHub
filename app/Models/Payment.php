@@ -24,9 +24,23 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder|Payment whereValue($value)
  * @property int $company_id
  * @method static \Illuminate\Database\Eloquent\Builder|Payment whereCompanyId($value)
+ * @property string $date
+ * @property-read \App\Models\Invoice $invoice
+ * @method static \Illuminate\Database\Eloquent\Builder|Payment whereDate($value)
  * @mixin \Eloquent
  */
 class Payment extends Model
 {
     use HasFactory;
+
+    protected $fillable = [
+        'invoice_id',
+        'value',
+        'date'
+    ];
+
+    public function invoice()
+    {
+        return $this->belongsTo(Invoice::class);
+    }
 }

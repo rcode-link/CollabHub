@@ -26,7 +26,7 @@ class InvoiceItemsUpdate implements ShouldBroadcast
      */
     public function __construct(public int $invoice_id)
     {
-        $data = Invoice::whereId($invoice_id)->with('items', 'items.billingItem', 'company')->firstOrFail();
+        $data = Invoice::whereId($invoice_id)->with('items', 'items.billingItem', 'company', 'company.currency')->firstOrFail();
         $this->items = new InvoiceResource($data);
     }
 

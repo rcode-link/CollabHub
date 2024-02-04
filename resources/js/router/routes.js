@@ -53,6 +53,38 @@ export default [
                 component: () =>
                     import("../components/pages/settings/invoice/Item.vue"),
             },
+            {
+                name: "settings.company-info",
+                path: "billing/company",
+                component: () =>
+                    import(
+                        "../components/pages/settings/invoice/company_information/Index.vue"
+                    ),
+            },
+            {
+                name: "settings.currency",
+                path: "currency",
+                component: () =>
+                    import(
+                        "../components/pages/settings/invoice/currency/Index.vue"
+                    ),
+            },
+            {
+                name: "settings.mesurment-units",
+                path: "mesurment-units",
+                component: () =>
+                    import(
+                        "../components/pages/settings/invoice/mesurment_units/Index.vue"
+                    ),
+            },
+            {
+                name: "settings.notes",
+                path: "notes",
+                component: () =>
+                    import(
+                        "../components/pages/settings/invoice/notes/Index.vue"
+                    ),
+            },
         ],
     },
     {

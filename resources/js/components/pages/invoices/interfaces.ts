@@ -1,13 +1,14 @@
 export interface iCustomer {
-    id: null | number;
+    id?: number;
     name: string;
-    address: string | null;
-    city: string | null;
-    zip: number | null;
-    country: string | null;
-    billing_address: string | null;
-    billing_city: string | null;
-    billing_zip: number | null;
-    billing_country: string | null;
-    prefix: string | null;
+    currency_id?: string;
+    address?: string;
+    city?: string;
+    zip?: string;
+    country?: string;
+    billing_address?: string;
+    billing_city?: string;
+    billing_zip?: string;
+    billing_country?: string;
+    prefix?: string;
 }

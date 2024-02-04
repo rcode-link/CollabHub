@@ -1,5 +1,6 @@
 <?php
 
+use App\Providers\MoneyDirective;
 use Illuminate\Support\Facades\Facade;
 use Illuminate\Support\ServiceProvider;
 
@@ -169,6 +170,7 @@ return [
         App\Providers\RouteServiceProvider::class,
         App\Providers\TelescopeServiceProvider::class,
         Barryvdh\Snappy\ServiceProvider::class,
+        MoneyDirective::class,
 
         //        Sabre => App\Providers\SabreUserManagerServiceProvider::class,
 //        App\Providers\CalendarServiceProvider::class,

@@ -59,6 +59,11 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media;
  * @method static Builder|Company whereZip($value)
  * @property-read \App\Models\Invoice|null $invoices
  * @property-read \App\Models\Payment|null $payments
+ * @property int|null $currency_id
+ * @property string|null $prefix
+ * @property-read \App\Models\Currency|null $currency
+ * @method static Builder|Company whereCurrencyId($value)
+ * @method static Builder|Company wherePrefix($value)
  * @mixin Eloquent
  */
 class Company extends Model implements HasMedia
@@ -76,7 +81,8 @@ class Company extends Model implements HasMedia
         'billing_city',
         'billing_zip',
         'billing_country',
-        'is_costumer_company'
+        'is_costumer_company',
+        'currency_id'
     ];
 
     /**
@@ -115,5 +121,10 @@ class Company extends Model implements HasMedia
     public function payments(): BelongsTo
     {
         return $this->belongsTo(Payment::class);
+    }
+
+    public function currency()
+    {
+        return $this->belongsTo(Currency::class);
     }
 }

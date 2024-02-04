@@ -11,7 +11,7 @@ class StoreCurrencyRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +22,9 @@ class StoreCurrencyRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'currency' => ['required', 'unique:currencies,currency'],
+            'format' => ['required', 'string'],
+            'iso' => ['required', 'string']
         ];
     }
 }

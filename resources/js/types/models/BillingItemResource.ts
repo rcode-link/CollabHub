@@ -5,7 +5,7 @@
 export type BillingItemResource = {
     id: number;
     name: string;
-    price: number;
+    price: string;
     user?: {
         name: string;
         rate: number;

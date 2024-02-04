@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreCurrencyRequest;
 use App\Http\Requests\UpdateCurrencyRequest;
+use App\Http\Resources\CurrencyResource;
 use App\Models\Currency;
 
 class CurrencyController extends Controller
@@ -13,7 +14,7 @@ class CurrencyController extends Controller
      */
     public function index()
     {
-        //
+        return CurrencyResource::collection(Currency::all());
     }
 
     /**
@@ -21,7 +22,8 @@ class CurrencyController extends Controller
      */
     public function store(StoreCurrencyRequest $request)
     {
-        //
+        Currency::create($request->validated());
+        return response()->noContent();
     }
 
     /**
@@ -45,6 +47,6 @@ class CurrencyController extends Controller
      */
     public function destroy(Currency $currency)
     {
-        //
+        $currency->delete();
     }
 }

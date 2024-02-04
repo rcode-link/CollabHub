@@ -5,9 +5,17 @@ import Card from "@/components/shared/Card.vue";
 import Label from "@/components/shared/Label.vue";
 import Text from "@/components/shared/Text.vue";
 import DatePicker from "@/components/shared/DatePicker.vue";
+import currencyPrint from "@/functions/currencyPrint";
 import { onUnmounted, ref, watch } from "vue";
 import { InvoiceResource } from "@/components/../types";
-import { FwbHeading, FwbP } from "flowbite-vue";
+import {
+    FwbButton,
+    FwbDropdown,
+    FwbHeading,
+    FwbListGroup,
+    FwbListGroupItem,
+    FwbP,
+} from "flowbite-vue";
 import Editor from "@/components/pages/project/tasks/partisals/Form/Editor.vue";
 
 import {
@@ -18,23 +26,29 @@ import {
     FwbTableRow,
     FwbTableHeadCell,
 } from "flowbite-vue";
-import SearchInvoiceItems from "./SearchInvoiceItems.vue";
-import InvoiceItem from "./InvoiceItem.vue";
+import SearchInvoiceItems from "./partials/SearchInvoiceItems.vue";
+import InvoiceItem from "./partials/InvoiceItem.vue";
 import { debounce } from "lodash";
-import Options from "./Options.vue";
+import Options from "./partials/Options.vue";
+import { useInvoiceDetailsStore } from "@/store/invoiceDetailsStore";
 const route = useRoute();
-
+const invoiceStore = useInvoiceDetailsStore();
 onUnmounted(() => {
     window.Echo.leave(`update-invoice.${route.params.inv_id}`);
 });
 
-const data = ref<InvoiceResource>();
 const noteValue = ref<string | null>(null);
-const load = () => {
-    window.axios.get(`/api/v1/invoices/${route.params.inv_id}`).then((res) => {
-        data.value = res.data.data;
-        noteValue.value = data.value?.note ?? "";
-    });
+const predefinedNotes = ref<any[]>([]);
+const loadNotes = () => {
+    window.axios
+        .get("/api/v1/invoice/data", {
+            params: {
+                type: "note",
+            },
+        })
+        .then((res) => {
+            predefinedNotes.value = res.data;
+        });
 };
 
 watch(
@@ -43,10 +57,16 @@ watch(
         window.Echo.private(`update-invoice.${route.params.inv_id}`).listen(
             "InvoiceItemsUpdate",
             (list: any) => {
-                data.value = list.items;
+                invoiceStore.data = list.items;
             }
         );
-        load();
+        invoiceStore.load().then((data) => {
+            if (!data) {
+                return;
+            }
+            noteValue.value = (data as unknown as InvoiceResource).note;
+        });
+        loadNotes();
     },
     {
         immediate: true,
@@ -54,32 +74,38 @@ watch(
 );
 
 const updateNote = debounce(function (value: any) {
-    window.axios.put(`/api/v1/invoices/${data.value?.id}`, {
+    window.axios.put(`/api/v1/invoices/${invoiceStore.data.id}`, {
         note: value,
     });
 }, 500);
 </script>
 <template>
     <Auth>
-        <div class="grid grid-cols-2 gap-4" v-if="data">
+        <div class="grid grid-cols-2 gap-4" v-if="invoiceStore.data">
             <Card class="items-center">
                 <div class="">
                     <fwb-heading tag="h3">
-                        {{ data?.company?.name }}
+                        {{ invoiceStore.data?.company?.name }}
                     </fwb-heading>
                     <fwb-p>
                         {{
-                            data?.company?.billing_address ??
-                            data?.company?.address
+                            invoiceStore.data?.company?.billing_address ??
+                            invoiceStore.data?.company?.address
                         }}
                         <br />
 
-                        {{ data?.company?.billing_city ?? data?.company?.city }}
-                        {{ data?.company?.billing_zip ?? data?.company?.zip }},
+                        {{
+                            invoiceStore.data?.company?.billing_city ??
+                            invoiceStore.data?.company?.city
+                        }}
+                        {{
+                            invoiceStore.data?.company?.billing_zip ??
+                            invoiceStore.data?.company?.zip
+                        }},
                         <br />
                         {{
-                            data?.company?.billing_country ??
-                            data?.company?.country
+                            invoiceStore.data?.company?.billing_country ??
+                            invoiceStore.data?.company?.country
                         }}
                     </fwb-p>
                 </div>
@@ -90,15 +116,15 @@ const updateNote = debounce(function (value: any) {
             <div class="flex flex-col gap-4 justify-between">
                 <div>
                     <Label>Invoice No:</Label>
-                    <Text v-model="data.number" />
+                    <Text v-model="invoiceStore.data.number" />
                 </div>
                 <div>
                     Invoice Date:
-                    <DatePicker v-model="data.date" />
+                    <DatePicker v-model="invoiceStore.data.date" />
                 </div>
                 <div>
                     Invoice Due date:
-                    <DatePicker v-model="data.due_date" />
+                    <DatePicker v-model="invoiceStore.data.due_date" />
                 </div>
             </div>
         </div>
@@ -114,33 +140,61 @@ const updateNote = debounce(function (value: any) {
                 <fwb-table-head-cell> Total </fwb-table-head-cell>
                 <fwb-table-head-cell> </fwb-table-head-cell>
             </fwb-table-head>
-            <fwb-table-body v-if="data?.items">
+            <fwb-table-body v-if="invoiceStore.data?.items">
                 <invoice-item
-                    v-for="(obj, index) in data?.items"
+                    v-for="(obj, index) in invoiceStore.data.items"
                     :index="index.toString()"
                     :item="obj"
                     :key="obj.id"
+                    :currency="invoiceStore.data?.company?.currency"
                 />
             </fwb-table-body>
         </fwb-table>
-        <div class="grid grid-cols-3 gap-4" v-if="data">
+        <div class="grid grid-cols-3 gap-4" v-if="invoiceStore.data">
             <div>
                 <Editor
                     :model-value="noteValue ?? ''"
                     @update:markdown="updateNote"
-                />
+                >
+                    <template #header>
+                        <FwbDropdown text="Notes">
+                            <template #trigger>
+                                <FwbButton size="sm" color="alternative"
+                                    >Insert note</FwbButton
+                                >
+                            </template>
+                            <FwbListGroup>
+                                <FwbListGroupItem
+                                    v-for="obj in predefinedNotes"
+                                    :key="obj.id"
+                                    class="cursor-pointer"
+                                    @click="
+                                        () => {
+                                            noteValue = obj.data.val;
+                                            updateNote(obj.data.val);
+                                        }
+                                    "
+                                >
+                                    {{ obj.data.title }}
+                                </FwbListGroupItem>
+                            </FwbListGroup>
+                        </FwbDropdown>
+                    </template>
+                </Editor>
             </div>
             <div></div>
             <div class="flex">
                 <fwb-table class="overflow-auto w-full mt-auto">
                     <fwb-table-row>
                         <fwb-table-head-cell> Total </fwb-table-head-cell>
-                        <fwb-table-cell>{{
-                            data.total.toLocaleString("en-US", {
-                                style: "currency",
-                                currency: "USD",
-                            })
-                        }}</fwb-table-cell>
+                        <fwb-table-cell>
+                            {{
+                                currencyPrint(
+                                    Number(invoiceStore.data.total),
+                                    invoiceStore.data?.company?.currency
+                                )
+                            }}</fwb-table-cell
+                        >
                     </fwb-table-row>
                 </fwb-table>
             </div>

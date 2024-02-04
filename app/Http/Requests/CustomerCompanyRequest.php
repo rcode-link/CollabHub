@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class CustomerCompanyRequest extends FormRequest
 {
@@ -23,8 +24,9 @@ class CustomerCompanyRequest extends FormRequest
     {
         return [
             'name' => ['required'],
-            'prefix' => ['required', 'unique:companies,prefix'],
+            'prefix' => ['required', Rule::unique('companies', 'prefix')->ignore(request()->get('id'))],
             'address' => ['required'],
+            'currency_id' => ['required', 'exists:currencies,id'],
             'city' => ['required'],
             'zip' => ['required'],
             'country' => ['required'],

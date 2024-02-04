@@ -1,9 +1,9 @@
 <script lang="ts" setup>
-import { onMounted, ref } from "vue";
-import { useRoute } from "vue-router";
-import { InvoiceResource } from "@/types";
-import { Pagination } from "@/interfaces";
+import { onMounted } from "vue";
+import useInvoice from "@/components/pages/invoices/details/functions/useInvoice";
 import InvoiceForm from "./Form.vue";
+import currencyPrint from "@/functions/currencyPrint";
+import { useInvoiceDetailsStore } from "@/store/invoiceDetailsStore";
 import {
     FwbTable,
     FwbTableHead,
@@ -13,23 +13,9 @@ import {
     FwbTableHeadCell,
 } from "flowbite-vue";
 import { DateTime } from "luxon";
-interface iResource extends Pagination {
-    data: InvoiceResource[];
-}
+const invoiceDetails = useInvoiceDetailsStore();
 
-const route = useRoute();
-
-const invoices = ref<iResource>();
-const load = () => {
-    window.axios
-        .get("/api/v1/invoices", {
-            params: {
-                company_id: route.params.id,
-            },
-        })
-        .then((res) => (invoices.value = res.data));
-};
-
+const { invoices, load } = useInvoice();
 onMounted(() => {
     load();
 });
@@ -60,7 +46,12 @@ onMounted(() => {
                     {{ obj.number }}
                 </fwb-table-cell>
                 <fwb-table-cell>
-                    {{ obj.total }}
+                    {{
+                        currencyPrint(
+                            Number(obj.total),
+                            invoiceDetails.companyData?.currency
+                        )
+                    }}
                 </fwb-table-cell>
                 <fwb-table-cell>
                     {{ obj.sent ? "Sent" : "Not sent" }}

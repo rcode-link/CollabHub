@@ -31,6 +31,7 @@ export class CustomerCompanyService {
             name: string;
             prefix: string;
             address: string;
+            currency_id: number;
             city: string;
             zip: string;
             country: string;
@@ -74,13 +75,25 @@ export class CustomerCompanyService {
      * Update the specified resource in storage
      * @param id
      * @param requestBody
-     * @returns string
+     * @returns void
      * @throws ApiError
      */
     public static apicustomersUpdate(
         id: string,
-        requestBody?: Record<string, any>,
-    ): CancelablePromise<string> {
+        requestBody?: {
+            name: string;
+            prefix: string;
+            address: string;
+            currency_id: number;
+            city: string;
+            zip: string;
+            country: string;
+            billing_address?: string | null;
+            billing_city?: string | null;
+            billing_zip?: string | null;
+            billing_country?: string | null;
+        },
+    ): CancelablePromise<void> {
         return __request(OpenAPI, {
             method: 'PUT',
             url: '/v1/customers/{id}',
@@ -89,6 +102,10 @@ export class CustomerCompanyService {
             },
             body: requestBody,
             mediaType: 'application/json',
+            errors: {
+                403: `Authorization error`,
+                422: `Validation error`,
+            },
         });
     }
     /**

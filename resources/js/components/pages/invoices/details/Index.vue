@@ -2,12 +2,14 @@
 import Auth from "../../../layouts/Auth.vue";
 import { FwbHeading, FwbP, FwbTab, FwbTabs } from "flowbite-vue";
 import { ref, watch } from "vue";
-import Invoice from "./partials/invoice/Invoice.vue";
-import Payments from "./partials/Payments.vue";
+import Invoice from "./partials/invoice/List.vue";
+import Payments from "./partials/payment/Payments.vue";
 import { useRoute } from "vue-router";
 import Card from "../../../shared/Card.vue";
 import { useInvoiceDetailsStore } from "@/store/invoiceDetailsStore";
+import { Chart as ChartJS, registerables } from "chart.js";
 
+ChartJS.register(...registerables);
 const route = useRoute();
 const activeTab = ref<string>("invoice");
 const invoiceDetails = useInvoiceDetailsStore();
@@ -23,7 +25,7 @@ watch(
 </script>
 <template>
     <Auth>
-        <Card class="gap-4">
+        <Card class="gap-4 items-center">
             <img :src="invoiceDetails.companyData?.logo" class="w-80" />
             <div class="">
                 <fwb-heading tag="h3">

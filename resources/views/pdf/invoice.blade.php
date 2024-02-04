@@ -78,7 +78,7 @@
         }
 
         main {
-            margin-top: 50px;
+            /* margin-top: 50px; */
         }
 
         header h1,
@@ -113,9 +113,9 @@
 </head>
 
 <body>
-    <header>
-        <img src="{{ $company->getFirstMedia('avatar')?->getPath() }}" />
-    </header>
+    {{-- <header> --}}
+    {{-- <img src="{{ $company->getFirstMedia('avatar')?->getPath() }}" /> --}}
+    {{-- </header> --}}
     <main>
         <table class="w-full">
             <tr>
@@ -176,9 +176,21 @@
                     <tr>
                         <td>{{ $index + 1 }}</td>
                         <td>{{ $obj->billingItem->title }}</td>
-                        <td>{{ number_format($obj->price / 100, 2) }}</td>
+                        <td>
+                            @if ($model->company?->currency)
+                                {{ formatMoney($obj->price, $model->company->currency?->currency, $model->company->currency?->format) }}
+                            @else
+                                {{ formatMoney($obj->price, 'USD') }}
+                            @endif
+                        </td>
                         <td>{{ number_format($obj->qty / 100, 2) }}</td>
-                        <td>{{ number_format($obj->total / 100, 2) }}</td>
+                        <td>
+                            @if ($model->company?->currency)
+                                {{ formatMoney($obj->total, $model->company->currency?->currency, $model->company->currency?->format) }}
+                            @else
+                                {{ formatMoney($obj->total, 'USD') }}
+                            @endif
+                        </td>
                     </tr>
                 @endforeach
             </tbody>
@@ -186,7 +198,13 @@
                 <tr>
                     <th colspan="3"></th>
                     <th>Total</th>
-                    <th>{{ number_format($model->total / 100, 2) }}</th>
+                    <th>
+                        @if ($model->company?->currency)
+                            {{ formatMoney($model->total, $model->company->currency?->currency, $model->company->currency?->format) }}
+                        @else
+                            {{ formatMoney($model->total, 'USD') }}
+                        @endif
+                    </th>
                 </tr>
             </tfoot>
         </table>

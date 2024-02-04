@@ -42,7 +42,7 @@ export class InvoiceService {
     /**
      * Store a newly created resource in storage
      * @param requestBody
-     * @returns string
+     * @returns any `InvoiceResource`
      * @throws ApiError
      */
     public static apiinvoicesStore(
@@ -52,7 +52,9 @@ export class InvoiceService {
             due_date: string;
             company_id: number;
         },
-    ): CancelablePromise<string> {
+    ): CancelablePromise<{
+        data: InvoiceResource;
+    }> {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/v1/invoices',

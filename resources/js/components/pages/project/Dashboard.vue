@@ -1,30 +1,28 @@
 <script setup>
-
 import Card from "../../shared/Card.vue";
-import {useBreadcrumbStore} from "../../../store/breadcrumb.js";
-import {watch} from "vue";
-import {useRoute} from "vue-router";
+import { useBreadcrumbStore } from "../../../store/breadcrumb";
+import { watch } from "vue";
+import { useRoute } from "vue-router";
 const breadcrumbStore = useBreadcrumbStore();
 const route = useRoute();
 
-
-watch(() => route.params, () => {
-  breadcrumbStore.addEntry([
+watch(
+    () => route.params,
+    () => {
+        breadcrumbStore.addEntry([
+            {
+                title: "Dashboard",
+            },
+        ]);
+    },
     {
-      title: 'Dashboard'
+        immediate: true,
     }
-  ])
-}, {
-  immediate: true
-});
+);
 </script>
 
 <template>
-  <Card>
-    Dashboard
-  </Card>
+    <Card> Dashboard </Card>
 </template>
 
-<style scoped>
-
-</style>
+<style scoped></style>

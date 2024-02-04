@@ -27,7 +27,10 @@ export class BillingItemService {
      * @throws ApiError
      */
     public static apibillingItemsStore(
-        requestBody?: Record<string, any>,
+        requestBody?: {
+            title: string;
+            price?: number;
+        },
     ): CancelablePromise<string> {
         return __request(OpenAPI, {
             method: 'POST',

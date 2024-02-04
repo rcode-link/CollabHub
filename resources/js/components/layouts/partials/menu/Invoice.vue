@@ -1,13 +1,11 @@
 <script setup lang="ts">
 import { useAbility } from "@casl/vue";
 import { useUserStore } from "../../../../store/user";
-import { useRoleStore } from "../../../../store/roleStore";
 
 import { FwbListGroup, FwbListGroupItem, FwbHeading } from "flowbite-vue";
 
 const { can } = useAbility();
 const userStore = useUserStore();
-const roleStore = useRoleStore();
 </script>
 <template>
     <FwbHeading tag="h4">Invoice</FwbHeading>
@@ -15,7 +13,7 @@ const roleStore = useRoleStore();
         <fwb-list-group-item
             v-if="can(`can-view-users.${userStore.company.id}`, '')"
         >
-            <router-link :to="{ name: 'settings.invoice-items' }">
+            <router-link :to="{ name: 'settings.company-info' }">
                 Base information
             </router-link>
         </fwb-list-group-item>
@@ -29,21 +27,19 @@ const roleStore = useRoleStore();
         <fwb-list-group-item
             v-if="can(`can-view-users.${userStore.company.id}`, '')"
         >
-            <router-link :to="{ name: 'settings.invoice-items' }">
-                Notes
-            </router-link>
+            <router-link :to="{ name: 'settings.notes' }"> Notes </router-link>
         </fwb-list-group-item>
         <fwb-list-group-item
             v-if="can(`can-view-users.${userStore.company.id}`, '')"
         >
-            <router-link :to="{ name: 'settings.invoice-items' }">
+            <router-link :to="{ name: 'settings.mesurment-units' }">
                 Masurment units
             </router-link>
         </fwb-list-group-item>
         <fwb-list-group-item
             v-if="can(`can-view-users.${userStore.company.id}`, '')"
         >
-            <router-link :to="{ name: 'settings.invoice-items' }">
+            <router-link :to="{ name: 'settings.currency' }">
                 Currency
             </router-link>
         </fwb-list-group-item>

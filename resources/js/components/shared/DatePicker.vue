@@ -13,14 +13,17 @@ const props = withDefaults(defineProps<iProps>(), {
     name: "",
 });
 const emit = defineEmits<{
-    (e: "update:modelValue", value: string): void;
+    (e: "update:modelValue", value: string | null): void;
 }>();
 
 const internalVal = ref(props.modelValue ?? DateTime.now().toLocaleString());
 const errors = useErrorsStore();
 
 watch(internalVal, () => {
-    emit("update:modelValue", internalVal.value);
+    emit(
+        "update:modelValue",
+        DateTime.fromISO(internalVal.value).set({ hour: 8 }).toUTC().toISO()
+    );
 });
 </script>
 

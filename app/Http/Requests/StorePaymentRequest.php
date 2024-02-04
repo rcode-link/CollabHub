@@ -11,7 +11,7 @@ class StorePaymentRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +22,9 @@ class StorePaymentRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'invoice_id' => ['required', 'exists:invoices,id'],
+            'value' => ['int'],
+            'date' => ['date']
         ];
     }
 }

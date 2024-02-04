@@ -5,7 +5,7 @@ import { useRoleStore } from "../../../../store/roleStore";
 import Permissions from "./partials/Permissions.vue";
 import { FwbButton, FwbInput, FwbTab, FwbTabs } from "flowbite-vue";
 import Users from "./partials/Users.vue";
-import { useBreadcrumbStore } from "../../../../store/breadcrumb.js";
+import { useBreadcrumbStore } from "../../../../store/breadcrumb";
 import InteractiveToast from "../../../shared/InteractiveToast.vue";
 import Resource from "./partials/Resource.vue";
 import { toast } from "vue3-toastify";

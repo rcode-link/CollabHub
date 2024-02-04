@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StorePaymentRequest;
 use App\Http\Requests\UpdatePaymentRequest;
+use App\Http\Resources\PaymentResource;
 use App\Models\Payment;
+use Carbon\Carbon;
 
 class PaymentController extends Controller
 {
@@ -13,7 +15,7 @@ class PaymentController extends Controller
      */
     public function index()
     {
-        //
+        return PaymentResource::collection(Payment::with('invoice')->whereHas('invoice', fn($query) => $query->where('company_id', request()->get('company_id')))->get());
     }
 
     /**
@@ -21,6 +23,11 @@ class PaymentController extends Controller
      */
     public function store(StorePaymentRequest $request)
     {
+        $data = $request->validated();
+        $data['date'] = Carbon::parse($data['date']);
+        $data['value'] = $data['value'] * 100;
+        Payment::create($data);
+        return $request->validated();
         //
     }
 

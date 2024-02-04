@@ -17,5 +17,6 @@ export type CustomerResource = {
     billing_city?: string;
     billing_zip?: string;
     billing_country?: string;
+    currency?: string;
 };
 

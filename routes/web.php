@@ -39,10 +39,10 @@ Route::post('/login', function () {
 
 });
 Route::get('/generate-pdf-v2', function () {
-    $invoice = Invoice::whereId(2)->with(['items', 'items.billingItem', 'company'])->firstOrFail();
+    $invoice = Invoice::whereId(9)->with(['items', 'items.billingItem', 'company'])->firstOrFail();
     $company = Company::whereIsCostumerCompany(false)->firstOrFail();
-    $pdf = Pdf::loadView('pdf.invoice', ['model' => $invoice, 'company' => $company]);
-    return $pdf->stream('document.pdf');
+    // $pdf = Pdf::loadView();
+    return view('pdf.invoice', ['model' => $invoice, 'company' => $company]);
 });
 
 Route::middleware([\App\Http\Middleware\FrontendEnv::class])->group(function () {

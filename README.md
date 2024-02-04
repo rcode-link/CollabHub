@@ -1,49 +1,48 @@
 # Application for Organizing with chat, video calls, tasks, projects etc.
 
-Application is written in laravel and vue3 SPA. 
+Application is written in laravel and vue3 SPA.
 Vue3 application is standalone integrated in laravel blade. For authentication is used Laravel sencrum.
 
-### Folder structure 
- 
- - Backend is following Laravel practices
- - frontend 
-   - folder names snake_case
-   - component names CamelCase
-   - javascript variables camelCase
- 
+### Folder structure
+
+-   Backend is following Laravel practices (TBD)
+-   frontend
+    -   folder names `snake_case`
+    -   component names `CamelCase`
+    -   javascript variables `camelCase`
 
 # Features
-- [x] Chat
-- [x] Video cals
-- [x] Create chat
-- [x] Projects
-- [x] Tasks 
-- [x] Documents
-- [x] Boards (sprint and kanban)
-- [x] Project settings
-- [x] User groups
-- [x] Set user groups on company level
-- [x] Update user permissions on company level
-- [x] Update user permissions on project level
-- [ ] Filter tasks in board
-- [ ] Group tasks in board
-- [x] Set task statuses per board
-- [ ] Task custom fields
-- [x] Add task to board / sprint when creating
-- [ ] Project dashboard
-- [x] Company dashboard
-- [ ] Invoicing 
-- [x] Customer companies
-- [ ] Users in customer companies
-- [ ] Documents live update and cursors
-- [ ] Webhooks
-- [ ] Git integration
-- [x] Calendar
-- [ ] Calendar event invitation accept/decline
-- [ ] Calendar event preview
-- [x] Calendar vacations
-- [ ] Mutiliselect tasks on board with options for status change option
 
+-   [x] Chat
+-   [x] Video cals
+-   [x] Create chat
+-   [x] Projects
+-   [x] Tasks
+-   [x] Documents
+-   [x] Boards (sprint and kanban)
+-   [x] Project settings
+-   [x] User groups
+-   [x] Set user groups on company level
+-   [x] Update user permissions on company level
+-   [x] Update user permissions on project level
+-   [ ] Filter tasks in board
+-   [ ] Group tasks in board
+-   [x] Set task statuses per board
+-   [ ] Task custom fields
+-   [x] Add task to board / sprint when creating
+-   [ ] Project dashboard
+-   [x] Company dashboard
+-   [x] Invoicing
+-   [x] Customer companies
+-   [ ] Users in customer companies
+-   [ ] Documents live update and cursors
+-   [ ] Webhooks
+-   [ ] Git integration
+-   [x] Calendar
+-   [x] Calendar event invitation accept/decline
+-   [x] Calendar event preview
+-   [x] Calendar vacations
+-   [ ] Mutiliselect tasks on board with options for status change option
 
 # License
 

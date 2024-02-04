@@ -11,67 +11,82 @@ import { FwbButton } from "flowbite-vue";
 
 const editorRef = ref<InstanceType<typeof Editor> | null>(null);
 const props = defineProps<{
-  modelValue: object[] | string;
+    modelValue: object[] | string;
 }>();
 
 const model = ref<object[] | string>();
 
 watch(
-  () => [props.modelValue, editorRef.value?.editor],
-  () => {
-    editorRef.value?.editor?.commands.setContent(props.modelValue);
-  },
-  {
-    immediate: true,
-  }
+    () => [props.modelValue, editorRef.value?.editor],
+    () => {
+        editorRef.value?.editor?.commands.setContent(props.modelValue);
+    },
+    {
+        immediate: true,
+    }
 );
 
 const emits = defineEmits<{
-  (e: "update:modelValue", value: object[] | string): void;
-  (e: "update:markdown", value: object[]): void;
+    (e: "update:modelValue", value: object[] | string): void;
+    (e: "update:markdown", value: object[]): void;
 }>();
 
 watch(model, () => {
-  if (model.value) {
-    emits("update:modelValue", model.value);
-    emits(
-      "update:markdown",
-      editorRef.value?.editor?.storage.markdown.getMarkdown()
-    );
-  }
+    if (model.value) {
+        emits("update:modelValue", model.value);
+        emits(
+            "update:markdown",
+            editorRef.value?.editor?.storage.markdown.getMarkdown()
+        );
+    }
 });
 </script>
 <template>
-  <fwb-button
-    :color="editorRef?.editor?.isActive('bold') ? 'dark' : 'alternative'"
-    @click="editorRef?.editor?.chain().focus().toggleBold().run()"
-  >
-    <TextBold class="w-4 h-4" />
-  </fwb-button>
-  <fwb-button
-    :color="editorRef?.editor?.isActive('italic') ? 'dark' : 'alternative'"
-    @click="editorRef?.editor?.chain().focus().toggleItalic().run()"
-  >
-    <TextItalic class="w-4 h-4" />
-  </fwb-button>
-  <fwb-button
-    :color="editorRef?.editor?.isActive('strike') ? 'dark' : 'alternative'"
-    @click="editorRef?.editor?.chain().focus().toggleStrike().run()"
-  >
-    <TextStroke class="w-4 h-4" />
-  </fwb-button>
-  <fwb-button
-    :color="editorRef?.editor?.isActive('strike') ? 'dark' : 'alternative'"
-    @click="editorRef?.editor?.chain().focus().toggleBulletList().run()"
-  >
-    <BulletListIcon class="w-4 h-4 mr-3" />
-  </fwb-button>
-  <fwb-button
-    :color="editorRef?.editor?.isActive('strike') ? 'dark' : 'alternative'"
-    @click="editorRef?.editor?.chain().focus().toggleOrderedList().run()"
-  >
-    <OrderedListIcon class="w-4 h-4 mr-3" />
-  </fwb-button>
+    <div class="flex gap-1 items-center mb-2">
+        <fwb-button
+            :color="
+                editorRef?.editor?.isActive('bold') ? 'dark' : 'alternative'
+            "
+            @click="editorRef?.editor?.chain().focus().toggleBold().run()"
+        >
+            <TextBold class="w-4 h-4" />
+        </fwb-button>
+        <fwb-button
+            :color="
+                editorRef?.editor?.isActive('italic') ? 'dark' : 'alternative'
+            "
+            @click="editorRef?.editor?.chain().focus().toggleItalic().run()"
+        >
+            <TextItalic class="w-4 h-4" />
+        </fwb-button>
+        <fwb-button
+            :color="
+                editorRef?.editor?.isActive('strike') ? 'dark' : 'alternative'
+            "
+            @click="editorRef?.editor?.chain().focus().toggleStrike().run()"
+        >
+            <TextStroke class="w-4 h-4" />
+        </fwb-button>
+        <fwb-button
+            :color="
+                editorRef?.editor?.isActive('strike') ? 'dark' : 'alternative'
+            "
+            @click="editorRef?.editor?.chain().focus().toggleBulletList().run()"
+        >
+            <BulletListIcon class="w-4 h-4 mr-3" />
+        </fwb-button>
+        <fwb-button
+            :color="
+                editorRef?.editor?.isActive('strike') ? 'dark' : 'alternative'
+            "
+            @click="
+                editorRef?.editor?.chain().focus().toggleOrderedList().run()
+            "
+        >
+            <OrderedListIcon class="w-4 h-4 mr-3" />
+        </fwb-button>
+        <slot name="header"></slot>
+    </div>
 
-  <Editor ref="editorRef" v-model="model" css-class="input big-input" />
+    <Editor ref="editorRef" v-model="model" css-class="input big-input" />
 </template>

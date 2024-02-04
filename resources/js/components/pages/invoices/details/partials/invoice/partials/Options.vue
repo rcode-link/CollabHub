@@ -1,5 +1,7 @@
 <script lang="ts" setup>
 import { FwbButton } from "flowbite-vue";
+import PaymentForm from "@/components/pages/invoices/details/partials/payment/Form.vue";
+
 import { useRoute } from "vue-router";
 const route = useRoute();
 const downloadInvoice = () => {
@@ -20,10 +22,12 @@ const markAsSent = () => {
 };
 </script>
 <template>
-    <fwb-button @click="downloadInvoice" color="green">Download</fwb-button>
-    <fwb-button color="yellow">Record payment</fwb-button>
+    <fwb-button @click="downloadInvoice" color="green" size="xs">
+        Download
+    </fwb-button>
+    <PaymentForm />
     <!-- <fwb-button>Send</fwb-button> -->
-    <fwb-button @click="markAsSent" color="alternative"
-        >Mark as sent</fwb-button
-    >
+    <fwb-button size="xs" @click="markAsSent" color="alternative">
+        Mark as sent
+    </fwb-button>
 </template>

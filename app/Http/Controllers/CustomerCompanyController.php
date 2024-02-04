@@ -33,14 +33,16 @@ class CustomerCompanyController extends Controller
      */
     public function show(string $id)
     {
-        return new CustomerResource(Company::whereId($id)->firstOrFail());
+        return new CustomerResource(Company::whereId($id)->with('currency')->firstOrFail());
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(CustomerCompanyRequest $request, string $id)
     {
+        Company::whereId($id)->update($request->validated());
+        return response()->noContent();
         //
     }
 

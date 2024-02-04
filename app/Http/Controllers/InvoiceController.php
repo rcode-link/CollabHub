@@ -45,7 +45,7 @@ class InvoiceController extends Controller
     public function show(Invoice $invoice)
     {
 
-        $invoice->load('company', 'items', 'items.billingItem');
+        $invoice->load('company', 'company.currency', 'items', 'items.billingItem');
         return new InvoiceResource($invoice);
         //
     }
@@ -62,10 +62,10 @@ class InvoiceController extends Controller
 
     public function download(Invoice $invoice)
     {
-        $invoice->load('items', 'items.billingItem', 'company');
+        $invoice->load('items', 'items.billingItem', 'company', 'company.currency');
         $company = Company::whereIsCostumerCompany(false)->firstOrFail();
         $pdf = Pdf::loadView('pdf.invoice', ['model' => $invoice, 'company' => $company]);
-        return $pdf->stream('document.pdf');
+        return $pdf->stream($invoice->number);
     }
 
     /**
