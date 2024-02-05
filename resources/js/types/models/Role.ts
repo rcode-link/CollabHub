@@ -10,3 +10,4 @@ export type Role = {
     can_be_changed: boolean;
     is_visible: boolean;
 };
+

@@ -62,7 +62,8 @@ class UserResource extends JsonResource
             'view_profile' => $this->when(\request()->routeIs('apiusers.show'), function () {
                 return $this->permissions()->filter(fn($obj) => $obj['users']->contains($this->id))->pluck('model');
             }),
-            'availability' => $this->todayMeetings()
+            'availability' => $this->todayMeetings(),
+            'attending' => $this->when(request()->routeIs('api.calendar.*'), fn() => $this->pivot->attending)
         ];
     }
 }

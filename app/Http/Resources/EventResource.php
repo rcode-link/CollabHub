@@ -50,7 +50,7 @@ class EventResource extends JsonResource
             }),
             'creator' => $this->whenLoaded('creator', fn() => new UserResource($this->creator)),
             'attendance' => $this->whenLoaded('user', function () {
-                return $this->user->map(fn($obj) => ['name' => $obj->name, 'email' => $obj->email, 'id' => $obj->id, 'avatar' => $obj->getFirstMediaUrl('avatar'), 'attending' => $obj->pivot->attending]);
+                return EventUserResource::collection($this->user);
             })
         ];
     }

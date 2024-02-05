@@ -13,5 +13,6 @@ export type UserResource = {
     manager?: UserResource;
     view_profile?: string;
     availability: string;
+    attending?: string;
 };
 

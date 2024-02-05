@@ -108,11 +108,11 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::apiResource('/roles', RoleController::class);
 
     Route::apiResource('/time-sheet', TimeSheetController::class);
-    Route::get('/calendar', [CalendarController::class, 'getMyEvents'])->name('api.getMyEvents');
-    Route::post('/calendar', [CalendarController::class, 'insertCalendarItem'])->name('api.insertCalendarItem');
+    Route::get('/calendar', [CalendarController::class, 'getMyEvents'])->name('api.calendar.myEvents');
+    Route::post('/calendar', [CalendarController::class, 'insertCalendarItem'])->name('api.calendar.insertCalendarItem');
     Route::put('/calendar/{event}', [CalendarController::class, 'update'])->name('api.calendar.update');
     Route::get('/event/{event}', [CalendarController::class, 'view'])->name('api.event.view');
-    Route::put('/event/{event}', EventController::class);
+    Route::put('/event/{event}', EventController::class)->name('api.calendar.updateEvent');
     Route::delete('/calendar/{event}', [CalendarController::class, 'destroy'])->name('api.destroy');
     Route::apiResource('/users', UserController::class);
     Route::put('/user/change-password', [UserController::class, 'updatePassword'])->name('api.updatePassword');

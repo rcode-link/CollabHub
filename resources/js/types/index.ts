@@ -22,6 +22,7 @@ export type { InvoiceResource } from './models/InvoiceResource';
 export type { LoginResource } from './models/LoginResource';
 export type { MediaResource } from './models/MediaResource';
 export type { MessageReactionResouce } from './models/MessageReactionResouce';
+export type { PaymentResource } from './models/PaymentResource';
 export { PermissionsScopes } from './models/PermissionsScopes';
 export type { Project } from './models/Project';
 export type { ProjectResource } from './models/ProjectResource';

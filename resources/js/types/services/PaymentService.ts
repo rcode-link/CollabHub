@@ -2,16 +2,19 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
+import type { PaymentResource } from '../models/PaymentResource';
 import type { CancelablePromise } from '../core/CancelablePromise';
 import { OpenAPI } from '../core/OpenAPI';
 import { request as __request } from '../core/request';
 export class PaymentService {
     /**
      * Display a listing of the resource
-     * @returns string
+     * @returns any Array of `PaymentResource`
      * @throws ApiError
      */
-    public static apipaymentsIndex(): CancelablePromise<string> {
+    public static apipaymentsIndex(): CancelablePromise<{
+        data: Array<PaymentResource>;
+    }> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/v1/payments',

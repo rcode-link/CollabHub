@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Events\CalendarEventUpdatedEvent;
 use App\Helpers\HasChat;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -70,6 +71,14 @@ class Event extends Model
         'end_time' => 'datetime',
         'start_time' => 'datetime'
     ];
+
+    protected static function booted()
+    {
+        parent::booted();
+
+        self::updated(fn(Event $event) => CalendarEventUpdatedEvent::broadcast($event->load('user', 'creator')));
+        self::created(fn(Event $event) => CalendarEventUpdatedEvent::broadcast($event->load('user', 'creator')));
+    }
 
     public function creator(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {

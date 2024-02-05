@@ -19,6 +19,6 @@ export type EventResource = {
         slug: string | null;
     };
     creator?: UserResource;
-    attendance?: string;
+    attendance?: Array<UserResource>;
 };
 

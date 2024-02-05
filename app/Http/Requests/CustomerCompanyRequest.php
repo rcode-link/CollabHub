@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Models\Company;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -22,9 +23,10 @@ class CustomerCompanyRequest extends FormRequest
      */
     public function rules(): array
     {
+        $company = Company::whereId(request()->get('id'))->first();
         return [
             'name' => ['required'],
-            'prefix' => ['required', Rule::unique('companies', 'prefix')->ignore(request()->get('id'))],
+            'prefix' => [Rule::requiredIf($company ? $company->is_costumer_company : true), Rule::unique('companies', 'prefix')->ignore(request()->get('id'))],
             'address' => ['required'],
             'currency_id' => ['required', 'exists:currencies,id'],
             'city' => ['required'],

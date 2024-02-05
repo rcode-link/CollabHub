@@ -17,12 +17,12 @@ export type EventType = {
     id: number | null;
     start_time: string;
     end_time: string;
-    freq?: string | null;
+    freq?: string;
     description: string | null;
-    freq_settings?: string | object | null;
+    freq_settings?: string | object;
     has_video: boolean;
     user_id: number | null;
-    freq_until?: string | null;
+    freq_until?: string;
     users: any[];
     type: string;
     approved: boolean;
@@ -97,7 +97,15 @@ export const useCalendarStore = defineStore("calendarStore", () => {
         type: "event",
         freq: "",
         user_id: null,
-        freq_settings: {},
+        freq_settings: {
+            MO: false,
+            TU: false,
+            WE: false,
+            TH: false,
+            FR: false,
+            SA: false,
+            SU: false,
+        },
         users: [],
     });
 
@@ -129,7 +137,7 @@ export const useCalendarStore = defineStore("calendarStore", () => {
                 },
             })
             .then((response) => {
-                response.data.data.forEach((obj) => {
+                response.data.data.forEach((obj: any) => {
                     calendar.value.push(getRepeatingEventData(obj));
                 });
             });
@@ -185,7 +193,7 @@ export const useCalendarStore = defineStore("calendarStore", () => {
         showAdvancedSettings.value = false;
     };
 
-    const setItem = (obj) => {
+    const setItem = (obj: any) => {
         form.description = obj.description;
         form.summary = obj.summary;
         form.end_time = obj.end_time;

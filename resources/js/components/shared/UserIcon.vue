@@ -28,7 +28,7 @@ const getUserStatus = () => {
         <div
             v-if="status"
             :class="{
-                'w-2 h-2 rounded z-50': true,
+                'w-2 h-2 rounded z-10': true,
                 'bg-green-600': getUserStatus(),
             }"
         />

@@ -58,3 +58,7 @@ BroadcastCustom::getInstance()->channel('task-updated.*', function (User $user, 
 BroadcastCustom::getInstance()->channel('UpdateChatForUser.*', function (User $user, $userId) {
     return $user->id === (int) $userId;
 });
+
+BroadcastCustom::getInstance()->channel('event.*', function (User $user, $userId) {
+    return $user->id === (int) $userId;
+});

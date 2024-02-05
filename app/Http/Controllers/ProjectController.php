@@ -24,6 +24,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Symfony\Component\HttpFoundation\Response;
 use function PHPUnit\Framework\throwException;
+use Illuminate\Support\Facades\Cache;
 
 class ProjectController extends Controller
 {
@@ -49,7 +50,11 @@ class ProjectController extends Controller
         ]);
 
 
-        $users = Auth::user()->permissions()->filter(fn($obj) => $obj['model']['type'] === Project::class && $obj['model']['id'] == $request->get('project_id'))->map(fn($obj) => $obj['users'])->flatten();
+        $permissions = Cache::get('permissions');
+
+        $users = $permissions->filter(fn($obj) => $obj['model']['type'] === Project::class && $obj['model']['id'] == $request->get('project_id'))->map(fn($obj) => $obj['users'])->flatten();
+
+
 
 
         $list = User::query()

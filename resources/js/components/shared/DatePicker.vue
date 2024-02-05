@@ -6,7 +6,7 @@ import { useErrorsStore } from "../../store/errors";
 import { DateTime } from "luxon";
 
 interface iProps {
-    modelValue: string;
+    modelValue?: string;
     name?: string;
 }
 const props = withDefaults(defineProps<iProps>(), {

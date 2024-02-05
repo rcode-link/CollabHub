@@ -12,7 +12,7 @@ export class CalendarService {
      * @returns any Array of `EventResource`
      * @throws ApiError
      */
-    public static apiapiGetMyEvents(): CancelablePromise<{
+    public static apiapiCalendarMyEvents(): CancelablePromise<{
         data: Array<EventResource>;
     }> {
         return __request(OpenAPI, {
@@ -25,7 +25,7 @@ export class CalendarService {
      * @returns any
      * @throws ApiError
      */
-    public static apiapiInsertCalendarItem(
+    public static apiapiCalendarInsertCalendarItem(
         requestBody?: {
             summary: string;
             description?: string | null;
