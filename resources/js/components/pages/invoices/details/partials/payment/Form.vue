@@ -13,6 +13,11 @@ import { DateTime } from "luxon";
 const invoiceStore = useInvoiceDetailsStore();
 const { invoices, load, route } = useInvoice();
 
+const modalRef = ref();
+
+const emit = defineEmits<{
+    (e: "update"): void;
+}>();
 onMounted(() => {
     load();
 });
@@ -39,11 +44,14 @@ watch(
 );
 
 const submit = () => {
-    window.axios.post("/api/v1/payments", model.value);
+    window.axios.post("/api/v1/payments", model.value).then(() => {
+        emit("update");
+        modalRef.value.closeModal();
+    });
 };
 </script>
 <template>
-    <Modal>
+    <Modal ref="modalRef">
         <template #button>
             <fwb-button color="yellow" size="xs">Record payment</fwb-button>
         </template>

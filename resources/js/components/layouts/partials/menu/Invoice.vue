@@ -13,13 +13,6 @@ const userStore = useUserStore();
         <fwb-list-group-item
             v-if="can(`can-view-users.${userStore.company.id}`, '')"
         >
-            <router-link :to="{ name: 'settings.company-info' }">
-                Base information
-            </router-link>
-        </fwb-list-group-item>
-        <fwb-list-group-item
-            v-if="can(`can-view-users.${userStore.company.id}`, '')"
-        >
             <router-link :to="{ name: 'settings.invoice-items' }">
                 Billable items
             </router-link>

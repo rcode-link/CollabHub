@@ -22,19 +22,11 @@ const props = withDefaults(
 );
 
 const getUserStatus = (): AvatarStatus => {
-    console.log({
-        onlineUsers: userState.onlineUsers,
-        id: typeof props.user,
-        filter: userState.onlineUsers.filter(
-            (obj) => obj.id === props.user?.id
-        ),
-    });
-
     let usersOnlineLength = userState.onlineUsers.filter(
         (obj) => obj.id === (props.user as UserResource)?.id
     ).length;
 
-    if ("chatable_id" in props.user) {
+    if (props.user && "chatable_id" in props.user) {
         usersOnlineLength = userState.onlineUsers.filter(
             (obj) =>
                 obj.id === toNumber((props.user as ChatResource)?.chatable_id)
@@ -43,8 +35,6 @@ const getUserStatus = (): AvatarStatus => {
 
     return usersOnlineLength ? "online" : "away";
 };
-
-console.log({ obj: props.user });
 </script>
 
 <template>

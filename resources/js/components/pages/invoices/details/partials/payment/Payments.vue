@@ -39,7 +39,7 @@ load();
             <fwb-table-head-cell>Total</fwb-table-head-cell>
             <fwb-table-head-cell>Date</fwb-table-head-cell>
             <fwb-table-head-cell class="flex justify-end">
-                <PaymentForm />
+                <PaymentForm @update="load" />
             </fwb-table-head-cell>
         </fwb-table-head>
         <fwb-table-body>
