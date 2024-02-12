@@ -47,7 +47,14 @@ class CalendarController extends Controller
         $event->load('videocalls');
         $data = $request->validated();
         $data['approved'] = ($event->type != $data['type'] && $data['type'] == EventTypes::Vacation->value) ? false : true;
-        $event->update($request->validated());
+
+        if (!$request->has('freq')) {
+            $data['freq'] = null;
+            $data['freq_settings'] = null;
+            $data['freq_until'] = null;
+        }
+
+        $event->update($data);
         if ($request->get('has_video') && !$event->videocalls) {
             $event->videocalls()->create([
                 'title' => $request->get('summary'),

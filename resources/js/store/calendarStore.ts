@@ -2,8 +2,9 @@ import { defineStore } from "pinia";
 import { computed, reactive, ref, watch } from "vue";
 import { DateTime } from "luxon";
 import { useErrorsStore } from "./errors.js";
-import { EventResource, UserResource } from "../types/index.js";
+import { EventResource } from "../types/index.js";
 import "../declaration.js";
+import { useRoute, useRouter } from "vue-router";
 export type EventAttendance = {
     name: string;
     id: number;
@@ -40,6 +41,8 @@ export const useCalendarStore = defineStore("calendarStore", () => {
         DateTime.now().set({ year: selectedYear.value }).month
     );
     const errorsStore = useErrorsStore();
+    const route = useRoute();
+    const router = useRouter();
     const showAdvancedSettings = ref(false);
     const videoCall = ref<{
         slug: string | null;
@@ -55,6 +58,15 @@ export const useCalendarStore = defineStore("calendarStore", () => {
             name: "Vacation",
         },
     ];
+    const freqSttingsBase = {
+        MO: false,
+        TU: false,
+        WE: false,
+        TH: false,
+        FR: false,
+        SA: false,
+        SU: false,
+    };
     const byDay = [
         {
             value: "MO",
@@ -97,15 +109,7 @@ export const useCalendarStore = defineStore("calendarStore", () => {
         type: "event",
         freq: "",
         user_id: null,
-        freq_settings: {
-            MO: false,
-            TU: false,
-            WE: false,
-            TH: false,
-            FR: false,
-            SA: false,
-            SU: false,
-        },
+        freq_settings: freqSttingsBase,
         users: [],
     });
 
@@ -147,7 +151,9 @@ export const useCalendarStore = defineStore("calendarStore", () => {
         let request;
         const data: EventType = Object.assign({}, form);
         if (form.freq === "WEEKLY" && form.freq_settings) {
-            data.freq_settings = Object.keys(form.freq_settings).join(",");
+            data.freq_settings = Object.keys(form.freq_settings)
+                .filter((key) => form.freq_settings[key] === true)
+                .join(",");
         }
         if (form.freq === "DAILY" && form.freq_settings) {
             delete data.freq_settings;
@@ -158,6 +164,16 @@ export const useCalendarStore = defineStore("calendarStore", () => {
             delete data.freq;
             delete data.freq_until;
         }
+
+        const stTime = DateTime.fromISO(form.start_time);
+        const endTime = DateTime.fromISO(form.end_time);
+        data.end_time = stTime
+            .set({
+                hour: endTime.hour,
+                minute: endTime.minute,
+            })
+            .toUTC()
+            .toString();
 
         data.users = data.users.map((obj) => obj.id);
 
@@ -170,7 +186,6 @@ export const useCalendarStore = defineStore("calendarStore", () => {
         await request
             .then(() => {
                 closeModal();
-                load();
             })
             .catch((error) => {
                 if (error.response.status === 422) {
@@ -191,15 +206,26 @@ export const useCalendarStore = defineStore("calendarStore", () => {
         };
         isModalVisible.value = false;
         showAdvancedSettings.value = false;
+        router.push({
+            query: {
+                event: route.query.event,
+            },
+        });
     };
 
     const setItem = (obj: any) => {
+        const tmpFreq = freqSttingsBase;
+        obj.freq_settings?.split(",").forEach((element: string) => {
+            //@ts-ignore
+            tmpFreq[element] = true;
+        });
+
         form.description = obj.description;
         form.summary = obj.summary;
         form.end_time = obj.end_time;
         form.start_time = obj.start_time;
         form.type = obj.type;
-        form.freq_settings = obj.freq_settings;
+        form.freq_settings = tmpFreq;
         form.freq_until = obj.freq_until;
         form.freq = obj.freq;
         form.id = obj.id;
@@ -266,6 +292,25 @@ export const useCalendarStore = defineStore("calendarStore", () => {
             load();
         });
     };
+
+    const showCalendarDetails = computed(() => {
+        const { edit, event } = route.query;
+        if (edit) {
+            return false;
+        }
+
+        return event && !edit;
+    });
+
+    const showEditForm = computed(() => {
+        if (route.query.createNewEvent === "true") {
+            return true;
+        }
+
+        return (route.query.edit === "true" &&
+            route.query.event &&
+            Number(route.query.event) > 0) as boolean;
+    });
     return {
         currentDate,
         selectedMonth,
@@ -278,6 +323,8 @@ export const useCalendarStore = defineStore("calendarStore", () => {
         showAdvancedSettings,
         calendarItemType,
         showDetails,
+        showCalendarDetails,
+        showEditForm,
         load,
         setItem,
         save,

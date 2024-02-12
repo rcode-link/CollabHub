@@ -108,6 +108,9 @@ const updateNote = debounce(function (value: any) {
                             invoiceStore.data?.company?.country
                         }}
                     </fwb-p>
+                    <fwb-p v-if="invoiceStore.data.sent" class="font-bold">
+                        Invoice sent
+                    </fwb-p>
                 </div>
                 <div class="ml-auto mt-auto flex gap-4">
                     <Options />

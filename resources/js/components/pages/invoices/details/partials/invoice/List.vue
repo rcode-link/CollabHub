@@ -24,7 +24,8 @@ onMounted(() => {
     <fwb-table class="" hoverable>
         <fwb-table-head>
             <fwb-table-head-cell>No.</fwb-table-head-cell>
-            <fwb-table-head-cell>Total</fwb-table-head-cell>
+            <fwb-table-head-cell>Total Amount</fwb-table-head-cell>
+            <fwb-table-head-cell>Due Ammount</fwb-table-head-cell>
             <fwb-table-head-cell>Is sent</fwb-table-head-cell>
             <fwb-table-head-cell>Date</fwb-table-head-cell>
             <fwb-table-head-cell>Due date</fwb-table-head-cell>
@@ -49,6 +50,14 @@ onMounted(() => {
                     {{
                         currencyPrint(
                             Number(obj.total),
+                            invoiceDetails.companyData?.currency
+                        )
+                    }}
+                </fwb-table-cell>
+                <fwb-table-cell>
+                    {{
+                        currencyPrint(
+                            Number(obj.due_ammount),
                             invoiceDetails.companyData?.currency
                         )
                     }}

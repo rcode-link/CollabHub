@@ -12,7 +12,7 @@ export class InvoiceService {
      * @returns string
      * @throws ApiError
      */
-    public static invoiceDownload(
+    public static api(
         invoice: number,
     ): CancelablePromise<string> {
         return __request(OpenAPI, {

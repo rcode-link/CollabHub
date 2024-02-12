@@ -21,7 +21,10 @@ const props = withDefaults(
     }
 );
 
-const getUserStatus = (): AvatarStatus => {
+const getUserStatus = () => {
+    if (!props.status) {
+        return {};
+    }
     let usersOnlineLength = userState.onlineUsers.filter(
         (obj) => obj.id === (props.user as UserResource)?.id
     ).length;
@@ -33,7 +36,11 @@ const getUserStatus = (): AvatarStatus => {
         ).length;
     }
 
-    return usersOnlineLength ? "online" : "away";
+    const currentStatus: AvatarStatus = usersOnlineLength ? "online" : "away";
+
+    return {
+        status: currentStatus,
+    };
 };
 </script>
 
@@ -43,7 +50,7 @@ const getUserStatus = (): AvatarStatus => {
             :size="avatarSize"
             :img="user?.avatar"
             status-position="top-right"
-            :status="getUserStatus()"
+            v-bind="getUserStatus()"
         />
     </span>
 </template>

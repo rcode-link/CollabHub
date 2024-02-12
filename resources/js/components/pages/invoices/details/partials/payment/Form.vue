@@ -3,7 +3,7 @@ import Modal from "@/components/shared/Modal.vue";
 import Label from "@/components/shared/Label.vue";
 import Text from "@/components/shared/Text.vue";
 import { FwbButton, FwbSelect } from "flowbite-vue";
-import { onMounted, ref, watch } from "vue";
+import { computed, onMounted, ref, watch } from "vue";
 import DatePicker from "@/components/shared/DatePicker.vue";
 import { useInvoiceDetailsStore } from "@/store/invoiceDetailsStore";
 import useInvoice from "@/components/pages/invoices/details/functions/useInvoice";
@@ -49,6 +49,9 @@ const submit = () => {
         modalRef.value.closeModal();
     });
 };
+const canSelectInvoice = computed(() => {
+    return route.params.inv_id?.length > 0;
+});
 </script>
 <template>
     <Modal ref="modalRef">
@@ -63,7 +66,7 @@ const submit = () => {
                     <FwbSelect
                         name="invoice"
                         v-model="model.invoice_id"
-                        :disabled="invoiceStore.data.id > 0"
+                        :disabled="canSelectInvoice"
                         :options="
                             invoices?.data.map((obj) => {
                                 return {

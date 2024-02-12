@@ -20,44 +20,61 @@ import SelectUsersInCompany from "@/components/shared/SelectUsersInCompany.vue";
 import UserIcon from "@/components/shared/UserIcon.vue";
 import TrashIcon from "@/components/shared/icons/TrashIcon.vue";
 import { onUpdated, watch } from "vue";
+import flatPickr from "vue-flatpickr-component";
+
 import { useErrorsStore } from "@/store/errors";
 import InteractiveToast from "@/components/shared/InteractiveToast.vue";
-import TimePicker from "@/components/shared/TimePicker.vue";
+import { useRoute } from "vue-router";
+import { find, toNumber } from "lodash";
 import { DateTime } from "luxon";
 
+const route = useRoute();
 const calendar = useCalendarStore();
 const errorsStore = useErrorsStore();
-
-function openCall() {
-    window.open(`/call/${calendar.videoCall?.slug}`, "_blank");
-}
 
 onUpdated(() => {
     errorsStore.setErrors([], "");
 });
 
+// watch(
+//     () => calendar.form.start_time,
+//     (__newVal, __oldVal) => {
+//         calendar.form.end_time =
+//             DateTime.fromISO(calendar.form.start_time)
+//                 .set({
+//                     hour: DateTime.now().hour,
+//                     minute: DateTime.now().minute,
+//                 })
+//                 .toISO() ?? "";
+//     },
+//     {
+//         deep: true,
+//     }
+// );
+
 watch(
-    () => calendar.form.start_time,
-    (__newVal, oldVal) => {
-        if (oldVal === "") {
+    () => [route.query.event, calendar.calendar],
+    () => {
+        if (!calendar.calendar.length) {
             return;
         }
-        calendar.form.end_time =
-            DateTime.fromISO(calendar.form.start_time)
-                .set({
-                    hour: DateTime.now().hour,
-                    minute: DateTime.now().minute,
-                })
-                .toISO() ?? "";
+        if (route.query.edit === "true") {
+            const obj = find(calendar.calendar, {
+                id: toNumber(route.query.event),
+            });
+
+            calendar.setItem(obj);
+        }
     },
     {
+        immediate: true,
         deep: true,
     }
 );
 </script>
 
 <template>
-    <Modal :hide-modal="calendar.isModalVisible" @closed="calendar.closeModal">
+    <Modal :hide-modal="calendar.showEditForm" @closed="calendar.closeModal">
         <template #header>
             <h1>
                 <template v-if="calendar.form.id"> Event details </template>
@@ -77,27 +94,40 @@ watch(
                     <Errors name="summary" />
                 </div>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div class="md:col-span-2">
-                        <Label forInput="event_date">Date *</Label>
-                        <DatePicker
-                            v-model="calendar.form.start_time"
-                            :name="'event_date'"
-                        />
-                        <Errors name="start_time" />
-                    </div>
                     <div>
                         <Label forInput="start_time">Start time *</Label>
-                        <TimePicker
+                        <flat-pickr
                             v-model="calendar.form.start_time"
+                            class="input"
+                            :config="{
+                                enableTime: true,
+                                altInput: true,
+                                time_24hr: true,
+                                dateFormat: 'Z',
+                                altFormat: 'd/m/Y H:i',
+                            }"
                             :name="'start_time'"
                         />
                         <Errors name="start_time" />
                     </div>
                     <div>
                         <Label forInput="end_time">End time *</Label>
-                        <TimePicker
+                        <flat-pickr
                             v-model="calendar.form.end_time"
-                            name="end_time"
+                            class="input"
+                            :config="{
+                                enableTime: true,
+                                altInput: true,
+                                time_24hr: true,
+                                noCalendar: true,
+                                dateFormat: 'Z',
+                                altFormat: 'H:i',
+                                minTime: DateTime.fromISO(
+                                    calendar.form.start_time
+                                ).toLocaleString(DateTime.TIME_24_SIMPLE),
+                                maxTime: '23:00',
+                            }"
+                            :name="'end_time'"
                         />
                         <Errors name="end_time" />
                     </div>
@@ -217,15 +247,6 @@ watch(
             <div class="flex justify-between">
                 <div>
                     <FwbButton @click="calendar.save">Save</FwbButton>
-                    <FwbButton
-                        color="yellow"
-                        class="ml-4"
-                        @click="openCall"
-                        v-if="
-                            calendar.form.has_video && calendar.videoCall?.slug
-                        "
-                        >Start call
-                    </FwbButton>
                 </div>
                 <interactive-toast>
                     <template #trigger>

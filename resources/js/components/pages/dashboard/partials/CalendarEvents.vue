@@ -17,6 +17,7 @@ import ArrowRight from "@/components/shared/icons/ArrowRight.vue";
 import InfoIcon from "@/components/shared/icons/InfoIcon.vue";
 import { useUserStore } from "@/store/user";
 import Modal from "@/components/shared/Modal.vue";
+import CalendarDetails from "./calendar/Details.vue";
 import { EventResource } from "@/types";
 
 const calendar = useCalendarStore();
@@ -86,7 +87,9 @@ const location = window.location.href;
             <fwb-button
                 color="alternative"
                 class="ml-auto"
-                @click="calendar.isModalVisible = true"
+                @click="
+                    () => $router.push({ query: { createNewEvent: 'true' } })
+                "
             >
                 <PlusSquare class="w-4 h-4" />
             </fwb-button>
@@ -151,7 +154,8 @@ const location = window.location.href;
             />
         </div>
     </Card>
-    <Form />
+    <Form v-if="calendar.showEditForm" />
+    <CalendarDetails v-if="calendar.showCalendarDetails" />
 </template>
 
 <style scoped></style>

@@ -18,7 +18,8 @@ class InvoiceController extends Controller
      */
     public function index()
     {
-        $data = Invoice::whereCompanyId(request()->get('company_id'));
+        $data = Invoice::whereCompanyId(request()->get('company_id'))
+            ->withSum('paymants', 'value');
         return InvoiceResource::collection($data->paginate());
     }
 

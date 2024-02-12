@@ -11,7 +11,6 @@
                 <CalendarEvents />
             </div>
         </div>
-        <CalendarDetails />
     </Auth>
 </template>
 <script setup>

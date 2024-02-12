@@ -1,9 +1,12 @@
 <script lang="ts" setup>
 import { FwbButton } from "flowbite-vue";
 import PaymentForm from "@/components/pages/invoices/details/partials/payment/Form.vue";
-
 import { useRoute } from "vue-router";
+import { useInvoiceDetailsStore } from "@/store/invoiceDetailsStore";
+
 const route = useRoute();
+const invoiceDetails = useInvoiceDetailsStore();
+
 const downloadInvoice = () => {
     window.axios
         .get(`/api/v1/invoices/${route.params.inv_id}/download`, {
@@ -27,7 +30,12 @@ const markAsSent = () => {
     </fwb-button>
     <PaymentForm />
     <!-- <fwb-button>Send</fwb-button> -->
-    <fwb-button size="xs" @click="markAsSent" color="alternative">
+    <fwb-button
+        v-if="!invoiceDetails.data.sent"
+        size="xs"
+        @click="markAsSent"
+        color="alternative"
+    >
         Mark as sent
     </fwb-button>
 </template>

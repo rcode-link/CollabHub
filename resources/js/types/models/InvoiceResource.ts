@@ -14,6 +14,7 @@ export type InvoiceResource = {
     note: string;
     total: string;
     discont: number;
+    due_ammount: string;
     company?: CustomerResource;
     items?: Array<InvoiceItemResource>;
 };

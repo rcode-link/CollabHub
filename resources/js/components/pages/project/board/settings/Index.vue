@@ -1,11 +1,11 @@
-<script setup>
-import Card from "../../../../shared/Card.vue";
+<script setup lang="ts">
+import Card from "@/components/shared/Card.vue";
 import { useRoute } from "vue-router";
-import { onMounted, reactive, ref } from "vue";
+import { onMounted, reactive, ref, onBeforeUnmount } from "vue";
 import { FwbButton, FwbCheckbox, FwbInput } from "flowbite-vue";
-import ArrowDownIcon from "../../../../shared/icons/ArrowDownIcon.vue";
-import { useBreadcrumbStore } from "../../../../../store/breadcrumb";
-import { useBoardsState } from "../../../../../store/boards.ts";
+import ArrowDownIcon from "@/components/shared/icons/ArrowDownIcon.vue";
+import { useBreadcrumbStore } from "@/store/breadcrumb";
+import { useBoardsState } from "@/store/boards.ts";
 
 const boardsState = useBoardsState();
 const breadcrumbStore = useBreadcrumbStore();
@@ -18,7 +18,7 @@ const model = reactive({
     board_id: route.params.board,
 });
 const loadStatuses = () => {
-    axios
+    window.axios
         .get(`/api/v1/tasks-statuses/`, {
             params: {
                 project_id: route.params.project,
@@ -32,13 +32,13 @@ const loadStatuses = () => {
 
 loadStatuses();
 
-const update = (value) => {
-    axios
+const update = (value: any) => {
+    window.axios
         .put(`/api/v1/tasks-statuses/${value.id}`, value)
         .then(() => loadStatuses());
 };
 const create = () => {
-    axios.post(`/api/v1/tasks-statuses`, model).then(() => {
+    window.axios.post(`/api/v1/tasks-statuses`, model).then(() => {
         loadStatuses();
         model.title = "";
     });
@@ -50,20 +50,20 @@ onMounted(() => {
             link: {
                 name: "project.board.view",
                 params: {
-                    board: boardsState.activeBoard.id,
-                    sprint: boardsState.activeSprint.id,
+                    board: boardsState.activeBoard?.id,
+                    sprint: boardsState.activeSprint?.id,
                 },
             },
-            title: boardsState.activeBoard.title,
+            title: boardsState.activeBoard?.title,
         },
     ];
 
-    if (boardsState.activeSprint.title) {
+    if (boardsState.activeSprint?.title) {
         breadcrumItems.push({
             link: {
                 name: "project.board.view",
                 params: {
-                    board: boardsState.activeBoard.id,
+                    board: boardsState.activeBoard?.id,
                     sprint: boardsState.activeSprint.id,
                 },
             },
@@ -71,6 +71,7 @@ onMounted(() => {
         });
     }
 
+    //@ts-ignore
     breadcrumItems.push({
         title: "Settings",
     });

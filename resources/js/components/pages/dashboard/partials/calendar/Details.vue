@@ -20,7 +20,10 @@ import {
 import UserIcon from "@/components/shared/UserIcon.vue";
 import User from "@/components/shared/SelectUsersInCompany.vue";
 import { EventResource } from "@/types";
+import PencilIcon from "@/components/shared/icons/PencilIcon.vue";
+import { useUserStore } from "@/store/user";
 const calendar = useCalendarStore();
+const userState = useUserStore();
 const router = useRouter();
 const route = useRoute();
 const modalClosed = () => {
@@ -29,22 +32,20 @@ const modalClosed = () => {
             event: null,
         },
     });
-    showModal.value = false;
 };
 const event = ref<EventResource>();
-const showModal = ref(false);
+function openCall() {
+    window.open(`/call/${event.value?.videocall?.slug}`, "_blank");
+}
 watch(
     () => [route.query.event, calendar.calendar],
     () => {
         if (route.query.event) {
-            showModal.value = true;
             event.value = find(calendar.calendar, {
                 id: toNumber(route.query.event),
             });
             return;
         }
-
-        showModal.value = false;
     },
     {
         immediate: true,
@@ -66,8 +67,15 @@ const declineAttendance = () => {
 </script>
 
 <template>
-    <fwb-modal v-if="showModal" @close="modalClosed">
+    <fwb-modal @close="modalClosed">
         <template #header>
+            <RouterLink
+                v-if="event?.user_id === userState.user.id"
+                class="mr-3"
+                :to="{ query: { event: event?.id, edit: 'true' } }"
+            >
+                <PencilIcon class="w-4 h-4" />
+            </RouterLink>
             <fwb-heading v-if="event" tag="h3">{{ event.summary }}</fwb-heading>
             <div v-else>Loading...</div>
         </template>
@@ -142,10 +150,23 @@ const declineAttendance = () => {
             </div>
         </template>
         <template #footer>
-            <fwb-button @click="acceptAttendance">Accept</fwb-button>
-            <fwb-button @click="declineAttendance" color="red" class="ml-4"
-                >Decline</fwb-button
-            >
+            <div class="flex gap-4">
+                <template v-if="event?.user_id !== userState.user.id">
+                    <fwb-button @click="acceptAttendance">Accept</fwb-button>
+                    <fwb-button
+                        @click="declineAttendance"
+                        color="red"
+                        class="ml-4"
+                        >Decline</fwb-button
+                    >
+                </template>
+                <FwbButton
+                    color="yellow"
+                    @click="openCall"
+                    v-if="event?.videocall?.slug"
+                    >Start call
+                </FwbButton>
+            </div>
         </template>
     </fwb-modal>
 </template>

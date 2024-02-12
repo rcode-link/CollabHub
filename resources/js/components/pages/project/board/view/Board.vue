@@ -80,7 +80,12 @@ function manageBreadcrumb() {
 
 watch(
     () => boardState.activeBoard?.id,
-    () => {
+    (newVal, __oldVal) => {
+        boardState.setStatuses([]);
+
+        if (!newVal) {
+            return;
+        }
         loadStatuses();
         manageBreadcrumb();
     },
@@ -96,9 +101,8 @@ onBeforeUnmount(() => {
 
 <template>
     <div
-        v-if="boardState.getBoards.length > 0"
-        :key="route.params.sprint.toString()"
         class="flex w-full gap-4 overflow-auto pb-4"
+        :key="boardState.activeBoard?.id?.toString()"
     >
         <StatusRow
             v-for="status in boardState.taskStatuses"

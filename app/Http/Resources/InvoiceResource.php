@@ -16,6 +16,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
  * @property int $total
  * @property int $discont
  * @property string $number
+ * @property int $paymants_sum_value
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\InvoiceItem> $items
@@ -40,6 +41,7 @@ class InvoiceResource extends JsonResource
             'note' => $this->note,
             'total' => $this->total / 100,
             'discont' => $this->discont,
+            'due_ammount' => ($this->total - $this->paymants_sum_value) / 100,
             'company' => $this->whenLoaded('company', fn() => new CustomerResource($this->company)),
             'items' => $this->whenLoaded('items', fn() => InvoiceItemResource::collection($this->items))
         ];

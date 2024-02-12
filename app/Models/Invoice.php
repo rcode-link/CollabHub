@@ -60,6 +60,11 @@ class Invoice extends Model
         return $this->belongsTo(Company::class);
     }
 
+    public function paymants()
+    {
+        return $this->hasMany(Payment::class);
+    }
+
     public function items()
     {
         return $this->hasMany(InvoiceItem::class);

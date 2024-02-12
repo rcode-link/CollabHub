@@ -2,6 +2,7 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
+import type { EventUserResource } from './EventUserResource';
 import type { UserResource } from './UserResource';
 export type EventResource = {
     summary: string;
@@ -19,6 +20,6 @@ export type EventResource = {
         slug: string | null;
     };
     creator?: UserResource;
-    attendance?: Array<UserResource>;
+    attendance?: Array<EventUserResource>;
 };
 

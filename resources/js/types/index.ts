@@ -15,6 +15,7 @@ export type { CurrencyResource } from './models/CurrencyResource';
 export type { CustomerResource } from './models/CustomerResource';
 export type { EventResource } from './models/EventResource';
 export { EventTypes } from './models/EventTypes';
+export type { EventUserResource } from './models/EventUserResource';
 export type { InvitationResource } from './models/InvitationResource';
 export { InvoiceData } from './models/InvoiceData';
 export type { InvoiceItemResource } from './models/InvoiceItemResource';

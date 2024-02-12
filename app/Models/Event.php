@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
+use App\Helpers\DateTime;
 
 /**
  * App\Models\Event
@@ -97,7 +98,7 @@ class Event extends Model
             ->with(['creator', 'user', 'videocalls'])
             ->where(function (Builder $query) {
                 $query->where('user_id', \Auth::id())
-                    ->orWhereHas('user', fn(Builder $builder) => $builder->where('user_id', \Auth::id()));
+                    ->orWhereHas('user', fn(Builder $builder) => $builder->where('user_id', \Auth::id())->where('attending', true));
             })->get();
 
         $tasks = Task::query()
@@ -120,15 +121,15 @@ class Event extends Model
             ;
             $icalendar .= "SUMMARY:" . $event['summary'] . "\r\n";
             $icalendar .= "DESCRIPTION:" . str_replace("\n", "\\n", $event['description']) . $videoCallLink . "\r\n";
-            $icalendar .= "DTSTART:" . date('Ymd\THis', strtotime($event['start_time'])) . "\r\n";
-            $icalendar .= "DTEND:" . date('Ymd\THis', strtotime($event['end_time'])) . "\r\n";
+            $icalendar .= "DTSTART:" . DateTime::format($event['start_time']) . "\r\n";
+            $icalendar .= "DTEND:" . DateTime::format($event['end_time']) . "\r\n";
             if ($event->freq) {
                 switch ($event->freq) {
                     case 'DAILY':
-                        $icalendar .= "RRULE:FREQ=DAILY;UNTIL=" . date('Ymd\THis', strtotime($event['freq_until'])) . "\r\n";
+                        $icalendar .= "RRULE:FREQ=DAILY;UNTIL=" . DateTime::format($event['freq_until']) . "\r\n";
                         break;
                     case 'WEEKLY':
-                        $icalendar .= "RRULE:FREQ=WEEKLY;BYDAY=" . $event->freq_settings . ";UNTIL=" . date('Ymd\THis', strtotime($event['freq_until'])) . "\r\n";
+                        $icalendar .= "RRULE:FREQ=WEEKLY;BYDAY=" . $event->freq_settings . ";UNTIL=" . DateTime::format($event['freq_until']) . "\r\n";
                         break;
                 }
             }
@@ -154,8 +155,8 @@ class Event extends Model
             ;
             $icalendar .= "SUMMARY:" . $task->name . "\r\n";
             $icalendar .= "DESCRIPTION: For more details click <a href='" . $taskUrl . "'>Here</a>\r\n";
-            $icalendar .= "DTSTART:" . date('Ymd\THis', strtotime($task->due_date)) . "\r\n";
-            $icalendar .= "DTEND:" . date('Ymd\THis', strtotime($task->due_date)) . "\r\n";
+            $icalendar .= "DTSTART:" . DateTime::format($task->due_date) . "\r\n";
+            $icalendar .= "DTEND:" . DateTime::format($task->due_date) . "\r\n";
             $icalendar .= $alarm;
             $icalendar .= "END:VEVENT\r\n";
         }
@@ -164,6 +165,7 @@ class Event extends Model
 
         $icalendar .= "END:VCALENDAR\r\n";
 
+        \Log::info("message", [$icalendar]);
         return $icalendar;
     }
 
