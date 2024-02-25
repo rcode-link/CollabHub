@@ -155,6 +155,11 @@ export const useCalendarStore = defineStore("calendarStore", () => {
                 .filter((key) => form.freq_settings[key] === true)
                 .join(",");
         }
+
+        if (form.type === "vacation") {
+            form.freq = "DAILY";
+        }
+
         if (form.freq === "DAILY" && form.freq_settings) {
             delete data.freq_settings;
         }
@@ -290,6 +295,7 @@ export const useCalendarStore = defineStore("calendarStore", () => {
             isModalVisible.value = false;
             closeModal();
             load();
+            router.push("/");
         });
     };
 

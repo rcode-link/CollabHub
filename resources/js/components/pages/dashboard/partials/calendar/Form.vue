@@ -36,22 +36,6 @@ onUpdated(() => {
     errorsStore.setErrors([], "");
 });
 
-// watch(
-//     () => calendar.form.start_time,
-//     (__newVal, __oldVal) => {
-//         calendar.form.end_time =
-//             DateTime.fromISO(calendar.form.start_time)
-//                 .set({
-//                     hour: DateTime.now().hour,
-//                     minute: DateTime.now().minute,
-//                 })
-//                 .toISO() ?? "";
-//     },
-//     {
-//         deep: true,
-//     }
-// );
-
 watch(
     () => [route.query.event, calendar.calendar],
     () => {

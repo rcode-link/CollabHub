@@ -37,6 +37,7 @@ const start = async (obj: LocalParticipantModel) => {
 
 <template>
     <WelcomeScreen v-if="model.token === null" @update="start" />
+    {{ liveKit.tracks }}
     <div
         v-if="model.token"
         :class="{
