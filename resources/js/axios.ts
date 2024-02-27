@@ -1,9 +1,26 @@
+import axios, { InternalAxiosRequestConfig } from "axios";
 import { toast } from "vue3-toastify";
 import { useErrorsStore } from "./store/errors";
+// import { useErrorsStore } from "./store/errors";
 
 export const initAxios = () => {
-    const errors = useErrorsStore();
     const errorsStore = useErrorsStore();
+    // const errorsStore = useErrorsStore();
+    const onRequest = (
+        config: InternalAxiosRequestConfig
+    ): InternalAxiosRequestConfig => {
+        if (import.meta.env.DEV) {
+            if (!config.url) {
+                config.url += "?XDEBUG_SESSION_START=PHPSTORM";
+            } else {
+                config.url.indexOf("?") > -1
+                    ? "&XDEBUG_SESSION_START=PHPSTORM"
+                    : "?XDEBUG_SESSION_START=PHPSTORM";
+            }
+        }
+        errorsStore.setErrors([], "");
+        return config;
+    };
     const instance = axios.create({
         timeout: 1000,
         headers: {
@@ -11,27 +28,15 @@ export const initAxios = () => {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
     });
-    instance.interceptors.request.use(
-        function (config) {
-            if (import.meta.env.DEV) {
-                config.url +=
-                    config.url.indexOf("?") > -1
-                        ? "&XDEBUG_SESSION_START=PHPSTORM"
-                        : "?XDEBUG_SESSION_START=PHPSTORM";
-            }
-            errors.setErrors([]);
-            return config;
-        },
-        function (error) {
-            // Do something with request error
-            return error;
-        }
-    );
+    instance.interceptors.request.use(onRequest, function (error) {
+        return error;
+    });
     instance.interceptors.response.use(
         function (response) {
             return response;
         },
         function (error) {
+            console.log(error.response.status);
             if (
                 error.response.status === 401 &&
                 location.pathname !== "/login"
@@ -44,6 +49,7 @@ export const initAxios = () => {
             }
             if (error.response.status === 403) {
                 toast.error("You are not authorized to preform this action", {
+                    //@ts-ignore
                     theme: localStorage.getItem("color-theme") ?? "light",
                 });
             }
@@ -51,6 +57,7 @@ export const initAxios = () => {
                 toast.error(
                     "Someting went wrong, plese contact system administrator",
                     {
+                        //@ts-ignore
                         theme: localStorage.getItem("color-theme") ?? "light",
                     }
                 );

@@ -12,6 +12,7 @@
         "isolatedModules": true,
         "noEmit": true,
         "jsx": "preserve",
+        "types": ["vite/client"],
         /* Linting */
         "strict": true,
         "noUnusedLocals": true,

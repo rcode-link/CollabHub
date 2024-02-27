@@ -1,5 +1,4 @@
 import { useUserStore } from "../store/user.js";
-import { initAxios } from "../axios.js";
 import { Ability, AbilityBuilder } from "@casl/ability";
 import ability from "./ability.js";
 import { watch } from "vue";
@@ -12,6 +11,7 @@ import { toast } from "vue3-toastify";
 import { useRouter } from "vue-router";
 //@ts-ignore
 import VideoToast from "../components/shared/video/VideoToast.vue";
+import { initAxios } from "@/axios.js";
 export default () => {
     const userState = useUserStore();
     const messagesState = chatDetails();
@@ -41,18 +41,11 @@ export default () => {
             UpdateChatForUser
         );
     });
-    window.axios
-        .get<
-            any,
-            {
-                data: string[];
-            }
-        >("/api/v1/permissions/my")
-        .then((res) => {
-            const { can, rules } = new AbilityBuilder(Ability);
-            can(res.data, "");
-            ability.update(rules);
-        });
+    window.axios.get("/api/v1/permissions/my").then((res) => {
+        const { can, rules } = new AbilityBuilder(Ability);
+        can(res.data, "");
+        ability.update(rules);
+    });
 
     watch(
         () => userState.company.id,
@@ -61,21 +54,18 @@ export default () => {
                 return;
             }
             window.Echo.join(`user.${userState.company.id}`)
-                .here((users) => {
+                .here((users: any) => {
                     userState.setOnlineUsers(users);
                 })
-                .joining((user) => {
+                .joining((user: any) => {
                     userState.addOnlineUser(user);
                 })
-                .leaving((user) => {
+                .leaving((user: any) => {
                     userState.setOnlineUsers(
                         userState.onlineUsers.filter(
                             (obj) => obj.id !== user.id
                         )
                     );
-                })
-                .error((error) => {
-                    console.error(error);
                 });
         },
         {
@@ -83,7 +73,7 @@ export default () => {
         }
     );
 
-    const UpdateChatForUser = (data) => {
+    const UpdateChatForUser = (data: any) => {
         loadNumberOfUnreadMessages();
         if (!document.hasFocus()) {
             const notification = new Notification("New message", {
@@ -100,7 +90,7 @@ export default () => {
         }
     };
 
-    const pushNotificaiton = (data) => {
+    const pushNotificaiton = (data: any) => {
         if (!document.hasFocus()) {
             const notification = new Notification("Video call", {
                 body: `${data.callId.user.name} is calling you.`,
@@ -113,7 +103,7 @@ export default () => {
         }
     };
 
-    const videoCallNotification = (data) => {
+    const videoCallNotification = (data: any) => {
         toast(VideoToast, {
             data: {
                 callerName: data.callId.user.name,
@@ -129,7 +119,7 @@ export default () => {
             .get("/api/v1/chats/number-of-unread-messages")
             .then((res) => {
                 userState.setNewMessages(res.data);
-                res.data.messages.forEach((data) => {
+                res.data.messages.forEach((data: any) => {
                     messagesState.updateUnreadMessages(data);
                 });
             });

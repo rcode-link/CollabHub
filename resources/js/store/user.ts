@@ -1,26 +1,32 @@
 import { defineStore } from "pinia";
 import { Company, UserResource } from "../types";
 
-export const useUserStore = defineStore('users', {
-    state: () => ({ user: {} as UserResource, company: {} as Company, token: null as string | null, onlineUsers: [] as UserResource[], newMessages: 0 as number }),
+export const useUserStore = defineStore("users", {
+    state: () => ({
+        user: {} as UserResource,
+        company: {} as Company,
+        token: null as string | null,
+        onlineUsers: [] as UserResource[],
+        newMessages: 0 as number,
+    }),
     actions: {
-        setNewMessages(data) {
+        setNewMessages(data: any) {
             this.newMessages = data.total;
         },
-        subtractFromNewMessages(data) {
+        subtractFromNewMessages(data: any) {
             this.newMessages = this.newMessages - data;
         },
-        setUser(user) {
-            this.user = user.data;
+        setUser(user: any) {
+            this.user = user.data as UserResource;
         },
-        setOnlineUsers(users) {
+        setOnlineUsers(users: UserResource[]) {
             this.onlineUsers = users;
         },
-        addOnlineUser(user) {
+        addOnlineUser(user: UserResource) {
             this.onlineUsers.push(user);
         },
-        setCompany(company) {
+        setCompany(company: Company) {
             this.company = company;
         },
     },
-})
+});

@@ -152,6 +152,7 @@ export const useCalendarStore = defineStore("calendarStore", () => {
         const data: EventType = Object.assign({}, form);
         if (form.freq === "WEEKLY" && form.freq_settings) {
             data.freq_settings = Object.keys(form.freq_settings)
+                //@ts-ignore
                 .filter((key) => form.freq_settings[key] === true)
                 .join(",");
         }
