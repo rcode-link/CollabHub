@@ -26,13 +26,19 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
 
-        \Illuminate\Routing\Route::macro('propfind', function ($uri, $action) {
-            dd($this);
-            return $this->addRoute(['PROPFIND'], $uri, $action);
+        \Illuminate\Routing\Route::macro('subdomain', function ($uri, $action) {
+            $domain = request()->getHost();
+            $parts = explode('.', $domain);
+
+            if (count($parts) > 2) {
+                $subdomain = $parts[0];
+                return $subdomain;
+            }
+            return null;
         });
 
 
-        if(config('app.env') === 'production') {
+        if (config('app.env') === 'production') {
             \URL::forceScheme('https');
         }
 
