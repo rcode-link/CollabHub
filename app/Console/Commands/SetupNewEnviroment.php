@@ -42,7 +42,7 @@ class SetupNewEnviroment extends Command
     private function prepareDB()
     {
         $databaseName = $this->model->database_name;
-        $username = $this->model->subdomain;
+        $username = $this->model->database_name;
         $password = $this->model->database_password;
         $this->info("Creating db");
         \DB::statement("CREATE DATABASE IF NOT EXISTS $databaseName");
