@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup lang="js">
 import { DateTime } from "luxon";
 import {
     FwbAccordionContent,
@@ -11,13 +11,10 @@ import { groupBy as loGroupBy, remove, sumBy } from "lodash";
 import TrashIcon from "../../../../../../shared/icons/TrashIcon.vue";
 import InteractiveToast from "../../../../../../shared/InteractiveToast.vue";
 import Label from "../../../../../../shared/Label.vue";
-import { iTimeSheet } from "./index.vue";
 
 const groupBy = ref("yyyy LLL");
-const selectedDay = ref<string>();
-const props = defineProps<{
-    model: iTimeSheet[];
-}>();
+const selectedDay = ref();
+const props = defineProps(['model']);
 
 const emit = defineEmits(["deleted"]);
 
@@ -44,7 +41,7 @@ watch(
 );
 const items = ref(props.model);
 const data = computed(() => {
-    return loGroupBy(items.value, function (obj: any) {
+    return loGroupBy(items.value, function (obj) {
         return DateTime.fromISO(obj.start).toFormat(groupBy.value);
     });
 });
@@ -56,7 +53,7 @@ const getDatesDropDown = computed(() => {
         };
     });
 });
-const removeDate = ({ id }: any) => {
+const removeDate = ({ id }) => {
     window.axios.delete(`/api/v1/time-sheet/${id}`).then(() => {
         remove(items.value, { id: id });
         emit("deleted");
@@ -86,7 +83,7 @@ const removeDate = ({ id }: any) => {
                 </span>
                 <span>
                     {{
-                        sumBy(data[key], function (obj: any) {
+                        sumBy(data[key], function (obj) {
                             return Number(
                                 DateTime.fromISO(obj.end).diff(
                                     DateTime.fromISO(obj.start),
@@ -179,7 +176,7 @@ const removeDate = ({ id }: any) => {
                 <div></div>
                 <div class="flex justify-end">
                     {{
-                        sumBy(data[selectedDay], function (obj: iTimeSheet) {
+                        sumBy(data[selectedDay], function (obj) {
                             return Number(
                                 DateTime.fromISO(obj.end).diff(
                                     DateTime.fromISO(obj.start),

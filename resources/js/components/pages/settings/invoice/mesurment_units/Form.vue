@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup lang="js">
 import Text from "@/components/shared/Text.vue";
 import { ref } from "vue";
 import InteractiveToast from "@/components/shared/InteractiveToast.vue";

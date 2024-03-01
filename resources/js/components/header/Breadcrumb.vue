@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup lang="js">
 import { useBreadcrumbStore } from "../../store/breadcrumb";
 import { FwbBreadcrumb } from "flowbite-vue";
 import HomeIcon from "../shared/icons/HomeIcon.vue";

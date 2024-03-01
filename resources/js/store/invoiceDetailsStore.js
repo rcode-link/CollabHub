@@ -1,12 +1,11 @@
-import { CustomerResource, InvoiceResource } from "@/types";
 import { defineStore } from "pinia";
 import { ref } from "vue";
 import { useRoute } from "vue-router";
 
 export const useInvoiceDetailsStore = defineStore("invoiceDetailsStore", () => {
     const route = useRoute();
-    const companyData = ref<CustomerResource>();
-    const data = ref<InvoiceResource>({
+    const companyData = ref();
+    const data = ref({
         company_id: 0,
         date: "",
         discont: 0,
@@ -23,12 +22,12 @@ export const useInvoiceDetailsStore = defineStore("invoiceDetailsStore", () => {
             companyData.value = res.data.data;
         });
     };
-    const load = async (): Promise<InvoiceResource> => {
+    const load = async () => {
         return window.axios
             .get(`/api/v1/invoices/${route.params.inv_id}`)
             .then((res) => {
                 data.value = res.data.data;
-                return Promise.resolve(res.data.data as InvoiceResource);
+                return Promise.resolve(res.data.data);
             })
             .catch((e) => Promise.reject(e));
     };

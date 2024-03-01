@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup lang="js">
 import flatPickr from "vue-flatpickr-component";
 import "flatpickr/dist/flatpickr.css";
 import { useErrorsStore } from "../../store/errors";

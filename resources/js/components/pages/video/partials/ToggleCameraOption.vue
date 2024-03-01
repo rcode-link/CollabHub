@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup lang="js">
 import { computed } from "vue";
 import { useLiveKit } from "../../../../functions/liveKit";
 import { FwbButton } from "flowbite-vue";
@@ -19,14 +19,14 @@ const myCamera = computed(() => {
 });
 </script>
 <template>
-  <fwb-button
-    :key="myCamera.toString()"
-    :color="myCamera ? 'default' : 'red'"
-    pill
-    square
-    @click="toggleCamera"
-  >
-    <CameraIcon v-if="myCamera !== false" class="w-6 h-6" />
-    <CameraSlashIcon v-if="myCamera === false" class="w-6 h-6" />
-  </fwb-button>
+    <fwb-button
+        :key="myCamera.toString()"
+        :color="myCamera ? 'default' : 'red'"
+        pill
+        square
+        @click="toggleCamera"
+    >
+        <CameraIcon v-if="myCamera !== false" class="w-6 h-6" />
+        <CameraSlashIcon v-if="myCamera === false" class="w-6 h-6" />
+    </fwb-button>
 </template>

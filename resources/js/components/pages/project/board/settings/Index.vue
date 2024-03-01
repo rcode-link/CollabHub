@@ -1,11 +1,11 @@
-<script setup lang="ts">
+<script setup lang="js">
 import Card from "@/components/shared/Card.vue";
 import { useRoute } from "vue-router";
 import { onMounted, reactive, ref, onBeforeUnmount } from "vue";
 import { FwbButton, FwbCheckbox, FwbInput } from "flowbite-vue";
 import ArrowDownIcon from "@/components/shared/icons/ArrowDownIcon.vue";
 import { useBreadcrumbStore } from "@/store/breadcrumb";
-import { useBoardsState } from "@/store/boards.ts";
+import { useBoardsState } from "@/store/boards";
 
 const boardsState = useBoardsState();
 const breadcrumbStore = useBreadcrumbStore();

@@ -1,4 +1,4 @@
-<script lang="ts" setup>
+<script lang="js" setup>
 import { FwbButton } from "flowbite-vue";
 import PaymentForm from "@/components/pages/invoices/details/partials/payment/Form.vue";
 import { useRoute } from "vue-router";

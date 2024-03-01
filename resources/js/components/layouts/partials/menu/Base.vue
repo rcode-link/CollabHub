@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup lang="js">
 import { FwbListGroup, FwbListGroupItem, FwbHeading } from "flowbite-vue";
 </script>
 <template>

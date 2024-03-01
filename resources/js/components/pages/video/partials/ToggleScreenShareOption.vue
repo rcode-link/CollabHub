@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup lang="js">
 import { useLiveKit } from "../../../../functions/liveKit";
 import { FwbButton } from "flowbite-vue";
 import DispleyIcon from "../../../shared/icons/DispleyIcon.vue";
@@ -10,13 +10,13 @@ const toggleScreenShare = async () => {
 };
 </script>
 <template>
-  <fwb-button
-    :key="liveKit.videoShareTrack.length"
-    :color="liveKit.videoShareTrack.length ? 'red' : 'default'"
-    pill
-    square
-    @click="toggleScreenShare"
-  >
-    <DispleyIcon class="w-6 h-6" />
-  </fwb-button>
+    <fwb-button
+        :key="liveKit.videoShareTrack.length"
+        :color="liveKit.videoShareTrack.length ? 'red' : 'default'"
+        pill
+        square
+        @click="toggleScreenShare"
+    >
+        <DispleyIcon class="w-6 h-6" />
+    </fwb-button>
 </template>

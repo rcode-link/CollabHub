@@ -1,4 +1,4 @@
-<script lang="ts" setup>
+<script lang="js" setup>
 import { onMounted, ref } from "vue";
 import Settings from "../../../layouts/Settings.vue";
 import {
@@ -10,11 +10,10 @@ import {
     FwbTableHeadCell,
     FwbTableRow,
 } from "flowbite-vue";
-import { BillingItemResource } from "../../../../types";
 import AddItem from "./partials/AddItem.vue";
 import InteractiveToast from "../../../shared/InteractiveToast.vue";
 
-const items = ref<BillingItemResource[]>();
+const items = ref();
 
 const load = () => {
     window.axios.get("/api/v1/billing-items").then((res) => {

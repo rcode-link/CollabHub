@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup lang="js">
 import Label from "../../../../../../shared/Label.vue";
 import { FwbAccordion, FwbAccordionPanel, FwbButton } from "flowbite-vue";
 import { onMounted, reactive, ref } from "vue";
@@ -6,22 +6,10 @@ import { useRoute } from "vue-router";
 import { groupBy } from "lodash";
 import UserTimeSheet from "./UserTimeSheet.vue";
 import flatPickr from "vue-flatpickr-component";
-import { UserResource } from "@/types";
 
-export interface iTimeSheet {
-    id: number;
-    user_id: number;
-    task_id: number;
-    start: string;
-    end: string;
-    created_at: string;
-    updated_at: string;
-    user: UserResource;
-}
 
-const model = ref<{
-    [id: string]: iTimeSheet[];
-}>();
+
+const model = ref({});
 
 const route = useRoute();
 const props = defineProps({

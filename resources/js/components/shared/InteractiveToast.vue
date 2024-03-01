@@ -30,19 +30,14 @@
     </fwb-toast>
 </template>
 
-<script setup lang="ts">
+<script setup lang="js">
 import { FwbToast } from "flowbite-vue";
 import { ref, watch } from "vue";
 import { useTimer } from "../../functions/timer.ts";
 
-withDefaults(
-    defineProps<{
-        type: string;
-    }>(),
-    {
-        type: "",
-    }
-);
+defineProps( {
+    type: "",
+});
 const showToast = ref(false);
 const timer = useTimer();
 const showToastFn = () => {

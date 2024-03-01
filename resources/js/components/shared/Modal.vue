@@ -15,20 +15,17 @@
     </fwb-modal>
 </template>
 
-<script lang="ts" setup>
+<script lang="js" setup>
 import { ref, watch } from "vue";
-//@ts-ignore
 import { FwbButton, FwbModal } from "flowbite-vue";
 
 const emit = defineEmits(["closed"]);
-const props = withDefaults(
-    defineProps<{
-        hideModal: boolean;
-    }>(),
-    {
-        hideModal: false,
-    }
-);
+const props = defineProps({
+        hideModal: {
+            type: Boolean,
+            default: false
+        }
+    });
 const isShowModal = ref(false);
 
 watch(

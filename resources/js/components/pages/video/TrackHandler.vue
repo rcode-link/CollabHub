@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup lang="js">
 //@ts-ignore
 import { FwbButton, FwbBadge } from "flowbite-vue";
 import MicrophoneSlashIcon from "../../shared/icons/MicrophoneSlashIcon.vue";
@@ -44,38 +44,38 @@ const isVideoDisabled = computed(() => {
 });
 </script>
 <template>
-  <div class="flex-1 relative player">
-    <template v-for="track in filterTracks" :key="track.sid">
-      <component
-        v-if="!track.isMuted"
-        :is="track.kind"
-        autoplay="true"
-        class="w-full"
-        playsInline="true"
-        :srcObject="track.mediaStream"
-      />
-    </template>
-    <div
-      v-if="isVideoDisabled"
-      class="bg-black flex h-full justify-center items-center"
-    >
-      <img :src="userImage" class="max-h-fit h-24" alt="" />
+    <div class="flex-1 relative player">
+        <template v-for="track in filterTracks" :key="track.sid">
+            <component
+                v-if="!track.isMuted"
+                :is="track.kind"
+                autoplay="true"
+                class="w-full"
+                playsInline="true"
+                :srcObject="track.mediaStream"
+            />
+        </template>
+        <div
+            v-if="isVideoDisabled"
+            class="bg-black flex h-full justify-center items-center"
+        >
+            <img :src="userImage" class="max-h-fit h-24" alt="" />
+        </div>
+        <fwb-button
+            color="red"
+            v-if="isAudioMuted"
+            class="absolute right-1 bottom-1"
+        >
+            <MicrophoneSlashIcon class="w-4 h-4" />
+        </fwb-button>
+        <div class="username bg-white absolute bottom-1 left-1 px-2 rounded">
+            {{ name }}
+        </div>
     </div>
-    <fwb-button
-      color="red"
-      v-if="isAudioMuted"
-      class="absolute right-1 bottom-1"
-    >
-      <MicrophoneSlashIcon class="w-4 h-4" />
-    </fwb-button>
-    <div class="username bg-white absolute bottom-1 left-1 px-2 rounded">
-      {{ name }}
-    </div>
-  </div>
 </template>
 <style scoped>
 .player {
-  aspect-ratio: 16/9;
-  max-height: 100%;
+    aspect-ratio: 16/9;
+    max-height: 100%;
 }
 </style>

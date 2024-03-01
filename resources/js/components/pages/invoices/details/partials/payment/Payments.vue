@@ -1,4 +1,4 @@
-<script lang="ts" setup>
+<script lang="js" setup>
 import PaymentForm from "@/components/pages/invoices/details/partials/payment/Form.vue";
 import currencyPrint from "@/functions/currencyPrint";
 import { useInvoiceDetailsStore } from "@/store/invoiceDetailsStore";
@@ -16,7 +16,7 @@ import {
 import { useRoute } from "vue-router";
 const invoiceDetails = useInvoiceDetailsStore();
 
-const data = ref<any[]>();
+const data = ref();
 const route = useRoute();
 const load = () => {
     window.axios

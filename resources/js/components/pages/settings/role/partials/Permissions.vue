@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup lang="js">
 import _ from "lodash";
 import AddPermissionsModal from "./AddPermissionsModal.vue";
 import Card from "../../../../shared/Card.vue";

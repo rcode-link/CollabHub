@@ -1,35 +1,28 @@
-<script lang="ts" setup>
+<script lang="js" setup>
 import { FwbModal, FwbButton } from "flowbite-vue";
 
 import { onMounted, ref } from "vue";
-import { iCustomer } from "./interfaces";
 import Form from "./Form.vue";
 
-const emit = defineEmits<{
-    (e: "update"): void;
-}>();
-withDefaults(
-    defineProps<{
-        title: string;
-    }>(),
+const emit = defineEmits(['update']);
+    defineProps(
     {
         title: "Add customer",
-    }
-);
-const currency = ref<any[]>();
+    })
+const currency = ref();
 const load = () => {
     window.axios.get("/api/v1/currency").then((res) => {
         currency.value = res.data.data;
     });
 };
 
-const showModal = ref<boolean>(false);
+const showModal = ref(false);
 
 const modalClosed = () => {
     showModal.value = false;
 };
 
-const model = ref<iCustomer>({
+const model = ref({
     name: "",
     currency_id: undefined,
 });
@@ -39,9 +32,6 @@ const save = () => {
         .then(() => {
             emit("update");
         })
-        .catch((err) => {
-            if (err.response.status === 422) console.log();
-        });
 };
 
 onMounted(() => {

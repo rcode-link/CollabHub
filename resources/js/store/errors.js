@@ -1,27 +1,26 @@
 import { defineStore } from "pinia";
 
-export const useErrorsStore = defineStore('errors', {
+export const useErrorsStore = defineStore("errors", {
     state: () => ({ errors: {} }),
     actions: {
-        setErrors(errors, form: string | null) {
+        setErrors(errors, form) {
             this.errors = errors;
-        }
+        },
     },
     getters: {
         getErrors: (state) => {
-            return (field: string, form: string) => {
+            return (field, form) => {
                 if (!state.errors.hasOwnProperty(form)) {
-                    return {}
+                    return {};
                 }
                 if (!state.errors[form].hasOwnProperty(field)) {
-                    return {}
+                    return {};
                 }
                 if (!form) {
                     return state.errors[field];
                 }
                 return state.errors[form][field];
-            }
+            };
         },
-    }
-
-})
+    },
+});

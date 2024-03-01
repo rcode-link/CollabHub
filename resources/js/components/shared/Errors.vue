@@ -1,14 +1,10 @@
-<script setup lang="ts">
+<script setup lang="js">
 import { useErrorsStore } from "../../store/errors";
 const errors = useErrorsStore();
-withDefaults(
-    defineProps<{
-        name: string;
-    }>(),
-    {
-        name: "",
-    }
-);
+
+defineProps({
+    name: ""
+})
 </script>
 
 <template>

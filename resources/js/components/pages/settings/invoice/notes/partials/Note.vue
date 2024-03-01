@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup lang="js">
 import Card from "@/components/shared/Card.vue";
 import Editor from "@/components/pages/project/tasks/partisals/Form/Editor.vue";
 import Text from "@/components/shared/Text.vue";

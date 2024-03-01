@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup lang="js">
 import { useLiveKit, LocalParticipantModel } from "../../../functions/liveKit";
 //@ts-ignore
 import { reactive } from "vue";

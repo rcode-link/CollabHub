@@ -1,12 +1,12 @@
 import { defineStore } from "pinia";
 
 export const useRoleStore = defineStore("roleStore", {
-    state: () => ({ roles: [] as any[], role: {}, activeRole: 0 }),
+    state: () => ({ roles: [], role: {}, activeRole: 0 }),
     actions: {
-        setRoles(roles: any[]) {
+        setRoles(roles) {
             this.roles = roles;
         },
-        setActiveRole(id: number) {
+        setActiveRole(id) {
             this.activeRole = id;
         },
         loadRoles() {

@@ -8,6 +8,7 @@
         /* Bundler mode */
         "moduleResolution": "Node",
         "allowImportingTsExtensions": true,
+        "allowJs": true,
         "resolveJsonModule": true,
         "isolatedModules": true,
         "noEmit": true,
@@ -25,7 +26,18 @@
     "include": [
         "resources/**/*.ts",
         "resources/**/*.tsx",
-        "resources/**/*.vue"
+        "resources/**/*.vue",
+        "resources/js/store/breadcrumb.js",
+        "resources/js/store/boards.js",
+        "resources/js/store/calendarStore.js",
+        "resources/js/store/errors.js",
+        "resources/js/store/invoiceDetailsStore.js",
+        "resources/js/store/progressBarStore.js",
+        "resources/js/store/roleStore.js",
+        "resources/js/store/singleUser.js",
+        "resources/js/store/textToLinkStore.js",
+        "resources/js/store/user.js",
+        "resources/js/axios.js"
     ],
     "references": [
         {

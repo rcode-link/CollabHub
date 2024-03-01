@@ -1,4 +1,4 @@
-<script lang="ts" setup>
+<script lang="js" setup>
 import { useRoute } from "vue-router";
 import Auth from "@/components/layouts/Auth.vue";
 import Card from "@/components/shared/Card.vue";
@@ -7,7 +7,6 @@ import Text from "@/components/shared/Text.vue";
 import DatePicker from "@/components/shared/DatePicker.vue";
 import currencyPrint from "@/functions/currencyPrint";
 import { onUnmounted, ref, watch } from "vue";
-import { InvoiceResource } from "@/components/../types";
 import {
     FwbButton,
     FwbDropdown,
@@ -37,8 +36,8 @@ onUnmounted(() => {
     window.Echo.leave(`update-invoice.${route.params.inv_id}`);
 });
 
-const noteValue = ref<string | null>(null);
-const predefinedNotes = ref<any[]>([]);
+const noteValue = ref(null);
+const predefinedNotes = ref([]);
 const loadNotes = () => {
     window.axios
         .get("/api/v1/invoice/data", {
@@ -56,7 +55,7 @@ watch(
     () => {
         window.Echo.private(`update-invoice.${route.params.inv_id}`).listen(
             "InvoiceItemsUpdate",
-            (list: any) => {
+            (list) => {
                 invoiceStore.data = list.items;
             }
         );
@@ -64,7 +63,7 @@ watch(
             if (!data) {
                 return;
             }
-            noteValue.value = (data as unknown as InvoiceResource).note;
+            noteValue.value = data.note;
         });
         loadNotes();
     },
@@ -73,7 +72,7 @@ watch(
     }
 );
 
-const updateNote = debounce(function (value: any) {
+const updateNote = debounce(function (value) {
     window.axios.put(`/api/v1/invoices/${invoiceStore.data.id}`, {
         note: value,
     });

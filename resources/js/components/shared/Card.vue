@@ -1,7 +1,8 @@
-<script lang="ts" setup>
-withDefaults(defineProps<{ color: string | null }>(), {
-    color: null,
-});
+<script lang="js" setup>
+defineProps({ color: {
+    required: false,
+    type: String
+} })
 </script>
 
 <template>

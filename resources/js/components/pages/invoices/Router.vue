@@ -1,4 +1,4 @@
-<script lang="ts">
+<script lang="js">
 import { watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 export default {
@@ -23,5 +23,5 @@ export default {
 };
 </script>
 <template>
-  <router-view></router-view>
+    <router-view></router-view>
 </template>

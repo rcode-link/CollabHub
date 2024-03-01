@@ -1,11 +1,11 @@
-<script setup lang="ts">
+<script setup lang="js">
 import Modal from "../../../../shared/Modal.vue";
 import { FwbButton } from "flowbite-vue";
 import Label from "../../../../shared/Label.vue";
 import Text from "../../../../shared/Text.vue";
 import { reactive, ref } from "vue";
 import { useRoleStore } from "../../../../../store/roleStore";
-import { ToastTheme, toast } from "vue3-toastify";
+import { toast } from "vue3-toastify";
 
 const roleStore = useRoleStore();
 
@@ -17,9 +17,9 @@ const form = reactive({
 const submit = () => {
     window.axios.post("/api/v1/roles", form).then(() => {
         modalRef.value?.toggleModal();
-        const theme: ToastTheme =
-            (localStorage.getItem("color-theme") as ToastTheme) ??
-            ("light" as ToastTheme);
+        const theme =
+            localStorage.getItem("color-theme") ??
+            "light";
         toast.success(`Role created`, {
             theme,
         });

@@ -1,20 +1,25 @@
-<script lang="ts" setup>
+<script lang="js" setup>
 import flatPickr from "vue-flatpickr-component";
 import "flatpickr/dist/flatpickr.css";
 import { ref, watch } from "vue";
 import { useErrorsStore } from "../../store/errors";
 import { DateTime } from "luxon";
 
-interface iProps {
-    modelValue?: string;
-    name?: string;
-}
-const props = withDefaults(defineProps<iProps>(), {
-    name: "",
-});
-const emit = defineEmits<{
-    (e: "update:modelValue", value: string | null): void;
-}>();
+
+const props = defineProps({
+    modelValue: {
+        type: String,
+        default: null
+    },
+    name: {
+        default: null,
+        type: String,
+
+    }
+})
+const emit = defineEmits(['update:modelValue']);
+
+
 
 const internalVal = ref(props.modelValue ?? DateTime.now().toLocaleString());
 const errors = useErrorsStore();

@@ -1,16 +1,15 @@
-<script lang="ts" setup>
+<script lang="js" setup>
 import { FwbModal, FwbButton } from "flowbite-vue";
 import Text from "@/components/shared/Text.vue";
 import Label from "@/components/shared/Label.vue";
 
 import { ref } from "vue";
-import { FormInvoice, FormProps } from "./interfaces";
 import { useRoute, useRouter } from "vue-router";
 import DatePicker from "@/components/shared/DatePicker.vue";
 import { useInvoiceDetailsStore } from "@/store/invoiceDetailsStore";
 
-const props = defineProps<FormProps>();
-const showModal = ref<boolean>(false);
+const props = defineProps(['numberOfInvoices']);
+const showModal = ref(false);
 const route = useRoute();
 const router = useRouter();
 const modalClosed = () => {
@@ -19,7 +18,7 @@ const modalClosed = () => {
 const invoiceDetails = useInvoiceDetailsStore();
 
 const number = (props.numberOfInvoices + 1).toString().padStart(5, "0");
-const model = ref<FormInvoice>({
+const model = ref({
     number: `INV-${invoiceDetails.companyData?.prefix}-${number}`,
     company_id: route.params.id.toString() ?? "",
     due_date: "",

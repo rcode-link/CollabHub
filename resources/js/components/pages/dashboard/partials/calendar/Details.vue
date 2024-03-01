@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup lang="js">
 import { watch, ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { DateTime } from "luxon";
@@ -19,7 +19,6 @@ import {
 } from "flowbite-vue";
 import UserIcon from "@/components/shared/UserIcon.vue";
 import User from "@/components/shared/SelectUsersInCompany.vue";
-import { EventResource } from "@/types";
 import PencilIcon from "@/components/shared/icons/PencilIcon.vue";
 import { useUserStore } from "@/store/user";
 const calendar = useCalendarStore();
@@ -33,7 +32,7 @@ const modalClosed = () => {
         },
     });
 };
-const event = ref<EventResource>();
+const event = ref();
 function openCall() {
     window.open(`/call/${event.value?.videocall?.slug}`, "_blank");
 }

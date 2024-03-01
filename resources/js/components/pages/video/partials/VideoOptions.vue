@@ -11,7 +11,7 @@
         <DeviceSelector />
     </div>
 </template>
-<script setup lang="ts">
+<script setup lang="js">
 import DeviceSelector from "./DeviceSelector.vue";
 import EndCallOption from "./EndCallOption.vue";
 import ToggleCameraOption from "./ToggleCameraOption.vue";

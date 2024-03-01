@@ -1,42 +1,39 @@
-<script setup lang="ts">
+<script setup lang="js">
 import { FwbAvatar } from "flowbite-vue";
 import { useUserStore } from "../../store/user";
-import {
-    AvatarSize,
-    AvatarStatus,
-} from "flowbite-vue/dist/components/FwbAvatar/types";
-import { ChatResource, UserResource } from "@/types";
 import { toNumber } from "lodash";
 const userState = useUserStore();
 
-const props = withDefaults(
-    defineProps<{
-        user: ChatResource | UserResource;
-        status: boolean;
-        avatarSize: AvatarSize;
-    }>(),
-    {
-        status: true,
-        avatarSize: "sm",
-    }
-);
+const props = defineProps({
+    user: {
+        type: Object
+    },
+    status: {
+        type: Boolean,
+        default: true
+    },
+     avatarSize: {
+        type: String,
+        default: 'sm'
+     }
+})
 
 const getUserStatus = () => {
     if (!props.status) {
         return {};
     }
     let usersOnlineLength = userState.onlineUsers.filter(
-        (obj) => obj.id === (props.user as UserResource)?.id
+        (obj) => obj.id === (props.user)?.id
     ).length;
 
     if (props.user && "chatable_id" in props.user) {
         usersOnlineLength = userState.onlineUsers.filter(
             (obj) =>
-                obj.id === toNumber((props.user as ChatResource)?.chatable_id)
+                obj.id === toNumber((props.user)?.chatable_id)
         ).length;
     }
 
-    const currentStatus: AvatarStatus = usersOnlineLength ? "online" : "away";
+    const currentStatus = usersOnlineLength ? "online" : "away";
 
     return {
         status: currentStatus,

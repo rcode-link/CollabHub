@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup lang="js">
 import { useUserStore } from "../../store/user";
 import { computed, ref, watch } from "vue";
 import { useErrorsStore } from "../../store/errors";
@@ -6,37 +6,34 @@ import { debounce, find, toNumber } from "lodash";
 import UserIcon from "./UserIcon.vue";
 import Text from "./Text.vue";
 import { useRoute } from "vue-router";
-import { UserResource } from "@/types";
 
 const errors = useErrorsStore();
 const userState = useUserStore();
 const route = useRoute();
-const props = withDefaults(
-    defineProps<{
-        showCleanInput: boolean;
-        modelValue: string | number;
-        name: string;
-        form: string;
-        disabled: boolean;
-    }>(),
-    {
-        showCleanInput: true,
-        modelValue: "",
-        name: "",
-        form: "",
-        disabled: false,
-    }
-);
+const props = defineProps({
+        showCleanInput: {
+            type: Boolean
+        },
+        modelValue: {
+            type: String | Number
+        },
+        name: {
+            type: String
+        },
+        form: {
+            type: String
+        },
+        disabled: {
+            type: Boolean
+        }
+    })
 
-const emit = defineEmits<{
-    (e: "update:modelValue", value: number | null): void;
-    (e: "selectedUser", value: UserResource): void;
-}>();
+const emit = defineEmits(["update:modelValue", 'selectedUser']);
 
 const currentValue = ref<string | number>(props.modelValue);
-const users = ref<{
-    data: UserResource[];
-}>();
+const users = ref({
+    data: {}
+});
 const showItems = ref(false);
 const searchUsers = ref("");
 const loadUsers = debounce(
@@ -54,7 +51,7 @@ const loadUsers = debounce(
     300
 );
 
-const handleItemClick = (obj: UserResource) => {
+const handleItemClick = (obj) => {
     emit("update:modelValue", obj.id);
     emit("selectedUser", obj);
     showItems.value = false;

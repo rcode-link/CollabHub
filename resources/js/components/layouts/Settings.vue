@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup lang="js">
 import Auth from "./Auth.vue";
 
 import { useRoleStore } from "../../store/roleStore";

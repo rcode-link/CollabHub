@@ -1,4 +1,4 @@
-<script lang="ts" setup>
+<script lang="js" setup>
 //@ts-ignore
 import Menu from "../header/Menu.vue";
 //@ts-ignore

@@ -1,18 +1,12 @@
-<script lang="ts">
-import { ref } from "vue";
+<script lang="js" setup>
+import { onMounted, ref } from "vue";
 import AutoComplete from "@/components/shared/AutoComplete.vue";
-import { BillingItemResource } from "@/components/../types";
 import { useRoute } from "vue-router";
 import Label from "@/components/shared/Label.vue";
-export default {
-    components: {
-        AutoComplete,
-        Label,
-    },
-    setup() {
-        const itemList = ref<BillingItemResource[]>([]);
+
+        const itemList = ref([]);
         const route = useRoute();
-        const searchItems = (val: string) => {
+        const searchItems = (val) => {
             console.log(val);
         };
 
@@ -22,24 +16,14 @@ export default {
             });
         };
 
-        const selected = (val: number) => {
+        const selected = (val) => {
             window.axios.post(`/api/v1/invoices-items`, {
                 item_id: val,
                 invoice_id: route.params.inv_id,
             });
         };
 
-        return {
-            itemList,
-            searchItems,
-            load,
-            selected,
-        };
-    },
-    created() {
-        this.load();
-    },
-};
+        load();
 </script>
 
 <template>

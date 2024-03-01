@@ -1,17 +1,17 @@
-<script setup lang="ts">
+<script setup lang="js">
 import CalendarItem from "./CalendarItem.vue";
-import { EventResource } from "@/types";
-withDefaults(
-    defineProps<{
-        day: string;
-        isToday: boolean;
-        events: EventResource[];
-    }>(),
-    {
-        day: "",
-        isToday: false,
-    }
-);
+defineProps({
+        day: {
+            type: String,
+        },
+
+        isToday:{
+            type: Boolean
+        },
+        events: {
+                type: Array
+        }
+    })
 </script>
 
 <template>

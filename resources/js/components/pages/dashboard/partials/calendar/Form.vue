@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup lang="js">
 import Modal from "@/components/shared/Modal.vue";
 import Label from "@/components/shared/Label.vue";
 import Text from "@/components/shared/Text.vue";

@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup lang="js">
 import Modal from "@/components/shared/Modal.vue";
 import Label from "@/components/shared/Label.vue";
 import Text from "@/components/shared/Text.vue";
@@ -15,18 +15,11 @@ const { invoices, load, route } = useInvoice();
 
 const modalRef = ref();
 
-const emit = defineEmits<{
-    (e: "update"): void;
-}>();
+const emit = defineEmits(['update']);
 onMounted(() => {
     load();
 });
-interface iPayment {
-    value?: string;
-    date: string;
-    invoice_id?: string;
-}
-const model = ref<iPayment>({
+const model = ref({
     date: "",
 });
 

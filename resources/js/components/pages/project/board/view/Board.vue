@@ -1,5 +1,5 @@
-<script setup lang="ts">
-import { useBoardsState } from "../../../../../store/boards.ts";
+<script setup lang="js">
+import { useBoardsState } from "../../../../../store/boards";
 import { onBeforeUnmount, onMounted, watch } from "vue";
 import { useRoute } from "vue-router";
 import StatusRow from "./StatusRow.vue";
@@ -26,7 +26,7 @@ const loadStatuses = () => {
 onMounted(() => {
     window.Echo.private(`task-updated.${route.params.project}`).listen(
         "TaskUpdatedEvent",
-        ({ task, oldStatus }: any) => {
+        ({ task, oldStatus }) => {
             boardState.updateTask(oldStatus, task);
         }
     );

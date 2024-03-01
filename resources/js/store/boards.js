@@ -2,68 +2,20 @@ import { defineStore } from "pinia";
 import { computed, ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { findIndex, toNumber, find, isArray } from "lodash";
-import { TaskStatusResource } from "../types/models/TaskStatusResource";
-import { MediaResource } from "../types/models/MediaResource";
-import { TaskType } from "../types/models/TaskType";
-import { UserResource } from "../types/models/UserResource";
-import { Sprint } from "@/types";
-
-export interface iTask {
-    id: number;
-    name: string;
-    task_id: string | null;
-    project_id: number;
-    user?: UserResource;
-    createdBy?: UserResource;
-    description: string | null;
-    type?: TaskType;
-    children_count: string;
-    relation?: string;
-    sprints?: string;
-    chat_id?: number;
-    due_date: string;
-    tags: string | null;
-    media?: Array<MediaResource>;
-    status: TaskStatusResource;
-}
-
-export interface iSprint {
-    board_id: number | null;
-    created_at: string | null;
-    duration: number | null;
-    end_time: string | null;
-    id: number;
-    is_active: boolean | null;
-    start_time: string | null;
-    title: string | null;
-    updated_at: string | null;
-}
-
-export interface iBoard {
-    id: number | null;
-    title: string | null;
-    type: string | null;
-    project_id: number;
-    created_at: string;
-    updated_at: string;
-    sprint: iSprint[];
-}
 
 export const useBoardsState = defineStore("boards", () => {
-    const boards = ref<iBoard[]>([]);
-    const activeBoard = ref<iBoard>();
-    const activeSprint = ref<iSprint>();
-    const boardTasks = ref<{
-        [key: string]: iTask[];
-    }>({});
-    const taskStatuses = ref<TaskStatusResource[]>([]);
+    const boards = ref([]);
+    const activeBoard = ref();
+    const activeSprint = ref();
+    const boardTasks = ref({});
+    const taskStatuses = ref([]);
     const isLoading = ref(true);
 
-    const draggedTask = ref<iTask>();
+    const draggedTask = ref();
     const router = useRouter();
     const route = useRoute();
 
-    function changeTaskStatus(status: any) {
+    function changeTaskStatus(status) {
         if (!draggedTask.value) {
             return;
         }
@@ -79,7 +31,7 @@ export const useBoardsState = defineStore("boards", () => {
         boardTasks.value[status.title].push(draggedTask.value);
     }
 
-    function addSprintToBoard(sprint: Sprint) {
+    function addSprintToBoard(sprint) {
         const indexOfBoard = findIndex(boards.value, {
             id: toNumber(activeBoard.value?.id),
         });
@@ -122,11 +74,11 @@ export const useBoardsState = defineStore("boards", () => {
         boardTasks.value[status.title].push(task);
     }
 
-    function setDraggedTaskId(val: iTask) {
+    function setDraggedTaskId(val) {
         draggedTask.value = val;
     }
 
-    function setStatuses(statuses: TaskStatusResource[]) {
+    function setStatuses(statuses) {
         taskStatuses.value = statuses;
     }
 
@@ -172,10 +124,9 @@ export const useBoardsState = defineStore("boards", () => {
                 activeSprint.value = data;
                 return;
             }
-            let sprintToBeActive = (find(
-                activeBoard.value?.sprint,
-                (obj) => obj.is_active
-            ) ?? activeBoard.value?.sprint[0]) as iSprint;
+            let sprintToBeActive =
+                find(activeBoard.value?.sprint, (obj) => obj.is_active) ??
+                activeBoard.value?.sprint[0];
 
             if (!sprintToBeActive) {
                 return;
@@ -218,7 +169,7 @@ export const useBoardsState = defineStore("boards", () => {
             created_at: "",
             updated_at: "",
             sprint: [],
-        } as iBoard;
+        };
         activeSprint.value = {
             id: 0,
             title: "Select sprint",

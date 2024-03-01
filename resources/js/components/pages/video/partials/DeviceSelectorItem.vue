@@ -1,4 +1,4 @@
-<script lang="ts" setup>
+<script lang="js" setup>
 import { useLiveKit, iMediaDeviceInfo } from "../../../../functions/liveKit";
 //@ts-ignore
 import { FwbListGroupItem } from "flowbite-vue";
@@ -12,7 +12,7 @@ const changeItem = async () => {
 };
 </script>
 <template>
-  <fwb-list-group-item class="cursor-pointer" @click="changeItem">
-    <span v-if="device.active">&#10003;</span> {{ device.label }}
-  </fwb-list-group-item>
+    <fwb-list-group-item class="cursor-pointer" @click="changeItem">
+        <span v-if="device.active">&#10003;</span> {{ device.label }}
+    </fwb-list-group-item>
 </template>

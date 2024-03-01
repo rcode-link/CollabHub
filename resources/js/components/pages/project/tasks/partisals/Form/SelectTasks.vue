@@ -1,31 +1,21 @@
-<script setup lang="ts">
+<script setup lang="js">
 import AutoComplete from "@/components/shared/AutoComplete.vue";
 import { ref, watch } from "vue";
 import { useRoute } from "vue-router";
 import { toNumber, find } from "lodash";
 import { FwbSelect } from "flowbite-vue";
-import { TaskResource } from "@/types";
-import { OptionsType } from "flowbite-vue/dist/components/FwbSelect/types";
 
 const emit = defineEmits(["update"]);
 const route = useRoute();
-const taskRelations = ref<{
-    data: TaskResource[];
-}>({
+const taskRelations = ref({
     data: [],
 });
-const relatedTasks = ref<{
-    data: TaskResource[];
-}>({
+const relatedTasks = ref({
     data: [],
 });
-interface iSelectedTask {
-    task_relation_id?: string;
-    task: TaskResource;
-}
-const selectedItems = ref<iSelectedTask[]>([]);
+const selectedItems = ref([]);
 
-const searchTasks = (value: any) => {
+const searchTasks = (value) => {
     window.axios
         .get("/api/v1/tasks/search", {
             params: {
@@ -44,7 +34,7 @@ const getTaskRelations = () => {
         .then((res) => (taskRelations.value = res.data));
 };
 
-const itemSelected = (id: number) => {
+const itemSelected = (id) => {
     selectedItems.value.push({
         //@ts-ignore
         task: find(relatedTasks.value.data, { id: toNumber(id) }),
@@ -62,8 +52,8 @@ watch(
         deep: true,
     }
 );
-const relations = (): OptionsType[] => {
-    const list: OptionsType[] = [];
+const relations = () => {
+    const list = [];
     taskRelations.value.data.forEach((item) => {
         list.push({
             value: item.id.toString(),

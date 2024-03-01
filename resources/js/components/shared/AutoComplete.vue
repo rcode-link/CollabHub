@@ -1,25 +1,16 @@
-<script lang="ts" setup>
+<script lang="js" setup>
 import { debounce } from "lodash";
 import Text from "./Text.vue";
 import { ref, watch } from "vue";
 
-interface iItem {
-    value: any;
-    label: string;
-}
-interface iItems {
-    items: iItem[];
-}
-const emit = defineEmits<{
-    (e: "search", value: string): void;
-    (e: "selected", value: number): void;
-}>();
-const props = defineProps<iItems>();
+const emit = defineEmits(["search",
+"selected"]);
+const props = defineProps();
 const showItems = ref(false);
 const inputValue = ref("");
 const activeItem = ref(-1);
 
-const handleItemClick = (obj: number) => {
+const handleItemClick = (obj) => {
     emit("selected", obj);
     showItems.value = false;
     inputValue.value = "";
@@ -44,7 +35,7 @@ const handleDown = () => {
     <div class="relative">
         <Text
             @focus="
-                (e:any) => {
+                (e) => {
                     showItems = true;
                     emit('search', e.target.value);
                 }

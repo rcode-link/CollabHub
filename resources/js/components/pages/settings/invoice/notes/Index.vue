@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup lang="js">
 import { FwbButton } from "flowbite-vue";
 import Settings from "../../../../layouts/Settings.vue";
 import { onMounted, ref } from "vue";

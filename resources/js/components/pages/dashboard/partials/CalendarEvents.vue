@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup lang="js">
 import Card from "@/components/shared/Card.vue";
 import { onMounted } from "vue";
 import { DateTime } from "luxon";
@@ -18,7 +18,6 @@ import InfoIcon from "@/components/shared/icons/InfoIcon.vue";
 import { useUserStore } from "@/store/user";
 import Modal from "@/components/shared/Modal.vue";
 import CalendarDetails from "./calendar/Details.vue";
-import { EventResource } from "@/types";
 
 const calendar = useCalendarStore();
 const userStore = useUserStore();
@@ -26,7 +25,7 @@ onMounted(() => {
     calendar.load();
     window.Echo.private(`event.${userStore.user.id}`).listen(
         "CalendarEventUpdatedEvent",
-        (__obj: EventResource) => {
+        (__obj) => {
             calendar.load();
         }
     );

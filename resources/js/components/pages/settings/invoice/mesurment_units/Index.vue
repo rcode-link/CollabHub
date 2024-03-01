@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup lang="js">
 import Settings from "@/components/layouts/Settings.vue";
 import Text from "@/components/shared/Text.vue";
 import { iData, iInvoiceData } from "@/functions/invoiceDataInterface";

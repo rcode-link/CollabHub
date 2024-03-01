@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup lang="js">
 import { computed } from "vue";
 import { useLiveKit } from "../../../../functions/liveKit";
 import { FwbButton } from "flowbite-vue";
@@ -19,14 +19,14 @@ const myMirophone = computed(() => {
 });
 </script>
 <template>
-  <fwb-button
-    :key="myMirophone.toString()"
-    :color="myMirophone === false ? 'red' : 'default'"
-    pill
-    square
-    @click="toggleMicrophone"
-  >
-    <MicrophoneIcon v-if="myMirophone !== false" class="w-6 h-6" />
-    <MicrophoneSlashIcon v-if="myMirophone === false" class="w-6 h-6" />
-  </fwb-button>
+    <fwb-button
+        :key="myMirophone.toString()"
+        :color="myMirophone === false ? 'red' : 'default'"
+        pill
+        square
+        @click="toggleMicrophone"
+    >
+        <MicrophoneIcon v-if="myMirophone !== false" class="w-6 h-6" />
+        <MicrophoneSlashIcon v-if="myMirophone === false" class="w-6 h-6" />
+    </fwb-button>
 </template>

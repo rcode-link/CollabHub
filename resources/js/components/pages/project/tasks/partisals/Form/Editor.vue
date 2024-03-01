@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup lang="js">
 import { ref, watch } from "vue";
 
 import Editor from "../../../../../shared/Editor.vue";
@@ -9,12 +9,10 @@ import BulletListIcon from "../../../../../shared/icons/BulletListIcon.vue";
 import OrderedListIcon from "../../../../../shared/icons/OrderedListIcon.vue";
 import { FwbButton } from "flowbite-vue";
 
-const editorRef = ref<InstanceType<typeof Editor> | null>(null);
-const props = defineProps<{
-    modelValue: object[] | string;
-}>();
+const editorRef = ref(null);
+const props = defineProps(['modelValue']);
 
-const model = ref<object[] | string>();
+const model = ref();
 
 watch(
     () => [props.modelValue, editorRef.value?.editor],
@@ -26,10 +24,7 @@ watch(
     }
 );
 
-const emits = defineEmits<{
-    (e: "update:modelValue", value: object[] | string): void;
-    (e: "update:markdown", value: object[]): void;
-}>();
+const emits = defineEmits(['update:modelValue','update:markdown']);
 
 watch(model, () => {
     if (model.value) {

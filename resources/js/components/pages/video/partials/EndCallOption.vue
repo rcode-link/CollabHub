@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup lang="js">
 import PhoneIcon from "../../../shared/icons/PhoneEndIcon.vue";
 //@ts-ignore
 import { FwbButton } from "flowbite-vue";
@@ -10,7 +10,7 @@ const endTheCall = async () => {
 };
 </script>
 <template>
-  <fwb-button color="red" pill square @click="endTheCall">
-    <PhoneIcon class="w-6 h-6" />
-  </fwb-button>
+    <fwb-button color="red" pill square @click="endTheCall">
+        <PhoneIcon class="w-6 h-6" />
+    </fwb-button>
 </template>

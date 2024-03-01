@@ -1,19 +1,13 @@
-<script setup lang="ts">
+<script setup lang="js">
 import { FwbButton } from "flowbite-vue";
 import Modal from "../../../../shared/Modal.vue";
 import Label from "../../../../shared/Label.vue";
 import Text from "../../../../shared/Text.vue";
 import { ref } from "vue";
-interface iItem {
-    title: string;
-    price: string;
-}
 
 const modalRef = ref();
-const emit = defineEmits<{
-    (e: "update", value: null): void;
-}>();
-const model = ref<iItem>({
+const emit = defineEmits(['update']);
+const model = ref({
     title: "",
     price: "0",
 });

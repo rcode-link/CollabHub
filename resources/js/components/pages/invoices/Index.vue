@@ -1,4 +1,4 @@
-<script lang="ts" setup>
+<script lang="js" setup>
 import { onMounted, ref } from "vue";
 import Form from "./Form.vue";
 import { TailwindPagination } from "laravel-vue-pagination";
@@ -13,17 +13,12 @@ import {
     FwbTableRow,
     FwbSpinner,
 } from "flowbite-vue";
-import { iCustomer } from "./interfaces";
-import { Pagination } from "../../../interfaces";
 import Create from "./Create.vue";
-interface Response extends Pagination {
-    data: iCustomer[];
-}
 
 const loading = ref(false);
-const companies = ref<Response>();
+const companies = ref();
 
-const load = (page: number = 1) => {
+const load = (page = 1) => {
     loading.value = true;
     window.axios
         .get("/api/v1/customers", {

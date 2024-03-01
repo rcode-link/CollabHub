@@ -1,14 +1,11 @@
-<script setup lang="ts">
+<script setup lang="js">
 import { ref, watch } from "vue";
-//@ts-ignore
 import Text from "../../../../../shared/Text.vue";
 import { FwbBadge } from "flowbite-vue";
-const props = defineProps<{
-  modelValue: string[];
-}>();
-const emit = defineEmits<{
-  (e: "update:modelValue", value: string[]): void;
-}>();
+const props = defineProps({
+  modelValue: []
+});
+const emit = defineEmits(['update:modelValue']);
 
 watch(
   () => props.modelValue,
@@ -17,9 +14,9 @@ watch(
   }
 );
 
-const tags = ref<string[]>(props.modelValue);
-const addTags = (e: Event) => {
-  const target = e.target as HTMLInputElement;
+const tags = ref(props.modelValue);
+const addTags = (e) => {
+  const target = e.target;
   if (tags.value.indexOf(target.value) === -1) {
     tags.value.push(target.value);
     target.value = "";
@@ -27,17 +24,19 @@ const addTags = (e: Event) => {
   }
 };
 
-const removeTag = (index: number) => {
+const removeTag = (index) => {
   tags.value.splice(index, 1);
   emit("update:modelValue", tags.value);
 };
 </script>
 <template>
-  <Text @keydown.enter.prevent="addTags" />
-  <div class="flex gap-1 mt-2 flex-wrap">
-    <fwb-badge v-for="(str, index) in tags" :key="index + str"
-      >{{ str }}
-      <span @click="() => removeTag(index)" class="ml-2 cursor-pointer">x</span>
-    </fwb-badge>
-  </div>
+    <Text @keydown.enter.prevent="addTags" />
+    <div class="flex gap-1 mt-2 flex-wrap">
+        <fwb-badge v-for="(str, index) in tags" :key="index + str"
+            >{{ str }}
+            <span @click="() => removeTag(index)" class="ml-2 cursor-pointer"
+                >x</span
+            >
+        </fwb-badge>
+    </div>
 </template>

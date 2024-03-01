@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup lang="js">
 import { EditorContent, useEditor } from "@tiptap/vue-3";
 import StarterKit from "@tiptap/starter-kit";
 import { Link } from "@tiptap/extension-link";
@@ -11,7 +11,7 @@ import drawIoExtension from "@rcode-link/tiptap-drawio";
 import { TableRow } from "@tiptap/extension-table-row";
 import { TableHeader } from "@tiptap/extension-table-header";
 import { TableCell } from "@tiptap/extension-table-cell";
-import tableExtension from "../../../functions/editor/TableExtension.js";
+import tableExtension from "../../../functions/editor/TableExtension";
 import { useRoute } from "vue-router";
 //@ts-ignore
 import EditorHeader from "./EditorHeader.vue";
@@ -23,15 +23,14 @@ import suggestion from "../../../functions/editor/mention/suggestion";
 import { SmilieReplacer } from "../../../functions/smilieReplacer";
 import { useConvertTextToLink } from "../../../functions/editor/convertTextToLink";
 
-const props = withDefaults(
-    defineProps<{
-        modelValue: string;
-        editable: boolean;
-    }>(),
-    {
-        editable: true,
-    }
-);
+const props = defineProps({
+        modelValue: {
+            type: String
+        },
+        editable: {
+            type: Boolean
+        }
+    })
 
 const lowlight = createLowlight();
 
@@ -43,7 +42,7 @@ hljs.listLanguages().forEach(async (lang) => {
 const route = useRoute();
 const emit = defineEmits(["update:modelValue", "submitted"]);
 
-const pressedKeys = ref<string[]>([]);
+const pressedKeys = ref([]);
 const textToLink = useConvertTextToLink();
 
 const editor = useEditor({

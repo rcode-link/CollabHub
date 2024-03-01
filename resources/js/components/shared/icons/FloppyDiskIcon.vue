@@ -1,4 +1,4 @@
-<script setup lang="ts"></script>
+<script setup lang="js"></script>
 
 <template>
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 448">

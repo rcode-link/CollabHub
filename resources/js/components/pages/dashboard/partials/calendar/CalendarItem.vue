@@ -32,7 +32,7 @@ Start time: ${DateTime.fromISO(obj.start_time).toLocaleString(
         </fwb-badge>
     </tippy>
 </template>
-<script setup lang="ts">
+<script setup lang="js">
 import { Tippy } from "vue-tippy";
 import { find } from "lodash";
 import { DateTime } from "luxon";
@@ -43,9 +43,7 @@ import { useRouter } from "vue-router";
 
 const router = useRouter();
 const userStore = useUserStore();
-const props = defineProps<{
-    obj: any;
-}>();
+const props = defineProps(['obj']);
 const badgeType = computed(() => {
     if (props.obj.type === "event" && props.obj.user_id !== userStore.user.id) {
         return "default";

@@ -1,16 +1,16 @@
-<script lang="ts" setup>
-import { InvoiceItemResource } from "@/types";
+<script lang="js" setup>
+// import { InvoiceItemResource } from "@/types";
 import { FwbTableCell, FwbTableRow, FwbButton } from "flowbite-vue";
 import Text from "@/components/shared/Text.vue";
 import TrashIcon from "@/components/shared/icons/TrashIcon.vue";
 import currencyPrint from "@/functions/currencyPrint";
 import { debounce } from "lodash";
-interface iProps {
-    item: InvoiceItemResource;
-    index: string;
-    currency: any;
-}
-const props = defineProps<iProps>();
+// interface iProps {
+//     item: InvoiceItemResource;
+//     index: string;
+//     currency: any;
+// }
+const props = defineProps(['item', 'index', 'currency']);
 const updateItem = debounce(async () => {
     await window.axios.put(
         `/api/v1/invoices-items/${props.item.id}`,

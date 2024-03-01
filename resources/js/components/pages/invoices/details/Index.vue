@@ -1,4 +1,4 @@
-<script lang="ts" setup>
+<script lang="js" setup>
 import Auth from "../../../layouts/Auth.vue";
 import { FwbHeading, FwbP, FwbTab, FwbTabs } from "flowbite-vue";
 import { ref, watch } from "vue";
@@ -11,7 +11,7 @@ import { Chart as ChartJS, registerables } from "chart.js";
 
 ChartJS.register(...registerables);
 const route = useRoute();
-const activeTab = ref<string>("invoice");
+const activeTab = ref("invoice");
 const invoiceDetails = useInvoiceDetailsStore();
 watch(
     () => route.params.id,

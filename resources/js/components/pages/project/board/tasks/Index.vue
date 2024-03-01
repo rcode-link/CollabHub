@@ -8,7 +8,7 @@ import Label from "../../../../shared/Label.vue";
 import Text from "../../../../shared/Text.vue";
 import UsersSelectInput from "../../../../shared/SelectUsersInProject.vue";
 import { useBreadcrumbStore } from "../../../../../store/breadcrumb";
-import { useBoardsState } from "../../../../../store/boards.ts";
+import { useBoardsState } from "../../../../../store/boards";
 import InteractiveToast from "../../../../shared/InteractiveToast.vue";
 
 const route = useRoute();

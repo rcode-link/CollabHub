@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup lang="js">
 import { useLiveKit } from "../../../../functions/liveKit";
 import TrackHandler from "../TrackHandler.vue";
 

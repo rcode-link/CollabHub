@@ -4,7 +4,7 @@ import UserIcon from "@/components/shared/UserIcon.vue";
 import { FwbBadge } from "flowbite-vue";
 import Label from "../../../../shared/Label.vue";
 import Card from "../../../../shared/Card.vue";
-import { useBoardsState } from "../../../../../store/boards.ts";
+import { useBoardsState } from "../../../../../store/boards";
 import { useRoute, useRouter } from "vue-router";
 import { Tippy } from "vue-tippy";
 import { computed } from "vue";

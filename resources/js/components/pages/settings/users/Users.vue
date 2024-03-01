@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup lang="js">
 import Settings from "../../../layouts/Settings.vue";
 import { FwbTab, FwbTabs } from "flowbite-vue";
 import { ref } from "vue";

@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup lang="js">
 import { reactive, watch } from "vue";
 import { LocalParticipantModel } from "../../../../functions/liveKit";
 import { DateTime } from "luxon";
@@ -58,16 +58,19 @@ watch(
 );
 </script>
 <template>
-  <div class="z-[60] flex h-screen w-screen justify-center items-center">
-    <div class="flex flex-col gap-4 w-72">
-      <div>
-        <Label> Name </Label>
-        <Text v-model="model.name" :disabled="userState.user.id" />
-      </div>
-      <fwb-toggle v-model="model.enableCamera" label="Enable camera" />
-      <fwb-toggle v-model="model.enableMicrophone" label="Enable microphone" />
+    <div class="z-[60] flex h-screen w-screen justify-center items-center">
+        <div class="flex flex-col gap-4 w-72">
+            <div>
+                <Label> Name </Label>
+                <Text v-model="model.name" :disabled="userState.user.id" />
+            </div>
+            <fwb-toggle v-model="model.enableCamera" label="Enable camera" />
+            <fwb-toggle
+                v-model="model.enableMicrophone"
+                label="Enable microphone"
+            />
 
-      <fwb-button @click="load">Start call</fwb-button>
+            <fwb-button @click="load">Start call</fwb-button>
+        </div>
     </div>
-  </div>
 </template>

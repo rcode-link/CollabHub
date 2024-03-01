@@ -1,9 +1,9 @@
-<script lang="ts" setup>
+<script lang="js" setup>
 import { useErrorsStore } from "../../store/errors";
 const errors = useErrorsStore();
-withDefaults(defineProps<{ forInput: string }>(), {
+defineProps({
     forInput: "",
-});
+})
 </script>
 
 <template>

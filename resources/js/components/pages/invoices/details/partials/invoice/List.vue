@@ -1,4 +1,4 @@
-<script lang="ts" setup>
+<script lang="js" setup>
 import { onMounted } from "vue";
 import useInvoice from "@/components/pages/invoices/details/functions/useInvoice";
 import InvoiceForm from "./Form.vue";

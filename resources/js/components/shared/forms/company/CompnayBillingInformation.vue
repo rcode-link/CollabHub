@@ -1,28 +1,23 @@
-<script lang="ts" setup>
+<script lang="js" setup>
 import Text from "@/components/shared/Text.vue";
 import Label from "@/components/shared/Label.vue";
 import { onMounted, ref, watch } from "vue";
-import { iCustomer } from "@/components/pages/invoices/interfaces";
 import { FwbSelect } from "flowbite-vue";
 
-const currency = ref<any[]>();
+const currency = ref();
 const load = () => {
     window.axios.get("/api/v1/currency").then((res) => {
         currency.value = res.data.data;
     });
 };
 
-const props = defineProps<{
-    modelValue: iCustomer;
-}>();
+const props = defineProps(['modelValue']);
 
 onMounted(() => {
     load();
 });
 
-const emit = defineEmits<{
-    (e: "update:modelValue", value: iCustomer): void;
-}>();
+const emit = defineEmits(["update:modelValue"]);
 
 watch(
     () => props.modelValue,

@@ -1,21 +1,14 @@
-<script lang="ts" setup>
+<script lang="js" setup>
 import { onMounted, ref } from "vue";
 import { useErrorsStore } from "../../store/errors";
 
 const errors = useErrorsStore();
-interface iProps {
-    modelValue: string;
-    name: string;
-    form: string;
-    disabled: boolean;
-}
-withDefaults(defineProps<iProps>(), {
+defineProps({
     modelValue: "",
     name: "",
     form: "",
     disabled: false,
-});
-
+})
 defineEmits(["update:modelValue"]);
 
 const input = ref<HTMLInputElement | null>(null);
@@ -41,12 +34,7 @@ defineExpose({ focus: () => input.value?.focus() });
         :value="modelValue"
         :id="name"
         :disabled="disabled"
-        @input="
-            $emit(
-                'update:modelValue',
-                (<HTMLInputElement>$event?.target)?.value
-            )
-        "
+        @input="$emit('update:modelValue', $event?.target?.value)"
         ref="input"
     />
 </template>

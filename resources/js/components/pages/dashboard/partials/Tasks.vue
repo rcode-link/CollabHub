@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup lang="js">
 import Card from "../../../shared/Card.vue";
 import { ref } from "vue";
 import {

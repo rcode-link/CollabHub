@@ -1,24 +1,22 @@
-<script setup lang="ts">
+<script setup lang="js">
 import { onMounted, ref, watch } from "vue";
 import { useRoute } from "vue-router";
 import { useBoardsState } from "../../../../../store/boards";
-//@ts-ignore
 import Card from "../../../../shared/Card.vue";
-//@ts-ignore
 import SingleTask from "./SingleTask.vue";
 import { FwbButton } from "flowbite-vue";
+import { objectEntries } from "@vueuse/core";
 
 const boardsStore = useBoardsState();
 const route = useRoute();
-const currentPage = ref<number>(1);
-const lastLoadedPage = ref<number>(1);
-const props = defineProps<{
+const currentPage = ref(1);
+const lastLoadedPage = ref(1);
+const props = defineProps({
     status: {
-        title: string;
-        id: string;
-    };
-}>();
-const loadTaskForStatus = (): void => {
+        type: Object
+    }
+});
+const loadTaskForStatus = () => {
     if (
         lastLoadedPage.value === currentPage.value &&
         lastLoadedPage.value > 1

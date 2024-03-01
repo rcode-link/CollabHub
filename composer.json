@@ -15,6 +15,7 @@
         "dedoc/scramble": "^0.8.5",
         "doctrine/dbal": "^3.7",
         "guzzlehttp/guzzle": "^7.2",
+        "itsgoingd/clockwork": "^5.2",
         "johngrogg/ics-parser": "^3.3",
         "kalnoy/nestedset": "^6.0",
         "laravel/breeze": "^1.26",

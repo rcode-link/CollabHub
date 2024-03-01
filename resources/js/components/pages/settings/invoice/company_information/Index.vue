@@ -1,8 +1,7 @@
-<script lang="ts" setup>
+<script lang="js" setup>
 import Settings from "@/components/layouts/Settings.vue";
 import Card from "@/components/shared/Card.vue";
 import { onMounted, ref, watch } from "vue";
-import { iCustomer } from "@/components/pages/invoices/interfaces";
 import { FwbButton } from "flowbite-vue";
 import { useUserStore } from "@/store/user";
 import { toast } from "vue3-toastify";
@@ -15,7 +14,7 @@ const load = () => {
     });
 };
 
-const model = ref<iCustomer>({
+const model = ref({
     name: "",
 });
 

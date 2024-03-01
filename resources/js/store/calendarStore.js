@@ -2,40 +2,12 @@ import { defineStore } from "pinia";
 import { computed, reactive, ref, watch } from "vue";
 import { DateTime } from "luxon";
 import { useErrorsStore } from "./errors.js";
-import { EventResource } from "../types/index.js";
-import "../declaration.js";
 import { useRoute, useRouter } from "vue-router";
-export type EventAttendance = {
-    name: string;
-    id: number;
-    email: string;
-    avatar: string;
-    attending: boolean;
-};
 
-export type EventType = {
-    summary: string;
-    id: number | null;
-    start_time: string;
-    end_time: string;
-    freq?: string;
-    description: string | null;
-    freq_settings?: string | object;
-    has_video: boolean;
-    user_id: number | null;
-    freq_until?: string;
-    users: any[];
-    type: string;
-    approved: boolean;
-    videocall?: {
-        slug: string | null;
-    };
-    attendance?: EventAttendance;
-};
 export const useCalendarStore = defineStore("calendarStore", () => {
-    const calendar = ref<any[]>([]);
-    const isModalVisible = ref<boolean>(false);
-    const showDetails = ref<boolean>(false);
+    const calendar = ref([]);
+    const isModalVisible = ref(false);
+    const showDetails = ref(false);
     const selectedYear = ref(DateTime.now().year);
     const selectedMonth = ref(
         DateTime.now().set({ year: selectedYear.value }).month
@@ -44,9 +16,7 @@ export const useCalendarStore = defineStore("calendarStore", () => {
     const route = useRoute();
     const router = useRouter();
     const showAdvancedSettings = ref(false);
-    const videoCall = ref<{
-        slug: string | null;
-    }>();
+    const videoCall = ref();
 
     const calendarItemType = [
         {
@@ -97,7 +67,7 @@ export const useCalendarStore = defineStore("calendarStore", () => {
             label: "Sunday",
         },
     ];
-    const form = reactive<EventType>({
+    const form = reactive({
         summary: "",
         description: "",
         start_time: "",
@@ -141,7 +111,7 @@ export const useCalendarStore = defineStore("calendarStore", () => {
                 },
             })
             .then((response) => {
-                response.data.data.forEach((obj: any) => {
+                response.data.data.forEach((obj) => {
                     calendar.value.push(getRepeatingEventData(obj));
                 });
             });
@@ -149,7 +119,7 @@ export const useCalendarStore = defineStore("calendarStore", () => {
 
     const save = async () => {
         let request;
-        const data: EventType = Object.assign({}, form);
+        const data = Object.assign({}, form);
         if (form.freq === "WEEKLY" && form.freq_settings) {
             data.freq_settings = Object.keys(form.freq_settings)
                 //@ts-ignore
@@ -219,9 +189,9 @@ export const useCalendarStore = defineStore("calendarStore", () => {
         });
     };
 
-    const setItem = (obj: any) => {
+    const setItem = (obj) => {
         const tmpFreq = freqSttingsBase;
-        obj.freq_settings?.split(",").forEach((element: string) => {
+        obj.freq_settings?.split(",").forEach((element) => {
             //@ts-ignore
             tmpFreq[element] = true;
         });
@@ -245,7 +215,7 @@ export const useCalendarStore = defineStore("calendarStore", () => {
         }
     };
 
-    const getRepeatingEventData = (obj: EventResource) => {
+    const getRepeatingEventData = (obj) => {
         const start_date = DateTime.fromISO(obj.start_time);
         const end_date = DateTime.fromISO(obj.freq_until ?? obj.end_time);
         const startOfTheMonth = DateTime.now()
@@ -264,7 +234,7 @@ export const useCalendarStore = defineStore("calendarStore", () => {
         const item = {
             ...obj,
             has_video: !!obj.videocall,
-            dates: [] as any[],
+            dates: [],
         };
 
         for (let i = 1; i <= currentDate.value.endOf("month").day; i++) {
@@ -314,9 +284,11 @@ export const useCalendarStore = defineStore("calendarStore", () => {
             return true;
         }
 
-        return (route.query.edit === "true" &&
+        return (
+            route.query.edit === "true" &&
             route.query.event &&
-            Number(route.query.event) > 0) as boolean;
+            Number(route.query.event) > 0
+        );
     });
     return {
         currentDate,

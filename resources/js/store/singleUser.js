@@ -6,20 +6,8 @@ import { toast } from "vue3-toastify";
 import { UserResource } from "../types/models/UserResource.js";
 import "../declaration.js";
 
-export interface iUser {
-    id: number;
-    name: string;
-    email: string;
-    avatar: string;
-    start_work_time: string | null;
-    end_work_time: string | null;
-    deleted_at: string | null;
-    manager: UserResource;
-    view_profile?: string;
-    availability: string;
-}
 export const useSingleUserStore = defineStore("singleUserStore", () => {
-    const emptyUser: iUser = {
+    const emptyUser = {
         id: 0,
         name: "",
         email: "",
@@ -42,8 +30,8 @@ export const useSingleUserStore = defineStore("singleUserStore", () => {
         availability: "",
     };
     const route = useRoute();
-    const loading = ref<boolean>(true);
-    const user = ref<iUser>(emptyUser);
+    const loading = ref(true);
+    const user = ref(emptyUser);
     //
     const breadcrumb = useBreadcrumbStore();
     const manager = ref();

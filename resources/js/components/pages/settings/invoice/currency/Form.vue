@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup lang="js">
 import { FwbButton } from "flowbite-vue";
 import { ref } from "vue";
 import Modal from "@/components/shared/Modal.vue";
