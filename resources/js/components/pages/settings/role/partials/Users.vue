@@ -16,7 +16,7 @@ import { toast } from "vue3-toastify";
 const roleStore = useRoleStore();
 
 const save = (id) => {
-    let users = roleStore.role.users.find((obj: any) => obj.id);
+    let users = roleStore.role.users.find((obj) => obj.id);
     window.axios
         .put(`/api/v1/roles/detach/users/${roleStore.role.id}`, {
             user: id,

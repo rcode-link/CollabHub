@@ -2,17 +2,18 @@
 import Text from "@/components/shared/Text.vue";
 import { ref } from "vue";
 import InteractiveToast from "@/components/shared/InteractiveToast.vue";
-import { iData } from "@/functions/invoiceDataInterface";
 import { FwbButton, FwbTableCell, FwbTableRow } from "flowbite-vue";
-const emit = defineEmits<{
-    (e: "update"): void;
-}>();
-const props = defineProps<{
-    val: string;
-    id: number;
-}>();
+const emit = defineEmits(['update']);
+const props = defineProps({
+    val: {
+        type: String
+    },
+    id: {
+        type: Number
+    }
+});
 
-const model = ref<iData>({
+const model = ref({
     val: props.val,
 });
 

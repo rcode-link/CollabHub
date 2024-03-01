@@ -10,11 +10,10 @@ import {
 } from "flowbite-vue";
 import Settings from "@/components/layouts/Settings.vue";
 import { onMounted, ref } from "vue";
-import { CurrencyResource } from "@/types";
 import Form from "./Form.vue";
 import InteractiveToast from "@/components/shared/InteractiveToast.vue";
 
-const model = ref<CurrencyResource[]>();
+const model = ref();
 
 const load = () => {
     window.axios.get("/api/v1/currency").then((res) => {
@@ -26,7 +25,7 @@ onMounted(() => {
     load();
 });
 
-const deleteItem = (id: number) => {
+const deleteItem = (id) => {
     window.axios.delete(`/api/v1/currency/${id}`).then(() => {
         load();
     });
@@ -51,21 +50,21 @@ const deleteItem = (id: number) => {
                     <FwbTableCell>{{ obj.format }}</FwbTableCell>
                     <FwbTableCell>
                         {{
-                            (5 as number).toLocaleString(obj.format, {
+                            Number(5).toLocaleString(obj.format, {
                                 style: "currency",
                                 currency: obj.currency,
                             })
                         }}
                         |
                         {{
-                            (50 as number).toLocaleString(obj.format, {
+                            Number(50).toLocaleString(obj.format, {
                                 style: "currency",
                                 currency: obj.currency,
                             })
                         }}
                         |
                         {{
-                            (5000 as number).toLocaleString(obj.format, {
+                            Number(5000).toLocaleString(obj.format, {
                                 style: "currency",
                                 currency: obj.currency,
                             })

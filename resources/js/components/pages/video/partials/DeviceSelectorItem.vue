@@ -1,14 +1,14 @@
-<script lang="js" setup>
+<script lang="ts" setup>
 import { useLiveKit, iMediaDeviceInfo } from "../../../../functions/liveKit";
 //@ts-ignore
 import { FwbListGroupItem } from "flowbite-vue";
 const props = defineProps<{
-  type: "videoinput" | "audioinput";
-  device: iMediaDeviceInfo;
+    type: "videoinput" | "audioinput";
+    device: iMediaDeviceInfo;
 }>();
 const liveKit = useLiveKit();
 const changeItem = async () => {
-  await liveKit.switchDevice(props.type, props.device.deviceId);
+    await liveKit.switchDevice(props.type, props.device.deviceId);
 };
 </script>
 <template>

@@ -1,5 +1,5 @@
 <script setup lang="js">
-import { useLiveKit, LocalParticipantModel } from "../../../functions/liveKit";
+import { useLiveKit } from "../../../functions/liveKit";
 //@ts-ignore
 import { reactive } from "vue";
 
@@ -11,7 +11,7 @@ import WelcomeScreen from "./partials/WelcomeScreen.vue";
 import PrintTracks from "./partials/PrintTracks.vue";
 
 const liveKit = useLiveKit();
-const model = reactive<LocalParticipantModel>({
+const model = reactive({
     name: null,
     enableMicrophone: true,
     shareScreen: false,
@@ -19,7 +19,7 @@ const model = reactive<LocalParticipantModel>({
     token: null,
 });
 
-const start = async (obj: LocalParticipantModel) => {
+const start = async (obj) => {
     model.name = obj.name;
     model.enableCamera = obj.enableCamera;
     model.enableMicrophone = obj.enableMicrophone;

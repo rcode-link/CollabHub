@@ -32,7 +32,7 @@ const loadStatuses = () => {
 
 loadStatuses();
 
-const update = (value: any) => {
+const update = (value) => {
     window.axios
         .put(`/api/v1/tasks-statuses/${value.id}`, value)
         .then(() => loadStatuses());

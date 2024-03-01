@@ -6,12 +6,11 @@ import Card from "../../../../shared/Card.vue";
 import Editor from "@/components/pages/project/tasks/partisals/Form/Editor.vue";
 import Text from "../../../../shared/Text.vue";
 import Note from "./partials/Note.vue";
-import { iInvoiceData, iData } from "@/functions/invoiceDataInterface";
-const model = ref<iData>({
+const model = ref({
     val: "",
     title: "",
 });
-const list = ref<iInvoiceData[]>();
+const list = ref();
 const load = () => {
     model.value = {
         val: "",

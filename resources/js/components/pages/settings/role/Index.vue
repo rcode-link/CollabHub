@@ -21,7 +21,7 @@ const deleteRoleToastRef = ref();
 watch(
     () => route.query.role_id,
     () => {
-        roleStore.activeRole = (route.params.id as number) ?? 0;
+        roleStore.activeRole = route.params.id ?? 0;
         roleStore.loadRoleData();
     },
     {

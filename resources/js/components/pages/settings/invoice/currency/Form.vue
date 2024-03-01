@@ -6,18 +6,10 @@ import Label from "@/components/shared/Label.vue";
 import Text from "@/components/shared/Text.vue";
 import Errors from "@/components/shared/Errors.vue";
 
-const emit = defineEmits<{
-    (e: "update"): void;
-}>();
+const emit = defineEmits(['update']);
 
 const modalRef = ref();
-interface iModel {
-    id: number | null;
-    currency: string;
-    iso: string;
-    format: string;
-}
-const model = ref<iModel>({
+const model = ref({
     id: null,
     currency: "",
     iso: "",
@@ -72,21 +64,21 @@ const save = () => {
                     v-if="model.currency.length && model.format.length"
                 >
                     {{
-                        (5 as number).toLocaleString(model.format, {
+                        Number(5).toLocaleString(model.format, {
                             style: "currency",
                             currency: model.currency,
                         })
                     }}
                     <br />
                     {{
-                        (50 as number).toLocaleString(model.format, {
+                        Number(50).toLocaleString(model.format, {
                             style: "currency",
                             currency: model.currency,
                         })
                     }}
                     <br />
                     {{
-                        (5000 as number).toLocaleString(model.format, {
+                        Number(5000).toLocaleString(model.format, {
                             style: "currency",
                             currency: model.currency,
                         })

@@ -7,7 +7,7 @@ import { useUserStore } from "@/store/user";
 import { toast } from "vue3-toastify";
 import CompnayBillingInformation from "@/components/shared/forms/company/CompnayBillingInformation.vue";
 const userStore = useUserStore();
-const currency = ref<any[]>();
+const currency = ref();
 const load = () => {
     window.axios.get("/api/v1/currency").then((res) => {
         currency.value = res.data.data;

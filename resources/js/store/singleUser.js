@@ -3,8 +3,6 @@ import { ref } from "vue";
 import { useRoute } from "vue-router";
 import { useBreadcrumbStore } from "./breadcrumb.js";
 import { toast } from "vue3-toastify";
-import { UserResource } from "../types/models/UserResource.js";
-import "../declaration.js";
 
 export const useSingleUserStore = defineStore("singleUserStore", () => {
     const emptyUser = {

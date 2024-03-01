@@ -1,7 +1,6 @@
 <script setup lang="js">
 import Settings from "@/components/layouts/Settings.vue";
 import Text from "@/components/shared/Text.vue";
-import { iData, iInvoiceData } from "@/functions/invoiceDataInterface";
 import {
     FwbButton,
     FwbTable,
@@ -13,10 +12,10 @@ import {
 } from "flowbite-vue";
 import { onMounted, ref } from "vue";
 import Form from "./Form.vue";
-const model = ref<iData>({
+const model = ref({
     val: "",
 });
-const list = ref<iInvoiceData[]>();
+const list = ref();
 const load = () => {
     model.value = {
         val: "",

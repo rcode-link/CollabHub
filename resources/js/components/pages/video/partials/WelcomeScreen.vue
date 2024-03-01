@@ -1,18 +1,14 @@
 <script setup lang="js">
 import { reactive, watch } from "vue";
-import { LocalParticipantModel } from "../../../../functions/liveKit";
 import { DateTime } from "luxon";
 import { toast } from "vue3-toastify";
 import { useUserStore } from "../../../../store/user";
 import { useRoute } from "vue-router";
-//@ts-ignore
 import Label from "../../../shared/Label.vue";
-//@ts-ignore
 import Text from "../../../shared/Text.vue";
-//@ts-ignore
 import { FwbToggle, FwbButton } from "flowbite-vue";
 
-const model = reactive<LocalParticipantModel>({
+const model = reactive({
   name: null,
   enableMicrophone: true,
   shareScreen: false,
@@ -23,9 +19,7 @@ const model = reactive<LocalParticipantModel>({
 const route = useRoute();
 const userState = useUserStore();
 
-const emits = defineEmits<{
-  (e: "update", value: LocalParticipantModel): void;
-}>();
+const emits = defineEmits(['update']);
 
 const load = () => {
   window.axios
