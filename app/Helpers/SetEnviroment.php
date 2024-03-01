@@ -55,7 +55,7 @@ class SetEnviroment
         \Cache::setPrefix($model->subdomain);
         \Config::set("app.name", $model->name . " | CollabHub");
         \Config::set("database.connections.mysql.database", $model->database_name);
-        \Config::set("database.connections.mysql.username", $model->subdomain);
+        \Config::set("database.connections.mysql.username", $model->database_name);
         \Config::set("database.connections.mysql.password", $model->database_password);
         \Config::set("frontend", [
             'VITE_APP_NAME' => $model->name,
