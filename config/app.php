@@ -86,6 +86,9 @@ return [
 
     'locale' => 'en',
 
+    'license_provider' => env('APP_LICENSE_URL', null),
+    'license_token' => env('APP_LICENSE_TOKEN', null),
+
     /*
     |--------------------------------------------------------------------------
     | Application Fallback Locale
@@ -156,13 +159,13 @@ return [
     */
 
     'providers' => ServiceProvider::defaultProviders()->merge([
-            /*
-             * Package Service Providers...
-             */
+        /*
+         * Package Service Providers...
+         */
 
-            /*
-             * Application Service Providers...
-             */
+        /*
+         * Application Service Providers...
+         */
         App\Providers\AppServiceProvider::class,
         App\Providers\AuthServiceProvider::class,
         App\Providers\BroadcastServiceProvider::class,
