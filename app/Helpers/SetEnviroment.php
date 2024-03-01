@@ -52,6 +52,7 @@ class SetEnviroment
 
     static function connection($model)
     {
+        \Log::info("model data", $model);
         \Cache::setPrefix($model->subdomain);
         \Config::set("app.name", $model->name . " | CollabHub");
         \Config::set("database.connections.mysql.database", $model->database_name);

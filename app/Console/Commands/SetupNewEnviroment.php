@@ -34,7 +34,7 @@ class SetupNewEnviroment extends Command
         $this->model = SetEnviroment::loadEnv($connection);
         $this->info("Loaded enviroment");
         SetEnviroment::connection($this->model);
-        Artisan::call('migrate --seed');
+        Artisan::call('migrate', ['--seed' => true]);
     }
 
 }
