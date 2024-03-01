@@ -44,8 +44,6 @@ class SetupNewEnviroment extends Command
         $databaseName = $this->model->database_name;
         $username = $this->model->subdomain;
         $password = $this->model->database_password;
-        \Config::set("database.connections.mysql.username", 'root');
-        \DB::reconnect();
         $this->info("Creating db");
         \DB::statement("CREATE DATABASE IF NOT EXISTS $databaseName");
 
