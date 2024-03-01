@@ -14,8 +14,8 @@ class SetEnviroment
 
                 $res = $client->post(
                     config('app.license_provider') . "/api/settings?token=" . config('app.license_token'),
-                    array(
-                        'form_params' => array(
+                    array (
+                        'form_params' => array (
                             'subdomain' => $sitename,
                         )
                     )
@@ -41,7 +41,11 @@ class SetEnviroment
             return;
         }
 
-        $model = SetEnviroment::loadEnv(request()->subdomain());
+        $domain = request()->getHost();
+        $parts = explode('.', $domain);
+
+        $subdomain = $parts[0];
+        $model = SetEnviroment::loadEnv($subdomain);
         \Config::set('app.url', request()->root());
         SetEnviroment::connection($model);
     }
