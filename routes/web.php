@@ -23,7 +23,7 @@ use Barryvdh\DomPDF\Facade\Pdf;
 |
 */
 
-Route::get('/storage/{media}/{slug}', function (Request $request, $media) {
+Route::get('/storage/{folder}/{media}/{slug}', function (Request $request, $media) {
     if ($media === 'images') {
         return response()->file(storage_path('/app/public/images/avatar.png'));
     }
