@@ -125,7 +125,7 @@
                                 </tippy>
                                 <tippy
                                     content="Dark theme"
-                                    @click="() => changeTheme(themeData.light)"
+                                    @click="() => changeTheme(themeData.dark)"
                                 >
                                     <fwb-button
                                         :color="

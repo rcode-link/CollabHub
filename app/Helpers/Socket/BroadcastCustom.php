@@ -75,7 +75,16 @@ class BroadcastCustom
             return $str !== $chanelData->chanelName;
         });
         try {
-            $pusher = new Pusher(auth_key: config('broadcasting.connections.pusher.key'), secret: config('broadcasting.connections.pusher.secret'), app_id: config('broadcasting.connections.pusher.app_id'));
+            Log::info('pusher', [
+                'auth_key' => config('broadcasting.connections.pusher.key'),
+                'secret' => config('broadcasting.connections.pusher.secret'),
+                'app_id' => config('broadcasting.connections.pusher.app_id')
+            ]);
+            $pusher = new Pusher(
+                auth_key: config('broadcasting.connections.pusher.key'),
+                secret: config('broadcasting.connections.pusher.secret'),
+                app_id: config('broadcasting.connections.pusher.app_id')
+            );
         } catch (PusherException $e) {
             Log::error('Pusher', $e);
         }

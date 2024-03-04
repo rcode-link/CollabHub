@@ -25,9 +25,9 @@ export const initAxios = () => {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
     });
-    // instance.interceptors.request.use(onRequest, function (error) {
-    //     return error;
-    // });
+    instance.interceptors.request.use(onRequest, function (error) {
+        return error;
+    });
     // instance.interceptors.response.use(
     //     function (response) {
     //         return response;

@@ -6,9 +6,8 @@ use Dedoc\Scramble\Scramble;
 use Dedoc\Scramble\Support\Generator\OpenApi;
 use Dedoc\Scramble\Support\Generator\SecurityScheme;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Routing\Route;
 use Illuminate\Support\ServiceProvider;
-use Illuminate\Support\Str;
+use App\Helpers\SetEnviroment;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -25,6 +24,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+
+        SetEnviroment::setup();
 
         \Illuminate\Routing\Route::macro('subdomain', function ($uri, $action) {
             $domain = request()->getHost();

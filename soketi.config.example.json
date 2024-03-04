@@ -1,0 +1,24 @@
+{
+    "debug": true,
+    "host": "0.0.0.0",
+    "port": 6001,
+    "metrics.enabled": true,
+    "metrics.host": "0.0.0.0",
+    "metrics.port": 9601,
+    "webhooks.batching.enabled": true,
+    "rateLimiter.driver": "redis",
+    "appManager.driver": "mysql",
+    "appManager.mysql.table": "soketis",
+    "appManager.cache.enabled": true,
+    "appManager.cache.ttl": 3600,
+    "databasePooling.enabled": true,
+    "database": {
+        "mysql": {
+            "host": "127.0.0.1",
+            "port": "3306",
+            "user": "root",
+            "password": "local",
+            "database": "collabhubmanager"
+        }
+    }
+}

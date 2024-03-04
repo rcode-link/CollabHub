@@ -24,7 +24,8 @@ class RoleSeeder extends Seeder
         ]);
 
         $company = Company::create([
-            'name' => 'Company'
+            'name' => 'Company',
+            'is_costumer_company' => false
         ]);
 
         $users = User::all();

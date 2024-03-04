@@ -15,11 +15,11 @@ class CompanySeeder extends Seeder
     {
         $company = Company::create([
             'name' => 'My company',
-            'is_costumer_company' => false
+            'is_costumer_company' => 0
         ]);
 
 
-        $permissions = PermissionDefinition::all()
+        PermissionDefinition::all()
             ->map(function ($obj) use ($company) {
                 return [
                     'permission' => $obj->slug . '.' . $company->id,

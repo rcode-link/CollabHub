@@ -20,7 +20,6 @@
     @else
         @vite(['resources/js/app.js'])
     @endproduction
-    <script type="module" src="/build/registerSW.js"></script>
     <!-- Styles -->
     <meta name="token" content="{{ csrf_token() }}">
 

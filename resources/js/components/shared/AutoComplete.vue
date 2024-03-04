@@ -5,7 +5,7 @@ import { ref, watch } from "vue";
 
 const emit = defineEmits(["search",
 "selected"]);
-const props = defineProps();
+const props = defineProps(['items']);
 const showItems = ref(false);
 const inputValue = ref("");
 const activeItem = ref(-1);

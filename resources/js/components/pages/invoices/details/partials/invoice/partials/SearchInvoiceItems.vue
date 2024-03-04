@@ -8,6 +8,7 @@ import Label from "@/components/shared/Label.vue";
         const route = useRoute();
         const searchItems = (val) => {
             console.log(val);
+            load();
         };
 
         const load = () => {
@@ -22,8 +23,6 @@ import Label from "@/components/shared/Label.vue";
                 invoice_id: route.params.inv_id,
             });
         };
-
-        load();
 </script>
 
 <template>

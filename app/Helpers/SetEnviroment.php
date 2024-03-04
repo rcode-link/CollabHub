@@ -37,7 +37,7 @@ class SetEnviroment
     }
     static function setup()
     {
-        if (!config('app.license_provider')) {
+        if (!config('app.license_provider') || app()->runningInConsole()) {
             return;
         }
 
@@ -52,12 +52,20 @@ class SetEnviroment
 
     static function connection($model)
     {
-        \Log::info("model data", [$model]);
+        if (!$model) {
+            return;
+        }
+
         \Cache::setPrefix($model->subdomain);
         \Config::set("app.name", $model->name . " | CollabHub");
-        \Config::set("database.connections.mysql.database", $model->database_name);
-        \Config::set("database.connections.mysql.username", $model->database_name);
-        \Config::set("database.connections.mysql.password", $model->database_password);
+        \Config::set("database.connections.mysql.database", "$model->database_name");
+        \Config::set("database.connections.mysql.username", "$model->database_name");
+        \Config::set("database.connections.mysql.password", "$model->database_password");
+        \Config::set('broadcasting.connections.pusher.key', $model->soket->key);
+        \Config::set('broadcasting.connections.pusher.secret', $model->soket->secret);
+        \Config::set('broadcasting.connections.pusher.app_id', $model->soket->id);
+
+        \Config::set('media-library.prefix', '/' . $model->subdomain);
         \Config::set("frontend", [
             'VITE_APP_NAME' => $model->name,
             'VITE_PUSHER_APP_KEY' => $model->soket->key,
@@ -67,7 +75,11 @@ class SetEnviroment
             'VITE_PUSHER_APP_CLUSTER' => env('VITE_PUSHER_APP_CLUSTER', null),
             'VITE_LIVEKIT_URL' => env('VITE_LIVEKIT_URL', null),
         ]);
-
         \DB::reconnect();
+        try {
+            \DB::connection()->getPdo();
+        } catch (\Exception $e) {
+            \Log::critical("db connection", [$model]);
+        }
     }
 }

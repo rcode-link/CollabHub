@@ -12,6 +12,7 @@ import Settings from "@/components/layouts/Settings.vue";
 import { onMounted, ref } from "vue";
 import Form from "./Form.vue";
 import InteractiveToast from "@/components/shared/InteractiveToast.vue";
+import TableItem from "./partials/TableItem.vue";
 
 const model = ref();
 
@@ -24,12 +25,6 @@ const load = () => {
 onMounted(() => {
     load();
 });
-
-const deleteItem = (id) => {
-    window.axios.delete(`/api/v1/currency/${id}`).then(() => {
-        load();
-    });
-};
 </script>
 <template>
     <Settings>
@@ -45,53 +40,7 @@ const deleteItem = (id) => {
             </FwbTableHead>
             <FwbTableBody>
                 <FwbTableRow v-for="obj in model">
-                    <FwbTableCell>{{ obj.currency }}</FwbTableCell>
-                    <FwbTableCell>{{ obj.iso }}</FwbTableCell>
-                    <FwbTableCell>{{ obj.format }}</FwbTableCell>
-                    <FwbTableCell>
-                        {{
-                            Number(5).toLocaleString(obj.format, {
-                                style: "currency",
-                                currency: obj.currency,
-                            })
-                        }}
-                        |
-                        {{
-                            Number(50).toLocaleString(obj.format, {
-                                style: "currency",
-                                currency: obj.currency,
-                            })
-                        }}
-                        |
-                        {{
-                            Number(5000).toLocaleString(obj.format, {
-                                style: "currency",
-                                currency: obj.currency,
-                            })
-                        }}
-                    </FwbTableCell>
-                    <FwbTableCell>
-                        <InteractiveToast>
-                            <template #trigger>
-                                <FwbButton size="xs" color="red"
-                                    >Delete</FwbButton
-                                >
-                            </template>
-                            <template #title>Are you sure?</template>
-                            <template #content>
-                                You are about to delete <b>{{ obj.currency }}</b
-                                >?
-                            </template>
-                            <template #actions>
-                                <FwbButton
-                                    @click="() => deleteItem(obj.id)"
-                                    size="xs"
-                                >
-                                    Yes, Delete it!
-                                </FwbButton>
-                            </template>
-                        </InteractiveToast>
-                    </FwbTableCell>
+                    <TableItem :obj="obj" @update="load" />
                 </FwbTableRow>
             </FwbTableBody>
         </FwbTable>

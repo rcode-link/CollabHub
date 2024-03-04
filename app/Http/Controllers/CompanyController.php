@@ -18,7 +18,7 @@ class CompanyController extends Controller
     {
         $permission = Auth::user()->permissions()->filter(fn($obj) => $obj['model']['type'] == Company::class)->pluck('model.id')->flatten();
 
-        $comapny = Company::whereIn('id', $permission)->first();
+        $comapny = Company::whereIn('id', $permission)->firstOrFail();
         return array_merge(
             $comapny->toArray(),
             [

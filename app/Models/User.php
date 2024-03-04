@@ -208,7 +208,7 @@ class User extends Authenticatable implements HasMedia
 
     public function permissions(): Collection
     {
-        $data = Cache::get('permissions');
+        $data = Cache::get('permissions', collect([]));
         if (!$data || !$data->count()) {
             ManagePermissionsEvent::dispatch();
         }

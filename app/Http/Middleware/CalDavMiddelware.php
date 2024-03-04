@@ -15,7 +15,6 @@ class CalDavMiddelware
      */
     public function handle(Request $request, Closure $next): Response
     {
-        \Log::info('caldav', [$request]);
         return $next($request);
     }
 }
