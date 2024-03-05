@@ -23,13 +23,13 @@ use Barryvdh\DomPDF\Facade\Pdf;
 |
 */
 
-Route::get('/storage/{folder}/{media}/{slug}', function (Request $request, $media) {
-    if ($media === 'images') {
-        return response()->file(storage_path('/app/public/images/avatar.png'));
-    }
-    $media = Spatie\MediaLibrary\MediaCollections\Models\Media::find($media);
-    return response()->file($media->getPath(), ["Content-Type" => $media->mime_type]);
-});
+// Route::get('/storage/{folder}/{media}/{slug}', function (Request $request, $media) {
+//     if ($media === 'images') {
+//         return response()->file(storage_path('/app/public/images/avatar.png'));
+//     }
+//     $media = Spatie\MediaLibrary\MediaCollections\Models\Media::find($media);
+//     return response()->file($media->getPath(), ["Content-Type" => $media->mime_type]);
+// });
 
 Route::match(['PROPFIND', 'GET'], '/calendar', [CalendarController::class, 'calDav'])->middleware('auth.basic');
 

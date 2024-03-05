@@ -41,6 +41,7 @@ class AppServiceProvider extends ServiceProvider
 
         if (config('app.env') === 'production') {
             \URL::forceScheme('https');
+            \URL::forceRootUrl(request()->root());
         }
 
         Scramble::extendOpenApi(function (OpenApi $openApi) {

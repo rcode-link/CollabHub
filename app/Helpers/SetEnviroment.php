@@ -46,8 +46,9 @@ class SetEnviroment
 
         $subdomain = $parts[0];
         $model = SetEnviroment::loadEnv($subdomain);
-        \Config::set('app.url', request()->getSchemeAndHttpHost());
-        \Config::set("filesystems.disks.public.url", request()->getSchemeAndHttpHost() . '/storage');
+        $fullDomain = \Str::replace('http://', 'https://', request()->getSchemeAndHttpHost());
+        \Config::set('app.url', $fullDomain);
+        \Config::set("filesystems.disks.public.url", $fullDomain . '/storage');
         SetEnviroment::connection($model);
     }
 
