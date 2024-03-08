@@ -68,14 +68,14 @@ class VideoCalls extends Model
     {
         $current = Carbon::parse($currentTime)->setTimezone("UTC");
 
-        // $data = (new RoomServiceClient(host: config('livekit.url'), apiKey: config('livekit.key'), apiSecret: config('livekit.secret')));
+        $data = (new RoomServiceClient(host: config('livekit.url'), apiKey: config('livekit.key'), apiSecret: config('livekit.secret')));
 
-        // $listOfUsers = $data->listParticipants($this->slug);
+        $listOfUsers = $data->listParticipants($this->slug);
 
-        // // if video call has users in it then user can join
-        // if ($listOfUsers->getParticipants()->count() > 0) {
-        //     return true;
-        // }
+        // if video call has users in it then user can join
+        if ($listOfUsers->getParticipants()->count() > 0) {
+            return true;
+        }
 
         switch ($this->callable::class) {
             case Event::class:
