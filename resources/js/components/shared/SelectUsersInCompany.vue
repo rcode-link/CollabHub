@@ -30,7 +30,7 @@ const props = defineProps({
 
 const emit = defineEmits(["update:modelValue", 'selectedUser']);
 
-const currentValue = ref<string | number>(props.modelValue);
+const currentValue = ref(props.modelValue);
 const users = ref({
     data: {}
 });

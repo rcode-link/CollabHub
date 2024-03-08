@@ -7,6 +7,10 @@ use App\Models\PermissionDefinition;
 use Illuminate\Console\Command;
 use Illuminate\Support\Str;
 
+use Agence104\LiveKit\AccessToken;
+use Agence104\LiveKit\AccessTokenOptions;
+use Agence104\LiveKit\VideoGrant;
+
 class AddPermission extends Command
 {
     /**
@@ -29,7 +33,24 @@ class AddPermission extends Command
     public function handle()
     {
 
-//
+        $tokenOptions = (new AccessTokenOptions())
+            ->setIdentity(1444)
+            ->setTtl(86400000)
+            ->setName("RADAN ");
+
+        $videoGrant = (new VideoGrant())
+            ->setRoomJoin(true)
+            ->setRoomName('$video->slug');
+
+
+        $token = (new AccessToken(apiKey: config('livekit.key'), apiSecret: config('livekit.secret')))
+            ->init($tokenOptions)
+            ->setGrant($videoGrant)
+            ->toJwt();
+
+        dd($token);
+
+        //
 //        $scopeArray = [];
 //        foreach (PermissionsScopes::cases() as $item) {
 //            $scopeArray[] = $item->value;

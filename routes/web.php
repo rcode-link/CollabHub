@@ -23,13 +23,6 @@ use Barryvdh\DomPDF\Facade\Pdf;
 |
 */
 
-// Route::get('/storage/{folder}/{media}/{slug}', function (Request $request, $media) {
-//     if ($media === 'images') {
-//         return response()->file(storage_path('/app/public/images/avatar.png'));
-//     }
-//     $media = Spatie\MediaLibrary\MediaCollections\Models\Media::find($media);
-//     return response()->file($media->getPath(), ["Content-Type" => $media->mime_type]);
-// });
 
 Route::match(['PROPFIND', 'GET'], '/calendar', [CalendarController::class, 'calDav'])->middleware('auth.basic');
 
@@ -41,7 +34,6 @@ Route::post('/login', function () {
 Route::get('/generate-pdf-v2', function () {
     $invoice = Invoice::whereId(9)->with(['items', 'items.billingItem', 'company'])->firstOrFail();
     $company = Company::whereIsCostumerCompany(false)->firstOrFail();
-    // $pdf = Pdf::loadView();
     return view('pdf.invoice', ['model' => $invoice, 'company' => $company]);
 });
 
