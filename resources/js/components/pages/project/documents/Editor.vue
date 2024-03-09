@@ -45,6 +45,7 @@ load();
         <AdvancedEditor
             :key="document.id"
             v-model="document.content"
+            :editable="true"
             @submitted="save"
         />
     </div>

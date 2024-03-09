@@ -13,10 +13,8 @@ import { TableHeader } from "@tiptap/extension-table-header";
 import { TableCell } from "@tiptap/extension-table-cell";
 import tableExtension from "../../../functions/editor/TableExtension";
 import { useRoute } from "vue-router";
-//@ts-ignore
 import EditorHeader from "./EditorHeader.vue";
 import hljs from "highlight.js";
-//@ts-ignore
 import MobileMenu from "./MobileMenu.vue";
 import Mention from "@tiptap/extension-mention";
 import suggestion from "../../../functions/editor/mention/suggestion";
@@ -35,7 +33,6 @@ const props = defineProps({
 const lowlight = createLowlight();
 
 hljs.listLanguages().forEach(async (lang) => {
-    //@ts-ignore
     lowlight.register(lang, hljs.getLanguage(lang).rawDefinition);
 });
 
@@ -72,7 +69,6 @@ const editor = useEditor({
             HTMLAttributes: {
                 class: "mention",
             },
-            //@ts-ignore
             suggestion,
         }),
         Link.configure({}),
@@ -91,7 +87,6 @@ const editor = useEditor({
         textToLink.convertTextToLink,
     ],
     onUpdate() {
-        //@ts-ignore
         emit("update:modelValue", editor.value.getJSON());
     },
 });
