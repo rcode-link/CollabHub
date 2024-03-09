@@ -20,7 +20,8 @@ import Mention from "@tiptap/extension-mention";
 import suggestion from "../../../functions/editor/mention/suggestion";
 import { SmilieReplacer } from "../../../functions/smilieReplacer";
 import { useConvertTextToLink } from "../../../functions/editor/convertTextToLink";
-
+import {Collaboration} from '@/functions/editor/colab/Collaboration'
+import {Cursors} from '@/functions/editor/colab/Cursor'
 const props = defineProps({
         modelValue: {
             type: String
@@ -65,6 +66,10 @@ const editor = useEditor({
     },
     extensions: [
         StarterKit,
+        // Cursors,
+        // Collaboration.configure({
+        //     documentId: 1
+        // }),
         Mention.configure({
             HTMLAttributes: {
                 class: "mention",

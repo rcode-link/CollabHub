@@ -23,7 +23,7 @@
     "dependencies": {
         "@casl/ability": "^6.5.0",
         "@casl/vue": "^2.2.1",
-        "@rcode-link/tiptap-drawio": "^1.0.2",
+        "@rcode-link/tiptap-drawio": "^1.0.21",
         "@tiptap/extension-code-block-lowlight": "^2.1.12",
         "@tiptap/extension-link": "^2.1.12",
         "@tiptap/extension-mention": "^2.1.13",
@@ -35,7 +35,7 @@
         "@tiptap/pm": "^2.1.12",
         "@tiptap/starter-kit": "^2.1.12",
         "@tiptap/suggestion": "^2.1.13",
-        "@tiptap/vue-3": "^2.1.12",
+        "@tiptap/vue-3": "^2.2.4",
         "@types/axios": "^0.14.0",
         "@vitejs/plugin-vue": "^4.4.0",
         "@vueuse/core": "^10.5.0",
