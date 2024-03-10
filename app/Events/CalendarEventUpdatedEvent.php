@@ -37,8 +37,6 @@ class CalendarEventUpdatedEvent implements ShouldBroadcast
         }
         $chanels[] = new PrivateChannel('event.' . $this->eventModel->user_id);
 
-        \Log::info('changles list', $chanels);
-
         return $chanels;
     }
 }

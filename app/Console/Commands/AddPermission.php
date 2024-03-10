@@ -10,6 +10,7 @@ use Illuminate\Support\Str;
 use Agence104\LiveKit\AccessToken;
 use Agence104\LiveKit\AccessTokenOptions;
 use Agence104\LiveKit\VideoGrant;
+use Pusher\Pusher;
 
 class AddPermission extends Command
 {
@@ -33,22 +34,15 @@ class AddPermission extends Command
     public function handle()
     {
 
-        $tokenOptions = (new AccessTokenOptions())
-            ->setIdentity(1444)
-            ->setTtl(86400000)
-            ->setName("RADAN ");
 
-        $videoGrant = (new VideoGrant())
-            ->setRoomJoin(true)
-            ->setRoomName('$video->slug');
+        $pusher = new Pusher(
+            auth_key: config('broadcasting.connections.pusher.key'),
+            secret: config('broadcasting.connections.pusher.secret'),
+            app_id: config('broadcasting.connections.pusher.app_id'),
+            options: config('broadcasting.connections.pusher.options')
+        );
 
-
-        $token = (new AccessToken(apiKey: config('livekit.key'), apiSecret: config('livekit.secret')))
-            ->init($tokenOptions)
-            ->setGrant($videoGrant)
-            ->toJwt();
-
-        dd($token);
+        dd($pusher);
 
         //
 //        $scopeArray = [];

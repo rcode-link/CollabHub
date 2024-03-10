@@ -165,7 +165,6 @@ class Event extends Model
 
         $icalendar .= "END:VCALENDAR\r\n";
 
-        \Log::info("message", [$icalendar]);
         return $icalendar;
     }
 

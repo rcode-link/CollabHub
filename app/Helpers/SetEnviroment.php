@@ -20,14 +20,10 @@ class SetEnviroment
                         )
                     )
                 );
-                \Log::info("send it", [
-                    'subdomain' => $sitename,
-
-                ]);
                 throw_if($res->getStatusCode() !== 200, 'SOmeting whent wrong');
                 return json_decode($res->getBody());
             } catch (\Exception $e) {
-                \Log::info('error loading config', [
+                \Log::error('error loading config', [
                     'subdomain' => $sitename,
                     'error' => $e->getCode()
                 ]);

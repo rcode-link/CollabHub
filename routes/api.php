@@ -48,31 +48,6 @@ use Illuminate\Support\Facades\Route;
 | be assigned to the "api" middleware group. Make something great!
 |
 */
-Route::any('/npm/-/{any}', function () {
-    $data = request();
-
-    \Log::info('npm', [$data]);
-    return response()->json([
-        'ok' => 'You are loggedin as someting',
-        'token' => 'token',
-        'doneUrl' => 'https://localhost',
-        'loginUrl' => 'https://localhost',
-
-    ]);
-})->middleware(['auth:sanctum'])->where('any', '.*');
-
-Route::post('/git/{any}', function () {
-    $data = request();
-
-    \Log::info('git', [$data]);
-    return response()->json([
-        'ok' => 'You are loggedin as someting',
-        'token' => 'token',
-        'doneUrl' => 'https://localhost',
-        'loginUrl' => 'https://localhost',
-
-    ]);
-})->where('any', '.*');
 
 Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('/user', [ProfileController::class, 'view'])->name('api.view');

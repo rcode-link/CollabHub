@@ -27,7 +27,6 @@ class VideoCallController extends Controller
         $title = $chatData->type === ChatTypes::USER->value ? $chatData->users->pluck('name')->join('-') . Carbon::now() : $chatData->title;
 
 
-        Log::info('video call title', ['title' => $title]);
         $chatMessage = ChatMessage::create([
             'user_id' => Auth::id(),
             'chat_id' => $chat
@@ -39,7 +38,7 @@ class VideoCallController extends Controller
             'slug' => Str::uuid()
         ]);
         $chatMessage->load('videocalls', 'user');
-        foreach ($chatData->users->where(fn ($obj) => $obj->id !== Auth::id())->all() as $user) {
+        foreach ($chatData->users->where(fn($obj) => $obj->id !== Auth::id())->all() as $user) {
             StartVideoCall::dispatch($user->id, $chatMessage);
         }
 
@@ -66,7 +65,7 @@ class VideoCallController extends Controller
         $video = VideoCalls::whereSlug($id)->where('is_active', true)
             ->with('callable')
             ->firstOrFail();
-//
+        //
         abort_if(!$video->canIJoinVideoCall($request->get('currentTime'), $user), 500, "Call is not available");
 
         $tokenOptions = (new AccessTokenOptions())
