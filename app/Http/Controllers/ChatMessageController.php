@@ -16,6 +16,7 @@ use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
+use Pusher\Pusher;
 
 class ChatMessageController extends Controller
 {
@@ -54,8 +55,6 @@ class ChatMessageController extends Controller
                     $fileAdder->toMediaCollection('files');
                 });
         }
-
-
         $activeUsersInChat = Cache::get("chat.$chat->id");
 
         $chat->load('users');

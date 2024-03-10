@@ -182,24 +182,24 @@ class User extends Authenticatable implements HasMedia
                 ]
             ];
 
-            // // send messages to other users
-            // foreach ($chats as $chat) {
-            //     $message = ChatMessage::create([
-            //         'message' => $messageContent,
-            //         'user_id' => $chat->users->first()->id,
-            //         'chat_id' => $chat->id
-            //     ]);
-            //     $message->load('user', 'media', 'videocalls', 'parent', 'messageReactions');
-            //     $message->messageViews()->insert($chat->users->pluck('id')->map(function ($user_id) use ($message) {
-            //         return [
-            //             'user_id' => $user_id,
-            //             'chat_message_id' => $message->id,
-            //             'reaction' => null
-            //         ];
-            //     })->toArray());
-            //     ChatUpdate::dispatch($chat->users->toArray(), $message);
-            //     ChatMessageCreated::dispatch($message);
-            // }
+            // send messages to other users
+            foreach ($chats as $chat) {
+                $message = ChatMessage::create([
+                    'message' => $messageContent,
+                    'user_id' => $chat->users->first()->id,
+                    'chat_id' => $chat->id
+                ]);
+                $message->load('user', 'media', 'videocalls', 'parent', 'messageReactions');
+                $message->messageViews()->insert($chat->users->pluck('id')->map(function ($user_id) use ($message) {
+                    return [
+                        'user_id' => $user_id,
+                        'chat_message_id' => $message->id,
+                        'reaction' => null
+                    ];
+                })->toArray());
+                ChatUpdate::dispatch($chat->users->toArray(), $message);
+                ChatMessageCreated::dispatch($message);
+            }
         });
 
 

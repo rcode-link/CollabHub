@@ -15,6 +15,7 @@ class PusherController extends Controller
     {
 
         $event = $request->get('events');
+        \Log::info('webhook event', $event);
         foreach ($event as $obj) {
             if (Str::contains($obj['channel'], 'presence')) {
                 $chanelName = Str::replace('presence-', '', $obj['channel']);
