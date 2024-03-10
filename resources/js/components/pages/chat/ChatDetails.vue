@@ -18,72 +18,79 @@ const page = ref(1);
 const chatLogic = useChatLogic(route.params.chatId);
 
 const form = reactive({
-  message: "",
-  files: [],
+    message: "",
+    files: [],
 });
 
 watch(
-  () => route.params.chatId,
-  (value, oldValue, onCleanup) => {
-    if (oldValue) {
-      Echo.leave(`chat.${oldValue}`);
+    () => route.params.chatId,
+    (value, oldValue, onCleanup) => {
+        if (oldValue) {
+            Echo.leave(`chat.${oldValue}`);
+        }
+        if (!route.params.chatId) {
+            return;
+        }
+        chatLogic.chatId.value = route.params.chatId;
+        chatLogic.listenForMessages(route.params.chatId);
+        chatLogic.resetMessages();
+        chatLogic.page.value = 1;
+        axios.get(`/api/v1/chats/${route.params.chatId}`).then((response) => {
+            chatStore.setActiveChat(response.data.data);
+        });
+
+        axios.post(`/api/v1/chat/${route.params.chatId}/present`);
+        chatLogic.loadMessages();
+    },
+    {
+        immediate: true,
     }
-    if (!route.params.chatId) {
-      return;
-    }
-    chatLogic.chatId.value = route.params.chatId;
-    chatLogic.listenForMessages(route.params.chatId);
-    chatLogic.resetMessages();
-    chatLogic.page.value = 1;
-    axios.get(`/api/v1/chats/${route.params.chatId}`).then((response) => {
-      chatStore.setActiveChat(response.data.data);
-    });
-    chatLogic.loadMessages();
-  },
-  {
-    immediate: true,
-  }
 );
 
 onUnmounted(async () => {
-  await Echo.leave(`chat.${chatLogic.chatId.value}`);
-  chatLogic.chatId.value = null;
+    await Echo.leave(`chat.${chatLogic.chatId.value}`);
+    await axios.post(`/api/v1/chat/${chatLogic.chatId.value}/left`);
+
+    chatLogic.chatId.value = null;
 });
 
 const messages = computed(() => {
-  return _.groupBy(chatStore.messages, (obj) => {
-    return DateTime.fromISO(obj.createdAt).toLocaleString(DateTime.DATE_SHORT);
-  });
+    return _.groupBy(chatStore.messages, (obj) => {
+        return DateTime.fromISO(obj.createdAt).toLocaleString(
+            DateTime.DATE_SHORT
+        );
+    });
 });
 </script>
 
 <template>
-  <div class="chat-details">
-    <Header />
-    <main @scroll="chatLogic.scrolled" class="overflow-auto pb-2">
-      <div v-for="(msg, index) in messages" :key="index">
-        <show-date :created-at="index" />
-        <ChatMessage
-          v-for="(obj, ind) in msg"
-          :hide-user="
-            ind > 0 && chatStore.messages[ind - 1]?.user?.id === obj.user.id
-          "
-          :key="obj"
-          :id="`message-${obj.id}`"
-          :message="obj"
-        />
-      </div>
-    </main>
-    <Footer />
-  </div>
+    <div class="chat-details">
+        <Header />
+        <main @scroll="chatLogic.scrolled" class="overflow-auto pb-2">
+            <div v-for="(msg, index) in messages" :key="index">
+                <show-date :created-at="index" />
+                <ChatMessage
+                    v-for="(obj, ind) in msg"
+                    :hide-user="
+                        ind > 0 &&
+                        chatStore.messages[ind - 1]?.user?.id === obj.user.id
+                    "
+                    :key="obj"
+                    :id="`message-${obj.id}`"
+                    :message="obj"
+                />
+            </div>
+        </main>
+        <Footer />
+    </div>
 </template>
 
 <style scoped>
 .chat-details {
-  display: grid;
-  margin: -1.5rem;
-  grid-auto-rows: minmax(min-content, max-content);
-  grid-template-rows: 64px 1fr auto;
-  height: 75vh;
+    display: grid;
+    margin: -1.5rem;
+    grid-auto-rows: minmax(min-content, max-content);
+    grid-template-rows: 64px 1fr auto;
+    height: 75vh;
 }
 </style>

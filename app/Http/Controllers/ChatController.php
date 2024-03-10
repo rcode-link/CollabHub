@@ -12,8 +12,7 @@ use App\Models\User;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Response;
-
+use Illuminate\Support\Facades\Cache;
 
 class ChatController extends Controller
 {
@@ -95,15 +94,52 @@ class ChatController extends Controller
     public function show(Request $request, Chat $chat)
     {
         $chat->load([
-                'users' => function ($builder) {
-                    $builder->whereNot('user_id', Auth::id())->limit(2);
-                },
+            'users' => function ($builder) {
+                $builder->whereNot('user_id', Auth::id())->limit(2);
+            },
             'chatable'
-            ])
+        ])
             ->loadCount('users');
         return new ChatResource($chat);
 
     }
+
+    public function present($id)
+    {
+
+        $chanelName = "chat.$id";
+        $users = Cache::get($chanelName);
+        if ($users == null) {
+            $users = collect([]);
+        }
+        $users->push(request()->user()->id)->unique();
+
+        Cache::set($chanelName, $users);
+
+        return $users;
+    }
+
+
+    public function left($id)
+    {
+        $chanelName = "chat.$id";
+        $users = Cache::get($chanelName);
+        if ($users == null) {
+            $users = collect([]);
+        }
+        $old = $users;
+        $users = $users->reject(function ($item) {
+            return $item === request()->user()->id;
+        });
+        Cache::set($chanelName, $users);
+
+        return response()->json([
+            'users' => $users,
+            'old' => $old
+        ]);
+    }
+
+
 
     /**
      * Update the specified resource in storage.

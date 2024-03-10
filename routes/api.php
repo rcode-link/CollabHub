@@ -118,6 +118,9 @@ Route::middleware(['auth:sanctum'])->group(function () {
         return response()->noContent();
     });
 
+    Route::post('/chat/{id}/present', [ChatController::class, 'present']);
+    Route::post('/chat/{id}/left', [ChatController::class, 'left']);
+
     \App\Helpers\Socket\BroadcastCustom::route();
 });
 Route::post('/register', RegisterController::class)->name('api.register');

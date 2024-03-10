@@ -35,14 +35,8 @@ class AddPermission extends Command
     {
 
 
-        $pusher = new Pusher(
-            auth_key: config('broadcasting.connections.pusher.key'),
-            secret: config('broadcasting.connections.pusher.secret'),
-            app_id: config('broadcasting.connections.pusher.app_id'),
-            options: config('broadcasting.connections.pusher.options')
-        );
 
-        dd($pusher);
+
 
         //
 //        $scopeArray = [];
