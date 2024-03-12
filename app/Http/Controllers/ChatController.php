@@ -116,7 +116,7 @@ class ChatController extends Controller
 
         Cache::set($chanelName, $users);
 
-        return $users;
+        return response()->noContent();
     }
 
 
@@ -133,10 +133,7 @@ class ChatController extends Controller
         });
         Cache::set($chanelName, $users);
 
-        return response()->json([
-            'users' => $users,
-            'old' => $old
-        ]);
+        return response()->noContent();
     }
 
 

@@ -67,7 +67,7 @@ export default () => {
 
     const resetMessages = () => chatStore.resetMessages();
 
-    const scrolled = (e) => {
+    const scrolled = (e: any) => {
         const { scrollTop, scrollHeight, offsetHeight } = e.currentTarget;
         if (
             scrollTop === scrollHeight - offsetHeight &&

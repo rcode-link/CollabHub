@@ -34,6 +34,10 @@ h1, h2, h3, h4,h5 {
 .mention {
     @apply text-blue-600 hover:underline dark:text-blue-500 no-underline
 }
+.ProseMirror {
+    outline: none;
+}
+
 .ProseMirror pre {
     background: #0D0D0D;
     color: #FFF;

@@ -24,6 +24,7 @@
         "@casl/ability": "^6.5.0",
         "@casl/vue": "^2.2.1",
         "@rcode-link/tiptap-drawio": "^1.0.21",
+        "@sentry/vue": "^7.40.0",
         "@tiptap/extension-code-block-lowlight": "^2.1.12",
         "@tiptap/extension-link": "^2.1.12",
         "@tiptap/extension-mention": "^2.1.13",

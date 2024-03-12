@@ -30,6 +30,7 @@ class FileController extends Controller
     {
         $data = $request->validated();
 
+
         switch ($data['entity_type']) {
             case 'project':
                 $data['entity_type'] = Project::class;
