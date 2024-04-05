@@ -67,13 +67,12 @@ const messages = computed(() => {
     <div class="chat-details">
         <Header />
         <main @scroll="chatLogic.scrolled" class="overflow-auto pb-2">
-            <div v-for="(msg, index) in messages" :key="index">
-                <show-date :created-at="index" />
+            <div v-for="index in chatStore.messages.length" :key="index">
+                <show-date :index="index" />
                 <ChatMessage
-                    v-for="(obj, ind) in msg"
                     :key="obj"
-                    :id="`message-${obj.id}`"
-                    :message="obj"
+                    :id="`message-${index}`"
+                    :index="index"
                 />
             </div>
         </main>

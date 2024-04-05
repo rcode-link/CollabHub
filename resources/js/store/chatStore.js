@@ -1,17 +1,17 @@
-import {defineStore} from "pinia";
+import { defineStore } from "pinia";
 import _ from "lodash";
 
 const NOT_FOUND_IN_ARRAY = -1;
-export const chatDetails = defineStore('chatDetails', {
+export const chatDetails = defineStore("chatDetails", {
     state: () => ({
-        message: '',
+        message: "",
         files: [],
         messages: [],
-        videoCallToken: '',
+        videoCallToken: "",
         previousDate: null,
         reply_to_message_id: null,
         activeChat: {},
-        chatList: []
+        chatList: [],
     }),
     actions: {
         setChatList(list) {
@@ -19,7 +19,7 @@ export const chatDetails = defineStore('chatDetails', {
         },
         setChatOnTopOfTheList(id) {
             const chat = _.find(this.chatList, (obj) => {
-                return obj.id === Number(id)
+                return obj.id === Number(id);
             });
 
             if (!chat) {
@@ -27,15 +27,14 @@ export const chatDetails = defineStore('chatDetails', {
             }
 
             this.chatList = this.chatList.filter((obj) => {
-                return obj.id !== Number(id)
+                return obj.id !== Number(id);
             });
             this.chatList.unshift(chat);
-
         },
         updateChatListMessage(data) {
-
-            const index = _.findIndex(this.chatList, {id: _.toNumber(data.chatId)});
-
+            const index = _.findIndex(this.chatList, {
+                id: _.toNumber(data.chatId),
+            });
 
             if (index === NOT_FOUND_IN_ARRAY) {
                 return;
@@ -48,7 +47,9 @@ export const chatDetails = defineStore('chatDetails', {
             this.chatList.splice(index, 1, item);
         },
         updateUnreadMessages(data) {
-            const index = _.findIndex(this.chatList, {id: _.toNumber(data.id)});
+            const index = _.findIndex(this.chatList, {
+                id: _.toNumber(data.id),
+            });
             if (index === NOT_FOUND_IN_ARRAY) {
                 return;
             }
@@ -61,7 +62,7 @@ export const chatDetails = defineStore('chatDetails', {
             this.reply_to_message_id = id;
         },
         setPreviousDate(date) {
-            this.previousDate = date
+            this.previousDate = date;
         },
         addFiles(value) {
             this.files.push(...value);
@@ -84,19 +85,25 @@ export const chatDetails = defineStore('chatDetails', {
             }
         },
         updateMessage(message) {
-            const index = _.findIndex(this.messages, {id: _.toNumber(message.id)});
+            const index = _.findIndex(this.messages, {
+                id: _.toNumber(message.id),
+            });
             if (index === NOT_FOUND_IN_ARRAY) {
                 return;
             }
             this.messages.splice(index, 1, message);
         },
         deleteMessage(message) {
-            const index = _.findIndex(this.messages, {id: _.toNumber(message.id)});
+            const index = _.findIndex(this.messages, {
+                id: _.toNumber(message.id),
+            });
             if (index === NOT_FOUND_IN_ARRAY) {
                 return;
             }
             this.messages.splice(index, 1);
-            this.messages = this.messages.filter((obj) => obj.id !== message.id);
+            this.messages = this.messages.filter(
+                (obj) => obj.id !== message.id
+            );
         },
         resetMessages() {
             this.messages = [];
@@ -105,9 +112,8 @@ export const chatDetails = defineStore('chatDetails', {
             this.activeChat = chatData;
         },
         resetMessageForm() {
-            this.message = '';
+            this.message = "";
             this.files = [];
-        }
+        },
     },
-
-})
+});
