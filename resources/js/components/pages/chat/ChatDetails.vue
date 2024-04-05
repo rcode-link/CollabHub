@@ -71,10 +71,6 @@ const messages = computed(() => {
                 <show-date :created-at="index" />
                 <ChatMessage
                     v-for="(obj, ind) in msg"
-                    :hide-user="
-                        ind > 0 &&
-                        chatStore.messages[ind - 1]?.user?.id === obj.user.id
-                    "
                     :key="obj"
                     :id="`message-${obj.id}`"
                     :message="obj"
