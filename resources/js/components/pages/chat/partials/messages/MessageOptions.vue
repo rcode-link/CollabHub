@@ -1,26 +1,35 @@
 <template>
-    <tippy tag="div" content-tag="div"
-           trigger="click"
-           interactive
-           placement="top"
-           content-class="flex gap-2">
+    <tippy
+        tag="div"
+        content-tag="div"
+        trigger="click"
+        interactive
+        placement="top"
+        content-class="flex gap-2"
+    >
         <template #default>
             <div class="p-2">
-                <EclipsisVerticalIcon class="w-4 h-4"/>
+                <EclipsisVerticalIcon class="w-4 h-4" />
             </div>
         </template>
         <template #content>
             <div class="flex gap-2">
                 <tippy content="Emoji" placement="top">
-                    <Emoji @select="messageReaction"/>
+                    <Emoji @select="messageReaction" />
                 </tippy>
                 <tippy content="Reply to this message" placement="top">
-                    <ArrowBackIcon class="w-4 h-4 cursor-pointer"
-                                   @click="() => messagesState.setReplyToMessageId(message.id)"/>
+                    <ArrowBackIcon
+                        class="w-4 h-4 cursor-pointer"
+                        @click="
+                            () => messagesState.setReplyToMessageId(message.id)
+                        "
+                    />
                 </tippy>
                 <tippy content="Delete Message" placement="top">
-                    <TrashIcon class="w-4 h-4 cursor-pointer"
-                               @click="() => deleteMessageToast.showToastFn()"/>
+                    <TrashIcon
+                        class="w-4 h-4 cursor-pointer"
+                        @click="() => deleteMessageToast.showToastFn()"
+                    />
                 </tippy>
             </div>
         </template>
@@ -38,11 +47,11 @@
     </InteractiveToast>
 </template>
 <script setup>
-import {FwbButton} from "flowbite-vue";
+import { FwbButton } from "flowbite-vue";
 import InteractiveToast from "../../../../shared/InteractiveToast.vue";
-import {chatDetails} from "../../../../../store/chatStore.js";
-import {ref} from "vue";
-import {Tippy} from "vue-tippy";
+import { chatDetails } from "../../../../../store/chatStore.js";
+import { ref } from "vue";
+import { Tippy } from "vue-tippy";
 import Emoji from "../../../../shared/Emoji.vue";
 import ArrowBackIcon from "../../../../shared/icons/ArrowBackIcon.vue";
 import TrashIcon from "../../../../shared/icons/TrashIcon.vue";
@@ -52,20 +61,18 @@ const messagesState = chatDetails();
 const deleteMessageToast = ref(null);
 
 const props = defineProps({
-    message: {}
-})
+    message: {},
+});
 
 const messageReaction = (emoji) => {
     deleteMessageToast.value.hideToast();
-    axios.post('/api/v1/messages/reactions', {
+    axios.post("/api/v1/messages/reactions", {
         reaction: emoji.i,
         chat_message_id: props.message.id,
-    })
-}
+    });
+};
 
 const deleteMessage = () => {
-    axios.delete(`/api/v1/messages/${props.message.id}`)
-}
-
-
+    axios.delete(`/api/v1/messages/${props.message.id}`);
+};
 </script>

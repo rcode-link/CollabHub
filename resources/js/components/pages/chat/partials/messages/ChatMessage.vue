@@ -1,6 +1,6 @@
 <script setup>
 import { FwbAvatar, FwbP } from "flowbite-vue";
-import { useUserStore } from "../../../../../store/user";
+import { useUserStore } from "@/store/user";
 import { computed, ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import PrintChatMessage from "./PrintChatMessage.vue";
@@ -52,11 +52,11 @@ watch(
 </script>
 
 <template>
-    <div ref="messageContainer" class="flex flex-col mx-4 mt-2">
+    <div ref="messageContainer" class="flex flex-col mx-4">
         <router-link
             v-if="showUser"
             :to="`/user/${message.user.id}`"
-            :class="{ 'mb-1 flex gap-1 items-center': true }"
+            :class="{ 'mb-1 mt-2 flex gap-1 items-center': true }"
         >
             <fwb-avatar :img="message.user.avatar" />
             <fwb-p class="font-bold">

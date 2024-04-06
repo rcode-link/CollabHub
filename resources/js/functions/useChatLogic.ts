@@ -34,7 +34,6 @@ export default () => {
     };
 
     const loadMessages = () => {
-        progressBar.start();
         window.axios
             .get(`/api/v1/chats/${chatId.value}/messages?page=${page.value}`)
             .then((response) => {
@@ -47,10 +46,12 @@ export default () => {
                 }
 
                 chatStore.addMessages(response.data.data);
-                progressBar.finish();
+                // progressBar.finish();
                 const numOfUnread = chatStore.chatList.find(
                     (obj: any) => obj.id === toNumber(route.params.chatId)
                 );
+
+                console.log(numOfUnread);
 
                 if (numOfUnread) {
                     userStore.subtractFromNewMessages(
@@ -68,21 +69,21 @@ export default () => {
     const resetMessages = () => chatStore.resetMessages();
 
     const scrolled = (e: any) => {
-        const { scrollTop, scrollHeight, offsetHeight } = e.currentTarget;
-        if (
-            scrollTop === scrollHeight - offsetHeight &&
-            chatStore.messages.length
-        ) {
-            router.push({
-                query: route.query,
-                hash: `#message-${
-                    chatStore.messages[chatStore.messages.length - 1].id
-                }`,
-            });
-        }
-        if (scrollTop === 0) {
-            loadMessages();
-        }
+        // const { scrollTop, scrollHeight, offsetHeight } = e.currentTarget;
+        // if (
+        //     scrollTop === scrollHeight - offsetHeight &&
+        //     chatStore.messages.length
+        // ) {
+        //     router.push({
+        //         query: route.query,
+        //         hash: `#message-${
+        //             chatStore.messages[chatStore.messages.length - 1].id
+        //         }`,
+        //     });
+        // }
+        // if (scrollTop === 0) {
+        //     loadMessages();
+        // }
     };
 
     return {

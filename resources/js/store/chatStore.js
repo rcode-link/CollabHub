@@ -81,7 +81,7 @@ export const chatDetails = defineStore("chatDetails", {
             if (this.messages.length === 0) {
                 this.messages = reversed;
             } else {
-                this.messages.unshift(...reversed);
+                this.messages.unshift(...messages);
             }
         },
         updateMessage(message) {

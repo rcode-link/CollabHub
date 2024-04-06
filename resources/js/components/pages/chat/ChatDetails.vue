@@ -1,6 +1,7 @@
 <script setup>
 import { computed, onUnmounted, reactive, ref, watch } from "vue";
-import { chatDetails } from "../../../store/chatStore.js";
+import { FwbButton } from "flowbite-vue";
+import { chatDetails } from "@/store/chatStore.js";
 import Footer from "./partials/messages/Footer.vue";
 import { useRoute, useRouter } from "vue-router";
 import ChatMessage from "./partials/messages/ChatMessage.vue";
@@ -67,6 +68,12 @@ const messages = computed(() => {
     <div class="chat-details">
         <Header />
         <main @scroll="chatLogic.scrolled" class="overflow-auto pb-2">
+            <fwb-button
+                size="xs"
+                class="ml-auto mr-auto mt-1 mb-1 block"
+                @click="() => chatLogic.loadMessages()"
+                >Load more</fwb-button
+            >
             <div v-for="index in chatStore.messages.length" :key="index">
                 <show-date :index="index" />
                 <ChatMessage
