@@ -8,15 +8,13 @@ export default defineConfig({
     plugins: [
         vuePlugin(),
         VitePWA({
+            srcDir: "public/build/",
+            outDir: "build",
             registerType: "autoUpdate",
             workbox: {
                 globPatterns: ["**/*.{js,css,html,ico,png,svg}"],
             },
-            includeAssets: [
-                "favicon.ico",
-                "apple-touch-icon.png",
-                "mask-icon.svg",
-            ],
+            includeAssets: ["**/*"],
             manifest: {
                 name: "My Awesome App",
                 short_name: "MyApp",
