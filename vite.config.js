@@ -9,7 +9,7 @@ export default defineConfig({
         vuePlugin(),
         VitePWA({
             srcDir: "public/build/",
-            outDir: "build",
+            outDir: "public/build",
             registerType: "autoUpdate",
             workbox: {
                 globPatterns: ["**/*.{js,css,html,ico,png,svg}"],
