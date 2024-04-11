@@ -1,13 +1,11 @@
 import { chatDetails } from "../store/chatStore.js";
 import { toNumber } from "lodash";
-import { useProgressBarStore } from "../store/progressBarStore";
 import { useUserStore } from "../store/user.js";
 import { ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
 
 export default () => {
     const chatStore = chatDetails();
-    const progressBar = useProgressBarStore();
     const userStore = useUserStore();
     const page = ref(1);
     const route = useRoute();

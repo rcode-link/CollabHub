@@ -23,7 +23,7 @@ Sentry.init({
             blockAllMedia: true,
         }),
     ],
-    environment: import.meta.env.VITE_SENTRY_ENVIRONMENT + "_testing",
+    environment: import.meta.env.VITE_SENTRY_ENVIRONMENT,
     // Performance Monitoring
     tracesSampleRate: 1.0, //  Capture 100% of the transactions
     // Set 'tracePropagationTargets' to control for which URLs distributed tracing should be enabled

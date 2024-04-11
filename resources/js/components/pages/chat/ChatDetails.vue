@@ -1,5 +1,5 @@
 <script setup>
-import { computed, onUnmounted, reactive, ref, watch } from "vue";
+import { computed, onMounted, onUnmounted, reactive, ref, watch } from "vue";
 import { FwbButton } from "flowbite-vue";
 import { chatDetails } from "@/store/chatStore.js";
 import Footer from "./partials/messages/Footer.vue";
@@ -7,9 +7,12 @@ import { useRoute, useRouter } from "vue-router";
 import ChatMessage from "./partials/messages/ChatMessage.vue";
 import Header from "./partials/messages/Header.vue";
 import ShowDate from "./partials/messages/ShowDate.vue";
+import ShowUser from "./partials/messages/ShowUser.vue";
 import useChatLogic from "../../../functions/useChatLogic";
 import _ from "lodash";
 import { DateTime } from "luxon";
+import { useTippy } from "vue-tippy";
+import MessageOptions from "./partials/messages/MessageOptions.vue";
 
 const chatStore = chatDetails();
 const route = useRoute();
@@ -17,7 +20,7 @@ const router = useRouter();
 const page = ref(1);
 
 const chatLogic = useChatLogic(route.params.chatId);
-
+const messageMenuId = ref(null);
 const form = reactive({
     message: "",
     files: [],
@@ -76,12 +79,19 @@ const messages = computed(() => {
             >
             <div v-for="index in chatStore.messages.length" :key="index">
                 <show-date :index="index" />
+                <show-user :index="index" />
                 <ChatMessage
                     :key="obj"
                     :id="`message-${index}`"
                     :index="index"
+                    @click="
+                        () => {
+                            chatStore.setSelectedMessage(index);
+                        }
+                    "
                 />
             </div>
+            <MessageOptions v-if="chatStore.selectedMessage" />
         </main>
         <Footer />
     </div>

@@ -5,6 +5,7 @@ import { computed, ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import PrintChatMessage from "./PrintChatMessage.vue";
 import { chatDetails } from "@/store/chatStore.js";
+import { DateTime } from "luxon";
 
 const chatStore = chatDetails();
 const user = useUserStore();
@@ -19,22 +20,8 @@ const message = computed(() => {
     return chatStore.messages[props.index - 1];
 });
 
-const showUser = computed(() => {
-    if (props.index - 1 === 0) {
-        return true;
-    }
-
-    if (
-        chatStore.messages[props.index - 1].user.id !=
-        chatStore.messages[props.index - 2].user.id
-    ) {
-        return true;
-    }
-    return false;
-});
-
 function handleFocusOnMessage() {
-    if (route.hash === `#message-${message.id}`) {
+    if (route.hash === `#message-${message.value.id}`) {
         messageContainer.value?.scrollIntoView();
     }
 }
@@ -52,22 +39,7 @@ watch(
 </script>
 
 <template>
-    <div ref="messageContainer" class="flex flex-col mx-4">
-        <router-link
-            v-if="showUser"
-            :to="`/user/${message.user.id}`"
-            :class="{ 'mb-1 mt-2 flex gap-1 items-center': true }"
-        >
-            <fwb-avatar :img="message.user.avatar" />
-            <fwb-p class="font-bold">
-                <div>
-                    {{ message.user.name }}
-                </div>
-                <div class="text-xs mb-auto">
-                    {{ message.user.email }}
-                </div>
-            </fwb-p>
-        </router-link>
+    <div ref="messageContainer" class="flex flex-col mx-4 relative">
         <PrintChatMessage :message="message" />
     </div>
 </template>

@@ -8,7 +8,10 @@ export default defineConfig({
     plugins: [
         vuePlugin(),
         VitePWA({
-            injectRegister: "auto",
+            registerType: "autoUpdate",
+            devOptions: {
+                enabled: true,
+            },
         }),
         laravel({
             input: ["resources/css/app.css", "resources/js/app.js"],

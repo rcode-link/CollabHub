@@ -1,39 +1,25 @@
 <template>
-    <tippy
-        tag="div"
-        content-tag="div"
-        trigger="click"
-        interactive
-        placement="top"
-        content-class="flex gap-2"
-    >
-        <template #default>
-            <div class="p-2">
-                <EclipsisVerticalIcon class="w-4 h-4" />
-            </div>
-        </template>
-        <template #content>
-            <div class="flex gap-2">
-                <tippy content="Emoji" placement="top">
-                    <Emoji @select="messageReaction" />
-                </tippy>
-                <tippy content="Reply to this message" placement="top">
-                    <ArrowBackIcon
-                        class="w-4 h-4 cursor-pointer"
-                        @click="
-                            () => messagesState.setReplyToMessageId(message.id)
-                        "
-                    />
-                </tippy>
-                <tippy content="Delete Message" placement="top">
-                    <TrashIcon
-                        class="w-4 h-4 cursor-pointer"
-                        @click="() => deleteMessageToast.showToastFn()"
-                    />
-                </tippy>
-            </div>
-        </template>
-    </tippy>
+    <Teleport :to="`#message-${messagesState.selectedMessage}`">
+        <div
+            class="flex gap-2 absolute top-0 left-[50%] -translate-y-full -translate-x-1/2 p-2 bg-slate-600 text-white hover:text-slate-200 z-50 rounded-sm"
+        >
+            <tippy content="Emoji" placement="top">
+                <Emoji @select="messageReaction" />
+            </tippy>
+            <tippy content="Reply to this message" placement="top">
+                <ArrowBackIcon
+                    class="w-4 h-4 cursor-pointer"
+                    @click="() => messagesState.setReplyToMessageId(message.id)"
+                />
+            </tippy>
+            <tippy content="Delete Message" placement="top">
+                <TrashIcon
+                    class="w-4 h-4 cursor-pointer"
+                    @click="() => deleteMessageToast.showToastFn()"
+                />
+            </tippy>
+        </div>
+    </Teleport>
 
     <InteractiveToast ref="deleteMessageToast">
         <template #content>
@@ -50,7 +36,7 @@
 import { FwbButton } from "flowbite-vue";
 import InteractiveToast from "../../../../shared/InteractiveToast.vue";
 import { chatDetails } from "../../../../../store/chatStore.js";
-import { ref } from "vue";
+import { onMounted, ref, computed, onUnmounted } from "vue";
 import { Tippy } from "vue-tippy";
 import Emoji from "../../../../shared/Emoji.vue";
 import ArrowBackIcon from "../../../../shared/icons/ArrowBackIcon.vue";
@@ -59,20 +45,41 @@ import EclipsisVerticalIcon from "../../../../shared/icons/EclipsisVerticalIcon.
 
 const messagesState = chatDetails();
 const deleteMessageToast = ref(null);
-
-const props = defineProps({
-    message: {},
+const message = computed(() => {
+    return messagesState.messages[messagesState.selectedMessage - 1];
 });
-
 const messageReaction = (emoji) => {
     deleteMessageToast.value.hideToast();
+    console.log(message.value);
     axios.post("/api/v1/messages/reactions", {
         reaction: emoji.i,
-        chat_message_id: props.message.id,
+        chat_message_id: message.value.id,
     });
 };
 
+onMounted(() => {
+    let isInside = false;
+    document.getElementById("app").addEventListener("click", (element) => {
+        let el = element.target;
+        isInside = false;
+        while (el.parentNode) {
+            if (
+                el.parentNode.id === `message-${messagesState.selectedMessage}`
+            ) {
+                isInside = true;
+            }
+            el = el.parentNode;
+        }
+        if (!isInside) {
+            messagesState.setSelectedMessage(null);
+        }
+    });
+});
+onUnmounted(() => {
+    document.getElementById("app").removeEventListener("click");
+});
+
 const deleteMessage = () => {
-    axios.delete(`/api/v1/messages/${props.message.id}`);
+    axios.delete(`/api/v1/messages/${message.value.id}`);
 };
 </script>

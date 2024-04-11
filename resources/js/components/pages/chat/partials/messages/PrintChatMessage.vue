@@ -1,6 +1,16 @@
 <template>
     <div
-        @mouseenter="getMessageTime"
+        @mouseenter="
+            () => {
+                hovered = true;
+                getMessageTime();
+            }
+        "
+        @mouseleave="
+            () => {
+                hovered = false;
+            }
+        "
         :class="{
             ' hover:bg-gray-100  focus:outline-none focus:ring-2  dark:hover:bg-gray-600  dark:focus:ring-gray-500':
                 message.videocall === null,
@@ -70,16 +80,17 @@
     </div>
 </template>
 <script setup>
-import Editor from "../../../../shared/Editor.vue";
-import PrintFiles from "../../../../shared/PrintFiles.vue";
+import Editor from "@/components/shared/Editor.vue";
+import PrintFiles from "@/components/shared/PrintFiles.vue";
 import { FwbBadge, FwbP } from "flowbite-vue";
 import { DateTime } from "luxon";
 import { computed, ref } from "vue";
 import _ from "lodash";
-import ArrowUpCurvedIcon from "../../../../shared/icons/ArrowUpCurvedIcon.vue";
-import PhoneIcon from "../../../../shared/icons/PhoneIcon.vue";
-import MessageOptions from "./MessageOptions.vue";
+import EclipsisVerticalIcon from "@/components/shared/icons/EclipsisVerticalIcon.vue";
 
+import ArrowUpCurvedIcon from "@/components/shared/icons/ArrowUpCurvedIcon.vue";
+import PhoneIcon from "@/components/shared/icons/PhoneIcon.vue";
+const hovered = ref(false);
 const props = defineProps({
     message: {},
 });

@@ -11,9 +11,13 @@ export const chatDetails = defineStore("chatDetails", {
         previousDate: null,
         reply_to_message_id: null,
         activeChat: {},
+        selectedMessage: null,
         chatList: [],
     }),
     actions: {
+        setSelectedMessage(index) {
+            this.selectedMessage = index;
+        },
         setChatList(list) {
             this.chatList = list;
         },

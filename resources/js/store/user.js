@@ -7,6 +7,7 @@ export const useUserStore = defineStore("users", {
         token: null,
         onlineUsers: [],
         newMessages: 0,
+        showMessageOptions: null,
     }),
     actions: {
         setNewMessages(data) {
