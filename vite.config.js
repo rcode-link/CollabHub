@@ -14,6 +14,7 @@ export default defineConfig({
             },
             includeAssets: ["**/*"],
             manifest: {
+                start_url: "/",
                 name: "CollabHub",
                 short_name: "CH",
                 description: "CollabHub Instance",
