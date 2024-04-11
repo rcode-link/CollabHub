@@ -9,6 +9,7 @@ import { abilitiesPlugin } from "@casl/vue";
 import ability from "./functions/ability";
 import "vue3-toastify/dist/index.css";
 import * as Sentry from "@sentry/vue";
+import "../../src/registerServiceWorker.js";
 const app = createApp(App);
 const pinia = createPinia();
 app.use(abilitiesPlugin, ability);
