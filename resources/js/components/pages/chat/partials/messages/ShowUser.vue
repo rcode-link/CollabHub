@@ -42,7 +42,7 @@ const message = computed(() => {
     <router-link
         v-if="showUser"
         :to="`/user/${message.user.id}`"
-        :class="{ 'mb-1 mt-2 flex gap-1 items-center': true }"
+        :class="{ 'mb-1 mt-2 ml-4 flex gap-1 items-center': true }"
     >
         <fwb-avatar :img="message.user.avatar" />
         <fwb-p class="font-bold">
