@@ -8,33 +8,29 @@ export default defineConfig({
     plugins: [
         vuePlugin(),
         VitePWA({
-            srcDir: "public/build/",
-            outDir: "public/build",
             registerType: "autoUpdate",
             workbox: {
                 globPatterns: ["**/*.{js,css,html,ico,png,svg}"],
             },
             includeAssets: ["**/*"],
             manifest: {
-                name: "My Awesome App",
-                short_name: "MyApp",
-                description: "My Awesome App description",
+                name: "CollabHub",
+                short_name: "CH",
+                description: "CollabHub Instance",
                 theme_color: "#ffffff",
                 icons: [
                     {
-                        src: "pwa-192x192.png",
+                        src: "../logo.png",
                         sizes: "192x192",
-                        type: "image/png",
+                        type: "image/x-icon",
+                        purpose: "any",
                     },
                     {
-                        src: "pwa-512x512.png",
+                        src: "../logo.png",
                         sizes: "512x512",
                         type: "image/png",
                     },
                 ],
-            },
-            devOptions: {
-                enabled: true,
             },
         }),
         laravel({

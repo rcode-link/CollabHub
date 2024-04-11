@@ -10,20 +10,18 @@
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=figtree:400,600&display=swap" rel="stylesheet" />
-    <meta name="description" content="My Awesome App description">
-    <link rel="icon" href="/favicon.ico">
-    <link rel="apple-touch-icon" href="/apple-touch-icon.png" sizes="180x180">
-    <link rel="mask-icon" href="/mask-icon.svg" color="#FFFFFF">
-    <meta name="theme-color" content="#ffffff">
-    @production
+    <link rel="manifest" href="/build/manifest.webmanifest" />
+    <link rel="icon" type="image/png" sizes="144x144" href="logo.png" />
+    {{-- @production
         @php
             $manifest = json_decode(file_get_contents(public_path('build/manifest.json')), true);
             echo '<script type="module" src="/build/'. $manifest['resources/js/app.js']['file'] .'"></script>';
             echo '<link rel="stylesheet" href="/build/' . $manifest['resources/js/app.js']['css'][0] . '">';
         @endphp
     @else
-        @vite(['resources/js/app.js'])
-    @endproduction
+    @endproduction --}}
+    @vite(['resources/js/app.js'])
+
     <!-- Styles -->
     <meta name="token" content="{{ csrf_token() }}">
 
