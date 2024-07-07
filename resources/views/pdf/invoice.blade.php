@@ -24,8 +24,11 @@
         h3 {
             padding: 0;
             margin: 0;
+            font-size: 2rem;
         }
-
+        .note {
+line-height: 1px;
+        }
         .mb-10 {
             margin-bottom: 10px;
         }
@@ -117,9 +120,9 @@
         <table class="w-full">
             <tr>
                 <td width='50%'>
-                    <h2 class="mb-10">
+                    <h3 class="mb-10">
                         {{ $company->name }}
-                    </h2>
+                    </h3>
                 <div>
                         <p>
                             {{ $company->billing_address ?? $company->address }}
@@ -146,7 +149,7 @@
         </table>
         <br>
         <br>
-        <b style="font-weight: 800">Bill to:</b>
+        <p >Bill to:</p>
         <h3>{{ $model->company->name }}</h3>
         <p style="width: 33.333%">
             {{ $model->company->billing_address ?? $model->company->address }}
@@ -205,7 +208,7 @@
                 </tr>
             </tfoot>
         </table>
-        <div style="width: 50%">
+        <div style="width: 50%" class="note">
             <h5>Note</h5>
             <x-markdown>
                 {!! $model->note !!}
