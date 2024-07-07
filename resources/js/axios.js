@@ -9,7 +9,7 @@ export const initAxios = () => {
             if (!config.url) {
                 config.url += "?XDEBUG_SESSION_START=PHPSTORM";
             } else {
-                config.url.indexOf("?") > -1
+                config.url += config.url.indexOf("?") > -1
                     ? "&XDEBUG_SESSION_START=PHPSTORM"
                     : "?XDEBUG_SESSION_START=PHPSTORM";
             }

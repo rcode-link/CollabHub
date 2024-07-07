@@ -7,18 +7,17 @@
     <title>Document</title>
     <style>
         @font-face {
-            font-family: 'Open Sans';
+            font-family: 'Open';
             src: url({{ storage_path('fonts/OpenSans-VariableFont_wdth.ttf') }});
         }
 
-        html>* {
-            font-family: 'Open Sans', sans-serif;
+        * {
+            font-family: 'Open', sans-serif;
             font-size: 12px;
             text-align: justify;
         }
 
         header {
-            font-family: 'Open Sans', sans-serif;
             display: flex;
         }
 
@@ -29,7 +28,6 @@
 
         .mb-10 {
             margin-bottom: 10px;
-            font-family: 'Open Sans', sans-serif;
         }
 
         .w-full {
@@ -49,7 +47,6 @@
 
         table.table {
             border-collapse: collapse;
-            font-family: 'Open Sans', sans-serif;
         }
 
 
@@ -123,7 +120,7 @@
                     <h2 class="mb-10">
                         {{ $company->name }}
                     </h2>
-                    <div>
+                <div>
                         <p>
                             {{ $company->billing_address ?? $company->address }}
                             <br />
@@ -134,7 +131,7 @@
                         </p>
                     </div>
                 </td>
-                <td width='50%'">
+                <td width='50%'>
                     <p class="mb-10" style="margin-left: auto">
                         <b>Invoice number</b> : {{ $model->number }}
                     </p>

@@ -37,6 +37,8 @@ use Illuminate\Database\Eloquent\Model;
  * @property-read \App\Models\Company $company
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\InvoiceItem> $items
  * @property-read int|null $items_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Payment> $paymants
+ * @property-read int|null $paymants_count
  * @mixin \Eloquent
  */
 class Invoice extends Model

@@ -56,4 +56,3 @@ Route::middleware([\App\Http\Middleware\FrontendEnv::class])->group(function () 
     });
 
 });
-

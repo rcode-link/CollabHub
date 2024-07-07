@@ -10,7 +10,10 @@ use App\Models\Chat;
 use App\Models\ChatMessage;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 
@@ -19,9 +22,8 @@ class ChatController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request)
+    public function index(Request $request): AnonymousResourceCollection
     {
-
         $chat = Chat::query()
             ->with([
                 'users' => function ($builder) {
@@ -49,7 +51,7 @@ class ChatController extends Controller
     }
 
 
-    public function getNumberOfUnreadMessages(Request $request)
+    public function getNumberOfUnreadMessages(Request $request): JsonResponse
     {
         $numberOfUnreadMessage = Chat::query()
             ->select('id')
@@ -68,7 +70,7 @@ class ChatController extends Controller
     /**
      * Create new chat
      */
-    public function store(StoreChatRequest $request)
+    public function store(StoreChatRequest $request): Response
     {
         $data = $request->only('title');
         $data['chatable_type'] = User::class;
@@ -91,7 +93,7 @@ class ChatController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Request $request, Chat $chat)
+    public function show(Request $request, Chat $chat): ChatResource
     {
         $chat->load([
             'users' => function ($builder) {
@@ -99,12 +101,12 @@ class ChatController extends Controller
             },
             'chatable'
         ])
-            ->loadCount('users');
+             ->loadCount('users');
         return new ChatResource($chat);
 
     }
 
-    public function present($id)
+    public function present($id): Response
     {
 
         $chanelName = "chat.$id";
@@ -120,7 +122,7 @@ class ChatController extends Controller
     }
 
 
-    public function left($id)
+    public function left($id): Response
     {
         $chanelName = "chat.$id";
         $users = Cache::get($chanelName);
@@ -141,7 +143,7 @@ class ChatController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateChatRequest $request, Chat $chat)
+    public function update(UpdateChatRequest $request, Chat $chat): void
     {
         //
     }
@@ -149,7 +151,7 @@ class ChatController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Chat $chat)
+    public function destroy(Chat $chat): void
     {
         //
     }
