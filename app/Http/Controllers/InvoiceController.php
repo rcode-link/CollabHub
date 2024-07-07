@@ -66,7 +66,7 @@ class InvoiceController extends Controller
         $invoice->load('items', 'items.billingItem', 'company', 'company.currency');
         $company = Company::whereIsCostumerCompany(false)->firstOrFail();
         $pdf = Pdf::loadView('pdf.invoice', ['model' => $invoice, 'company' => $company]);
-        return $pdf->stream($invoice->number);
+        return $pdf->stream($invoice->number . '.pdf');
     }
 
     /**
