@@ -45,7 +45,7 @@ const pressedKeys = ref([]);
 const textToLink = useConvertTextToLink();
 
 const editor = useEditor({
-    content: props.modelValue,
+    content: cleanTiptapJson(props.modelValue),
     editable: props.editable,
     debug: true,
     editorProps: {
@@ -97,6 +97,18 @@ const editor = useEditor({
     onUpdate() {
         emit("update:modelValue", editor.value.getJSON());
     },
+    onContentError({ editor, error, disableCollaboration }) {
+        console.log(error);
+    },
+    onTransaction: ({ transaction }) => {
+        console.log("Transaction:", transaction);
+    },
+    onFocus: ({ editor }) => {
+        console.log("Editor focused:", editor);
+    },
+    onBlur: ({ editor }) => {
+        console.log("Editor blurred:", editor);
+    },
 });
 
 const exportToPDF = () => {
@@ -111,26 +123,40 @@ const exportToPDF = () => {
             },
         )
         .then((response) => {
-            console.log(response);
             window.open(URL.createObjectURL(response.data));
         });
 
     console.log(editor.value.getHTML());
 };
-watch(
-    () => [props.modelValue, editor.value],
-    () => {
-        if (props.modelValue && editor.value) {
-            //    editor.value.commands.setContent(props.modelValue);
-            console.log(props.modelValue, editor.value);
-            console.log(editor.value?.getHTML());
-        }
-    },
-    {
-        deep: true,
-        immediate: true,
-    },
-);
+function cleanTiptapJson(json) {
+    // Recursively clean the content
+    function cleanContent(content) {
+        return content
+            .map((item) => {
+                // Remove empty text nodes and null text content
+                if (
+                    item.type === "text" &&
+                    (!item.text || item.text.trim() === "")
+                ) {
+                    return null;
+                }
+                if (item.content) {
+                    item.content = cleanContent(item.content);
+                }
+                // Remove elements with empty content arrays
+                if (item.content && item.content.length === 0) {
+                    return null;
+                }
+                return item;
+            })
+            .filter((item) => item !== null); // Remove null items
+    }
+
+    // Clean the top-level content
+    json.content = cleanContent(json.content);
+
+    return json;
+}
 </script>
 
 <template>

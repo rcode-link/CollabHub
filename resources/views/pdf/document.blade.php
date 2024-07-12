@@ -12,7 +12,9 @@
             font-family: 'Open', sans-serif;
             font-size: 12px;
         }
-
+img {
+max-width: 150mm;
+}
 
 h1 {
     font-size: 2.25rem; /* equivalent to text-4xl in Tailwind */
@@ -54,14 +56,6 @@ ul > li {
     list-style-type: disc; /* equivalent to list-disc in Tailwind */
 }
 
-table td {
-    min-width: 1vw; /* This rule remains as it is */
-}
-
-.my-custom-class {
-    width: 100%; /* This rule remains as it is */
-}
-
 table th {
     border-right: 1px solid rgba(12, 12, 13, 0.1);
     border-bottom: 1px solid rgba(12, 12, 13, 0.1);
@@ -77,9 +71,17 @@ table td:first-child,
 table th:first-child {
     border-left: 1px solid rgba(12, 12, 13, 0.1);
 }
+table td, table th {
+    max-width: 150px !important;
+    width: fill-content !important !important;
+}
+table {
+width: 100% !important;
+}
+
 </style>
 </head>
 <body>
-{!! $content !!}
+{!! str_replace('width','' , $content) !!}
 </body>
 </html>
