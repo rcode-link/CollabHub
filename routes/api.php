@@ -85,6 +85,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::apiResource('/boards', BoardController::class);
     Route::put('/sprints/{sprint}/activate', [SprintController::class, 'activate'])->name('api.activate');
     Route::apiResource('/sprints', SprintController::class);
+    Route::post('/file-to-pdf', [FileController::class, 'exportPDF']);
     Route::apiResource('/files', FileController::class);
     Route::get('/role/resources', [RoleController::class, 'getResource'])->name('api.getResource');
     Route::get('/role/resources/{role}', [RoleController::class, 'getAllResources'])->name('api.getAllResources');

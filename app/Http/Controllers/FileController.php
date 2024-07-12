@@ -8,6 +8,7 @@ use App\Models\File;
 use App\Models\Project;
 use Illuminate\Http\Request;
 
+use Barryvdh\DomPDF\Facade\Pdf;
 class FileController extends Controller
 {
     /**
@@ -21,6 +22,12 @@ class FileController extends Controller
                 'entity_id' => $request->get('entity_id', null)
             ])
             ->get()->toFlatTree();
+    }
+
+
+    public function exportPDF(Request $request){
+        $pdf = Pdf::loadView('pdf.document',['content' => $request->get('content')]);
+        return $pdf->stream();    // $invoice = Invoice::whereId(9)->with(['items', 'items.billingItem', 'company'])->firstOrFail();
     }
 
     /**

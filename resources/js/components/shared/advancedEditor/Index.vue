@@ -2,7 +2,7 @@
 import { EditorContent, useEditor } from "@tiptap/vue-3";
 import StarterKit from "@tiptap/starter-kit";
 import { Link } from "@tiptap/extension-link";
-import { ref } from "vue";
+import { ref, watch } from "vue";
 import { FwbButton } from "flowbite-vue";
 import { createLowlight } from "lowlight";
 import CodeBlockLowlight from "@tiptap/extension-code-block-lowlight";
@@ -20,16 +20,17 @@ import Mention from "@tiptap/extension-mention";
 import suggestion from "../../../functions/editor/mention/suggestion";
 import { SmilieReplacer } from "../../../functions/smilieReplacer";
 import { useConvertTextToLink } from "../../../functions/editor/convertTextToLink";
-import {Collaboration} from '@/functions/editor/colab/Collaboration'
-import {Cursors} from '@/functions/editor/colab/Cursor'
+import { Collaboration } from "@/functions/editor/colab/Collaboration";
+import { Cursors } from "@/functions/editor/colab/Cursor";
+import { jsPDF } from "jspdf";
 const props = defineProps({
-        modelValue: {
-            type: String
-        },
-        editable: {
-            type: Boolean
-        }
-    })
+    modelValue: {
+        type: String,
+    },
+    editable: {
+        type: Boolean,
+    },
+});
 
 const lowlight = createLowlight();
 
@@ -46,6 +47,7 @@ const textToLink = useConvertTextToLink();
 const editor = useEditor({
     content: props.modelValue,
     editable: props.editable,
+    debug: true,
     editorProps: {
         handleDOMEvents: {
             keydown: (view, event) => {
@@ -59,7 +61,7 @@ const editor = useEditor({
             },
             keyup(view, event) {
                 pressedKeys.value = pressedKeys.value.filter(
-                    (key) => key !== event.key
+                    (key) => key !== event.key,
                 );
             },
         },
@@ -74,6 +76,7 @@ const editor = useEditor({
             HTMLAttributes: {
                 class: "mention",
             },
+
             suggestion,
         }),
         Link.configure({}),
@@ -95,12 +98,48 @@ const editor = useEditor({
         emit("update:modelValue", editor.value.getJSON());
     },
 });
+
+const exportToPDF = () => {
+    axios
+        .post(
+            "/api/v1/file-to-pdf",
+            {
+                content: editor.value.getHTML(),
+            },
+            {
+                responseType: "blob",
+            },
+        )
+        .then((response) => {
+            console.log(response);
+            window.open(URL.createObjectURL(response.data));
+        });
+
+    console.log(editor.value.getHTML());
+};
+watch(
+    () => [props.modelValue, editor.value],
+    () => {
+        if (props.modelValue && editor.value) {
+            //    editor.value.commands.setContent(props.modelValue);
+            console.log(props.modelValue, editor.value);
+            console.log(editor.value?.getHTML());
+        }
+    },
+    {
+        deep: true,
+        immediate: true,
+    },
+);
 </script>
 
 <template>
     <div v-if="editor" class="max-w-full pb-2 gap-1 hidden lg:flex">
         <EditorHeader :editor="editor" />
         <div class="ml-auto">
+            <fwb-button color="alternative" @click="exportToPDF">
+                Export
+            </fwb-button>
             <fwb-button
                 color="alternative"
                 @click="() => emit('submitted', true)"

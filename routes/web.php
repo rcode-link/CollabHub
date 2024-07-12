@@ -6,6 +6,7 @@ use App\Http\Controllers\VideoCallController;
 use App\Http\Middleware\SignedRouteMiddleware;
 use App\Models\Company;
 use App\Models\Invoice;
+use App\Models\File;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -32,10 +33,22 @@ Route::post('/login', function () {
 
 });
 Route::get('/generate-pdf-v2', function () {
-    $invoice = Invoice::whereId(9)->with(['items', 'items.billingItem', 'company'])->firstOrFail();
-    $company = Company::whereIsCostumerCompany(false)->firstOrFail();
-    return view('pdf.invoice', ['model' => $invoice, 'company' => $company]);
+    $content = (new Tiptap\Editor([
+        'extensions' => [
+            new \Tiptap\Extensions\StarterKit([
+                'codeBlock' => false,
+            ]),
+        ]
+    ]))
+    ->setContent(File::whereId(1)->first()->content)
+    ->getHTML();
+$pdf = Pdf::loadView('pdf.document',['content' => $content]);
+    return $content;
+    return $pdf->stream();    // $invoice = Invoice::whereId(9)->with(['items', 'items.billingItem', 'company'])->firstOrFail();
+   // $company = Company::whereIsCostumerCompany(false)->firstOrFail();
+   // return view('pdf.invoice', ['model' => $invoice, 'company' => $company]);
 });
+
 
 Route::middleware([\App\Http\Middleware\FrontendEnv::class])->group(function () {
 
