@@ -151,11 +151,15 @@ function cleanTiptapJson(json) {
             })
             .filter((item) => item !== null); // Remove null items
     }
+    try {
+        // Clean the top-level content
+        json.content = cleanContent(json?.content ?? []);
 
-    // Clean the top-level content
-    json.content = cleanContent(json.content);
-
-    return json;
+        return json;
+    } catch (e) {
+        console.log(e);
+        return "";
+    }
 }
 </script>
 

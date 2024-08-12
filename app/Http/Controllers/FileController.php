@@ -45,7 +45,7 @@ class FileController extends Controller
                     ->where('entity_type', Project::class)->where('type', 'file')->orderByDesc('id')->first();
                 $projectKey = Project::whereId($request->get('entity_id'))->select('key')->firstOrFail();
                 \Log::info("numberOfFilesInProject", [$numberOfFilesInProject]);
-                $data['file_id'] = $projectKey->key . '-D-' . ($numberOfFilesInProject?->id ?? 0 + 1);
+                $data['file_id'] = $projectKey->key . '-D-' . ($numberOfFilesInProject?->id ?? 0) + 1;
                 break;
             default:
 

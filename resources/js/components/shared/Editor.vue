@@ -2,7 +2,7 @@
 import { EditorContent, useEditor } from "@tiptap/vue-3";
 import StarterKit from "@tiptap/starter-kit";
 import { Link } from "@tiptap/extension-link";
-import { ref } from "vue";
+import { ref, computed } from "vue";
 import { createLowlight } from "lowlight";
 import CodeBlockLowlight from "@tiptap/extension-code-block-lowlight";
 import drawIoExtension from "@rcode-link/tiptap-drawio";
@@ -53,7 +53,7 @@ const content = computed(() => {
 });
 
 const editor = useEditor({
-    content: props.model ?? props.modelValue,
+    content: content,
     editable: props.editable,
     editorProps: {
         handleDOMEvents: {
