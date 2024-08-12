@@ -33,12 +33,12 @@ export default () => {
 
         window.Echo.private(`start-call.${res.data.data.id}`).listen(
             "StartVideoCall",
-            videoCallNotification
+            videoCallNotification,
         );
 
         window.Echo.private("UpdateChatForUser." + res.data.data.id).listen(
             "ChatUpdate",
-            UpdateChatForUser
+            UpdateChatForUser,
         );
     });
     window.axios.get("/api/v1/permissions/my").then((res) => {
@@ -48,7 +48,7 @@ export default () => {
     });
 
     watch(
-        () => userState.company.id,
+        () => userState.company?.id,
         () => {
             if (!userState.company.id) {
                 return;
@@ -63,14 +63,14 @@ export default () => {
                 .leaving((user: any) => {
                     userState.setOnlineUsers(
                         userState.onlineUsers.filter(
-                            (obj) => obj.id !== user.id
-                        )
+                            (obj) => obj.id !== user.id,
+                        ),
                     );
                 });
         },
         {
             immediate: true,
-        }
+        },
     );
 
     const UpdateChatForUser = (data: any) => {

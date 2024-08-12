@@ -9,15 +9,17 @@ export const initAxios = () => {
             if (!config.url) {
                 config.url += "?XDEBUG_SESSION_START=PHPSTORM";
             } else {
-                config.url += config.url.indexOf("?") > -1
-                    ? "&XDEBUG_SESSION_START=PHPSTORM"
-                    : "?XDEBUG_SESSION_START=PHPSTORM";
+                config.url +=
+                    config.url.indexOf("?") > -1
+                        ? "&XDEBUG_SESSION_START=PHPSTORM"
+                        : "?XDEBUG_SESSION_START=PHPSTORM";
             }
         }
         errorsStore.setErrors([], "");
         return config;
     };
     const instance = axios.create({
+        url: "https://rcode-link.collabhub.cloud",
         headers: {
             Accept: "application/json",
             Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -53,11 +55,11 @@ export const initAxios = () => {
                     {
                         //@ts-ignore
                         theme: localStorage.getItem("color-theme") ?? "light",
-                    }
+                    },
                 );
             }
             return Promise.reject(error);
-        }
+        },
     );
     window.axios = instance;
 };

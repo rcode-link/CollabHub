@@ -11,7 +11,7 @@ import Echo from "laravel-echo";
 import Pusher from "pusher-js";
 
 window.env = JSON.parse(
-    document.getElementById("app").getAttribute("data-env")
+    document.getElementById("app").getAttribute("data-env"),
 );
 
 window.Pusher = Pusher;

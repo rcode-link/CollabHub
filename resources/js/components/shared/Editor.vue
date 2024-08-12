@@ -39,6 +39,19 @@ hljs.listLanguages().forEach(async (lang) => {
 
 const suggestion = useSuggestion();
 
+const content = computed(() => {
+    const { model, modelValue } = props;
+    if (!model && !modelValue) {
+        return "";
+    }
+
+    if (!model) {
+        return modelValue;
+    }
+
+    return model;
+});
+
 const editor = useEditor({
     content: props.model ?? props.modelValue,
     editable: props.editable,
@@ -55,13 +68,13 @@ const editor = useEditor({
             },
             keyup(view, event) {
                 pressedKeys.value = pressedKeys.value.filter(
-                    (key) => key !== event.key
+                    (key) => key !== event.key,
                 );
             },
         },
         handlePaste: function (view, event, slice) {
             const items = Array.from(event.clipboardData?.items || []).filter(
-                (obj) => obj.kind === "file"
+                (obj) => obj.kind === "file",
             );
             chatStore.addFiles(items.map((obj) => obj.getAsFile()));
         },
