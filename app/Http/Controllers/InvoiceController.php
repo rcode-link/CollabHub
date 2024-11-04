@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Events\InvoiceItemsUpdate;
 use App\Http\Requests\StoreInvoiceRequest;
+use Illuminate\Http\Response;
 use App\Http\Requests\UpdateInvoiceRequest;
 use App\Http\Resources\InvoiceResource;
 use App\Models\Company;
@@ -74,6 +75,9 @@ class InvoiceController extends Controller
      */
     public function destroy(Invoice $invoice)
     {
-        //
+        $invoice->items()->delete();
+        $invoice->delete();
+
+        return response()->noContent();
     }
 }

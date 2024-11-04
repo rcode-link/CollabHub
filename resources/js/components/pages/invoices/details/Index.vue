@@ -20,13 +20,21 @@ watch(
     },
     {
         immediate: true,
-    }
+    },
 );
 </script>
 <template>
     <Auth>
         <Card class="gap-4 items-center">
-            <img :src="invoiceDetails.companyData?.logo" class="w-80" />
+            <object
+                class="img"
+                :data="`https://placehold.co/300x300/png?text=${invoiceDetails.companyData?.name}`"
+                type="image/png"
+            >
+                <img :src="invoiceDetails.companyData?.logo" class="w-80" />
+            </object>
+
+            <object></object>
             <div class="">
                 <fwb-heading tag="h3">
                     {{ invoiceDetails.companyData?.name }}

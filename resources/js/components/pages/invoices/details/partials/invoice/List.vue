@@ -2,7 +2,10 @@
 import { onMounted } from "vue";
 import useInvoice from "@/components/pages/invoices/details/functions/useInvoice";
 import InvoiceForm from "./Form.vue";
+import { toast } from "vue3-toastify";
 import currencyPrint from "@/functions/currencyPrint";
+import InteractiveToast from "@/components/shared/InteractiveToast.vue";
+
 import { useInvoiceDetailsStore } from "@/store/invoiceDetailsStore";
 import {
     FwbTable,
@@ -11,11 +14,18 @@ import {
     FwbTableCell,
     FwbTableRow,
     FwbTableHeadCell,
+    FwbButton,
 } from "flowbite-vue";
 import { DateTime } from "luxon";
 const invoiceDetails = useInvoiceDetailsStore();
 
 const { invoices, load } = useInvoice();
+const deleteInvoice = (id) => {
+    window.axios.delete(`/api/v1/invoices/${id}`).then(() => {
+        toast.success("Invoice deleted");
+        load();
+    });
+};
 onMounted(() => {
     load();
 });
@@ -50,7 +60,7 @@ onMounted(() => {
                     {{
                         currencyPrint(
                             Number(obj.total),
-                            invoiceDetails.companyData?.currency
+                            invoiceDetails.companyData?.currency,
                         )
                     }}
                 </fwb-table-cell>
@@ -58,7 +68,7 @@ onMounted(() => {
                     {{
                         currencyPrint(
                             Number(obj.due_ammount),
-                            invoiceDetails.companyData?.currency
+                            invoiceDetails.companyData?.currency,
                         )
                     }}
                 </fwb-table-cell>
@@ -71,8 +81,9 @@ onMounted(() => {
                 <fwb-table-cell>
                     {{ DateTime.fromSQL(obj.due_date).toLocaleString() }}
                 </fwb-table-cell>
-                <fwb-table-cell>
+                <fwb-table-cell class="flex gap-2 justfiy-end">
                     <router-link
+                        class="ml-auto"
                         :to="{
                             name: 'invoices.form',
                             params: {
@@ -81,6 +92,28 @@ onMounted(() => {
                         }"
                         >Open</router-link
                     >
+                    <InteractiveToast>
+                        <template #trigger>
+                            <fwb-button class="ml-2" size="xs" color="red"
+                                >Delete</fwb-button
+                            >
+                        </template>
+                        <template #title> Are you sure? </template>
+
+                        <template #content
+                            >Changes are ireversable and you will lose all data
+                            related to <b>{{ obj.number }}</b> invoice
+                        </template>
+                        <template #actions>
+                            <fwb-button
+                                @click="() => deleteInvoice(obj.id)"
+                                class="ml-2"
+                                size="xs"
+                                color="red"
+                                >Yes, delete it</fwb-button
+                            >
+                        </template>
+                    </InteractiveToast>
                 </fwb-table-cell>
             </fwb-table-row>
         </fwb-table-body>
