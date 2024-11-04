@@ -1,35 +1,35 @@
 <script lang="js" setup>
 import flatPickr from "vue-flatpickr-component";
 import "flatpickr/dist/flatpickr.css";
-import { ref, watch } from "vue";
+import { ref, watch, computed } from "vue";
 import { useErrorsStore } from "../../store/errors";
 import { DateTime } from "luxon";
-
 
 const props = defineProps({
     modelValue: {
         type: String,
-        default: null
+        default: null,
     },
     name: {
         default: null,
         type: String,
-
-    }
-})
-const emit = defineEmits(['update:modelValue']);
-
-
-
-const internalVal = ref(props.modelValue ?? DateTime.now().toLocaleString());
-const errors = useErrorsStore();
-
-watch(internalVal, () => {
-    emit(
-        "update:modelValue",
-        DateTime.fromISO(internalVal.value).set({ hour: 8 }).toUTC().toISO()
-    );
+    },
 });
+const emit = defineEmits(["update:modelValue"]);
+
+const internalVal = computed({
+    get() {
+        return props.modelValue ?? DateTime.now().toLocaleString();
+    },
+    set(val) {
+        emit(
+            "update:modelValue",
+            DateTime.fromISO(val).set({ hour: 8 }).toUTC().toISO(),
+        );
+    },
+});
+
+const errors = useErrorsStore();
 </script>
 
 <template>

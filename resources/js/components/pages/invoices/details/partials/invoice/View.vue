@@ -57,7 +57,7 @@ watch(
             "InvoiceItemsUpdate",
             (list) => {
                 invoiceStore.data = list.items;
-            }
+            },
         );
         invoiceStore.load().then((data) => {
             if (!data) {
@@ -69,9 +69,14 @@ watch(
     },
     {
         immediate: true,
-    }
+    },
 );
 
+const updateData = (data) => {
+    window.axios.put(`/api/v1/invoices/${invoiceStore.data.id}`, {
+        ...data,
+    });
+};
 const updateNote = debounce(function (value) {
     window.axios.put(`/api/v1/invoices/${invoiceStore.data.id}`, {
         note: value,
@@ -122,11 +127,19 @@ const updateNote = debounce(function (value) {
                 </div>
                 <div>
                     Invoice Date:
-                    <DatePicker v-model="invoiceStore.data.date" />
+                    <DatePicker
+                        v-model="invoiceStore.data.date"
+                        @update:model-value="(val) => updateData({ date: val })"
+                    />
                 </div>
                 <div>
                     Invoice Due date:
-                    <DatePicker v-model="invoiceStore.data.due_date" />
+                    <DatePicker
+                        v-model="invoiceStore.data.due_date"
+                        @update:model-value="
+                            (val) => updateData({ due_date: val })
+                        "
+                    />
                 </div>
             </div>
         </div>
@@ -193,7 +206,7 @@ const updateNote = debounce(function (value) {
                             {{
                                 currencyPrint(
                                     Number(invoiceStore.data.total),
-                                    invoiceStore.data?.company?.currency
+                                    invoiceStore.data?.company?.currency,
                                 )
                             }}</fwb-table-cell
                         >

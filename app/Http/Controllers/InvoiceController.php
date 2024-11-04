@@ -57,7 +57,16 @@ class InvoiceController extends Controller
      */
     public function update(UpdateInvoiceRequest $request, Invoice $invoice)
     {
-        $invoice->update($request->validated());
+        $data = $request->validated();
+
+        if (isset($data['date'])) {
+            $data['date'] = Carbon::parse($data['date']);
+        }
+        if (isset($data['due_date'])) {
+            $data['due_date'] = Carbon::parse($data['due_date']);
+        }
+
+        $invoice->update($data);
         InvoiceItemsUpdate::dispatch($invoice->id);
 
     }
