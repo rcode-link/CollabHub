@@ -3,12 +3,12 @@ import { debounce } from "lodash";
 import Text from "./Text.vue";
 import { ref, watch } from "vue";
 
-const emit = defineEmits(["search",
-"selected"]);
-const props = defineProps(['items']);
+const emit = defineEmits(["search", "selected"]);
+const props = defineProps(["items"]);
 const showItems = ref(false);
 const inputValue = ref("");
 const activeItem = ref(-1);
+const textInput = ref(null);
 
 const handleItemClick = (obj) => {
     emit("selected", obj);
@@ -29,6 +29,12 @@ const handleDown = () => {
         activeItem.value = 0;
     }
 };
+watch(
+    () => props.items,
+    () => {
+        textInput.value.focus();
+    },
+);
 </script>
 
 <template>
@@ -42,6 +48,7 @@ const handleDown = () => {
             "
             @focusout="() => (showItems = false)"
             v-model="inputValue"
+            ref="textInput"
             @keydown.down.prevent="handleDown"
             @keydown.up.prevent="handleUp"
             @keydown.enter.prevent="

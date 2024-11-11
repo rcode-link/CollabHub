@@ -3,6 +3,7 @@ import { onMounted, ref } from "vue";
 import Form from "./Form.vue";
 import { TailwindPagination } from "laravel-vue-pagination";
 
+import { useBreadcrumbStore } from "@/store/breadcrumb";
 import Auth from "../../layouts/Auth.vue";
 import {
     FwbTable,
@@ -17,6 +18,7 @@ import Create from "./Create.vue";
 
 const loading = ref(false);
 const companies = ref();
+const breadcrumb = useBreadcrumbStore();
 
 const load = (page = 1) => {
     loading.value = true;
@@ -34,6 +36,18 @@ const load = (page = 1) => {
 
 onMounted(() => {
     load();
+    breadcrumb.setLinks([
+        {
+            link: "/",
+            title: "Home",
+        },
+        {
+            link: {
+                name: "invoices",
+            },
+            title: "Customers",
+        },
+    ]);
 });
 </script>
 <template>

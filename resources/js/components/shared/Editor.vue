@@ -39,21 +39,8 @@ hljs.listLanguages().forEach(async (lang) => {
 
 const suggestion = useSuggestion();
 
-const content = computed(() => {
-    const { model, modelValue } = props;
-    if (!model && !modelValue) {
-        return "";
-    }
-
-    if (!model) {
-        return modelValue;
-    }
-
-    return model;
-});
-
 const editor = useEditor({
-    content: content,
+    content: props.model ?? props.modelValue,
     editable: props.editable,
     editorProps: {
         handleDOMEvents: {
