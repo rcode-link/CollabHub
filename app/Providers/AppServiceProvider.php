@@ -2,12 +2,12 @@
 
 namespace App\Providers;
 
+use App\Helpers\SetEnviroment;
 use Dedoc\Scramble\Scramble;
 use Dedoc\Scramble\Support\Generator\OpenApi;
 use Dedoc\Scramble\Support\Generator\SecurityScheme;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\ServiceProvider;
-use App\Helpers\SetEnviroment;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -33,11 +33,12 @@ class AppServiceProvider extends ServiceProvider
 
             if (count($parts) > 2) {
                 $subdomain = $parts[0];
+
                 return $subdomain;
             }
+
             return null;
         });
-
 
         if (config('app.env') === 'production') {
             \URL::forceScheme('https');

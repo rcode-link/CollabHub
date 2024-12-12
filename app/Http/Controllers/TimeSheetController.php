@@ -25,11 +25,11 @@ class TimeSheetController extends Controller
 
         $canSeeAll = Auth::user()
             ->permissions()->pluck('permissions')->flatten()
-            ->contains('can-see-all-time-sheet' . $request->get('project_id', null));
+            ->contains('can-see-all-time-sheet.'.$request->get('project_id', null));
 
         $model = TimeSheet::query()
             ->with('user')
-            ->when(!$canSeeAll, function (Builder $query) {
+            ->when(! $canSeeAll, function (Builder $query) {
                 $query->where('user_id', Auth::id());
             })
             ->where('task_id', $request->get('task_id'))

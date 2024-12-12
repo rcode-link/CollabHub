@@ -28,11 +28,11 @@ class AuthServiceProvider extends ServiceProvider
         Gate::define('check-permission',
             function (User $user, Model|int $model, string $gate) {
 
-
                 $permissions = $user->permissions()->pluck('permissions')->flatten();
-                if(gettype($model) === 'object'){
+                if (gettype($model) === 'object') {
                     return $permissions->contains("$gate.$model->id");
                 }
+
                 return $permissions->contains("$gate.$model");
             });
     }

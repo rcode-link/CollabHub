@@ -32,7 +32,7 @@ watch(
 
 <template>
     <Auth>
-        <div class="grid lg:grid-cols-3 grid-cols-1 gap-2 h-[75vh] relative">
+        <div class="grid lg:grid-cols-3 grid-cols-1 gap-2 h-[80vh] relative">
             <fwb-button
                 class="ml-auto lg:hidden h-8"
                 @click="() => (showListInMobile = !showListInMobile)"
@@ -40,7 +40,7 @@ watch(
                 <MenuIcon class="w-4 h-4" />
             </fwb-button>
             <div
-                :class="`absolute lg:relative top-[45px] lg:top-0 z-20 bg-white lg:bg-transparent w-full lg:w-auto transition-all translate-x-[-200%] lg:translate-x-0 lg:overflow-auto list ${
+                :class="`absolute lg:relative top-[45px] lg:top-0 bottom-0 overflow-auto z-20 bg-white lg:bg-transparent w-full lg:w-auto transition-all translate-x-[-200%] lg:translate-x-0 lg:overflow-auto list ${
                     showListInMobile === true ? 'active' : ''
                 }`"
             >

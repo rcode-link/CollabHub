@@ -21,9 +21,9 @@ class BillingItemResource extends JsonResource
             'user' => $this->whenLoaded('users', function () {
                 return [
                     'name' => $this->user->name,
-                    'rate' => 0
+                    'rate' => 0,
                 ];
-            })
+            }),
         ];
     }
 }

@@ -27,7 +27,7 @@ class ChatMessageResource extends JsonResource
             'parent' => $this->whenLoaded('parent', function () {
                 return [
                     'text' => $this->parent->message,
-                    'id' => $this->parent->id
+                    'id' => $this->parent->id,
                 ];
             }),
         ];
