@@ -36,7 +36,7 @@ const location = window.location.href;
 
 <template>
     <Card class="flex-col">
-        <div class="flex gap-4 z-20 items-center">
+        <div class="flex gap-4 z-20 items-center flex-wrap">
             <fwb-dropdown
                 :text="calendar.currentDate.toLocaleString({ month: 'long' })"
             >
