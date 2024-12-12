@@ -36,87 +36,94 @@ const location = window.location.href;
 
 <template>
     <Card class="flex-col">
-        <div class="flex gap-4 z-20 items-center flex-wrap">
-            <fwb-dropdown
-                :text="calendar.currentDate.toLocaleString({ month: 'long' })"
-            >
-                <fwb-list-group>
-                    <fwb-list-group-item
-                        class="cursor-pointer"
-                        v-for="month in 12"
-                        :key="`month_${month}`"
+        <div class="flex gap-4 z-20 items-center flex-col md:flex-row">
+            <div class="flex gap-4 justify-between md:justify-start w-full">
+                <fwb-dropdown
+                    :text="
+                        calendar.currentDate.toLocaleString({ month: 'long' })
+                    "
+                >
+                    <fwb-list-group>
+                        <fwb-list-group-item
+                            class="cursor-pointer"
+                            v-for="month in 12"
+                            :key="`month_${month}`"
+                            @click="
+                                calendar.selectedMonth = DateTime.now()
+                                    .startOf('year')
+                                    .plus({ month: month - 1 }).month
+                            "
+                        >
+                            {{
+                                DateTime.now()
+                                    .startOf("year")
+                                    .plus({ month: month - 1 })
+                                    .toLocaleString({ month: "long" })
+                            }}
+                        </fwb-list-group-item>
+                    </fwb-list-group>
+                </fwb-dropdown>
+                <div class="flex gap-4 items-center">
+                    <fwb-button
+                        color="alternative"
                         @click="
-                            calendar.selectedMonth = DateTime.now()
-                                .startOf('year')
-                                .plus({ month: month - 1 }).month
+                            calendar.selectedYear = DateTime.now().set({
+                                year: calendar.selectedYear - 1,
+                            }).year
                         "
                     >
-                        {{
-                            DateTime.now()
-                                .startOf("year")
-                                .plus({ month: month - 1 })
-                                .toLocaleString({ month: "long" })
-                        }}
-                    </fwb-list-group-item>
-                </fwb-list-group>
-            </fwb-dropdown>
-            <div class="flex gap-4 items-center">
-                <fwb-button
-                    color="alternative"
-                    @click="
-                        calendar.selectedYear = DateTime.now().set({
-                            year: calendar.selectedYear - 1,
-                        }).year
-                    "
-                >
-                    <ArrowLeft class="w-4 h-4" />
-                </fwb-button>
-                <div>{{ calendar.selectedYear }}</div>
-                <fwb-button
-                    color="alternative"
-                    @click="
-                        calendar.selectedYear = DateTime.now().set({
-                            year: calendar.selectedYear + 1,
-                        }).year
-                    "
-                >
-                    <ArrowRight class="w-4 h-4" />
-                </fwb-button>
+                        <ArrowLeft class="w-4 h-4" />
+                    </fwb-button>
+                    <div>{{ calendar.selectedYear }}</div>
+                    <fwb-button
+                        color="alternative"
+                        @click="
+                            calendar.selectedYear = DateTime.now().set({
+                                year: calendar.selectedYear + 1,
+                            }).year
+                        "
+                    >
+                        <ArrowRight class="w-4 h-4" />
+                    </fwb-button>
+                </div>
             </div>
-            <fwb-button
-                color="alternative"
-                class="ml-auto"
-                @click="
-                    () => $router.push({ query: { createNewEvent: 'true' } })
-                "
-            >
-                <PlusSquare class="w-4 h-4" />
-            </fwb-button>
-            <Modal>
-                <template #button>
-                    <InfoIcon class="w-6 h-6" />
-                </template>
-                <template #header>
-                    <h1 class="text-lg">Subscribe to calendar</h1>
-                </template>
-                <template #body>
-                    Address: <b>{{ location }}calendar </b> <br />
-                    username: <b>{{ userStore.user.email }}</b> <br />
-                    password: <b>your password</b>
-                    <h2>Note</h2>
-                    <p>
-                        Check on the internet how you can subscribe to calendar
-                        with base base authentication.
-                    </p>
-                    <h4>For android:</h4>
-                    <p>Use ICSx5 or some similar app</p>
-                    <h4>For MacOS/iOS:</h4>
-                    <p>
-                        Open calendar click on calendars and subscribe to
-                        calendars
-                    </p>
-                </template>
-            </Modal>
+            <div class="flex w-full md:ml-auto gap-4 items-center">
+                <fwb-button
+                    color="alternative"
+                    class="ml-auto"
+                    @click="
+                        () =>
+                            $router.push({ query: { createNewEvent: 'true' } })
+                    "
+                >
+                    <PlusSquare class="w-4 h-4" />
+                </fwb-button>
+                <Modal>
+                    <template #button>
+                        <InfoIcon class="w-6 h-6" />
+                    </template>
+                    <template #header>
+                        <h1 class="text-lg">Subscribe to calendar</h1>
+                    </template>
+                    <template #body>
+                        Address: <b>{{ location }}calendar </b> <br />
+                        username: <b>{{ userStore.user.email }}</b> <br />
+                        password: <b>your password</b>
+                        <h2>Note</h2>
+                        <p>
+                            Check on the internet how you can subscribe to
+                            calendar with base base authentication.
+                        </p>
+                        <h4>For android:</h4>
+                        <p>Use ICSx5 or some similar app</p>
+                        <h4>For MacOS/iOS:</h4>
+                        <p>
+                            Open calendar click on calendars and subscribe to
+                            calendars
+                        </p>
+                    </template>
+                </Modal>
+            </div>
         </div>
         <div class="grid grid-cols-7 w-full">
             <div v-for="day in 7" :key="day + Math.random()">
