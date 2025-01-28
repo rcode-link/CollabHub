@@ -1,7 +1,7 @@
 import { useUserStore } from "../store/user.js";
 import { Ability, AbilityBuilder } from "@casl/ability";
 import ability from "./ability.js";
-import { watch } from "vue";
+import { ref, watch } from "vue";
 import { initEcho } from "../bootstrap.js";
 import { useTextToLinkStore } from "../store/textToLinkStore";
 import { chatDetails } from "../store/chatStore.js";
@@ -12,7 +12,9 @@ import { useRouter } from "vue-router";
 //@ts-ignore
 import VideoToast from "../components/shared/video/VideoToast.vue";
 import { initAxios } from "@/axios.js";
+import useTabCoordination from "./useTabCoordination.js";
 export default () => {
+    const tabCoordination = useTabCoordination();
     const userState = useUserStore();
     const messagesState = chatDetails();
     const router = useRouter();
@@ -24,6 +26,10 @@ export default () => {
     initEcho();
     initAxios();
     textToLinkStore.load();
+    const shouldIShowNotification = () => {
+        return tabCoordination.shouldINotifify();
+    };
+
     window.axios
         .get("/api/v1/companies")
         .then((response) => userState.setCompany(response.data));
@@ -33,12 +39,12 @@ export default () => {
 
         window.Echo.private(`start-call.${res.data.data.id}`).listen(
             "StartVideoCall",
-            videoCallNotification,
+            videoCallNotification
         );
 
         window.Echo.private("UpdateChatForUser." + res.data.data.id).listen(
             "ChatUpdate",
-            UpdateChatForUser,
+            UpdateChatForUser
         );
     });
     window.axios.get("/api/v1/permissions/my").then((res) => {
@@ -63,19 +69,20 @@ export default () => {
                 .leaving((user: any) => {
                     userState.setOnlineUsers(
                         userState.onlineUsers.filter(
-                            (obj) => obj.id !== user.id,
-                        ),
+                            (obj) => obj.id !== user.id
+                        )
                     );
                 });
         },
         {
             immediate: true,
-        },
+        }
     );
 
     const UpdateChatForUser = (data: any) => {
         loadNumberOfUnreadMessages();
-        if (!document.hasFocus()) {
+
+        if (shouldIShowNotification()) {
             const notification = new Notification("New message", {
                 body: `${data.message.user} send you new message`,
             });
@@ -91,7 +98,7 @@ export default () => {
     };
 
     const pushNotificaiton = (data: any) => {
-        if (!document.hasFocus()) {
+        if (shouldIShowNotification()) {
             const notification = new Notification("Video call", {
                 body: `${data.callId.user.name} is calling you.`,
             });
