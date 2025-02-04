@@ -111,7 +111,7 @@ const editor = useEditor({
 });
 
 const exportToPDF = () => {
-    document.getElementById('print-container').innerHTML = editor.value.getHTML();
+    document.getElementById('print').innerHTML = editor.value.getHTML();
     window.print();
 };
 function cleanTiptapJson(json) {
