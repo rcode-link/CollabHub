@@ -1,6 +1,7 @@
 <template>
     <router-view></router-view>
-    <div id="append-container" class="tiptap ProseMirror"></div>
+    <div id="append-container"></div>
+    <div id="print-cotainer" class="tiptap ProseMirror printOnly"></div>
 </template>
 <script setup lang="js">
 import { onMounted } from "vue";
@@ -10,3 +11,17 @@ onMounted(() => {
     useInit();
 });
 </script>
+
+<style>
+@media print {
+    .printOnly {
+        display: block;
+    }
+}
+
+@media screen {
+    .printOnly {
+        display: none;
+    }
+}
+</style>

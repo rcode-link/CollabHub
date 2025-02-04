@@ -111,9 +111,8 @@ const editor = useEditor({
 });
 
 const exportToPDF = () => {
-    document.getElementById('append-container').innerHTML = editor.value.getHTML();
+    document.getElementById('print-container').innerHTML = editor.value.getHTML();
     window.print();
-    console.log(editor.value.getHTML());
 };
 function cleanTiptapJson(json) {
     // Recursively clean the content
