@@ -40,9 +40,9 @@ h5 {
     font-size: 1.125rem; /* equivalent to text-lg in Tailwind */
     line-height: 1.75rem; /* line-height is 1.555 times font-size by default in Tailwind */
 }
-ul, ol {
-    line-height: 1.5px; /* equivalent to leading-normal in Tailwind CSS */
-}
+/* ul, ol {
+    line-height: 1.5px; /* equivalent to leading-normal in Tailwind CSS
+} */
 
 ol {
     padding-left: 1.5rem; /* equivalent to pl-6 in Tailwind */

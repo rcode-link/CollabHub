@@ -9,8 +9,14 @@ register(`/build/sw.js`, {
                 "For more details, visit https://goo.gl/AFskqB"
         );
     },
-    registered() {
+    async registered() {
         console.log("Service worker has been registered.");
+        const permission = await Notification.requestPermission();
+
+        if (permission !== "granted") {
+            console.log("Notification permission denied");
+            return;
+        }
     },
     cached() {
         console.log("Content has been cached for offline use.");

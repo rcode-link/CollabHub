@@ -22,7 +22,6 @@ import { SmilieReplacer } from "../../../functions/smilieReplacer";
 import { useConvertTextToLink } from "../../../functions/editor/convertTextToLink";
 import { Collaboration } from "@/functions/editor/colab/Collaboration";
 import { Cursors } from "@/functions/editor/colab/Cursor";
-import { jsPDF } from "jspdf";
 const props = defineProps({
     modelValue: {
         type: String,
@@ -112,20 +111,8 @@ const editor = useEditor({
 });
 
 const exportToPDF = () => {
-    axios
-        .post(
-            "/api/v1/file-to-pdf",
-            {
-                content: editor.value.getHTML(),
-            },
-            {
-                responseType: "blob",
-            },
-        )
-        .then((response) => {
-            window.open(URL.createObjectURL(response.data));
-        });
-
+    document.getElementById('append-container').innerHTML = editor.value.getHTML();
+    window.print();
     console.log(editor.value.getHTML());
 };
 function cleanTiptapJson(json) {
