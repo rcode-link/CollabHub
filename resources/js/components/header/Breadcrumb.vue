@@ -1,9 +1,15 @@
 <script setup lang="js">
+import { watch } from 'vue'
 import { useBreadcrumbStore } from "../../store/breadcrumb";
 import { FwbBreadcrumb } from "flowbite-vue";
 import HomeIcon from "../shared/icons/HomeIcon.vue";
 
 const store = useBreadcrumbStore();
+
+watch(() => store.getLinks, () => {
+
+    document.title = store.getLinks[store.getLinks.length - 1].title + ' - CollabHub ';
+})
 </script>
 <template>
     <fwb-breadcrumb
