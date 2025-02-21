@@ -54,16 +54,16 @@ class UserResource extends JsonResource
             'id' => $this->id,
             'name' => $this->name,
             'email' => $this->email,
-            'avatar' => $this->getFirstMediaUrl('avatar'),
+            'avatar' => str_replace('//storage', '/storage', $this->getFirstMediaUrl('avatar')),
             'start_work_time' => $this->start_work_time,
             'end_work_time' => $this->end_work_time,
             'deleted_at' => $this->deleted_at,
-            'manager' => $this->whenLoaded('manager', fn() => new UserResource($this->manager)),
+            'manager' => $this->whenLoaded('manager', fn () => new UserResource($this->manager)),
             'view_profile' => $this->when(\request()->routeIs('apiusers.show'), function () {
-                return $this->permissions()->filter(fn($obj) => $obj['users']->contains($this->id))->pluck('model');
+                return $this->permissions()->filter(fn ($obj) => $obj['users']->contains($this->id))->pluck('model');
             }),
             'availability' => $this->todayMeetings(),
-            'attending' => $this->when(request()->routeIs('api.calendar.*'), fn() => $this->pivot->attending)
+            'attending' => $this->when(request()->routeIs('api.calendar.*'), fn () => $this->pivot->attending)
         ];
     }
 }

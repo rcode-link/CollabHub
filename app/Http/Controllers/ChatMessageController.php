@@ -14,7 +14,6 @@ use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Http\Response;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Cache;
 
 class ChatMessageController extends Controller
 {
@@ -53,14 +52,13 @@ class ChatMessageController extends Controller
                     $fileAdder->toMediaCollection('files');
                 });
         }
-        $activeUsersInChat = Cache::get("chat.$chat->id");
 
         $chat->load('users');
-        $message->messageViews()->insert($chat->users->pluck('id')->map(function ($user_id) use ($message, $activeUsersInChat) {
+        $message->messageViews()->insert($chat->users->pluck('id')->map(function ($user_id) use ($message) {
             return [
                 'user_id' => $user_id,
                 'chat_message_id' => $message->id,
-                'reaction' => $activeUsersInChat && $activeUsersInChat->contains($user_id) ? 'seen' : null
+                'reaction' => null
             ];
         })->toArray());
 

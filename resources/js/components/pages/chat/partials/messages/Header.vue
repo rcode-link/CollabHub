@@ -7,7 +7,6 @@ import UserIcon from "../../../../shared/UserIcon.vue";
 import Task from "../../../../shared/icons/Task.vue";
 import EarthIcon from "../../../../shared/icons/EarthIcon.vue";
 
-
 const chatStore = chatDetails();
 const route = useRoute();
 
@@ -30,27 +29,32 @@ const makeLink = () => {
 
 <template>
   <header class="shadow p-6 flex gap-4 items-center">
-<UserIcon
+    <UserIcon
       v-if="['user', 'group'].indexOf(chatStore.activeChat.type) > -1"
       :user="chatStore.activeChat"
       class="min-w-10"
     />
     <template v-else>
-      <Task v-if="chatStore.activeChat.type === 'app\\models\\task'" class="w-10 h-10" />
+      <Task
+        v-if="chatStore.activeChat.type === 'app\\models\\task'"
+        class="w-10 h-10"
+      />
       <fwb-avatar
         v-if="chatStore.activeChat.type === 'app\\models\\company'"
         class="w-10 h-10"
         :img="chatStore.activeChat.avatar"
       />
-      <EarthIcon v-if="chatStore.activeChat.type === 'app\\models\\event'" class="w-10 h-10" />
+      <EarthIcon
+        v-if="chatStore.activeChat.type === 'app\\models\\event'"
+        class="w-10 h-10"
+      />
     </template>
 
     <router-link
-      tag="h1"
       :to="makeLink()"
       :class="`text-xl`"
     >
-      {{ chatStore.activeChat.title }}
+      <h1>{{ chatStore.activeChat.title }}</h1>
     </router-link>
     <fwb-button
       v-if="['user', 'group'].indexOf(chatStore.activeChat.type) > -1"

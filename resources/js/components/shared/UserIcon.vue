@@ -12,10 +12,10 @@ const props = defineProps({
         type: Boolean,
         default: true
     },
-     avatarSize: {
+    avatarSize: {
         type: String,
         default: 'sm'
-     }
+    }
 })
 
 const getUserStatus = () => {
@@ -42,14 +42,14 @@ const getUserStatus = () => {
 </script>
 
 <template>
-    <span class="relative flex gap-0.5 items-center">
-        <fwb-avatar
-            :size="avatarSize"
-            :img="user?.avatar"
-            status-position="top-right"
-            v-bind="getUserStatus()"
-        />
-    </span>
+  <span class="relative flex gap-0.5 items-center">
+    <fwb-avatar
+      :size="avatarSize"
+      :img="user?.avatar"
+      status-position="top-right"
+      v-bind="getUserStatus()"
+    />
+  </span>
 </template>
 
 <style scoped></style>

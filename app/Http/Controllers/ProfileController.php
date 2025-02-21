@@ -10,7 +10,7 @@ class ProfileController extends Controller
 {
     public function view(Request $request)
     {
-        return cache()->remember("user_" . $request->user()->id, 8 * 60 * 60, fn() => new UserResource($request->user()));
+        return cache()->remember("user_" . $request->user()->id, 8 * 60 * 60, fn () => new UserResource($request->user()));
     }
 
     public function update(Request $request)
@@ -31,6 +31,5 @@ class ProfileController extends Controller
         $request->user()->addMedia($request->file('avatar'))->toMediaCollection('avatar');
 
         return response()->json(['data' => 'ok']);
-
     }
 }
