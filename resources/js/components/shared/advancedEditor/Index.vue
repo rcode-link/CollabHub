@@ -43,6 +43,11 @@ const emit = defineEmits(["update:modelValue", "submitted"]);
 const pressedKeys = ref([]);
 const textToLink = useConvertTextToLink();
 
+const submited = async () => {
+    emit('update:modelValue', editor.value.getJSON());
+    emit("submitted", true);
+}
+
 const editor = useEditor({
     content: cleanTiptapJson(props.modelValue),
     editable: props.editable,
@@ -55,7 +60,7 @@ const editor = useEditor({
                 }
                 if (pressedKeys.value.join("-") === "Control-Enter") {
                     event.preventDefault();
-                    emit("submitted", true);
+                    submited();
                 }
             },
             keyup(view, event) {
@@ -136,38 +141,51 @@ function cleanTiptapJson(json) {
 </script>
 
 <template>
-    <div v-if="editor" class="max-w-full pb-2 gap-1 hidden lg:flex">
-        <EditorHeader :editor="editor" />
-        <div class="ml-auto">
-            <fwb-button color="alternative" @click="exportToPDF">
-                Export
-            </fwb-button>
-            <fwb-button
-                color="alternative"
-                @click="() => emit('submitted', true)"
-            >
-                <FloppyDiskIcon class="w-4 h-4" />
-            </fwb-button>
-        </div>
+  <div
+    v-if="editor"
+    class="max-w-full pb-2 gap-1 hidden lg:flex"
+  >
+    <EditorHeader :editor="editor" />
+    <div class="ml-auto">
+      <fwb-button
+        color="alternative"
+        @click="exportToPDF"
+      >
+        Export
+      </fwb-button>
+      <fwb-button
+        color="alternative"
+        @click="() => submited()"
+      >
+        <FloppyDiskIcon class="w-4 h-4" />
+      </fwb-button>
     </div>
-    <MobileMenu v-if="editor" :editor="editor" class="block lg:hidden" />
-    <editor-content class="document-editor" :editor="editor" />
+  </div>
+  <MobileMenu
+    v-if="editor"
+    :editor="editor"
+    class="block lg:hidden"
+  />
+  <editor-content
+    class="document-editor"
+    :editor="editor"
+  />
 </template>
 
 <style>
 .document-editor {
-    @apply w-full flex p-1 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700;
-    height: calc(100vh - 50px);
-    margin-bottom: 10px;
-    overflow: auto;
+  @apply w-full flex p-1 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700;
+  height: calc(100vh - 50px);
+  margin-bottom: 10px;
+  overflow: auto;
 }
 
 .document-editor > .tiptap.ProseMirror {
-    @apply min-h-[80vh] w-full active:border-none focus:border-none focus:outline-0;
+  @apply min-h-[80vh] w-full active:border-none focus:border-none focus:outline-0;
 }
 
 .document-editor > .tiptap.ProseMirror-focused {
-    outline: none;
-    border: none;
+  outline: none;
+  border: none;
 }
 </style>

@@ -76,7 +76,9 @@ export default () => {
             a.date > b.date ? a : b
         );
 
-        return activeTab.tabId === tabId;
+        console.log(activeTab.tabId === tabId)
+
+        return true;
     };
 
     return {

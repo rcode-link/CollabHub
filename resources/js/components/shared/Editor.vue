@@ -50,6 +50,8 @@ const editor = useEditor({
                 }
                 if (pressedKeys.value.join("-") === "Control-Enter") {
                     event.preventDefault();
+
+                    emit("update:modelValue", editor.value?.getJSON());
                     emit("submitted", true);
                 }
             },
@@ -92,7 +94,6 @@ const editor = useEditor({
         Markdown,
     ],
     onUpdate() {
-        emit("update:modelValue", editor.value?.getJSON());
     },
 });
 

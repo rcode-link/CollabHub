@@ -82,32 +82,34 @@ export default () => {
     const UpdateChatForUser = (data: any) => {
         loadNumberOfUnreadMessages();
 
-        if (shouldIShowNotification()) {
-            const notification = new Notification("New message", {
-                body: `${data.message.user} send you new message`,
-            });
-            notification.onclick = () => {
-                router.push({
-                    name: "chat-details",
-                    params: {
-                        chatId: data.chatId,
-                    },
-                });
-            };
+        if(document.visibilityState === 'visible'){
+            return;
         }
+        const notification = new Notification("New message", {
+            body: `${data.message.user} send you new message`,
+        });
+        notification.onclick = () => {
+            router.push({
+                name: "chat-details",
+                params: {
+                    chatId: data.chatId,
+                },
+            });
+        };
     };
 
     const pushNotificaiton = (data: any) => {
-        if (shouldIShowNotification()) {
+if(document.visibilityState === 'visible'){
+            return;
+        }
             const notification = new Notification("Video call", {
                 body: `${data.callId.user.name} is calling you.`,
             });
 
             notification.onclick = (e) => {
                 e.preventDefault();
-                window.open(`/call/${data.callId.videocalls.slug}`);
+                router.push(`/call/${data.callId.videocalls.slug}`);
             };
-        }
     };
 
     const videoCallNotification = (data: any) => {
