@@ -1,79 +1,97 @@
-import { Extension } from "@tiptap/vue-3";
-import { Plugin } from "@tiptap/pm/state";
-import { Decoration, DecorationSet } from '@tiptap/pm/view'
-import { useTextToLinkStore } from "../../store/textToLinkStore";
-import { useRouter } from "vue-router";
-
-
-const items = [];
+import { Extension } from '@tiptap/core'
+import { Plugin, PluginKey } from 'prosemirror-state'
+import { Decoration, DecorationSet } from 'prosemirror-view'
+import { useTextToLinkStore } from '../../store/textToLinkStore.js' // Update this path as needed
+import { useRouter } from 'vue-router'
 
 export const useConvertTextToLink = () => {
-    const textToLinkStore = useTextToLinkStore();
+    const textToLinkStore = useTextToLinkStore()
+    const router = useRouter()
+
+    // Simplified plugin key
+    const pluginKey = new PluginKey('convertTextToLink')
+
+    // Lightweight link finder with optimal regex handling
+    const findLink = (doc) => {
+        // Early return if no items
+        if (!textToLinkStore.items?.length) return DecorationSet.empty
+
+        const decorations = []
+        // Create pattern once per document scan
+        const pattern = new RegExp(textToLinkStore.items.map(item =>
+            `${item}-\\d+|${item}-D-\\d+`).join('|'), 'g')
+
+        doc.descendants((node, pos) => {
+            // Skip non-text nodes quickly
+            if (!node.isText) return
+
+            const text = node.text
+            if (!text) return
+
+            // Reset regex for each new text node
+            pattern.lastIndex = 0
+
+            let match
+            while ((match = pattern.exec(text)) !== null) {
+                const id = match[0]
+                const from = pos + match.index
+                const to = from + id.length
+
+                // Minimal decoration
+                decorations.push(
+                    Decoration.inline(from, to, {
+                        nodeName: 'a',
+                        class: 'router-link',
+                        'data-id': id
+                    })
+                )
+            }
+        })
+
+        return DecorationSet.create(doc, decorations)
+    }
+
+    // Create minimal extension
     const convertTextToLink = Extension.create({
         name: 'convertTextToLink',
-        addStorage() {
-            return {
-                links: []
-            }
-        },
+
         addProseMirrorPlugins() {
+            // Use a single plugin with minimal features
             return [
                 new Plugin({
+                    key: pluginKey,
+
                     state: {
-                        init(_, editor) {
-                            return findLink(editor.doc)
+                        init(_, { doc }) {
+                            return findLink(doc)
                         },
-                        apply(transaction, oldState) {
-                            return transaction.docChanged ? findLink(transaction.doc) : oldState
-                        },
+                        apply(tr, old) {
+                            return tr.docChanged ? findLink(tr.doc) : old
+                        }
                     },
 
                     props: {
                         decorations(state) {
                             return this.getState(state)
                         },
-                    },
-                }),
+
+                        handleClick(view, pos, event) {
+                            const target = event.target
+                            if (target.classList.contains('router-link')) {
+                                const id = target.getAttribute('data-id')
+                                if (id) {
+                                    event.preventDefault()
+                                    router.push(`/open/${id}`)
+                                    return true
+                                }
+                            }
+                            return false
+                        }
+                    }
+                })
             ]
         }
-    });
-    interface Match {
-        0: string;
-        groups?: undefined;
-        index: number;
-        input: string;
-        length: number;
-    }
-    const findLink = (doc) => {
-        const decorations: Decoration[] = [];
-        doc.descendants((node, pos) => {
-            if (!textToLinkStore.items) {
-                return;
-            }
-            const regex = new RegExp(textToLinkStore.items.map(obj => `${obj}-\\d+|${obj}-D-\\d+`).join("|"), 'g');
+    })
 
-            for (const obj of Array.from(node.text?.matchAll(regex) ?? []) as any[]) {
-                const item: Match = obj as Match;
-                const text = obj[0];
-
-                const index = item.index || 0
-                const from = pos + index;
-                const to = from + text.length;
-                const decoration = Decoration.inline(from, to, {
-                    nodeName: 'a',
-                    href: `/open/${text}`,
-                    target: '_blank'
-                })
-
-                decorations.push(decoration)
-            }
-
-        })
-
-        return DecorationSet.create(doc, decorations)
-    }
-
-    return {
-        convertTextToLink
-    }
+    return { convertTextToLink }
 }

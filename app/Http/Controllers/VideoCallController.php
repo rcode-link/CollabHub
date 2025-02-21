@@ -24,7 +24,7 @@ class VideoCallController extends Controller
         $chatData = Chat::with('users')->where('id', $chat)->first();
 
         $title = $chatData->title;
-        if($chatData->type === ChatTypes::USER->value){
+        if ($chatData->type === ChatTypes::USER->value) {
             $title =  $chatData->users->pluck('name')->join('-') . Carbon::now();
         }
 

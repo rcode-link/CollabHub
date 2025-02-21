@@ -13,36 +13,36 @@ export const useSingleUserStore = defineStore("singleUserStore", () => {
         start_work_time: null,
         end_work_time: null,
         deleted_at: null,
-        manager: {
-            id: 0,
-            name: "",
-            email: "",
-            avatar: "",
-            start_work_time: null,
-            end_work_time: null,
-            deleted_at: null,
-            view_profile: "",
-            availability: "",
-        },
+        manager: {},
         view_profile: "",
         availability: "",
     };
+    const breadcrumb = useBreadcrumbStore(); // Initialize the breadcrumb store
     const route = useRoute();
     const loading = ref(true);
-    const user = ref(emptyUser);
-    //
-    const breadcrumb = useBreadcrumbStore();
+    const user = ref(structuredClone(emptyUser));  // Create a deep copy of emptyUser
     const manager = ref();
+
+    function sanitizeUser(userData) {
+        return {
+            id: userData.id || 0,
+            name: userData.name || "",
+            email: userData.email || "",
+            avatar: userData.avatar || "",
+            start_work_time: userData.start_work_time || null,
+            end_work_time: userData.end_work_time || null,
+            deleted_at: userData.deleted_at || null,
+            manager: userData.manager ? sanitizeUser(userData.manager): {},
+            view_profile: Array.isArray(userData.view_profile) ? userData.view_profile : [],
+            availability: Array.isArray(userData.availability) ? userData.availability : [],
+        };
+    }
 
     const load = () => {
         loading.value = true;
         window.axios.get(`/api/v1/users/${route.params.id}`).then((res) => {
-            user.value = res.data.data;
+            user.value = sanitizeUser(res.data.data);
             loading.value = false;
-
-            if (user.value.manager === null) {
-                user.value.manager = emptyUser;
-            }
 
             breadcrumb.setLinks([
                 {

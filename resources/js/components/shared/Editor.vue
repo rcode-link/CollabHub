@@ -71,8 +71,6 @@ const editor = useEditor({
         Mention.configure({
             HTMLAttributes: {
                 class: "mention",
-                onclick:
-                    "window.open(`/user/${event.target.getAttribute('data-id')}`)",
             },
             suggestion: suggestion.plugin,
         }),

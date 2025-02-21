@@ -56,9 +56,9 @@ import { computed } from "vue";
 import { useRoute } from "vue-router";
 import UserIcon from "../../../shared/UserIcon.vue";
 import Task from "../../../shared/icons/Task.vue";
+import EarthIcon from "../../../shared/icons/EarthIcon.vue";
 import { FwbAvatar } from "flowbite-vue";
 import { useUserStore } from "../../../../store/user";
-import EarthIcon from "../../../shared/icons/EarthIcon.vue";
 
 const userStore = useUserStore();
 const route = useRoute();

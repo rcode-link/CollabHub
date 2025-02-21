@@ -67,21 +67,21 @@ export default () => {
     const resetMessages = () => chatStore.resetMessages();
 
     const scrolled = (e: any) => {
-        // const { scrollTop, scrollHeight, offsetHeight } = e.currentTarget;
-        // if (
-        //     scrollTop === scrollHeight - offsetHeight &&
-        //     chatStore.messages.length
-        // ) {
-        //     router.push({
-        //         query: route.query,
-        //         hash: `#message-${
-        //             chatStore.messages[chatStore.messages.length - 1].id
-        //         }`,
-        //     });
-        // }
-        // if (scrollTop === 0) {
-        //     loadMessages();
-        // }
+         const { scrollTop, scrollHeight, offsetHeight } = e.currentTarget;
+         if (
+             scrollTop === scrollHeight - offsetHeight &&
+             chatStore.messages.length
+         ) {
+             router.push({
+                 query: route.query,
+                 hash: `#message-${
+                     chatStore.messages[chatStore.messages.length - 1].id
+                 }`,
+             });
+         }
+         if (scrollTop === 0) {
+             loadMessages();
+         }
     };
 
     return {
