@@ -1,5 +1,5 @@
 <template>
-    <Teleport :to="`#message-${messagesState.selectedMessage}`">
+    <Teleport :to="`#message-${message.id}`">
         <div
             class="flex gap-2 absolute top-0 left-[50%] -translate-y-full -translate-x-1/2 p-2 bg-slate-600 text-white hover:text-slate-200 z-50 rounded-sm"
         >
@@ -48,6 +48,7 @@ const deleteMessageToast = ref(null);
 const message = computed(() => {
     return messagesState.messages[messagesState.selectedMessage - 1];
 });
+
 const messageReaction = (emoji) => {
     deleteMessageToast.value.hideToast();
     console.log(message.value);
@@ -57,27 +58,7 @@ const messageReaction = (emoji) => {
     });
 };
 
-onMounted(() => {
-    let isInside = false;
-    document.getElementById("app").addEventListener("click", (element) => {
-        let el = element.target;
-        isInside = false;
-        while (el.parentNode) {
-            if (
-                el.parentNode.id === `message-${messagesState.selectedMessage}`
-            ) {
-                isInside = true;
-            }
-            el = el.parentNode;
-        }
-        if (!isInside) {
-            messagesState.setSelectedMessage(null);
-        }
-    });
-});
-onUnmounted(() => {
-    document.getElementById("app").removeEventListener("click");
-});
+
 
 const deleteMessage = () => {
     axios.delete(`/api/v1/messages/${message.value.id}`);

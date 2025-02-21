@@ -1,7 +1,7 @@
 import { chatDetails } from "../store/chatStore.js";
 import { toNumber } from "lodash";
 import { useUserStore } from "../store/user.js";
-import { ref, nextTick } from "vue";
+import { ref, nextTick, onUpdated } from "vue";
 import { useRoute, useRouter } from "vue-router";
 
 export default () => {
@@ -19,7 +19,6 @@ export default () => {
 
         if (targetElement) {
             targetElement.scrollIntoView({
-                block: 'start',
                 behavior: 'smooth'
             });
         }
@@ -39,7 +38,7 @@ export default () => {
 
                     scrollMessageToView(data.message.id);
                 }
-                    showScrollToBottom.value = 1;
+                showScrollToBottom.value = 1;
             })
             .listen("ChatMessageUpdated", (data: any) => {
                 setTimeout(() => chatStore.updateMessage(data.data));
@@ -74,7 +73,7 @@ export default () => {
                     number_of_unread_messages_count: 0,
                 });
 
-                return items[items.length- 1];
+                return items[items.length - 1];
             }).then(res => scrollMessageToView(res.id));
     };
 
@@ -86,11 +85,11 @@ export default () => {
 
         const bottom = scrollHeight - offsetHeight - scrollTop;
 
-        if (bottom === 0) {
+        if (bottom < 25) {
             scrollToLastMessage.value = true;
             showScrollToBottom.value = 0;
         }
-        if (scrollTop === 0) {
+        if (scrollTop === 0 && page.value > 1) {
             loadMessages();
         }
     };

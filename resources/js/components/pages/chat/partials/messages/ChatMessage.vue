@@ -13,17 +13,23 @@ const router = useRouter();
 const route = useRoute();
 const messageContainer = ref(null);
 const props = defineProps({
-    index: null,
+  index: null,
 });
 
 const message = computed(() => {
-    return chatStore.messages[props.index - 1];
+  return chatStore.messages[props.index - 1];
 });
-
 </script>
 
 <template>
-    <div ref="messageContainer" class="flex flex-col mx-4 relative" :id="`message-${message.id}`">
-        <PrintChatMessage :message="message" />
-    </div>
+  <div
+    ref="messageContainer"
+    class="flex flex-col mx-4 relative"
+    :id="`message-${message.id}`"
+  >
+    <PrintChatMessage
+      :message="message"
+      @click="() => { chatStore.setSelectedMessage(props.index); }"
+    />
+  </div>
 </template>
