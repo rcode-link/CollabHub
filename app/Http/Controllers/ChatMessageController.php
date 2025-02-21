@@ -44,6 +44,9 @@ class ChatMessageController extends Controller
 
         $message = ChatMessage::create($data);
 
+        $chat->numberOfUnreadMessages()->update([
+            'reaction' => 'seen'
+        ]);
 
         if ($request->files->count()) {
             $message
