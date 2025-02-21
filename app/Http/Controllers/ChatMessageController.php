@@ -58,7 +58,7 @@ class ChatMessageController extends Controller
             return [
                 'user_id' => $user_id,
                 'chat_message_id' => $message->id,
-                'reaction' => null
+                'reaction' => auth()->id() === $user_id ? 'seen' : null
             ];
         })->toArray());
 
