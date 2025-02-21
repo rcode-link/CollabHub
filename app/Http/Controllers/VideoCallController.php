@@ -23,10 +23,7 @@ class VideoCallController extends Controller
     {
         $chatData = Chat::with('users')->where('id', $chat)->first();
 
-        $title = $chatData->title;
-        if ($chatData->type === ChatTypes::USER->value) {
-            $title =  $chatData->users->pluck('name')->join('-') . Carbon::now();
-        }
+        $title = $chatData->type === ChatTypes::USER->value ? $chatData->users->pluck('name')->join('-') . Carbon::now() : $chatData->title;
 
 
         $chatMessage = ChatMessage::create([
@@ -86,4 +83,5 @@ class VideoCallController extends Controller
 
         return response()->json(['token' => $token]);
     }
+
 }
