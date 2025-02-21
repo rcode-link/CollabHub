@@ -11,6 +11,7 @@
                 v-for="(file, index) in chatMessageStore.files"
                 :file="file"
                 :index="index"
+                :key="index"
             />
         </div>
 
@@ -108,7 +109,7 @@ const submit = () => {
     const chatId = route.params.chatId ?? props.chatId;
     const form = new FormData();
 
-    form.append("message", JSON.stringify(chatMessageStore.message));
+    form.append("message", JSON.stringify(editorRef.value.editor.getJSON()));
 
     chatMessageStore.files.forEach((file, index) => {
         form.append(`files[${index}]`, file);

@@ -54,7 +54,6 @@
                         slug: message.videocall.slug,
                     },
                 }"
-                target="_blank"
                 :class="{ 'flex w-2/5': true }"
             >
                 <fwb-badge
@@ -69,7 +68,7 @@
                 v-if="!message.videocall && Object.keys(reactions).length"
                 class="flex mt-1"
             >
-                <fwb-badge v-for="key in Object.keys(reactions)" size="sm">
+                <fwb-badge v-for="key in Object.keys(reactions)" size="sm" v-bind:key="key">
                     <template #icon>
                         {{ key }}
                     </template>
