@@ -93,21 +93,7 @@ const editor = useEditor({
         SmilieReplacer,
         textToLink.convertTextToLink,
     ],
-    onUpdate() {
-        emit("update:modelValue", editor.value.getJSON());
-    },
-    onContentError({ editor, error, disableCollaboration }) {
-        console.log(error);
-    },
-    onTransaction: ({ transaction }) => {
-        console.log("Transaction:", transaction);
-    },
-    onFocus: ({ editor }) => {
-        console.log("Editor focused:", editor);
-    },
-    onBlur: ({ editor }) => {
-        console.log("Editor blurred:", editor);
-    },
+
 });
 
 const exportToPDF = () => {

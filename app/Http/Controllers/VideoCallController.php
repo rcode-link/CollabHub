@@ -14,7 +14,6 @@ use App\Models\VideoCalls;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Laravel\Sanctum\PersonalAccessToken;
 
@@ -24,7 +23,10 @@ class VideoCallController extends Controller
     {
         $chatData = Chat::with('users')->where('id', $chat)->first();
 
-        $title = $chatData->type === ChatTypes::USER->value ? $chatData->users->pluck('name')->join('-') . Carbon::now() : $chatData->title;
+        $title = $chatData->title;
+        if($chatData->type === ChatTypes::USER->value){
+            $title =  $chatData->users->pluck('name')->join('-') . Carbon::now();
+        }
 
 
         $chatMessage = ChatMessage::create([
@@ -44,13 +46,12 @@ class VideoCallController extends Controller
 
         ChatMessageCreated::dispatch($chatMessage);
         return response()->json($chatMessage->videocalls);
-
     }
 
     public function getVideoCallToken(Request $request, $id)
     {
 
-        if ($request->header('authorization')) {
+        if ($request->header('authorization') && $request->header('authorization') != 'Bearer null') {
             $userToken = preg_replace('/Bearer |/', '', $request->header('authorization'));
 
             $user = PersonalAccessToken::findToken($userToken)->tokenable;
@@ -85,5 +86,4 @@ class VideoCallController extends Controller
 
         return response()->json(['token' => $token]);
     }
-
 }
