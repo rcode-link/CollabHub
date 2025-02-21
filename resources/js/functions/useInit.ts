@@ -82,7 +82,7 @@ export default () => {
     const UpdateChatForUser = (data: any) => {
         loadNumberOfUnreadMessages();
 
-        if(document.visibilityState === 'visible'){
+        if (document.visibilityState === 'visible') {
             return;
         }
         const notification = new Notification("New message", {
@@ -99,17 +99,17 @@ export default () => {
     };
 
     const pushNotificaiton = (data: any) => {
-if(document.visibilityState === 'visible'){
+        if (document.visibilityState === 'visible') {
             return;
         }
-            const notification = new Notification("Video call", {
-                body: `${data.callId.user.name} is calling you.`,
-            });
+        const notification = new Notification("Video call", {
+            body: `${data.callId.user.name} is calling you.`,
+        });
 
-            notification.onclick = (e) => {
-                e.preventDefault();
-                router.push(`/call/${data.callId.videocalls.slug}`);
-            };
+        notification.onclick = (e) => {
+            e.preventDefault();
+            router.push(`/call/${data.callId.videocalls.slug}`);
+        };
     };
 
     const videoCallNotification = (data: any) => {
