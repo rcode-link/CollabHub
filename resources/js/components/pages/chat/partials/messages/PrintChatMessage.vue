@@ -12,12 +12,12 @@
             }
         "
         :class="{
-            ' hover:bg-gray-100  focus:outline-none focus:ring-2  dark:hover:bg-gray-600  dark:focus:ring-gray-500':
+            'hover:bg-gray-100  focus:outline-none focus:ring-2  dark:hover:bg-gray-600  dark:focus:ring-gray-500':
                 message.videocall === null,
             'flex rounded cursor-pointer mb-0.5 message-container': true,
         }"
     >
-        <fwb-p class="mb-0 text-xs w-10 date-time mt-1 ml-1">
+        <fwb-p class="mb-0 text-xs w-12 date-time mt-1 ml-1">
             {{ messageTime }}
         </fwb-p>
 

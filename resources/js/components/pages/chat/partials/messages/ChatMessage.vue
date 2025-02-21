@@ -20,26 +20,10 @@ const message = computed(() => {
     return chatStore.messages[props.index - 1];
 });
 
-function handleFocusOnMessage() {
-    if (route.hash === `#message-${message.value.id}`) {
-        messageContainer.value?.scrollIntoView();
-    }
-}
-
-watch(
-    () => route.hash,
-    () => {
-        handleFocusOnMessage();
-    },
-    {
-        deep: true,
-        immediate: true,
-    }
-);
 </script>
 
 <template>
-    <div ref="messageContainer" class="flex flex-col mx-4 relative">
+    <div ref="messageContainer" class="flex flex-col mx-4 relative" :id="`message-${message.id}`">
         <PrintChatMessage :message="message" />
     </div>
 </template>
