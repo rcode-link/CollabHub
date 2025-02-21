@@ -83,5 +83,4 @@ class VideoCallController extends Controller
 
         return response()->json(['token' => $token]);
     }
-
 }
