@@ -39,7 +39,6 @@ watch(
     chatLogic.chatId.value = route.params.chatId;
     chatLogic.listenForMessages(route.params.chatId);
     chatLogic.resetMessages();
-    chatLogic.page.value = 1;
     axios.get(`/api/v1/chats/${route.params.chatId}`).then((response) => {
       chatStore.setActiveChat(response.data.data);
     });
