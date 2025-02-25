@@ -49,6 +49,7 @@ export default () => {
     };
 
     const loadMessages = () => {
+        console.trace("hello")
         page.value += 1;
         window.axios
             .get(`/api/v1/chats/${chatId.value}/messages?page=${page.value}`)
@@ -77,7 +78,10 @@ export default () => {
             }).then(res => scrollMessageToView(res.id));
     };
 
-    const resetMessages = () => chatStore.resetMessages();
+    const resetMessages = () => {
+        page.value = 0;
+        chatStore.resetMessages()
+    };
 
     const scrolled = (e: any) => {
         const { scrollTop, scrollHeight, offsetHeight } = e.currentTarget;

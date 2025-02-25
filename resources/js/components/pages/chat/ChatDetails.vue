@@ -1,5 +1,5 @@
 <script setup>
-import { computed, onMounted, onUnmounted, onUpdated, reactive, ref, watch } from "vue";
+import { computed, onMounted, onUnmounted, onUpdated, reactive, ref, watch, nextTick } from "vue";
 import { FwbButton } from "flowbite-vue";
 import { chatDetails } from "@/store/chatStore.js";
 import Footer from "./partials/messages/Footer.vue";
@@ -30,12 +30,13 @@ watch(
   () => route.params.chatId,
   async (value, oldValue, onCleanup) => {
     if (oldValue) {
-      await axios.post(`/api/v1/chat/${chatLogic.chatId.value}/left`);
+      //await axios.post(`/api/v1/chat/${chatLogic.chatId.value}/left`);
       Echo.leave(`chat.${oldValue}`);
     }
     if (!route.params.chatId) {
       return;
     }
+    console.log('load');
     chatLogic.chatId.value = route.params.chatId;
     chatLogic.listenForMessages(route.params.chatId);
     chatLogic.resetMessages();
@@ -43,7 +44,7 @@ watch(
       chatStore.setActiveChat(response.data.data);
     });
 
-    axios.post(`/api/v1/chat/${route.params.chatId}/present`);
+    //axios.post(`/api/v1/chat/${route.params.chatId}/present`);
     chatLogic.loadMessages();
   },
   {
@@ -55,7 +56,7 @@ onUpdated(() => {
     if(chatLogic.page.value !== 1){
         return;
     }
-    chatLogic.scrollToBottom();
+    setTimeout(() => chatLogic.scrollToBottom());
 })
 
 onUnmounted(async () => {

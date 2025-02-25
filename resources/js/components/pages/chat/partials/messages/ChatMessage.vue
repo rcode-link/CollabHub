@@ -6,15 +6,20 @@ import { useRoute, useRouter } from "vue-router";
 import PrintChatMessage from "./PrintChatMessage.vue";
 import { chatDetails } from "@/store/chatStore.js";
 import { DateTime } from "luxon";
+import { onClickOutside } from '@vueuse/core'
+import { useTemplateRef } from 'vue'
+
+
+
 
 const chatStore = chatDetails();
 const user = useUserStore();
 const router = useRouter();
 const route = useRoute();
-const messageContainer = ref(null);
 const props = defineProps({
   index: null,
 });
+
 
 const message = computed(() => {
   return chatStore.messages[props.index - 1];
@@ -23,7 +28,6 @@ const message = computed(() => {
 
 <template>
   <div
-    ref="messageContainer"
     class="flex flex-col mx-4 relative"
     :id="`message-${message.id}`"
   >
