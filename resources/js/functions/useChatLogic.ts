@@ -93,7 +93,7 @@ export default () => {
             scrollToLastMessage.value = true;
             showScrollToBottom.value = 0;
         }
-        if (scrollTop === 0 && page.value > 1) {
+        if (scrollTop === 0) {
             loadMessages();
         }
     };
