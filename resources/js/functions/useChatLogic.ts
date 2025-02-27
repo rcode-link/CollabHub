@@ -7,6 +7,7 @@ import { useRoute, useRouter } from "vue-router";
 export default () => {
     const chatStore = chatDetails();
     const userStore = useUserStore();
+    const maxPage = ref(0);
     const page = ref(0);
     const route = useRoute();
     const router = useRouter();
@@ -49,15 +50,19 @@ export default () => {
     };
 
     const loadMessages = () => {
-        console.trace("hello")
         page.value += 1;
+
+        if(maxPage.value != 0 && page.value > maxPage.value){
+            return;
+        }
         window.axios
             .get(`/api/v1/chats/${chatId.value}/messages?page=${page.value}`)
             .then((response) => {
 
                 const items = response.data.data;
+
+                maxPage.value = response.data.meta.last_page;
                 chatStore.addMessages(items);
-                //progressBar.finish();
                 const numOfUnread = chatStore.chatList.find(
                     (obj: any) => obj.id === toNumber(route.params.chatId)
                 );
