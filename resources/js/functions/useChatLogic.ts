@@ -79,9 +79,17 @@ export default () => {
                     id: route.params.chatId,
                     number_of_unread_messages_count: 0,
                 });
-
-                return items[items.length - 1];
-            }).then(res => scrollMessageToView(res.id));
+                try {
+                    return items[items.length - 1];
+                } catch (error) {
+                    return null;
+                }
+            }).then(res => {
+                if (!res) {
+                    return;
+                }
+                scrollMessageToView(res.id)
+            });
     };
 
     const resetMessages = () => {
