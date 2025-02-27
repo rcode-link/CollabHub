@@ -82,7 +82,11 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media;
  */
 class User extends Authenticatable implements HasMedia
 {
-    use HasApiTokens, HasFactory, Notifiable, InteractsWithMedia, SoftDeletes;
+    use HasApiTokens;
+    use HasFactory;
+    use Notifiable;
+    use InteractsWithMedia;
+    use SoftDeletes;
 
     /**
      * The attributes that are mass assignable.
@@ -149,7 +153,6 @@ class User extends Authenticatable implements HasMedia
                 ]);
 
                 $chat->users()->attach($user);
-
             }
 
 
@@ -157,7 +160,7 @@ class User extends Authenticatable implements HasMedia
             $chats = Chat::query()
                 ->whereHasMorph('chatable', Company::class)
                 ->with('users')
-                ->whereHas('users', fn(Builder $builder) => $builder->whereNot('user_id', $user->id))
+                ->whereHas('users', fn (Builder $builder) => $builder->whereNot('user_id', $user->id))
                 ->get();
 
             $messageContent = [
@@ -201,8 +204,6 @@ class User extends Authenticatable implements HasMedia
                 ChatMessageCreated::dispatch($message);
             }
         });
-
-
     }
 
 
@@ -213,7 +214,7 @@ class User extends Authenticatable implements HasMedia
             ManagePermissionsEvent::dispatch();
         }
 
-        return $data->filter(fn($obj) => $obj['users']->contains($this->id));
+        return $data->filter(fn ($obj) => $obj['users']->contains($this->id));
     }
 
     public function manager(): BelongsTo
@@ -274,5 +275,4 @@ class User extends Authenticatable implements HasMedia
             ];
         });
     }
-
 }
