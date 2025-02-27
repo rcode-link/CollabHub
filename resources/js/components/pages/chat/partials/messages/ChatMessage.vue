@@ -26,7 +26,7 @@ const props = defineProps({
   >
     <PrintChatMessage
       :message="message"
-      @click="() => { chatStore.setSelectedMessage(props.index); }"
+      @click="() => { chatStore.setSelectedMessage(message.id); }"
     />
   </div>
 </template>

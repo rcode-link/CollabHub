@@ -73,12 +73,6 @@ onUnmounted(async () => {
 
   chatLogic.chatId.value = null;
 });
-
-const messages = computed(() => {
-  return _.groupBy(chatStore.messages, (obj) => {
-    return DateTime.fromISO(obj.createdAt).toLocaleString(DateTime.DATE_SHORT);
-  });
-});
 </script>
 <template>
   <div class="chat-details">
@@ -96,16 +90,20 @@ const messages = computed(() => {
         Loading older messages...
       </div>
 
-      <div
+      <template
         v-for="(obj, index) in chatStore.messages"
         :key="obj"
       >
-        <show-user :user="obj.user" :messageId="obj.id" />
+        <ShowDate :index="index" />
+        <show-user
+          :user="obj.user"
+          :messageId="obj.id"
+        />
         <ChatMessage
           :message="obj"
           :index="index"
         />
-      </div>
+      </template>
 
       <MessageOptions v-if="chatStore.selectedMessage" />
 
