@@ -20,7 +20,8 @@ export default () => {
 
         if (targetElement) {
             targetElement.scrollIntoView({
-                behavior: 'smooth'
+                behavior: 'smooth',
+                block: "start"
             });
         }
         showScrollToBottom.value = 0;
@@ -52,7 +53,7 @@ export default () => {
     const loadMessages = () => {
         page.value += 1;
 
-        if(maxPage.value != 0 && page.value > maxPage.value){
+        if (maxPage.value != 0 && page.value > maxPage.value) {
             return;
         }
         window.axios
