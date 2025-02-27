@@ -62,7 +62,7 @@ export default () => {
                 const items = response.data.data;
 
                 maxPage.value = response.data.meta.last_page;
-                chatStore.addMessages(items);
+                chatStore.addMessages(items.reverse());
                 const numOfUnread = chatStore.chatList.find(
                     (obj: any) => obj.id === toNumber(route.params.chatId)
                 );

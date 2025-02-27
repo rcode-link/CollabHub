@@ -12,9 +12,7 @@ const showUser = computed(() => {
   const prevMessage = chatStore.messages.findIndex(
     (obj) => (obj.id == messageId)
   );
-
-    console.log(messageId, prevMessage);
-    // if the message index is zero that means its first message in the list
+  // if the message index is zero that means its first message in the list
   if (prevMessage === 0) {
     return true;
   }

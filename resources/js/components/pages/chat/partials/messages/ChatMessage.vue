@@ -6,11 +6,8 @@ import { useRoute, useRouter } from "vue-router";
 import PrintChatMessage from "./PrintChatMessage.vue";
 import { chatDetails } from "@/store/chatStore.js";
 import { DateTime } from "luxon";
-import { onClickOutside } from '@vueuse/core'
-import { useTemplateRef } from 'vue'
-
-
-
+import { onClickOutside } from "@vueuse/core";
+import { useTemplateRef } from "vue";
 
 const chatStore = chatDetails();
 const user = useUserStore();
@@ -18,10 +15,8 @@ const router = useRouter();
 const route = useRoute();
 const props = defineProps({
   index: null,
-    message:null
+  message: null,
 });
-
-
 </script>
 
 <template>
