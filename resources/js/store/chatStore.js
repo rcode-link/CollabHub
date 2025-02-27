@@ -17,11 +17,11 @@ export const chatDetails = defineStore("chatDetails", {
   actions: {
     setSelectedMessage(index) {
 
-      if(this.selectedMessage == index) {
+      if (this.selectedMessage == index) {
         this.selectedMessage = null;
         return;
       }
-            this.selectedMessage = index;
+      this.selectedMessage = index;
     },
     setChatList(list) {
       this.chatList = list;

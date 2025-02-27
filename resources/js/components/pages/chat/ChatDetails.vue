@@ -1,5 +1,14 @@
 <script setup>
-import { computed, onMounted, onUnmounted, onUpdated, reactive, ref, watch, nextTick } from "vue";
+import {
+  computed,
+  onMounted,
+  onUnmounted,
+  onUpdated,
+  reactive,
+  ref,
+  watch,
+  nextTick,
+} from "vue";
 import { FwbButton } from "flowbite-vue";
 import { chatDetails } from "@/store/chatStore.js";
 import Footer from "./partials/messages/Footer.vue";
@@ -36,7 +45,7 @@ watch(
     if (!route.params.chatId) {
       return;
     }
-    console.log('load');
+    console.log("load");
     chatLogic.chatId.value = route.params.chatId;
     chatLogic.listenForMessages(route.params.chatId);
     chatLogic.resetMessages();
@@ -53,11 +62,11 @@ watch(
 );
 
 onUpdated(() => {
-    if(chatLogic.page.value !== 1){
-        return;
-    }
-    setTimeout(() => chatLogic.scrollToBottom());
-})
+  if (chatLogic.page.value !== 1) {
+    return;
+  }
+  setTimeout(() => chatLogic.scrollToBottom());
+});
 
 onUnmounted(async () => {
   await Echo.leave(`chat.${chatLogic.chatId.value}`);
@@ -88,13 +97,12 @@ const messages = computed(() => {
       </div>
 
       <div
-        v-for="index in chatStore.messages.length"
-        :key="index"
+        v-for="(obj, index) in chatStore.messages"
+        :key="obj"
       >
-        <show-date :index="index" />
-        <show-user :index="index" />
+        <show-user :user="obj.user" :messageId="obj.id" />
         <ChatMessage
-          :key="obj"
+          :message="obj"
           :index="index"
         />
       </div>

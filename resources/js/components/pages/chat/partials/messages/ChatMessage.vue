@@ -18,12 +18,10 @@ const router = useRouter();
 const route = useRoute();
 const props = defineProps({
   index: null,
+    message:null
 });
 
 
-const message = computed(() => {
-  return chatStore.messages[props.index - 1];
-});
 </script>
 
 <template>

@@ -18,10 +18,8 @@
         }"
   >
     <fwb-p :class="['mb-0 text-xs w-12  mt-1 ml-1', {
-            'opacity-0': !hovered,
-            'opacity-100': hovered
+            'opacity-0': true,
         }]">
-      {{ messageTime }}
     </fwb-p>
 
     <div class="flex-1">
@@ -124,7 +122,4 @@ const reactions = computed(() =>
   opacity: 0;
 }
 
-.message-container:hover .date-time {
-  opacity: 1;
-}
 </style>

@@ -2,56 +2,41 @@
 import { FwbAvatar, FwbP } from "flowbite-vue";
 import { computed } from "vue";
 import { chatDetails } from "@/store/chatStore.js";
-import { DateTime } from "luxon";
-const props = defineProps({
-    index: null,
+const { user, messageId } = defineProps({
+  user: null,
+  messageId: null,
 });
 const chatStore = chatDetails();
 
 const showUser = computed(() => {
-    if (props.index - 1 === 0) {
-        return true;
-    }
+  const prevMessage = chatStore.messages.findIndex(
+    (obj) => (obj.id == messageId)
+  );
 
-    const prevDate = DateTime.fromISO(
-        chatStore.messages[props.index - 2].createdAt
-    ).toLocaleString(DateTime.DATE_SHORT);
+    console.log(messageId, prevMessage);
+    // if the message index is zero that means its first message in the list
+  if (prevMessage === 0) {
+    return true;
+  }
 
-    if (
-        prevDate !=
-        DateTime.fromISO(
-            chatStore.messages[props.index - 1].createdAt
-        ).toLocaleString(DateTime.DATE_SHORT)
-    ) {
-        return true;
-    }
 
-    if (
-        chatStore.messages[props.index - 1].user.id !=
-        chatStore.messages[props.index - 2].user.id
-    ) {
-        return true;
-    }
-    return false;
-});
-const message = computed(() => {
-    return chatStore.messages[props.index - 1];
+  return user.id !== chatStore.messages[prevMessage - 1].user.id;
 });
 </script>
 <template>
-    <router-link
-        v-if="showUser"
-        :to="`/user/${message.user.id}`"
-        :class="{ 'mb-1 mt-2 ml-4 flex gap-1 items-center': true }"
-    >
-        <fwb-avatar :img="message.user.avatar" />
-        <fwb-p class="font-bold">
-            <div>
-                {{ message.user.name }}
-            </div>
-            <div class="text-xs mb-auto">
-                {{ message.user.email }}
-            </div>
-        </fwb-p>
-    </router-link>
+  <router-link
+    v-if="showUser"
+    :to="`/user/${user.id}`"
+    :class="{ 'mb-1 mt-2 ml-4 flex gap-1 items-center': true }"
+  >
+    <fwb-avatar :img="user.avatar" />
+    <fwb-p class="font-bold">
+      <div>
+        {{ user.name }}
+      </div>
+      <div class="text-xs mb-auto">
+        {{ user.email }}
+      </div>
+    </fwb-p>
+  </router-link>
 </template>
