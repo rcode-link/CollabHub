@@ -27,8 +27,9 @@ const chatStore = chatDetails();
 const route = useRoute();
 const router = useRouter();
 const page = ref(1);
+const messageContainerRef = ref(null);
 
-const chatLogic = useChatLogic(route.params.chatId);
+const chatLogic = useChatLogic(route.params.chatId, messageContainerRef);
 const messageMenuId = ref(null);
 const form = reactive({
   message: "",
@@ -78,7 +79,7 @@ onUnmounted(async () => {
   <div class="chat-details">
     <Header />
     <main
-      ref="chatLogic.messageContainerRef"
+      ref="messageContainerRef"
       @scroll="chatLogic.scrolled"
       class="overflow-auto pb-2 message-container"
     >

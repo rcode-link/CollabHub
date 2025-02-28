@@ -4,7 +4,7 @@ import { useUserStore } from "../store/user.js";
 import { ref, nextTick, onUpdated } from "vue";
 import { useRoute, useRouter } from "vue-router";
 
-export default () => {
+export default (chatIdParam, messageContainerRef) => {
     const chatStore = chatDetails();
     const userStore = useUserStore();
     const maxPage = ref(0);
@@ -15,18 +15,18 @@ export default () => {
     const scrollToLastMessage = ref(false);
     const showScrollToBottom = ref(0);
     const lastMessageId = ref(null)
+
     const scrollMessageToView = (targetId) => {
-        const targetElement = document.getElementById(`message-${targetId}`);
-
-        if (targetElement) {
-            targetElement.scrollIntoView({
-                behavior: 'smooth',
-                block: "start"
-            });
-        }
-        showScrollToBottom.value = 0;
-        lastMessageId.value = null;
-
+        nextTick(() => {
+            const targetElement = document.getElementById(`message-${targetId}`);
+            const container = messageContainerRef.value;
+            if (targetElement && container) {
+                const itemPosition = targetElement.offsetTop;
+                container.scrollTop = itemPosition;
+            }
+            showScrollToBottom.value = 0;
+            lastMessageId.value = null;
+        });
     }
     const listenForMessages = () => {
 
@@ -60,10 +60,10 @@ export default () => {
             .get(`/api/v1/chats/${chatId.value}/messages?page=${page.value}`)
             .then((response) => {
 
-                const items = response.data.data;
+                const items = response.data.data.reverse();
 
                 maxPage.value = response.data.meta.last_page;
-                chatStore.addMessages(items.reverse());
+                chatStore.addMessages(items);
                 const numOfUnread = chatStore.chatList.find(
                     (obj: any) => obj.id === toNumber(route.params.chatId)
                 );
@@ -88,7 +88,8 @@ export default () => {
                 if (!res) {
                     return;
                 }
-                scrollMessageToView(res.id)
+                console.log(res.id)
+                nextTick(() => scrollMessageToView(res.id));
             });
     };
 
@@ -127,6 +128,7 @@ export default () => {
         scrolled,
         chatId,
         listenForMessages,
-        lastMessageId
+        lastMessageId,
+        messageContainerRef
     };
 };
