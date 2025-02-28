@@ -2,7 +2,7 @@
 import { EditorContent, useEditor } from "@tiptap/vue-3";
 import StarterKit from "@tiptap/starter-kit";
 import { Link } from "@tiptap/extension-link";
-import { ref, watch } from "vue";
+import { ref, watch, computed } from "vue";
 import { FwbButton, FwbCard } from "flowbite-vue";
 import { createLowlight } from "lowlight";
 import CodeBlockLowlight from "@tiptap/extension-code-block-lowlight";
@@ -25,6 +25,10 @@ import { useConvertTextToLink } from "../../../functions/editor/convertTextToLin
 import { Collaboration } from "@/functions/editor/colab/Collaboration";
 import { Cursors } from "@/functions/editor/colab/Cursor";
 import Placeholder from "@tiptap/extension-placeholder";
+import AdvancedBlockInsertionMenu from "../../../functions/editor/AdvancedBlockInsertionMenu";
+import BlockHoverActions from "../../../functions/editor/BlockHoverActions";
+import EnsureParagraph from "../../../functions/editor/EnsureParagraph";
+import EditorNavigation from "../../../functions/editor/EditorNavigation";
 
 const props = defineProps({
     modelValue: {
@@ -46,6 +50,11 @@ const emit = defineEmits(["update:modelValue", "submitted"]);
 
 const pressedKeys = ref([]);
 const textToLink = useConvertTextToLink();
+
+
+const showExtensions = computed(() => {
+    return props.editable;
+});
 
 const submited = async () => {
     emit('update:modelValue', editor.value.getJSON());
@@ -76,10 +85,9 @@ const editor = useEditor({
     },
     extensions: [
         StarterKit,
-        Placeholder.configure({
-            emptyEditorClass: 'is-editor-empty',
-        }),
-        Navitaion,
+        AdvancedBlockInsertionMenu,
+        EditorNavigation,
+        BlockHoverActions,
 
         // Cursors,
         // Collaboration.configure({
@@ -98,7 +106,9 @@ const editor = useEditor({
         drawIoExtension.configure({ openDialog: "dblclick" }),
         tableExtension.configure({
             resizable: true,
-            allowTableNodeSelection: true,
+            handleWidth: 5,
+            cellMinWidth: 50,
+            lastColumnResizable: true,
         }),
         TableRow,
         TableHeader,
@@ -214,52 +224,6 @@ function cleanTiptapJson(rawData) {
   border: none;
 }
 
-/* Styling for editor content */
-.tiptap h1 {
-  @apply text-3xl font-bold mb-4 mt-6;
-}
-
-.tiptap h2 {
-  @apply text-2xl font-bold mb-3 mt-5;
-}
-
-.tiptap h3 {
-  @apply text-xl font-bold mb-3 mt-4;
-}
-
-.tiptap p {
-  @apply mb-4;
-}
-
-.tiptap ul {
-  @apply list-disc pl-5 mb-4;
-}
-
-.tiptap ol {
-  @apply list-decimal pl-5 mb-4;
-}
-
-.tiptap blockquote {
-  @apply pl-4 border-l-4 border-gray-300 dark:border-gray-600 italic my-4;
-}
-
-.tiptap pre {
-  @apply bg-gray-100 dark:bg-gray-700 p-3 rounded mb-4 overflow-x-auto;
-}
-
-.tiptap table {
-  @apply border-collapse w-full mb-4;
-}
-
-.tiptap table th,
-.tiptap table td {
-  @apply border border-gray-300 dark:border-gray-600 p-2;
-}
-
-.tiptap table th {
-  @apply bg-gray-100 dark:bg-gray-700 font-bold;
-}
-
 /* Mention styling */
 .mention {
   @apply bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 px-1 rounded;
@@ -279,5 +243,64 @@ function cleanTiptapJson(rawData) {
   width: 100%;
   margin: 0;
   overflow: hidden;
+}
+
+/* Basic editor styles */
+.tiptap :first-child {
+  margin-top: 0;
+}
+
+
+.tiptap table .selectedCell:after {
+  background: var(--gray-2);
+  content: "";
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  pointer-events: none;
+  position: absolute;
+  z-index: 2;
+}
+
+.tiptap table .column-resize-handle {
+  background-color: var(--purple);
+  bottom: -2px;
+  pointer-events: none;
+  position: absolute;
+  right: -2px;
+  top: 0;
+  width: 4px;
+}
+
+.tiptap .tableWrapper {
+  margin: 1.5rem 0;
+  overflow-x: auto;
+}
+
+/* Added styling for our improved table plugin */
+.tiptap.resize-cursor {
+  cursor: ew-resize;
+  cursor: col-resize;
+}
+
+.tiptap .selected-table-row {
+  background-color: rgba(0, 100, 255, 0.05);
+}
+
+.tiptap .selected-table-cell {
+  position: relative;
+}
+
+.tiptap .selected-table-cell::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 100, 255, 0.1);
+  pointer-events: none;
+  z-index: 2;
 }
 </style>
