@@ -3,15 +3,17 @@ import { EditorContent, useEditor } from "@tiptap/vue-3";
 import StarterKit from "@tiptap/starter-kit";
 import { Link } from "@tiptap/extension-link";
 import { ref, watch } from "vue";
-import { FwbButton } from "flowbite-vue";
+import { FwbButton, FwbCard } from "flowbite-vue";
 import { createLowlight } from "lowlight";
 import CodeBlockLowlight from "@tiptap/extension-code-block-lowlight";
 import FloppyDiskIcon from "../icons/FloppyDiskIcon.vue";
+import FilePdfIcon from "../icons/FilePdf.vue";
 import drawIoExtension from "@rcode-link/tiptap-drawio";
 import { TableRow } from "@tiptap/extension-table-row";
 import { TableHeader } from "@tiptap/extension-table-header";
 import { TableCell } from "@tiptap/extension-table-cell";
 import tableExtension from "../../../functions/editor/TableExtension";
+import Navitaion from "../../../functions/editor/editorNavigation.js";
 import { useRoute } from "vue-router";
 import EditorHeader from "./EditorHeader.vue";
 import hljs from "highlight.js";
@@ -22,6 +24,8 @@ import { SmilieReplacer } from "../../../functions/smilieReplacer";
 import { useConvertTextToLink } from "../../../functions/editor/convertTextToLink";
 import { Collaboration } from "@/functions/editor/colab/Collaboration";
 import { Cursors } from "@/functions/editor/colab/Cursor";
+import Placeholder from "@tiptap/extension-placeholder";
+
 const props = defineProps({
     modelValue: {
         type: String,
@@ -72,6 +76,11 @@ const editor = useEditor({
     },
     extensions: [
         StarterKit,
+        Placeholder.configure({
+            emptyEditorClass: 'is-editor-empty',
+        }),
+        Navitaion,
+
         // Cursors,
         // Collaboration.configure({
         //     documentId: 1
@@ -80,7 +89,6 @@ const editor = useEditor({
             HTMLAttributes: {
                 class: "mention",
             },
-
             suggestion,
         }),
         Link.configure({}),
@@ -98,14 +106,16 @@ const editor = useEditor({
         SmilieReplacer,
         textToLink.convertTextToLink,
     ],
-
 });
 
 const exportToPDF = () => {
+    console.log(editor.value);
     document.getElementById('print').innerHTML = editor.value.getHTML();
     window.print();
 };
-function cleanTiptapJson(json) {
+
+function cleanTiptapJson(rawData) {
+    const json = { ...rawData };
     // Recursively clean the content
     function cleanContent(content) {
         return content
@@ -141,51 +151,133 @@ function cleanTiptapJson(json) {
 </script>
 
 <template>
-  <div
-    v-if="editor"
-    class="max-w-full pb-2 gap-1 hidden lg:flex"
-  >
-    <EditorHeader :editor="editor" />
-    <div class="ml-auto">
+  <div class="w-full bg-white border border-gray-200 rounded-lg shadow-sm dark:bg-gray-800 dark:border-gray-700">
+    <fwb-card-header
+      class="p-0 border-b-0"
+      v-if="editor"
+    >
+      <!-- Desktop toolbar -->
+      <div class="hidden lg:block">
+        <EditorHeader :editor="editor" />
+      </div>
+
+      <!-- Mobile toolbar -->
+      <MobileMenu
+        v-if="editor"
+        :editor="editor"
+        class="block lg:hidden"
+      />
+    </fwb-card-header>
+
+    <editor-content
+      class="editor-content mb-4 sm:mb-0"
+      :editor="editor"
+    />
+
+    <fwb-card-footer class="justify-end gap-2 bg-gray-50 dark:bg-gray-800 p-2 hidden md:flex">
       <fwb-button
-        color="alternative"
+        color="light"
+        size="sm"
         @click="exportToPDF"
       >
-        Export
+
+        <div class="flex flex-col justify-center items-center">
+
+          <FilePdfIcon class="w-4 h-4" />
+        </div>
       </fwb-button>
       <fwb-button
-        color="alternative"
-        @click="() => submited()"
+        size="sm"
+        @click="submited"
       >
-        <FloppyDiskIcon class="w-4 h-4" />
+        <div class="flex flex-col justify-center items-center">
+          <FloppyDiskIcon class="w-4 h-4" />
+        </div>
       </fwb-button>
-    </div>
+    </fwb-card-footer>
   </div>
-  <MobileMenu
-    v-if="editor"
-    :editor="editor"
-    class="block lg:hidden"
-  />
-  <editor-content
-    class="document-editor"
-    :editor="editor"
-  />
 </template>
 
 <style>
-.document-editor {
-  @apply w-full flex p-1 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700;
-  height: calc(100vh - 50px);
-  margin-bottom: 10px;
-  overflow: auto;
+.editor-content {
+  @apply w-full p-3 bg-white dark:bg-gray-800;
+  height: calc(100vh - 150px);
+  overflow-y: auto;
 }
 
-.document-editor > .tiptap.ProseMirror {
-  @apply min-h-[80vh] w-full active:border-none focus:border-none focus:outline-0;
+.editor-content > .tiptap.ProseMirror {
+  @apply min-h-full w-full active:border-none focus:border-none focus:outline-0;
 }
 
-.document-editor > .tiptap.ProseMirror-focused {
+.editor-content > .tiptap.ProseMirror-focused {
   outline: none;
   border: none;
+}
+
+/* Styling for editor content */
+.tiptap h1 {
+  @apply text-3xl font-bold mb-4 mt-6;
+}
+
+.tiptap h2 {
+  @apply text-2xl font-bold mb-3 mt-5;
+}
+
+.tiptap h3 {
+  @apply text-xl font-bold mb-3 mt-4;
+}
+
+.tiptap p {
+  @apply mb-4;
+}
+
+.tiptap ul {
+  @apply list-disc pl-5 mb-4;
+}
+
+.tiptap ol {
+  @apply list-decimal pl-5 mb-4;
+}
+
+.tiptap blockquote {
+  @apply pl-4 border-l-4 border-gray-300 dark:border-gray-600 italic my-4;
+}
+
+.tiptap pre {
+  @apply bg-gray-100 dark:bg-gray-700 p-3 rounded mb-4 overflow-x-auto;
+}
+
+.tiptap table {
+  @apply border-collapse w-full mb-4;
+}
+
+.tiptap table th,
+.tiptap table td {
+  @apply border border-gray-300 dark:border-gray-600 p-2;
+}
+
+.tiptap table th {
+  @apply bg-gray-100 dark:bg-gray-700 font-bold;
+}
+
+/* Mention styling */
+.mention {
+  @apply bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 px-1 rounded;
+}
+
+.selected-table-cell {
+  background-color: rgba(59, 130, 246, 0.1) !important;
+}
+
+.selected-table-row {
+  background-color: rgba(59, 130, 246, 0.05) !important;
+}
+
+.tiptap-table {
+  border-collapse: collapse;
+  table-layout: fixed;
+  width: 100%;
+  margin: 0;
+  overflow: hidden;
 }
 </style>

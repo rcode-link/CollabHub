@@ -2,6 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
+@import '/node_modules/flowbite-vue/dist/index.css';
 .router-link-exact-active {
     @apply font-bold text-blue-800 dark:text-blue-400
 }
@@ -213,4 +214,19 @@ pre .hljs-strong {
 
 .input {
     @apply bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500
+}
+.selected-table-cell {
+  background-color: rgba(59, 130, 246, 0.1) !important;
+}
+
+.selected-table-row {
+  background-color: rgba(59, 130, 246, 0.05) !important;
+}
+
+.tiptap-table {
+  border-collapse: collapse;
+  table-layout: fixed;
+  width: 100%;
+  margin: 0;
+  overflow: hidden;
 }
