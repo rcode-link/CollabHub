@@ -1,6 +1,7 @@
 <script setup>
 import OrderedListIcon from "../icons/OrderedListIcon.vue";
 import QuoteIcon from "../icons/QuoteIcon.vue";
+
 import {
   FwbButton,
   FwbDropdown,
@@ -69,6 +70,21 @@ const updateTableState = () => {
   }
 };
 
+const addImage = function () {
+  const url = window.prompt("URL");
+
+  if (url) {
+    props.editor
+      .chain()
+      .focus()
+      .setImage({
+        src: url,
+        alt: "Random image",
+        title: "Random image from Unsplash",
+      })
+      .run();
+  }
+};
 const textType = [
   {
     label: "Paragraph",
@@ -291,6 +307,16 @@ watch(isTableSelected, (newVal) => {
         </fwb-list-group-item>
         <fwb-list-group-item
           class="hover:bg-gray-100 cursor-pointer flex items-center"
+          @click="addImage"
+        >
+          <div class="flex items-center">
+            <DiagramIcon class="w-4 h-4 mr-2" />
+            Image
+          </div>
+        </fwb-list-group-item>
+
+        <fwb-list-group-item
+          class="hover:bg-gray-100 cursor-pointer flex items-center"
           @click="(e) => buttonClicked(e, editor.commands.insertDrawIo())"
         >
           <div class="flex items-center">
@@ -330,10 +356,11 @@ watch(isTableSelected, (newVal) => {
       </fwb-list-group>
     </fwb-dropdown>
 
+
     <!-- Table Controls Dropdown -->
     <!-- Using our custom isTableSelected computed property instead of editor.isActive('table') -->
     <fwb-dropdown
-      v-if="editor.isActive('improvedTable')"
+      v-if="editor.isActive('table')"
       placement="bottom"
     >
       <template #trigger>
@@ -349,6 +376,13 @@ watch(isTableSelected, (newVal) => {
         </fwb-button>
       </template>
       <fwb-list-group>
+        <fwb-list-group-item
+          class="hover:bg-gray-100 cursor-pointer"
+          @click="(e) => buttonClicked(e, editor.commands.toggleTableStriped())"
+        >
+                    Stripped style
+        </fwb-list-group-item>
+
         <fwb-list-group-item
           class="hover:bg-gray-100 cursor-pointer"
           @click="(e) => buttonClicked(e, editor.commands.addRowAfter())"

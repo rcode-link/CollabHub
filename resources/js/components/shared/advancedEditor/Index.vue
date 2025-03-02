@@ -1,19 +1,16 @@
 <script setup lang="js">
 import { EditorContent, useEditor } from "@tiptap/vue-3";
-import StarterKit from "@tiptap/starter-kit";
+import { VueNodeViewRenderer } from '@tiptap/vue-3';
 import { Link } from "@tiptap/extension-link";
 import { ref, watch, computed } from "vue";
-import { FwbButton, FwbCard } from "flowbite-vue";
+import {
+    FwbButton, FwbCard
+} from "flowbite-vue";
 import { createLowlight } from "lowlight";
 import CodeBlockLowlight from "@tiptap/extension-code-block-lowlight";
 import FloppyDiskIcon from "../icons/FloppyDiskIcon.vue";
 import FilePdfIcon from "../icons/FilePdf.vue";
 import drawIoExtension from "@rcode-link/tiptap-drawio";
-import { TableRow } from "@tiptap/extension-table-row";
-import { TableHeader } from "@tiptap/extension-table-header";
-import { TableCell } from "@tiptap/extension-table-cell";
-import tableExtension from "../../../functions/editor/TableExtension";
-import Navitaion from "../../../functions/editor/editorNavigation.js";
 import { useRoute } from "vue-router";
 import EditorHeader from "./EditorHeader.vue";
 import hljs from "highlight.js";
@@ -22,14 +19,32 @@ import Mention from "@tiptap/extension-mention";
 import suggestion from "../../../functions/editor/mention/suggestion";
 import { SmilieReplacer } from "../../../functions/smilieReplacer";
 import { useConvertTextToLink } from "../../../functions/editor/convertTextToLink";
-import { Collaboration } from "@/functions/editor/colab/Collaboration";
-import { Cursors } from "@/functions/editor/colab/Cursor";
-import Placeholder from "@tiptap/extension-placeholder";
-import AdvancedBlockInsertionMenu from "../../../functions/editor/AdvancedBlockInsertionMenu";
-import BlockHoverActions from "../../../functions/editor/BlockHoverActions";
-import EnsureParagraph from "../../../functions/editor/EnsureParagraph";
-import EditorNavigation from "../../../functions/editor/EditorNavigation";
+import { Image } from "@tiptap/extension-image";
 
+// Import individual extensions instead of StarterKit
+import Document from '@tiptap/extension-document';
+import Paragraph from '@tiptap/extension-paragraph';
+import Text from '@tiptap/extension-text';
+import Heading from '@tiptap/extension-heading';
+import BulletList from '@tiptap/extension-bullet-list';
+import OrderedList from '@tiptap/extension-ordered-list';
+import ListItem from '@tiptap/extension-list-item';
+import Bold from '@tiptap/extension-bold';
+import Italic from '@tiptap/extension-italic';
+import Strike from '@tiptap/extension-strike';
+import Blockquote from '@tiptap/extension-blockquote';
+import HardBreak from '@tiptap/extension-hard-break';
+import HorizontalRule from '@tiptap/extension-horizontal-rule';
+import History from '@tiptap/extension-history';
+import Table from '@tiptap/extension-table';
+import TableRow from '@tiptap/extension-table-row';
+import TableCell from '@tiptap/extension-table-cell';
+import TableHeader from '@tiptap/extension-table-header';
+import  StripedTable  from './blocks/table/FlowbiteTableExtension.js'
+import CustomBlockView from './blocks/customNode/CustomNodeView.vue';
+import Placeholder from '@tiptap/extension-placeholder';
+
+import { MoveNode } from './MoveBlock.js'
 const props = defineProps({
     modelValue: {
         type: String,
@@ -51,16 +66,55 @@ const emit = defineEmits(["update:modelValue", "submitted"]);
 const pressedKeys = ref([]);
 const textToLink = useConvertTextToLink();
 
-
-const showExtensions = computed(() => {
-    return props.editable;
-});
-
 const submited = async () => {
     emit('update:modelValue', editor.value.getJSON());
     emit("submitted", true);
 }
 
+// Create custom extensions with node views for block elements
+const CustomParagraph = Paragraph.extend({
+    addNodeView() {
+        return VueNodeViewRenderer(CustomBlockView)
+    }
+});
+
+const CustomHeading = Heading.extend({
+    addNodeView() {
+        return VueNodeViewRenderer(CustomBlockView)
+    }
+});
+
+const CustomBulletList = BulletList.extend({
+    addNodeView() {
+        return VueNodeViewRenderer(CustomBlockView)
+    }
+});
+
+const CustomOrderedList = OrderedList.extend({
+    addNodeView() {
+        return VueNodeViewRenderer(CustomBlockView)
+    }
+});
+
+const CustomBlockquote = Blockquote.extend({
+    addNodeView() {
+        return VueNodeViewRenderer(CustomBlockView)
+    }
+});
+const CustomTable =  StripedTable.extend({
+    addNodeView() {
+        return VueNodeViewRenderer(CustomBlockView)
+    }
+});
+
+// Custom Image extension with node view
+const CustomImage = Image.extend({
+    addNodeView() {
+        return VueNodeViewRenderer(CustomBlockView)
+    }
+});
+
+// Custom table extension with node view
 const editor = useEditor({
     content: cleanTiptapJson(props.modelValue),
     editable: props.editable,
@@ -84,37 +138,68 @@ const editor = useEditor({
         },
     },
     extensions: [
-        StarterKit,
-        AdvancedBlockInsertionMenu,
-        EditorNavigation,
-        BlockHoverActions,
+        // Core extensions (no custom node views)
+        Document,
+        Text,
+        // Extensions with custom node views
+        CustomParagraph,
+        CustomHeading,
+        CustomBulletList,
+        CustomOrderedList,
+        CustomBlockquote,
 
-        // Cursors,
-        // Collaboration.configure({
-        //     documentId: 1
-        // }),
+        // Other extensions without node views
+        ListItem,
+        Bold,
+        Italic,
+        Strike,
+        HardBreak,
+        HorizontalRule,
+        History,
+        CustomImage.configure({
+            inline: false,
+            allowBase64: true
+        }),
+
+        drawIoExtension.configure({
+            openDialog: 'dblclick',
+        }),
+
         Mention.configure({
             HTMLAttributes: {
                 class: "mention",
             },
             suggestion,
         }),
+
         Link.configure({}),
+
         CodeBlockLowlight.configure({
             lowlight,
         }),
-        drawIoExtension.configure({ openDialog: "dblclick" }),
-        tableExtension.configure({
-            resizable: true,
-            handleWidth: 5,
-            cellMinWidth: 50,
-            lastColumnResizable: true,
-        }),
-        TableRow,
-        TableHeader,
-        TableCell,
+
         SmilieReplacer,
         textToLink.convertTextToLink,
+
+        Table,
+        TableRow,
+        TableCell,
+        TableHeader,
+        CustomTable,
+        Placeholder.configure({
+          // Use a placeholder:
+          placeholder: 'Write something …',
+          // Use different placeholders depending on the node type:
+          // placeholder: ({ node }) => {
+          //   if (node.type.name === 'heading') {
+          //     return 'What’s the title?'
+          //   }
+
+          //   return 'Can you add some further context?'
+          // },
+        }),
+        MoveNode,
+
     ],
 });
 
@@ -190,9 +275,7 @@ function cleanTiptapJson(rawData) {
         size="sm"
         @click="exportToPDF"
       >
-
         <div class="flex flex-col justify-center items-center">
-
           <FilePdfIcon class="w-4 h-4" />
         </div>
       </fwb-button>
@@ -245,11 +328,14 @@ function cleanTiptapJson(rawData) {
   overflow: hidden;
 }
 
+table {
+  @apply w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400;
+}
+
 /* Basic editor styles */
 .tiptap :first-child {
   margin-top: 0;
 }
-
 
 .tiptap table .selectedCell:after {
   background: var(--gray-2);
@@ -293,7 +379,7 @@ function cleanTiptapJson(rawData) {
 }
 
 .tiptap .selected-table-cell::after {
-  content: '';
+  content: "";
   position: absolute;
   top: 0;
   left: 0;

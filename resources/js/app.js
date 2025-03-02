@@ -10,6 +10,7 @@ import ability from "./functions/ability";
 import "vue3-toastify/dist/index.css";
 import * as Sentry from "@sentry/vue";
 import "../../src/registerServiceWorker.js";
+import '../../node_modules/flowbite-vue/dist/index.css'
 import { initAxios } from "./axios";
 const app = createApp(App);
 const pinia = createPinia();
