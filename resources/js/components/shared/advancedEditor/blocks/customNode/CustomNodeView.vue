@@ -4,6 +4,7 @@
     :node="node"
     :deleteNode="deleteNode"
     :getPos="getPos"
+    :selected="selected"
   >
     <node-view-content />
   </BaseContianer>

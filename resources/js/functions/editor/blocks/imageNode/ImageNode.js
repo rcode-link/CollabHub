@@ -1,17 +1,16 @@
 import { Node, mergeAttributes } from '@tiptap/core'
 import { VueNodeViewRenderer } from '@tiptap/vue-3'
-import ImageNodeView from './ImageNode.vue'
+import ImageNode from '@/components/shared/advancedEditor/blocks/imageNode/ImageNode.vue';
 
-export const ImageNode = Node.create({
-  name: 'customImage',
+export const ResizableImage = Node.create({
+  name: 'resizableImage',
   
   group: 'block',
   
-  draggable: true,
-  
   inline: false,
   
-  // Define the allowed attributes with defaults
+  draggable: true,
+
   addAttributes() {
     return {
       src: {
@@ -24,35 +23,10 @@ export const ImageNode = Node.create({
         default: null,
       },
       width: {
-        default: null,
+        default: '100%',
       },
       height: {
-        default: null,
-      },
-      // Additional custom attributes for our node view
-      alignment: {
-        default: 'center',
-        parseHTML: element => element.getAttribute('data-alignment') || 'center',
-        renderHTML: attributes => {
-          if (!attributes.alignment) {
-            return {}
-          }
-          return {
-            'data-alignment': attributes.alignment,
-          }
-        },
-      },
-      size: {
-        default: 'medium',
-        parseHTML: element => element.getAttribute('data-size') || 'medium',
-        renderHTML: attributes => {
-          if (!attributes.size) {
-            return {}
-          }
-          return {
-            'data-size': attributes.size,
-          }
-        },
+        default: 'auto',
       },
     }
   },
@@ -60,58 +34,29 @@ export const ImageNode = Node.create({
   parseHTML() {
     return [
       {
-        tag: 'div[data-type="custom-image"]',
+        tag: 'img[src]',
       },
     ]
   },
   
   renderHTML({ HTMLAttributes }) {
-    return [
-      'div',
-      mergeAttributes(
-        { 'data-type': 'custom-image' },
-        HTMLAttributes,
-      ),
-      ['img', {
-        src: HTMLAttributes.src,
-        alt: HTMLAttributes.alt,
-        title: HTMLAttributes.title,
-      }]
-    ]
-  },
-  
-  addNodeView() {
-    return VueNodeViewRenderer(ImageNodeView)
+    return ['img', mergeAttributes(HTMLAttributes)]
   },
   
   addCommands() {
     return {
-      setCustomImage: options => ({ chain }) => {
-        return chain()
-          .insertContent({
-            type: this.name,
-            attrs: options,
-          })
-          .run()
-      },
-      
-      updateImageAttributes: attributes => ({ chain, state }) => {
-        const { selection } = state
-        const pos = selection.$anchor.before()
-        
-        return chain()
-          .command(({ tr }) => {
-            tr.setNodeMarkup(pos, undefined, {
-              ...tr.doc.nodeAt(pos).attrs,
-              ...attributes,
-            })
-            
-            return true
-          })
-          .run()
+      setImage: options => ({ commands }) => {
+        return commands.insertContent({
+          type: this.name,
+          attrs: options,
+        })
       },
     }
   },
+  
+  addNodeView() {
+    return VueNodeViewRenderer(ImageNode)
+  },
 })
 
-export default ImageNode
+export default ResizableImage;

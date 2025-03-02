@@ -1,7 +1,7 @@
 <template>
-  <node-view-wrapper :class="{ 'wrapper': true, 'custom-block-wrapper': isFocused }">
+  <node-view-wrapper :class="{ 'wrapper': true, 'custom-block-wrapper': shouldShowControls }">
     <CustomControls
-      v-if="isFocused"
+      v-if="shouldShowControls"
       @removeNode="removeNode"
       @moveUp="moveUp"
       @moveDown="moveDown"
@@ -52,13 +52,24 @@ const props = defineProps({
   },
 });
 
-// Use our focus tracking composable - just one line!
+// Use our focus tracking composable
 const { isFocused } = useElementFocus(props);
 
 // Computed properties using the focus state
 const nodeType = computed(() => props.node.type.name);
 
 const depth = computed(() => props.editor?.state.selection.$from.depth);
+
+// Only show controls when the element is focused AND the editor is already initialized
+const shouldShowControls = computed(() => {
+  console.log(props);
+  if (!props.editor) return false;
+  // Don't show controls during initial load
+  if (!props.editor.isEditable) return false;
+
+  // Only show when focused
+  return isFocused.value;
+});
 
 // Your existing methods
 function moveUp() {
@@ -73,17 +84,6 @@ function moveDown() {
 
 function removeNode() {
   props.deleteNode();
-}
-
-// Method that uses focus state
-function doSomethingWhenFocused() {
-  if (!isFocused) {
-    console.log("Not focused, ignoring action");
-    return;
-  }
-
-  console.log("Node is focused, performing action!");
-  // Do your focus-dependent logic here
 }
 </script>
 <style>

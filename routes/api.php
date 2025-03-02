@@ -116,7 +116,6 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::apiResource('/billing-items', BillingItemController::class);
     Route::apiResource('/invoice/data', InvoiceDataController::class);
 
-
     Route::post('/collaboration/{document}', function ($document) {
         EditorCollabEvent::dispatch(request()->all(), $document);
         return response()->noContent();

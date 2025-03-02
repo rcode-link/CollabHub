@@ -40,11 +40,12 @@ import Table from '@tiptap/extension-table';
 import TableRow from '@tiptap/extension-table-row';
 import TableCell from '@tiptap/extension-table-cell';
 import TableHeader from '@tiptap/extension-table-header';
-import StripedTable from '@/functions/editor/blocks/table/FlowbiteTableExtension.js'
+import StripedTable from '@/functions/editor/blocks/table/StripedTableExtension.js'
 import CustomBlockView from './blocks/customNode/CustomNodeView.vue';
 import Placeholder from '@tiptap/extension-placeholder';
 
 import { MoveNode } from '@/functions/editor/extensions/MoveBlock.js'
+import CustomImage from '@/functions/editor/blocks/imageNode/ImageNode.js'
 const props = defineProps({
     modelValue: {
         type: String,
@@ -71,54 +72,63 @@ const submited = async () => {
     emit("submitted", true);
 }
 
+const customRenderData = (data, component) => {
+    const { node, getPos } = data;
+
+    // Determine if this paragraph is at depth 1
+    if (typeof getPos === 'function') {
+        try {
+            const pos = getPos();
+            // Resolve position to get the actual node context
+            const $pos = data.editor?.view.state.doc.resolve(pos);
+            if ($pos && $pos.depth === 0) {
+                return VueNodeViewRenderer(component)(data);
+            }
+            return null;
+        } catch (e) {
+            // In case of any error, don't break the editor
+            console.error('Error determining paragraph depth:', e);
+            return null;
+        }
+    }
+
+    // Return custom view only for depth 1 paragraphs
+}
+
 // Create custom extensions with node views for block elements
 const CustomParagraph = Paragraph.extend({
     addNodeView() {
-        return (data) => {
-            console.log('Custom Paragraphj',data.editor?.state.selection.$head)
-            if(data.editor?.state.selection.$head.depth !== 1) {
-                return null;
-            }
-            return VueNodeViewRenderer(CustomBlockView)(data)
-        }
+        return (data) => customRenderData(data, CustomBlockView);
     }
 });
 
 const CustomHeading = Heading.extend({
     addNodeView() {
-        return VueNodeViewRenderer(CustomBlockView)
+        return (data) => customRenderData(data, CustomBlockView);
     }
 });
 
 const CustomBulletList = BulletList.extend({
     addNodeView() {
-        return VueNodeViewRenderer(CustomBlockView)
+        return (data) => customRenderData(data, CustomBlockView);
     }
 });
 
 const CustomOrderedList = OrderedList.extend({
     addNodeView() {
-        return VueNodeViewRenderer(CustomBlockView)
+        return (data) => customRenderData(data, CustomBlockView);
     }
 });
 
 const CustomBlockquote = Blockquote.extend({
     addNodeView() {
-        return VueNodeViewRenderer(CustomBlockView)
+        return (data) => customRenderData(data, CustomBlockView);
     }
 });
-const CustomTable = StripedTable.extend({
-    addNodeView() {
-        return VueNodeViewRenderer(CustomBlockView)
-    }
-});
+// Using StripedTable directly without custom node view
+// This prevents tables from getting the controls wrapper
+const CustomTable = StripedTable;
 
-// Custom Image extension with node view
-const CustomImage = Image.extend({
-    addNodeView() {
-        return VueNodeViewRenderer(CustomBlockView)
-    }
-});
 
 // Custom table extension with node view
 const editor = useEditor({
