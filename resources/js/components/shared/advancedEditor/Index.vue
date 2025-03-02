@@ -16,9 +16,9 @@ import EditorHeader from "./EditorHeader.vue";
 import hljs from "highlight.js";
 import MobileMenu from "./MobileMenu.vue";
 import Mention from "@tiptap/extension-mention";
-import suggestion from "../../../functions/editor/mention/suggestion";
-import { SmilieReplacer } from "../../../functions/smilieReplacer";
-import { useConvertTextToLink } from "../../../functions/editor/convertTextToLink";
+import suggestion from "@/functions/editor/mention/suggestion";
+import { SmilieReplacer } from "@/functions/smilieReplacer";
+import { useConvertTextToLink } from "@/functions/editor/convertTextToLink";
 import { Image } from "@tiptap/extension-image";
 
 // Import individual extensions instead of StarterKit
@@ -40,11 +40,11 @@ import Table from '@tiptap/extension-table';
 import TableRow from '@tiptap/extension-table-row';
 import TableCell from '@tiptap/extension-table-cell';
 import TableHeader from '@tiptap/extension-table-header';
-import  StripedTable  from './blocks/table/FlowbiteTableExtension.js'
+import StripedTable from '@/functions/editor/blocks/table/FlowbiteTableExtension.js'
 import CustomBlockView from './blocks/customNode/CustomNodeView.vue';
 import Placeholder from '@tiptap/extension-placeholder';
 
-import { MoveNode } from './MoveBlock.js'
+import { MoveNode } from '@/functions/editor/extensions/MoveBlock.js'
 const props = defineProps({
     modelValue: {
         type: String,
@@ -74,7 +74,13 @@ const submited = async () => {
 // Create custom extensions with node views for block elements
 const CustomParagraph = Paragraph.extend({
     addNodeView() {
-        return VueNodeViewRenderer(CustomBlockView)
+        return (data) => {
+            console.log('Custom Paragraphj',data.editor?.state.selection.$head)
+            if(data.editor?.state.selection.$head.depth !== 1) {
+                return null;
+            }
+            return VueNodeViewRenderer(CustomBlockView)(data)
+        }
     }
 });
 
@@ -101,7 +107,7 @@ const CustomBlockquote = Blockquote.extend({
         return VueNodeViewRenderer(CustomBlockView)
     }
 });
-const CustomTable =  StripedTable.extend({
+const CustomTable = StripedTable.extend({
     addNodeView() {
         return VueNodeViewRenderer(CustomBlockView)
     }
@@ -187,16 +193,16 @@ const editor = useEditor({
         TableHeader,
         CustomTable,
         Placeholder.configure({
-          // Use a placeholder:
-          placeholder: 'Write something …',
-          // Use different placeholders depending on the node type:
-          // placeholder: ({ node }) => {
-          //   if (node.type.name === 'heading') {
-          //     return 'What’s the title?'
-          //   }
+            // Use a placeholder:
+            placeholder: 'Write something …',
+            // Use different placeholders depending on the node type:
+            // placeholder: ({ node }) => {
+            //   if (node.type.name === 'heading') {
+            //     return 'What’s the title?'
+            //   }
 
-          //   return 'Can you add some further context?'
-          // },
+            //   return 'Can you add some further context?'
+            // },
         }),
         MoveNode,
 

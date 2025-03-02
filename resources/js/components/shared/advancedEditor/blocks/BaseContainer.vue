@@ -15,7 +15,7 @@
 <script setup>
 import { NodeViewWrapper, NodeViewContent } from "@tiptap/vue-3";
 import { computed } from "vue";
-import { useElementFocus } from "../useElementFocus";
+import { useElementFocus } from "@/functions/editor/composables/useElementFocus";
 import CustomControls from "./CustomControls.vue";
 
 const props = defineProps({
@@ -55,18 +55,11 @@ const props = defineProps({
 // Use our focus tracking composable - just one line!
 const { isFocused } = useElementFocus(props);
 
-console.log(props.editor?.state.selection.$anchor.depth);
 // Computed properties using the focus state
 const nodeType = computed(() => props.node.type.name);
 
-const wrapperClasses = computed(() => [
-  "block-wrapper",
-  `${nodeType.value}-wrapper`,
-  {
-    "is-selected": props.selected,
-    "is-focused": isFocused.value,
-  },
-]);
+const depth = computed(() => props.editor?.state.selection.$from.depth);
+
 // Your existing methods
 function moveUp() {
   // Implementation
