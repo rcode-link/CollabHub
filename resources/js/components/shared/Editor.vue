@@ -18,7 +18,10 @@ import { useConvertTextToLink } from "../../functions/editor/convertTextToLink";
 import { chatDetails } from "../../store/chatStore";
 import vacation from "../shared/vacationPlugin/vacation";
 import { Markdown } from "tiptap-markdown";
+import { useTextToLinkStore } from "@/store/textToLinkStore";
+import { useRouter } from "vue-router";
 const chatStore = chatDetails();
+const router = useRouter();
 const props = defineProps({
     modelValue: "",
     model: "",
@@ -27,7 +30,9 @@ const props = defineProps({
 });
 
 const pressedKeys = ref([]);
-const textToLink = useConvertTextToLink();
+
+const textToLinkStore = useTextToLinkStore();
+const textToLink = useConvertTextToLink(textToLinkStore.items, router.push);
 const emit = defineEmits(["update:modelValue", "submitted"]);
 
 const lowlight = createLowlight();

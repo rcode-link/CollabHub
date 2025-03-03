@@ -1,25 +1,27 @@
 import { Extension } from '@tiptap/core'
 import { Plugin, PluginKey } from 'prosemirror-state'
 import { Decoration, DecorationSet } from 'prosemirror-view'
-import { useTextToLinkStore } from '../../store/textToLinkStore.js' // Update this path as needed
-import { useRouter } from 'vue-router'
 
-export const useConvertTextToLink = () => {
-    const textToLinkStore = useTextToLinkStore()
-    const router = useRouter()
-
+// Avoid importing the entire vue-router - instead, accept a navigation function
+export const useConvertTextToLink = (items, navigateFn) => {
     // Simplified plugin key
     const pluginKey = new PluginKey('convertTextToLink')
+
+    // Optimize pattern creation - only recreate when items change
+    const createPattern = (itemList) => {
+        if (!itemList?.length) return null
+        return new RegExp(itemList.map(item => `${item}-\\d+|${item}-D-\\d+`).join('|'), 'g')
+    }
 
     // Lightweight link finder with optimal regex handling
     const findLink = (doc) => {
         // Early return if no items
-        if (!textToLinkStore.items?.length) return DecorationSet.empty
+        if (!items?.length) return DecorationSet.empty
 
         const decorations = []
-        // Create pattern once per document scan
-        const pattern = new RegExp(textToLinkStore.items.map(item =>
-            `${item}-\\d+|${item}-D-\\d+`).join('|'), 'g')
+        // Create pattern only once
+        const pattern = createPattern(items)
+        if (!pattern) return DecorationSet.empty
 
         doc.descendants((node, pos) => {
             // Skip non-text nodes quickly
@@ -77,11 +79,16 @@ export const useConvertTextToLink = () => {
 
                         handleClick(view, pos, event) {
                             const target = event.target
-                            if (target.classList.contains('router-link')) {
+                            if (target?.classList?.contains('router-link')) {
                                 const id = target.getAttribute('data-id')
                                 if (id) {
                                     event.preventDefault()
-                                    router.push(`/open/${id}`)
+                                    // Use the provided navigation function or fallback to window.location
+                                    if (typeof navigateFn === 'function') {
+                                        navigateFn(`/open/${id}`)
+                                    } else {
+                                        window.location.href = `/open/${id}`
+                                    }
                                     return true
                                 }
                             }

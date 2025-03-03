@@ -12,6 +12,22 @@ export default defineConfig({
         drop_console: true,
         drop_debugger: true
       }
+    },
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          'prosemirror': ['prosemirror-state', 'prosemirror-view'],
+          'tiptap-core': ['@tiptap/core'],
+          'editor-extensions': [
+            '@tiptap/extension-link',
+            '@tiptap/extension-code-block-lowlight',
+            '@tiptap/extension-table', 
+            '@tiptap/extension-table-row',
+            '@tiptap/extension-table-header',
+            '@tiptap/extension-table-cell'
+          ],
+        }
+      }
     }
   },
   plugins: [

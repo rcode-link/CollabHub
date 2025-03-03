@@ -50,6 +50,8 @@ import Placeholder from "@tiptap/extension-placeholder";
 
 import { MoveNode } from "@/functions/editor/extensions/MoveBlock.js";
 import CustomImage from "@/functions/editor/blocks/imageNode/ImageNode.js";
+import { useTextToLinkStore } from "@/store/textToLinkStore";
+import { useRouter } from "vue-router";
 
 const props = defineProps({
   modelValue: {
@@ -68,7 +70,9 @@ const props = defineProps({
   },
 });
 
+const textToLinkStore = useTextToLinkStore();
 const lowlight = createLowlight();
+const router = useRouter();
 
 hljs.listLanguages().forEach(async (lang) => {
   lowlight.register(lang, hljs.getLanguage(lang).rawDefinition);
@@ -78,7 +82,7 @@ const route = useRoute();
 const emit = defineEmits(["update:modelValue", "submitted"]);
 
 const pressedKeys = ref([]);
-const textToLink = useConvertTextToLink();
+const textToLink = useConvertTextToLink(textToLinkStore.items, router.push);
 
 const submited = async () => {
   emit("update:modelValue", editor.value.getJSON());
