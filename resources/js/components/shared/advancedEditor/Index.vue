@@ -40,6 +40,12 @@ import TableCell from "@tiptap/extension-table-cell";
 import TableHeader from "@tiptap/extension-table-header";
 import StripedTable from "@/functions/editor/blocks/table/StripedTableExtension.js";
 import CustomBlockView from "./blocks/customNode/CustomNodeView.vue";
+import HeadingBlockView from "./blocks/Typograhpy/HeadingNode.vue";
+import ParagraphNodeView from "./blocks/Typograhpy/PharagraphNode.vue";
+import BulletListNodeView from "./blocks/Typograhpy/BulletListNode.vue";
+import OrderedListNodeView from "./blocks/Typograhpy/OrderedListNode.vue";
+import ListItemNodeView from "./blocks/Typograhpy/ListItemNode.vue";
+
 import Placeholder from "@tiptap/extension-placeholder";
 
 import { MoveNode } from "@/functions/editor/extensions/MoveBlock.js";
@@ -110,25 +116,78 @@ const customRenderData = (data, viewComponent) => {
 // Create custom extensions with node views for block elements
 const CustomParagraph = Paragraph.extend({
   addNodeView() {
-    return (data) => customRenderData(data, CustomBlockView);
+    return (data) => customRenderData(data, ParagraphNodeView);
+  },
+  addAttributes() {
+    return {
+      ...this.parent?.(),
+      id: {
+        default: () => `paragraph-${Math.floor(Math.random() * 10000)}`,
+      },
+    };
   },
 });
 
 const CustomHeading = Heading.extend({
   addNodeView() {
-    return (data) => customRenderData(data, CustomBlockView);
+    return (data) => customRenderData(data, HeadingBlockView);
+  },
+  addAttributes() {
+    return {
+      ...this.parent?.(),
+      // Add id attribute to help with finding nodes in the DOM
+      id: {
+        default: null,
+        parseHTML: (element) =>
+          element.getAttribute("id") ||
+          `heading-${Math.floor(Math.random() * 10000)}`,
+        renderHTML: (attributes) => {
+          return { id: attributes.id };
+        },
+      },
+    };
   },
 });
 
+const listClasses =
+  "";
 const CustomBulletList = BulletList.extend({
   addNodeView() {
     return (data) => customRenderData(data, CustomBlockView);
+  },
+  renderHTML({ HTMLAttributes }) {
+    // This creates a direct <ul> without wrapper divs
+    return [
+      "ul",
+      {
+        ...HTMLAttributes,
+        class: `${HTMLAttributes.class || ""} ${listClasses}`.trim(),
+      },
+      0,
+    ];
+  },
+  parseHTML() {
+    return [{ tag: "ul" }];
   },
 });
 
 const CustomOrderedList = OrderedList.extend({
   addNodeView() {
     return (data) => customRenderData(data, CustomBlockView);
+  },
+  renderHTML({ HTMLAttributes }) {
+    // This creates a direct <ol> without wrapper divs
+    return [
+      "ol",
+      {
+        ...HTMLAttributes,
+        class: `${HTMLAttributes.class || ""} ${listClasses}`.trim(),
+      },
+      0,
+    ];
+  },
+  parseHTML() {
+    return [{ tag: "ol" }];
   },
 });
 
@@ -141,6 +200,7 @@ const CustomBlockquote = Blockquote.extend({
 // This prevents tables from getting the controls wrapper
 const CustomTable = StripedTable;
 
+const generateId = (prefix) => `${prefix}-${Math.floor(Math.random() * 10000)}`;
 // Define function to get extensions
 const getExtensions = () => {
   // Base extensions that are always included
@@ -154,9 +214,18 @@ const getExtensions = () => {
     CustomBulletList,
     CustomOrderedList,
     CustomBlockquote,
-
-    // Other extensions without node views
-    ListItem,
+    ListItem.extend({
+      renderHTML({ HTMLAttributes }) {
+        return [
+          "li",
+          {
+            ...HTMLAttributes,
+            class: "text-gray-500 dark:text-gray-400 ml-6",
+          },
+          0,
+        ];
+      },
+    }),
     Bold,
     Italic,
     Strike,

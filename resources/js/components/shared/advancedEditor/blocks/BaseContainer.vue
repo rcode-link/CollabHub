@@ -1,5 +1,5 @@
 <template>
-  <node-view-wrapper :class="{ 'wrapper': true, 'custom-block-wrapper': shouldShowControls }">
+  <node-view-wrapper :as="as" :class="{ 'wrapper': true, 'custom-block-wrapper': shouldShowControls }">
     <div
       class="flex items-center"
       v-if="shouldShowControls"
@@ -25,6 +25,9 @@ import { useElementFocus } from "@/functions/editor/composables/useElementFocus"
 import CustomControls from "./CustomControls.vue";
 
 const props = defineProps({
+  as: {
+    default: "div",
+  },
   editor: {
     type: Object,
   },

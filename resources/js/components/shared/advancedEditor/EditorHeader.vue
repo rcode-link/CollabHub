@@ -334,17 +334,7 @@ watch(isTableSelected, (newVal) => {
             Bullet List
           </div>
         </fwb-list-group-item>
-        <fwb-list-group-item
-          class="hover:bg-gray-100 cursor-pointer flex items-center"
-          :class="{ 'bg-gray-200 dark:bg-gray-700': editor.isActive('orderedList') }"
-          @click="(e) => buttonClicked(e, editor.chain().focus().toggleOrderedList().run())"
-        >
-          <div class="flex items-center">
-            <OrderedListIcon class="w-4 h-4 mr-2" />
-            Ordered List
-          </div>
-        </fwb-list-group-item>
-        <fwb-list-group-item
+       <fwb-list-group-item
           class="hover:bg-gray-100 cursor-pointer flex items-center"
           @click="(e) => buttonClicked(e, editor.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run())"
         >
