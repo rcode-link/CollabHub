@@ -10,8 +10,12 @@
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=figtree:400,600&display=swap" rel="stylesheet" />
-    <link rel="manifest" href="/build/manifest.webmanifest" />
+    <link rel="manifest" href="/manifest.json" />
     <link rel="icon" type="image/png" sizes="144x144" href="logo.png" />
+    <meta name="theme-color" content="#4f46e5">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="apple-touch-icon" href="logo.png">
     {{-- @production
         @php
             $manifest = json_decode(file_get_contents(public_path('build/manifest.json')), true);

@@ -19,6 +19,9 @@ const urlsToCache = [
 
 // Install event - cache essential files
 self.addEventListener('install', event => {
+  // Use skipWaiting() to ensure the service worker activates immediately
+  self.skipWaiting();
+  
   event.waitUntil(
     caches.open(CACHE_NAME)
       .then(cache => {
@@ -27,18 +30,24 @@ self.addEventListener('install', event => {
   );
 });
 
-// Activate event - clean up old caches
+// Activate event - clean up old caches and take control immediately
 self.addEventListener('activate', event => {
+  // This ensures the service worker takes control of clients immediately
   event.waitUntil(
-    caches.keys().then(cacheNames => {
-      return Promise.all(
-        cacheNames.filter(cacheName => {
-          return cacheName !== CACHE_NAME;
-        }).map(cacheName => {
-          return caches.delete(cacheName);
-        })
-      );
-    })
+    Promise.all([
+      // Clean up old caches
+      caches.keys().then(cacheNames => {
+        return Promise.all(
+          cacheNames.filter(cacheName => {
+            return cacheName !== CACHE_NAME;
+          }).map(cacheName => {
+            return caches.delete(cacheName);
+          })
+        );
+      }),
+      // Take control of all clients immediately
+      self.clients.claim()
+    ])
   );
 });
 
@@ -106,8 +115,16 @@ self.addEventListener('notificationclick', event => {
 self.onmessage = function(event) {
   console.log('Worker received message:', event.data);
   
+  // Handle client claiming (for GrapheneOS compatibility)
+  if (event.data.type === 'claim-clients') {
+    self.clients.claim().then(() => {
+      console.log('Service worker claimed all clients');
+    }).catch(err => {
+      console.error('Error claiming clients:', err);
+    });
+  }
   // Handle custom Echo configuration if needed
-  if (event.data.type === 'configure-echo') {
+  else if (event.data.type === 'configure-echo') {
     try {
       // Check if Echo is available (from imported script)
       if (typeof Echo !== 'undefined') {
@@ -151,19 +168,47 @@ self.onmessage = function(event) {
   } else if (event.data.type === 'notification') {
     // Handle a notification request from the main thread
     showNotification(event.data.notification);
+    
+    // Also try to wake up any clients
+    self.clients.matchAll({type: 'window'}).then(clients => {
+      if (clients.length === 0) {
+        // No clients - might be completely in background on GrapheneOS
+        console.log('No client windows found, app may be in background');
+      } else {
+        console.log('Found ' + clients.length + ' client windows');
+      }
+    });
   }
 };
 
-// Helper function to show notifications
+// Helper function to show notifications with more options for GrapheneOS
 function showNotification(data) {
   const options = {
     body: data.body || 'New notification',
     icon: data.icon || '/logo.png',
     badge: '/logo.png',
+    tag: data.tag || 'notification-' + Date.now(),
+    timestamp: data.timestamp || Date.now(),
+    requireInteraction: data.requireInteraction !== undefined ? data.requireInteraction : true,
+    renotify: data.renotify !== undefined ? data.renotify : true,
+    vibrate: [200, 100, 200], // Add vibration pattern for mobile
+    actions: [
+      {
+        action: 'open',
+        title: 'Open App',
+      }
+    ],
     data: {
-      url: data.url || '/'
+      url: data.url || '/',
+      ...data // Include all data properties
     }
   };
 
-  self.registration.showNotification(data.title || 'CollabHub Notification', options);
+  // For GrapheneOS on Vanadium, ensure high priority
+  try {
+    // Use showNotification with await to ensure it completes
+    return self.registration.showNotification(data.title || 'CollabHub Notification', options);
+  } catch (error) {
+    console.error('Error showing notification:', error);
+  }
 }

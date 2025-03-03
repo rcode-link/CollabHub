@@ -15,6 +15,13 @@ import { initAxios } from "@/axios.js";
 
 // Track window focus state
 const isWindowFocused = ref(typeof document !== 'undefined' ? document.hasFocus() : true);
+
+// Flag to track whether app is running in standalone PWA mode
+const isPWA = ref(typeof window !== 'undefined' && (
+    window.matchMedia('(display-mode: standalone)').matches || 
+    window.navigator.standalone || 
+    document.referrer.includes('android-app://')
+));
 export default () => {
     const userState = useUserStore();
     const messagesState = chatDetails();
@@ -124,9 +131,12 @@ export default () => {
 
     // Handle showing notifications safely
     const showNotification = (title, body, onClick, icon = '/logo.png', data = {}) => {
-        // Check if window is focused using our tracked focus state
-        if (isWindowFocused.value) {
-            console.log('Window is focused, not showing browser notification');
+        // In PWA mode on GrapheneOS, we might want to show notifications even when focused
+        // since the app might be running but not visible (e.g., split screen)
+        const shouldShowNotification = !isWindowFocused.value || isPWA.value;
+        
+        if (!shouldShowNotification) {
+            console.log('Window is focused and not in PWA mode, not showing browser notification');
             return;
         }
 
@@ -137,20 +147,50 @@ export default () => {
         }
 
         // Try to show notification through service worker first (for PWA)
-        if (navigator.serviceWorker && navigator.serviceWorker.controller) {
+        if (navigator.serviceWorker) {
             try {
-                navigator.serviceWorker.controller.postMessage({
-                    type: 'notification',
-                    notification: {
-                        title,
-                        body,
-                        icon,
-                        url: data.url || '/',
-                        ...data
+                // For better GrapheneOS compatibility, we'll try to ensure controller is available
+                const getController = async () => {
+                    if (navigator.serviceWorker.controller) {
+                        return navigator.serviceWorker.controller;
                     }
-                });
-                console.log('Notification sent to service worker');
-                return;
+                    
+                    // If no controller, try to get registration
+                    const reg = await navigator.serviceWorker.ready;
+                    if (reg.active) {
+                        // Force claim clients if needed
+                        reg.active.postMessage({ type: 'claim-clients' });
+                        
+                        // Wait briefly for controller to be assigned
+                        await new Promise(resolve => setTimeout(resolve, 50));
+                        
+                        return navigator.serviceWorker.controller;
+                    }
+                    return null;
+                };
+                
+                const controller = await getController();
+                
+                if (controller) {
+                    controller.postMessage({
+                        type: 'notification',
+                        notification: {
+                            title,
+                            body,
+                            icon,
+                            tag: 'notification-' + Date.now(), // Ensure unique tag for each notification
+                            timestamp: Date.now(),
+                            requireInteraction: true, // Keep notification until user dismisses it
+                            renotify: true, // Notify each time even with same tag
+                            url: data.url || '/',
+                            ...data
+                        }
+                    });
+                    console.log('Notification sent to service worker');
+                    return;
+                } else {
+                    console.warn('No active service worker controller available');
+                }
             } catch (error) {
                 console.error('Error sending notification to service worker:', error);
                 // Fall back to regular notification
