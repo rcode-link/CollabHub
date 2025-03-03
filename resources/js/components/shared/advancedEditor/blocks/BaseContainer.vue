@@ -1,11 +1,17 @@
 <template>
   <node-view-wrapper :class="{ 'wrapper': true, 'custom-block-wrapper': shouldShowControls }">
-    <CustomControls
+    <div
+      class="flex items-center"
       v-if="shouldShowControls"
-      @removeNode="removeNode"
-      @moveUp="moveUp"
-      @moveDown="moveDown"
-    />
+    >
+      <CustomControls
+        @removeNode="removeNode"
+        @moveUp="moveUp"
+        @moveDown="moveDown"
+      />
+
+      <slot name="options" />
+    </div>
     <div class="custom-block-content">
       <slot />
     </div>

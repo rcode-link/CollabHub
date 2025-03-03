@@ -5,37 +5,98 @@
     :deleteNode="deleteNode"
     :getPos="getPos"
     :selected="selected"
-
-      :width="node.attrs.width"
+    :width="node.attrs.width"
   >
-    <img
-      :src="node.attrs.src"
-      :alt="node.attrs.alt"
-      :title="node.attrs.title"
-      :width="node.attrs.width"
-      :height="node.attrs.height"
-      ref="imageRef"
-      @dragstart.prevent
-    />
+
+    <template #options>
+      <fwb-button-group class="ml-auto">
+        <fwb-button
+          @click="() => updateAttributes({ size: '25' })"
+          size="sm"
+          color="alternative"
+        >25%</fwb-button>
+        <fwb-button
+          @click="() => updateAttributes({ size: '50' })"
+          size="sm"
+          color="alternative"
+        >50%</fwb-button>
+        <fwb-button
+          @click="() => updateAttributes({ size: '75' })"
+          size="sm"
+          color="alternative"
+        >75%</fwb-button>
+        <fwb-button
+          @click="() => updateAttributes({ size: '100' })"
+          size="sm"
+          color="alternative"
+        >100%</fwb-button>
+
+                <fwb-button
+color="alternative"
+                    size="sm" disabled>|</fwb-button>
+        <fwb-button
+          @click="() => updateAttributes({ position: 'left' })"
+          size="sm"
+          color="alternative"
+        >Left</fwb-button>
+        <fwb-button
+          @click="() => updateAttributes({ position: 'center' })"
+          size="sm"
+          color="alternative"
+        >Center</fwb-button>
+        <fwb-button
+          @click="() => updateAttributes({ position: 'right' })"
+          size="sm"
+          color="alternative"
+        >Right</fwb-button>
+
+      </fwb-button-group>
+    </template>
     <div
       v-if="selected"
-      class="resize-handlers"
-    >
-      <div
-        class="resize-handle bottom-right"
-        @mousedown.prevent="startResizing($event, 'bottomRight')"
-      ></div>
+      class="mt-1"
+    />
+    <div :class="`resizable-image-wrapper shadow rounded image-${node.attrs.size} position-${node.attrs.position}`">
+      <img
+        :src="node.attrs.src"
+        :alt="node.attrs.alt"
+        :title="node.attrs.title"
+        ref="imageRef"
+        @dragstart.prevent
+      />
+      <FwbP
+        class="text-center"
+        v-if="!selected"
+      >{{ title }}</FwbP>
     </div>
+    <FwbInput
+      v-if="selected"
+      v-model="title"
+    />
   </BaseContianer>
 </template>
 
 <script>
+//      <div
+//        v-if="selected"
+//        class="resize-handlers"
+//      >
+//        <div
+//          class="resize-handle bottom-right"
+//          @mousedown.prevent="startResizing($event, 'bottomRight')"
+//        ></div>
+//      </div>
 import BaseContianer from "../BaseContainer.vue";
+import { FwbP, FwbInput, FwbButtonGroup, FwbButton } from "flowbite-vue";
 export default {
   name: "ResizableImage",
 
   components: {
     BaseContianer,
+    FwbButton,
+    FwbButtonGroup,
+    FwbInput,
+    FwbP,
   },
   props: {
     editor: {
@@ -138,6 +199,18 @@ export default {
     },
   },
 
+  computed: {
+    title: {
+      get() {
+        return this.node.attrs.title;
+      },
+      set(val) {
+        this.updateAttributes({
+          title: val,
+        });
+      },
+    },
+  },
   beforeUnmount() {
     // Clean up any remaining listeners
     document.removeEventListener("mousemove", this.handleResizing);
@@ -148,8 +221,9 @@ export default {
 
 <style>
 .resizable-image-wrapper {
-  display: inline-block;
+  display: block;
   position: relative;
+  margin-top: 1rem;
 }
 
 .is-selected img {
@@ -179,4 +253,46 @@ export default {
   right: -5px;
   cursor: nwse-resize;
 }
+
+.lh-34 {
+  line-height: 34px;
+}
+
+img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.image-25 {
+  width: 25%;
+}
+
+.image-50 {
+  width: 50%;
+}
+
+.image-75 {
+  width: 75%;
+}
+
+.image-100 {
+  width: 100%;
+}
+
+.position-left {
+  margin-right: auto;
+}
+
+.position-right {
+  margin-left: auto;
+}
+
+.position-center {
+  margin-left: auto;
+  margin-right: auto;
+}
+/* Print styles for image component with position classes */
+
+
 </style>

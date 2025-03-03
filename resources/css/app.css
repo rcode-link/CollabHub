@@ -400,3 +400,69 @@ pre .hljs-strong {
 .tableWrapper {
   @apply relative overflow-x-auto shadow-md sm:rounded-lg;
 }
+
+/* Print styles for image component with position classes */
+
+@media print {
+  /* Core print settings */
+  @page {
+    margin: 0.5cm;
+    size: auto;
+  }
+
+  body {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    color-adjust: exact !important;
+  }
+
+
+  /* Size classes with !important for print override */
+  size[25] {
+    width: 25% !important;
+    max-width: 25% !important;
+  }
+
+  size[50] {
+    width: 50% !important;
+    max-width: 50% !important;
+  }
+
+  size[75] {
+    width: 75% !important;
+    max-width: 75% !important;
+  }
+
+  size[100] {
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+
+  /* Position classes for print */
+  .position-left {
+    margin-right: auto !important;
+    margin-left: 0 !important;
+  }
+
+  .position-right {
+    margin-left: auto !important;
+    margin-right: 0 !important;
+  }
+
+  .position-center {
+    margin-left: auto !important;
+    margin-right: auto !important;
+  }
+
+  /* Text flow and page break controls */
+  p, div {
+    orphans: 3 !important;
+    widows: 3 !important;
+  }
+
+  /* Prevent image splitting across pages */
+  img {
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+  }
+}
