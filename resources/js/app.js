@@ -19,8 +19,12 @@ app.use(pinia);
 app.use(router);
 initAxios();
 
+// Get environment data from data-env attribute
+const envEl = document.querySelector('body');
+const envData = envEl ? JSON.parse(envEl.getAttribute('data-env') || '{}') : {};
+
 Sentry.init({
-	dsn: import.meta.env.VITE_SENTRY_DSN_PUBLIC,
+	dsn: envData.VITE_SENTRY_DSN_PUBLIC,
 	integrations: [
 		Sentry.browserTracingIntegration(),
 		Sentry.replayIntegration({
@@ -28,7 +32,7 @@ Sentry.init({
 			blockAllMedia: true,
 		}),
 	],
-	environment: import.meta.env.VITE_SENTRY_ENVIRONMENT,
+	environment: envData.VITE_SENTRY_ENVIRONMENT,
 	// Performance Monitoring
 	tracesSampleRate: 1.0, //  Capture 100% of the transactions
 	// Set 'tracePropagationTargets' to control for which URLs distributed tracing should be enabled
