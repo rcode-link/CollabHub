@@ -1,11 +1,9 @@
-<script setup lang="js">
+<script setup>
 import { EditorContent, useEditor } from "@tiptap/vue-3";
-import { VueNodeViewRenderer } from '@tiptap/vue-3';
+import { VueNodeViewRenderer } from "@tiptap/vue-3";
 import { Link } from "@tiptap/extension-link";
 import { ref, watch, computed } from "vue";
-import {
-    FwbButton, FwbCard
-} from "flowbite-vue";
+import { FwbButton, FwbCard } from "flowbite-vue";
 import { createLowlight } from "lowlight";
 import CodeBlockLowlight from "@tiptap/extension-code-block-lowlight";
 import FloppyDiskIcon from "../icons/FloppyDiskIcon.vue";
@@ -22,43 +20,52 @@ import { useConvertTextToLink } from "@/functions/editor/convertTextToLink";
 import { Image } from "@tiptap/extension-image";
 
 // Import individual extensions instead of StarterKit
-import Document from '@tiptap/extension-document';
-import Paragraph from '@tiptap/extension-paragraph';
-import Text from '@tiptap/extension-text';
-import Heading from '@tiptap/extension-heading';
-import BulletList from '@tiptap/extension-bullet-list';
-import OrderedList from '@tiptap/extension-ordered-list';
-import ListItem from '@tiptap/extension-list-item';
-import Bold from '@tiptap/extension-bold';
-import Italic from '@tiptap/extension-italic';
-import Strike from '@tiptap/extension-strike';
-import Blockquote from '@tiptap/extension-blockquote';
-import HardBreak from '@tiptap/extension-hard-break';
-import HorizontalRule from '@tiptap/extension-horizontal-rule';
-import History from '@tiptap/extension-history';
-import Table from '@tiptap/extension-table';
-import TableRow from '@tiptap/extension-table-row';
-import TableCell from '@tiptap/extension-table-cell';
-import TableHeader from '@tiptap/extension-table-header';
-import StripedTable from '@/functions/editor/blocks/table/StripedTableExtension.js'
-import CustomBlockView from './blocks/customNode/CustomNodeView.vue';
-import Placeholder from '@tiptap/extension-placeholder';
+import Document from "@tiptap/extension-document";
+import Paragraph from "@tiptap/extension-paragraph";
+import Text from "@tiptap/extension-text";
+import Heading from "@tiptap/extension-heading";
+import BulletList from "@tiptap/extension-bullet-list";
+import OrderedList from "@tiptap/extension-ordered-list";
+import ListItem from "@tiptap/extension-list-item";
+import Bold from "@tiptap/extension-bold";
+import Italic from "@tiptap/extension-italic";
+import Strike from "@tiptap/extension-strike";
+import Blockquote from "@tiptap/extension-blockquote";
+import HardBreak from "@tiptap/extension-hard-break";
+import HorizontalRule from "@tiptap/extension-horizontal-rule";
+import History from "@tiptap/extension-history";
+import Table from "@tiptap/extension-table";
+import TableRow from "@tiptap/extension-table-row";
+import TableCell from "@tiptap/extension-table-cell";
+import TableHeader from "@tiptap/extension-table-header";
+import StripedTable from "@/functions/editor/blocks/table/StripedTableExtension.js";
+import CustomBlockView from "./blocks/customNode/CustomNodeView.vue";
+import Placeholder from "@tiptap/extension-placeholder";
 
-import { MoveNode } from '@/functions/editor/extensions/MoveBlock.js'
-import CustomImage from '@/functions/editor/blocks/imageNode/ImageNode.js'
+import { MoveNode } from "@/functions/editor/extensions/MoveBlock.js";
+import CustomImage from "@/functions/editor/blocks/imageNode/ImageNode.js";
+
 const props = defineProps({
-    modelValue: {
-        type: String,
-    },
-    editable: {
-        type: Boolean,
-    },
+  modelValue: {
+    type: String,
+  },
+  editable: {
+    type: Boolean,
+  },
+  documentId: {
+    type: [String, Number],
+    default: null,
+  },
+  collaborative: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 const lowlight = createLowlight();
 
 hljs.listLanguages().forEach(async (lang) => {
-    lowlight.register(lang, hljs.getLanguage(lang).rawDefinition);
+  lowlight.register(lang, hljs.getLanguage(lang).rawDefinition);
 });
 
 const route = useRoute();
@@ -68,196 +75,199 @@ const pressedKeys = ref([]);
 const textToLink = useConvertTextToLink();
 
 const submited = async () => {
-    emit('update:modelValue', editor.value.getJSON());
-    emit("submitted", true);
-}
+  emit("update:modelValue", editor.value.getJSON());
+  emit("submitted", true);
+};
 
-const customRenderData = (data, component) => {
-    const { node, getPos } = data;
+// Helper function for custom node view renderer with optional depth check
+const customRenderData = (data, viewComponent) => {
+  const { getPos } = data;
 
-    // Determine if this paragraph is at depth 1
-    if (typeof getPos === 'function') {
-        try {
-            const pos = getPos();
-            // Resolve position to get the actual node context
-            const $pos = data.editor?.view.state.doc.resolve(pos);
-            if ($pos && $pos.depth === 0) {
-                return VueNodeViewRenderer(component)(data);
-            }
-            return null;
-        } catch (e) {
-            // In case of any error, don't break the editor
-            console.error('Error determining paragraph depth:', e);
-            return null;
+  // Determine if this node is at depth 1
+  if (typeof getPos === "function") {
+    try {
+      const pos = getPos();
+      // Resolve position to get the actual node context
+      const $pos = data.editor?.view.state.doc.resolve(pos);
+
+      if ($pos) {
+        // Only use custom view for paragraphs at depth 1
+        if ($pos.depth !== 0) {
+          return null;
         }
+      }
+    } catch (e) {
+      // In case of any error, don't break the editor
+      console.error("Error determining node depth:", e);
+      return null;
     }
+  }
 
-    // Return custom view only for depth 1 paragraphs
-}
+  // Return custom view only for depth 1 nodes
+  return VueNodeViewRenderer(viewComponent)(data);
+};
 
 // Create custom extensions with node views for block elements
 const CustomParagraph = Paragraph.extend({
-    addNodeView() {
-        return (data) => customRenderData(data, CustomBlockView);
-    }
+  addNodeView() {
+    return (data) => customRenderData(data, CustomBlockView);
+  },
 });
 
 const CustomHeading = Heading.extend({
-    addNodeView() {
-        return (data) => customRenderData(data, CustomBlockView);
-    }
+  addNodeView() {
+    return (data) => customRenderData(data, CustomBlockView);
+  },
 });
 
 const CustomBulletList = BulletList.extend({
-    addNodeView() {
-        return (data) => customRenderData(data, CustomBlockView);
-    }
+  addNodeView() {
+    return (data) => customRenderData(data, CustomBlockView);
+  },
 });
 
 const CustomOrderedList = OrderedList.extend({
-    addNodeView() {
-        return (data) => customRenderData(data, CustomBlockView);
-    }
+  addNodeView() {
+    return (data) => customRenderData(data, CustomBlockView);
+  },
 });
 
 const CustomBlockquote = Blockquote.extend({
-    addNodeView() {
-        return (data) => customRenderData(data, CustomBlockView);
-    }
+  addNodeView() {
+    return (data) => customRenderData(data, CustomBlockView);
+  },
 });
 // Using StripedTable directly without custom node view
 // This prevents tables from getting the controls wrapper
 const CustomTable = StripedTable;
 
+// Define function to get extensions
+const getExtensions = () => {
+  // Base extensions that are always included
+  const extensions = [
+    // Core extensions (no custom node views)
+    Document,
+    Text,
+    // Extensions with custom node views
+    CustomParagraph,
+    CustomHeading,
+    CustomBulletList,
+    CustomOrderedList,
+    CustomBlockquote,
+
+    // Other extensions without node views
+    ListItem,
+    Bold,
+    Italic,
+    Strike,
+    HardBreak,
+    HorizontalRule,
+    History,
+    CustomImage.configure({
+      inline: false,
+      allowBase64: true,
+    }),
+    drawIoExtension.configure({
+      openDialog: "dblclick",
+    }),
+    Mention.configure({
+      HTMLAttributes: {
+        class: "mention",
+      },
+      suggestion,
+    }),
+    Link.configure({}),
+    CodeBlockLowlight.configure({
+      lowlight,
+    }),
+    SmilieReplacer,
+    textToLink.convertTextToLink,
+    Table,
+    TableRow,
+    TableCell,
+    TableHeader,
+    CustomTable,
+    Placeholder.configure({
+      placeholder: "Write something …",
+    }),
+    MoveNode,
+    // Collaboration.configure({
+    //   documentId: `test`,
+    //   // Optional configuration
+    //   debounce: 150,
+    //   maxRetries: 5,
+    //   retryDelay: 300,
+    // }),
+    // Cursors.configure({
+    //   labelDuration: 2000,
+    // }),
+  ];
+
+  return extensions;
+};
 
 // Custom table extension with node view
 const editor = useEditor({
-    content: cleanTiptapJson(props.modelValue),
-    editable: props.editable,
-    debug: true,
-    editorProps: {
-        handleDOMEvents: {
-            keydown: (view, event) => {
-                if (["Control", "Enter"].indexOf(event.key) > -1) {
-                    pressedKeys.value.push(event.key);
-                }
-                if (pressedKeys.value.join("-") === "Control-Enter") {
-                    event.preventDefault();
-                    submited();
-                }
-            },
-            keyup(view, event) {
-                pressedKeys.value = pressedKeys.value.filter(
-                    (key) => key !== event.key,
-                );
-            },
-        },
+  content: cleanTiptapJson(props.modelValue),
+  editable: props.editable,
+  debug: true,
+  editorProps: {
+    handleDOMEvents: {
+      keydown: (view, event) => {
+        if (["Control", "Enter"].indexOf(event.key) > -1) {
+          pressedKeys.value.push(event.key);
+        }
+        if (pressedKeys.value.join("-") === "Control-Enter") {
+          event.preventDefault();
+          submited();
+        }
+      },
+      keyup(view, event) {
+        pressedKeys.value = pressedKeys.value.filter(
+          (key) => key !== event.key
+        );
+      },
     },
-    extensions: [
-        // Core extensions (no custom node views)
-        Document,
-        Text,
-        // Extensions with custom node views
-        CustomParagraph,
-        CustomHeading,
-        CustomBulletList,
-        CustomOrderedList,
-        CustomBlockquote,
-
-        // Other extensions without node views
-        ListItem,
-        Bold,
-        Italic,
-        Strike,
-        HardBreak,
-        HorizontalRule,
-        History,
-        CustomImage.configure({
-            inline: false,
-            allowBase64: true
-        }),
-
-        drawIoExtension.configure({
-            openDialog: 'dblclick',
-        }),
-
-        Mention.configure({
-            HTMLAttributes: {
-                class: "mention",
-            },
-            suggestion,
-        }),
-
-        Link.configure({}),
-
-        CodeBlockLowlight.configure({
-            lowlight,
-        }),
-
-        SmilieReplacer,
-        textToLink.convertTextToLink,
-
-        Table,
-        TableRow,
-        TableCell,
-        TableHeader,
-        CustomTable,
-        Placeholder.configure({
-            // Use a placeholder:
-            placeholder: 'Write something …',
-            // Use different placeholders depending on the node type:
-            // placeholder: ({ node }) => {
-            //   if (node.type.name === 'heading') {
-            //     return 'What’s the title?'
-            //   }
-
-            //   return 'Can you add some further context?'
-            // },
-        }),
-        MoveNode,
-
-    ],
+  },
+  extensions: getExtensions(),
 });
 
 const exportToPDF = () => {
-    console.log(editor.value);
-    document.getElementById('print').innerHTML = editor.value.getHTML();
-    window.print();
+  console.log(editor.value);
+  document.getElementById("print").innerHTML = editor.value.getHTML();
+  window.print();
 };
 
 function cleanTiptapJson(rawData) {
-    const json = { ...rawData };
-    // Recursively clean the content
-    function cleanContent(content) {
-        return content
-            .map((item) => {
-                // Remove empty text nodes and null text content
-                if (
-                    item.type === "text" &&
-                    (!item.text || item.text.trim() === "")
-                ) {
-                    return null;
-                }
-                if (item.content) {
-                    item.content = cleanContent(item.content);
-                }
-                // Remove elements with empty content arrays
-                if (item.content && item.content.length === 0) {
-                    return null;
-                }
-                return item;
-            })
-            .filter((item) => item !== null); // Remove null items
-    }
-    try {
-        // Clean the top-level content
-        json.content = cleanContent(json?.content ?? []);
+  const json = { ...rawData };
+  // Recursively clean the content
+  function cleanContent(content) {
+    return content
+      .map((item) => {
+        // Remove empty text nodes and null text content
+        if (item.type === "text" && (!item.text || item.text.trim() === "")) {
+          return null;
+        }
+        if (item.content) {
+          item.content = cleanContent(item.content);
+        }
+        // Remove elements with empty content arrays
+        if (item.content && item.content.length === 0) {
+          return null;
+        }
+        return item;
+      })
+      .filter((item) => item !== null); // Remove null items
+  }
+  try {
+    // Clean the top-level content
+    json.content = cleanContent(json?.content ?? []);
 
-        return json;
-    } catch (e) {
-        console.log(e);
-        return "";
-    }
+    return json;
+  } catch (e) {
+    console.log(e);
+    return "";
+  }
 }
 </script>
 
@@ -278,6 +288,17 @@ function cleanTiptapJson(rawData) {
         :editor="editor"
         class="block lg:hidden"
       />
+
+      <!-- Collaboration status indicator -->
+      <div
+        v-if="collaborative && documentId"
+        class="collab-status px-3 py-1 text-xs bg-blue-50 text-blue-700 dark:bg-blue-900 dark:text-blue-200 border-b border-gray-200 dark:border-gray-700"
+      >
+        <span class="flex items-center">
+          <span class="w-2 h-2 mr-1 rounded-full bg-green-500 animate-pulse"></span>
+          Collaborative mode enabled (Document #{{ documentId }})
+        </span>
+      </div>
     </fwb-card-header>
 
     <editor-content
@@ -404,5 +425,41 @@ table {
   background-color: rgba(0, 100, 255, 0.1);
   pointer-events: none;
   z-index: 2;
+}
+
+/* Collaboration styling */
+.collab-status {
+  font-size: 0.75rem;
+  line-height: 1rem;
+}
+
+/* Additional collaboration cursor styles */
+.collaboration-cursor {
+  position: relative;
+  border-left: 2px solid;
+  margin-left: -1px;
+  height: 1.2em;
+  display: inline-block;
+  pointer-events: none;
+}
+
+.collaboration-cursor-label {
+  position: absolute;
+  top: -1.4em;
+  left: -1px;
+  font-size: 0.75rem;
+  border-radius: 3px;
+  padding: 0 4px;
+  white-space: nowrap;
+  color: white;
+  font-weight: 500;
+  pointer-events: none;
+  user-select: none;
+}
+
+.collaboration-selection {
+  background-color: rgba(0, 100, 255, 0.1);
+  border-radius: 2px;
+  pointer-events: none;
 }
 </style>

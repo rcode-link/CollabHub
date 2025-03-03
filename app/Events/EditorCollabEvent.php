@@ -18,10 +18,13 @@ class EditorCollabEvent implements ShouldBroadcast
 
     /**
      * Create a new event instance.
+     * 
+     * @param mixed $data The collaboration data to broadcast
+     * @param int $docId The document ID
      */
     public function __construct(public $data, private readonly int $docId)
     {
-        //
+        $this->dontBroadcastToCurrentUser();
     }
 
     /**
@@ -33,6 +36,19 @@ class EditorCollabEvent implements ShouldBroadcast
     {
         return [
             new PresenceChannel('collaboration.' . $this->docId),
+        ];
+    }
+    
+    /**
+     * Get the data to broadcast.
+     *
+     * @return array
+     */
+    public function broadcastWith(): array
+    {
+        return [
+            'data' => $this->data,
+            'timestamp' => now()->timestamp,
         ];
     }
 }
