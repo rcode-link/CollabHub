@@ -130,7 +130,7 @@ export default () => {
     };
 
     // Handle showing notifications safely
-    const showNotification = (title, body, onClick, icon = '/logo.png', data = {}) => {
+    const showNotification = async (title, body, onClick, icon = '/logo.png', data = {}) => {
         // In PWA mode on GrapheneOS, we might want to show notifications even when focused
         // since the app might be running but not visible (e.g., split screen)
         const shouldShowNotification = !isWindowFocused.value || isPWA.value;
@@ -215,7 +215,7 @@ export default () => {
         }
     };
 
-    const UpdateChatForUser = (data: any) => {
+    const UpdateChatForUser = async (data: any) => {
         loadNumberOfUnreadMessages();
 
         // Only show notification if message wasn't sent by current user
@@ -223,7 +223,7 @@ export default () => {
             // Get user avatar if available
             const userAvatar = data.message.user_avatar || '/logo.png';
             
-            showNotification(
+            await showNotification(
                 "New message",
                 `${data.message.user} send you new message`,
                 () => {
@@ -236,11 +236,11 @@ export default () => {
         }
     };
 
-    const pushNotificaiton = (data: any) => {
+    const pushNotificaiton = async (data: any) => {
         // Get user avatar if available
         const userAvatar = data.callId.user.profile_photo_url || '/logo.png';
         
-        showNotification(
+        await showNotification(
             "Video call",
             `${data.callId.user.name} is calling you.`,
             (e) => {
@@ -314,7 +314,9 @@ export default () => {
     if (typeof window !== 'undefined') {
         // Make notification functions globally available
         window.$notifications = {
-            show: showNotification,
+            show: async (title, body, onClick, icon = '/logo.png', data = {}) => {
+                return await showNotification(title, body, onClick, icon, data);
+            },
             isWindowFocused: () => isWindowFocused.value,
             requestPermission: requestNotificationPermission
         };
