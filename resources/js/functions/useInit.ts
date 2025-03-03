@@ -12,6 +12,9 @@ import { useRouter } from "vue-router";
 //@ts-ignore
 import VideoToast from "../components/shared/video/VideoToast.vue";
 import { initAxios } from "@/axios.js";
+
+// Track window focus state
+const isWindowFocused = ref(typeof document !== 'undefined' ? document.hasFocus() : true);
 export default () => {
     const userState = useUserStore();
     const messagesState = chatDetails();
@@ -23,6 +26,27 @@ export default () => {
 
     const textToLinkStore = useTextToLinkStore();
     const notificationPermissionGranted = ref(Notification.permission === 'granted');
+    
+    // Setup window focus/blur event listeners
+    const setupFocusListeners = () => {
+        if (typeof window === 'undefined') return;
+        
+        window.addEventListener('focus', () => {
+            isWindowFocused.value = true;
+            console.log('Window is now focused');
+        });
+        
+        window.addEventListener('blur', () => {
+            isWindowFocused.value = false;
+            console.log('Window is now blurred');
+        });
+        
+        // Also listen for visibility changes which is more reliable in some cases
+        document.addEventListener('visibilitychange', () => {
+            isWindowFocused.value = document.visibilityState === 'visible';
+            console.log('Visibility changed:', document.visibilityState);
+        });
+    };
 
     initEcho();
     initAxios();
@@ -99,10 +123,10 @@ export default () => {
     };
 
     // Handle showing notifications safely
-    const showNotification = (title, body, onClick) => {
-
-        // Check if page is visible
-        if (document.visibilityState === 'visible') {
+    const showNotification = (title, body, onClick, icon = '/logo.png', data = {}) => {
+        // Check if window is focused using our tracked focus state
+        if (isWindowFocused.value) {
+            console.log('Window is focused, not showing browser notification');
             return;
         }
 
@@ -112,11 +136,39 @@ export default () => {
             return;
         }
 
-        // Create notification if permission granted
+        // Try to show notification through service worker first (for PWA)
+        if (navigator.serviceWorker && navigator.serviceWorker.controller) {
+            try {
+                navigator.serviceWorker.controller.postMessage({
+                    type: 'notification',
+                    notification: {
+                        title,
+                        body,
+                        icon,
+                        url: data.url || '/',
+                        ...data
+                    }
+                });
+                console.log('Notification sent to service worker');
+                return;
+            } catch (error) {
+                console.error('Error sending notification to service worker:', error);
+                // Fall back to regular notification
+            }
+        }
+
+        // Create direct browser notification if service worker approach failed
         if (notificationPermissionGranted.value) {
             try {
-                const notification = new Notification(title, { body });
+                const notification = new Notification(title, { 
+                    body,
+                    icon,
+                    data,
+                    badge: '/logo.png',
+                    requireInteraction: true
+                });
                 notification.onclick = onClick;
+                console.log('Direct browser notification shown');
             } catch (error) {
                 console.error('Error creating notification:', error);
             }
@@ -126,30 +178,38 @@ export default () => {
     const UpdateChatForUser = (data: any) => {
         loadNumberOfUnreadMessages();
 
-        showNotification(
-            "New message",
-            `${data.message.user} send you new message`,
-            () => {
-                router.push({
-                    name: "chat-details",
-                    params: {
-                        chatId: data.chatId,
-                    },
-                });
-                window.focus();
-            }
-        );
+        // Only show notification if message wasn't sent by current user
+        if (!data.message.is_self) {
+            // Get user avatar if available
+            const userAvatar = data.message.user_avatar || '/logo.png';
+            
+            showNotification(
+                "New message",
+                `${data.message.user} send you new message`,
+                () => {
+                    // Just focus the window
+                    window.focus();
+                },
+                userAvatar, 
+                {}
+            );
+        }
     };
 
     const pushNotificaiton = (data: any) => {
+        // Get user avatar if available
+        const userAvatar = data.callId.user.profile_photo_url || '/logo.png';
+        
         showNotification(
             "Video call",
             `${data.callId.user.name} is calling you.`,
             (e) => {
                 e.preventDefault();
-                router.push(`/call/${data.callId.videocalls.slug}`);
+                // Just focus the window
                 window.focus();
-            }
+            },
+            userAvatar,
+            {}
         );
     };
 
@@ -198,6 +258,9 @@ export default () => {
 
     // Request permission on initialization
     requestNotificationPermission();
+    
+    // Setup window focus/blur event listeners
+    setupFocusListeners();
 
     // Watch for changes in message count to update title
     watch(
@@ -206,4 +269,14 @@ export default () => {
             updatePageTitle();
         }
     );
+    
+    // Expose notification functions to window for use in other components
+    if (typeof window !== 'undefined') {
+        // Make notification functions globally available
+        window.$notifications = {
+            show: showNotification,
+            isWindowFocused: () => isWindowFocused.value,
+            requestPermission: requestNotificationPermission
+        };
+    }
 };

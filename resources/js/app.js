@@ -12,12 +12,18 @@ import * as Sentry from "@sentry/vue";
 import "../../src/registerServiceWorker.js";
 import '../../node_modules/flowbite-vue/dist/index.css'
 import { initAxios } from "./axios";
+import notificationManager from "./utils/notificationManager";
 const app = createApp(App);
 const pinia = createPinia();
 app.use(abilitiesPlugin, ability);
 app.use(pinia);
 app.use(router);
 initAxios();
+
+// Make notification manager available globally
+app.config.globalProperties.$notifications = notificationManager;
+// Also make it available to the window for non-Vue components
+window.$notifications = notificationManager;
 
 // Get environment data from data-env attribute
 const envEl = document.querySelector('body');

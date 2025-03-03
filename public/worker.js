@@ -76,27 +76,30 @@ self.addEventListener('push', event => {
   );
 });
 
-// Notification click event - open the relevant page
+// Notification click event - just focus the window
 self.addEventListener('notificationclick', event => {
   event.notification.close();
   
-  if (event.notification.data && event.notification.data.url) {
-    event.waitUntil(
-      clients.matchAll({type: 'window'})
-        .then(windowClients => {
-          // Check if there is already a window open with the URL
+  // Just focus the existing window without changing navigation
+  event.waitUntil(
+    clients.matchAll({type: 'window'})
+      .then(windowClients => {
+        // Find windows that are already open
+        if (windowClients.length > 0) {
+          // Focus the first window we find without changing its URL
           for (let client of windowClients) {
-            if (client.url === event.notification.data.url && 'focus' in client) {
+            if ('focus' in client) {
               return client.focus();
             }
           }
-          // If no window is open, open a new one
-          if (clients.openWindow) {
-            return clients.openWindow(event.notification.data.url);
-          }
-        })
-    );
-  }
+        }
+        
+        // If no window is open, open a new one at root URL
+        if (clients.openWindow) {
+          return clients.openWindow('/');
+        }
+      })
+  );
 });
 
 // Handle messages from the main thread
