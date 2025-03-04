@@ -22,11 +22,33 @@
           class="p-1 text-sm font-bold"
         >
           <div class="flex-1">Reply to:</div>
-          <Editor
-            class="h-4 overflow-hidden"
-            :editable="false"
-            :model="activeMessage.message"
-          />
+          <div class="response-message">
+            <Editor
+              class="h-4 overflow-hidden"
+              :editable="false"
+              :model="activeMessage.message"
+            />
+
+            <InteractiveToast>
+              <template #trigger>
+                <TrashIcon class="w-4 h-4 text-red-600" />
+              </template>
+              <template #title>
+                <h1>Are you sure?</h1>
+              </template>
+              <template #content>
+                You are about to dismiss replay to message!
+              </template>
+              <template #actions>
+                <fwb-button
+                  @click="() => chatMessageStore.setReplyToMessageId(null)"
+                  color="red"
+                  size="xs"
+                >Yes</fwb-button>
+              </template>
+
+            </InteractiveToast>
+          </div>
         </div>
         <Editor
           ref="editorRef"
@@ -91,17 +113,20 @@
   </form>
 </template>
 <script setup>
+import { computed, ref } from "vue";
+import { chatDetails } from "@/store/chatStore.js";
+import { useRoute } from "vue-router";
+import _ from "lodash";
+
 import { FwbButton } from "flowbite-vue";
 import FilesComponent from "./FilesComponent.vue";
-import { chatDetails } from "../../../../../store/chatStore.js";
-import { useRoute } from "vue-router";
-import Editor from "../../../../shared/Editor.vue";
-import { computed, ref } from "vue";
+import Editor from "@/components/shared/Editor.vue";
+import TrashIcon from "@/components/shared/icons/TrashIcon.vue";
+import InteractiveToast from "@/components/shared/InteractiveToast.vue";
 
 // import css
 import "vue3-emoji-picker/css";
-import Emoji from "../../../../shared/Emoji.vue";
-import _ from "lodash";
+import Emoji from "@/components/shared/Emoji.vue";
 
 const props = defineProps({
   chatId: null,
@@ -146,5 +171,10 @@ function onSelectEmoji(emoji) {
 .send-meessage-editor {
   overflow: auto;
   height: 42px;
+}
+
+.response-message {
+  display: grid;
+  grid-template-columns: 1fr auto;
 }
 </style>

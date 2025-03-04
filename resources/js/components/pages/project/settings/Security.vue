@@ -1,22 +1,19 @@
 <script setup>
-
-import InteractiveToast from "../../../shared/InteractiveToast.vue";
-import {FwbButton} from "flowbite-vue";
-import {useRoute, useRouter} from "vue-router";
-import {useAbility} from "@casl/vue";
+import InteractiveToast from "@/components/shared/InteractiveToast.vue";
+import { FwbButton } from "flowbite-vue";
+import { useRoute, useRouter } from "vue-router";
+import { useAbility } from "@casl/vue";
 const route = useRoute();
-const router = useRouter()
-const { can, rules } = useAbility()
+const router = useRouter();
+const { can, rules } = useAbility();
 
 const deleteProject = () => {
-    axios.delete(`/api/v1/projects/${route.params.project}`)
-        .then(() => {
-            router.push({
-                name: 'projects'
-            })
-        })
-}
-
+  axios.delete(`/api/v1/projects/${route.params.project}`).then(() => {
+    router.push({
+      name: "projects",
+    });
+  });
+};
 </script>
 
 <template>
@@ -32,11 +29,13 @@ const deleteProject = () => {
       You are about to delete project!
     </template>
     <template #actions>
-      <fwb-button @click="deleteProject" color="red" size="xs">Yes, delete it!</fwb-button>
+      <fwb-button
+        @click="deleteProject"
+        color="red"
+        size="xs"
+      >Yes, delete it!</fwb-button>
     </template>
   </InteractiveToast>
 </template>
 
-<style scoped>
-
-</style>
+<style scoped></style>
