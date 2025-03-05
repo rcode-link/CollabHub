@@ -27,6 +27,7 @@ export default () => {
     const messagesState = chatDetails();
     const router = useRouter();
 
+
     if (!localStorage.getItem("token")) {
         return;
     }
@@ -54,11 +55,15 @@ export default () => {
             console.log('Visibility changed:', document.visibilityState);
         });
     };
-
+    const broadcast = new BroadcastChannel('channel-123');
     initEcho();
     initAxios();
     textToLinkStore.load();
 
+    broadcast.onmessage = (data) => {
+    console.log("service worker is online");
+
+    }
     // Save original page title
     if (!userState.originalTitle) {
         userState.originalTitle = document.title;
@@ -76,7 +81,6 @@ export default () => {
     window.axios.get("/api/v1/user").then((res) => {
         userState.setUser(res.data);
         loadNumberOfUnreadMessages();
-
         window.Echo.private(`start-call.${res.data.data.id}`).listen(
             "StartVideoCall",
             videoCallNotification
@@ -133,8 +137,9 @@ export default () => {
     const showNotification = async (title, body, onClick, icon = '/logo.png', data = {}) => {
         // In PWA mode on GrapheneOS, we might want to show notifications even when focused
         // since the app might be running but not visible (e.g., split screen)
-        const shouldShowNotification = !isWindowFocused.value || isPWA.value || data.message.userId === userState.user.id;
 
+        const shouldShowNotification = !isWindowFocused.value || isPWA.value;
+        console.log("Show notification if i'm the one sending message: ", shouldShowNotification);
         if (!shouldShowNotification) {
             console.log('Window is focused and not in PWA mode, not showing browser notification');
             return;
@@ -159,7 +164,7 @@ export default () => {
                     const reg = await navigator.serviceWorker.ready;
                     if (reg.active) {
                         // Force claim clients if needed
-                        reg.active.postMessage({ type: 'claim-clients' });
+                        reg.active.postMessage({ type: 'claim-clients', userId: userState.user.id });
 
                         // Wait briefly for controller to be assigned
                         await new Promise(resolve => setTimeout(resolve, 50));
@@ -183,7 +188,8 @@ export default () => {
                             requireInteraction: true, // Keep notification until user dismisses it
                             renotify: true, // Notify each time even with same tag
                             url: data.url || '/',
-                            ...data
+                            ...data,
+                            didISendIt: data.message.userId === userState.user.id
                         }
                     });
                     console.log('Notification sent to service worker');

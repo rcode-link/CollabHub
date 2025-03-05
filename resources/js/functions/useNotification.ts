@@ -7,18 +7,15 @@ import { useRouter } from "vue-router";
 
 export default () => {
     const tabCoordination = useTabCoordination();
-
     const router = useRouter();
+    
     const shouldIShowNotification = () => {
         return tabCoordination.shouldINotifify();
     };
+    
     const UpdateChatForUser = (data: any) => {
         // Get the user store to access current user ID
         const userStore = useUserStore();
-        
-        // Since the ChatUpdate event doesn't contain the user_id directly in data,
-        // we need to look for it in the chat controller or get it from other user info
-        // We'll use the sender's name to decide if it's the current user
         
         // Only show notification if:
         // 1. User should be notified (user is not on the page)
@@ -26,17 +23,16 @@ export default () => {
         const isCurrentUserSender = userStore.user.name === data.message.user;
         
         if (shouldIShowNotification() && !isCurrentUserSender) {
-            const notification = new Notification("New message", {
-                body: `${data.message.user} send you new message`,
+            toast.info(`${data.message.user} sent you a new message`, {
+                onClick: () => {
+                    router.push({
+                        name: "chat-details",
+                        params: {
+                            chatId: data.chatId,
+                        },
+                    });
+                }
             });
-            notification.onclick = () => {
-                router.push({
-                    name: "chat-details",
-                    params: {
-                        chatId: data.chatId,
-                    },
-                });
-            };
         }
     };
 
@@ -50,28 +46,6 @@ export default () => {
             "ChatUpdate",
             UpdateChatForUser
         );
-    };
-
-    const pushNotificaiton = (data: any) => {
-        // Get the user store to access current user ID
-        const userStore = useUserStore();
-        
-        // Only show notification if:
-        // 1. User should be notified (user is not on the page)
-        // 2. The caller is not the current user
-        const callerId = data.callId.user.id;
-        const isCurrentUserCaller = callerId === userStore.user.id;
-        
-        if (shouldIShowNotification() && !isCurrentUserCaller) {
-            const notification = new Notification("Video call", {
-                body: `${data.callId.user.name} is calling you.`,
-            });
-
-            notification.onclick = (e) => {
-                e.preventDefault();
-                window.open(`/call/${data.callId.videocalls.slug}`);
-            };
-        }
     };
 
     const videoCallNotification = (data: any) => {
@@ -90,7 +64,6 @@ export default () => {
                 },
                 type: "info",
             });
-            pushNotificaiton(data);
         }
     };
 

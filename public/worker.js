@@ -1,5 +1,6 @@
 // Import Echo and Pusher libraries with error handling
 self.Echo = null;
+self.UserId = 0;
 
 try {
   // Import our created minimal libraries that are compatible with Service Worker context
@@ -9,7 +10,8 @@ try {
   console.error('Error importing scripts in service worker:', e.message);
 }
 
-const CACHE_NAME = 'collabhub-cache-v1';
+const CACHE_NAME = 'collabhub-cache-v1.1';
+
 const urlsToCache = [
   '/',
   '/index.php',
@@ -21,7 +23,7 @@ const urlsToCache = [
 self.addEventListener('install', event => {
   // Use skipWaiting() to ensure the service worker activates immediately
   self.skipWaiting();
-  
+
   event.waitUntil(
     caches.open(CACHE_NAME)
       .then(cache => {
@@ -70,7 +72,6 @@ self.addEventListener('push', event => {
   if (event.data) {
     data = event.data.json();
   }
-  console.log(data);
 
   const options = {
     body: data.body || 'New notification',
@@ -86,10 +87,11 @@ self.addEventListener('push', event => {
   );
 });
 
+
 // Notification click event - just focus the window
 self.addEventListener('notificationclick', event => {
   event.notification.close();
-  
+
   // Just focus the existing window without changing navigation
   event.waitUntil(
     clients.matchAll({type: 'window'})
@@ -103,7 +105,7 @@ self.addEventListener('notificationclick', event => {
             }
           }
         }
-        
+
         // If no window is open, open a new one at root URL
         if (clients.openWindow) {
           return clients.openWindow('/');
@@ -115,7 +117,7 @@ self.addEventListener('notificationclick', event => {
 // Handle messages from the main thread
 self.onmessage = function(event) {
   console.log('Worker received message:', event.data);
-  
+
   // Handle client claiming (for GrapheneOS compatibility)
   if (event.data.type === 'claim-clients') {
     self.clients.claim().then(() => {
@@ -134,8 +136,8 @@ self.onmessage = function(event) {
           broadcaster: "null", // Use null broadcaster in service worker context
           key: event.data.config.VITE_PUSHER_APP_KEY,
           cluster: event.data.config.VITE_PUSHER_APP_CLUSTER || "mt1",
-          wsHost: event.data.config.VITE_PUSHER_HOST 
-              ? event.data.config.VITE_PUSHER_HOST 
+          wsHost: event.data.config.VITE_PUSHER_HOST
+              ? event.data.config.VITE_PUSHER_HOST
               : `ws-${event.data.config.VITE_PUSHER_APP_CLUSTER}.pusher.com`,
           wsPort: event.data.config.VITE_PUSHER_PORT || 80,
           wssPort: event.data.config.VITE_PUSHER_PORT || 443,
@@ -150,9 +152,9 @@ self.onmessage = function(event) {
             },
           },
         });
-        
+
         console.log("Echo configured in service worker");
-        
+
         // Notify the main thread that we're ready for notifications
         if (event.source && event.source.postMessage) {
           event.source.postMessage({
@@ -169,7 +171,7 @@ self.onmessage = function(event) {
   } else if (event.data.type === 'notification') {
     // Handle a notification request from the main thread
     showNotification(event.data.notification);
-    
+
     // Also try to wake up any clients
     self.clients.matchAll({type: 'window'}).then(clients => {
       if (clients.length === 0) {
@@ -184,7 +186,9 @@ self.onmessage = function(event) {
 
 // Helper function to show notifications with more options for GrapheneOS
 function showNotification(data) {
-  console.log(data);
+    if(data.didISendIt){
+        return;
+    }
   const options = {
     body: data.body || 'New notification',
     icon: data.icon || '/logo.png',
@@ -214,3 +218,5 @@ function showNotification(data) {
     console.error('Error showing notification:', error);
   }
 }
+
+
