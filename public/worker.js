@@ -70,6 +70,7 @@ self.addEventListener('push', event => {
   if (event.data) {
     data = event.data.json();
   }
+  console.log(data);
 
   const options = {
     body: data.body || 'New notification',

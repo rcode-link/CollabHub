@@ -18,8 +18,8 @@ const isWindowFocused = ref(typeof document !== 'undefined' ? document.hasFocus(
 
 // Flag to track whether app is running in standalone PWA mode
 const isPWA = ref(typeof window !== 'undefined' && (
-    window.matchMedia('(display-mode: standalone)').matches || 
-    window.navigator.standalone || 
+    window.matchMedia('(display-mode: standalone)').matches ||
+    window.navigator.standalone ||
     document.referrer.includes('android-app://')
 ));
 export default () => {
@@ -33,21 +33,21 @@ export default () => {
 
     const textToLinkStore = useTextToLinkStore();
     const notificationPermissionGranted = ref(Notification.permission === 'granted');
-    
+
     // Setup window focus/blur event listeners
     const setupFocusListeners = () => {
         if (typeof window === 'undefined') return;
-        
+
         window.addEventListener('focus', () => {
             isWindowFocused.value = true;
             console.log('Window is now focused');
         });
-        
+
         window.addEventListener('blur', () => {
             isWindowFocused.value = false;
             console.log('Window is now blurred');
         });
-        
+
         // Also listen for visibility changes which is more reliable in some cases
         document.addEventListener('visibilitychange', () => {
             isWindowFocused.value = document.visibilityState === 'visible';
@@ -133,8 +133,8 @@ export default () => {
     const showNotification = async (title, body, onClick, icon = '/logo.png', data = {}) => {
         // In PWA mode on GrapheneOS, we might want to show notifications even when focused
         // since the app might be running but not visible (e.g., split screen)
-        const shouldShowNotification = !isWindowFocused.value || isPWA.value;
-        
+        const shouldShowNotification = !isWindowFocused.value || isPWA.value || data.message.userId === userState.user.id;
+
         if (!shouldShowNotification) {
             console.log('Window is focused and not in PWA mode, not showing browser notification');
             return;
@@ -154,23 +154,23 @@ export default () => {
                     if (navigator.serviceWorker.controller) {
                         return navigator.serviceWorker.controller;
                     }
-                    
+
                     // If no controller, try to get registration
                     const reg = await navigator.serviceWorker.ready;
                     if (reg.active) {
                         // Force claim clients if needed
                         reg.active.postMessage({ type: 'claim-clients' });
-                        
+
                         // Wait briefly for controller to be assigned
                         await new Promise(resolve => setTimeout(resolve, 50));
-                        
+
                         return navigator.serviceWorker.controller;
                     }
                     return null;
                 };
-                
+
                 const controller = await getController();
-                
+
                 if (controller) {
                     controller.postMessage({
                         type: 'notification',
@@ -200,7 +200,7 @@ export default () => {
         // Create direct browser notification if service worker approach failed
         if (notificationPermissionGranted.value) {
             try {
-                const notification = new Notification(title, { 
+                const notification = new Notification(title, {
                     body,
                     icon,
                     data,
@@ -218,11 +218,12 @@ export default () => {
     const UpdateChatForUser = async (data: any) => {
         loadNumberOfUnreadMessages();
 
+
+
         // Only show notification if message wasn't sent by current user
-        if (!data.message.is_self) {
             // Get user avatar if available
             const userAvatar = data.message.user_avatar || '/logo.png';
-            
+
             await showNotification(
                 "New message",
                 `${data.message.user} send you new message`,
@@ -230,16 +231,15 @@ export default () => {
                     // Just focus the window
                     window.focus();
                 },
-                userAvatar, 
-                {}
+                userAvatar,
+                data
             );
-        }
     };
 
     const pushNotificaiton = async (data: any) => {
         // Get user avatar if available
         const userAvatar = data.callId.user.profile_photo_url || '/logo.png';
-        
+
         await showNotification(
             "Video call",
             `${data.callId.user.name} is calling you.`,
@@ -249,7 +249,7 @@ export default () => {
                 window.focus();
             },
             userAvatar,
-            {}
+            data
         );
     };
 
@@ -298,7 +298,7 @@ export default () => {
 
     // Request permission on initialization
     requestNotificationPermission();
-    
+
     // Setup window focus/blur event listeners
     setupFocusListeners();
 
@@ -309,7 +309,7 @@ export default () => {
             updatePageTitle();
         }
     );
-    
+
     // Expose notification functions to window for use in other components
     if (typeof window !== 'undefined') {
         // Make notification functions globally available
