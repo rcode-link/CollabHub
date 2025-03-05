@@ -1,5 +1,6 @@
 import { toast } from "vue3-toastify/index";
 import useTabCoordination from "./useTabCoordination";
+import { useUserStore } from "../store/user";
 
 import VideoToast from "../components/shared/video/VideoToast.vue";
 import { useRouter } from "vue-router";
@@ -12,7 +13,19 @@ export default () => {
         return tabCoordination.shouldINotifify();
     };
     const UpdateChatForUser = (data: any) => {
-        if (shouldIShowNotification()) {
+        // Get the user store to access current user ID
+        const userStore = useUserStore();
+        
+        // Since the ChatUpdate event doesn't contain the user_id directly in data,
+        // we need to look for it in the chat controller or get it from other user info
+        // We'll use the sender's name to decide if it's the current user
+        
+        // Only show notification if:
+        // 1. User should be notified (user is not on the page)
+        // 2. The sender is not the current user (comparing by name since ID is not directly available)
+        const isCurrentUserSender = userStore.user.name === data.message.user;
+        
+        if (shouldIShowNotification() && !isCurrentUserSender) {
             const notification = new Notification("New message", {
                 body: `${data.message.user} send you new message`,
             });
@@ -40,7 +53,16 @@ export default () => {
     };
 
     const pushNotificaiton = (data: any) => {
-        if (shouldIShowNotification()) {
+        // Get the user store to access current user ID
+        const userStore = useUserStore();
+        
+        // Only show notification if:
+        // 1. User should be notified (user is not on the page)
+        // 2. The caller is not the current user
+        const callerId = data.callId.user.id;
+        const isCurrentUserCaller = callerId === userStore.user.id;
+        
+        if (shouldIShowNotification() && !isCurrentUserCaller) {
             const notification = new Notification("Video call", {
                 body: `${data.callId.user.name} is calling you.`,
             });
@@ -53,14 +75,23 @@ export default () => {
     };
 
     const videoCallNotification = (data: any) => {
-        toast(VideoToast, {
-            data: {
-                callerName: data.callId.user.name,
-                callId: data.callId.videocalls.slug,
-            },
-            type: "info",
-        });
-        pushNotificaiton(data);
+        // Get the user store to access current user ID
+        const userStore = useUserStore();
+        
+        // Check if the caller is not the current user
+        const callerId = data.callId.user.id;
+        const isCurrentUserCaller = callerId === userStore.user.id;
+        
+        if (!isCurrentUserCaller) {
+            toast(VideoToast, {
+                data: {
+                    callerName: data.callId.user.name,
+                    callId: data.callId.videocalls.slug,
+                },
+                type: "info",
+            });
+            pushNotificaiton(data);
+        }
     };
 
     return {
