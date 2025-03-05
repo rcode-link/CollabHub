@@ -19,14 +19,15 @@ import { chatDetails } from "../../store/chatStore";
 import vacation from "../shared/vacationPlugin/vacation";
 import { Markdown } from "tiptap-markdown";
 import { useTextToLinkStore } from "@/store/textToLinkStore";
+import { LinkPreviewExtension } from "@/functions/editor/LinkPreviewExtension.js";
 import { useRouter } from "vue-router";
 const chatStore = chatDetails();
 const router = useRouter();
 const props = defineProps({
-    modelValue: "",
-    model: "",
-    cssClass: "",
-    editable: true,
+  modelValue: "",
+  model: "",
+  cssClass: "",
+  defaultShowPreview: true,
 });
 
 const pressedKeys = ref([]);
@@ -38,77 +39,97 @@ const emit = defineEmits(["update:modelValue", "submitted"]);
 const lowlight = createLowlight();
 
 hljs.listLanguages().forEach(async (lang) => {
-    //@ts-ignore
-    lowlight.register(lang, hljs.getLanguage(lang).rawDefinition);
+  //@ts-ignore
+  lowlight.register(lang, hljs.getLanguage(lang).rawDefinition);
 });
 
 const suggestion = useSuggestion();
 
 const editor = useEditor({
-    content: props.model ?? props.modelValue,
-    editable: props.editable,
-    editorProps: {
-        handleDOMEvents: {
-            keydown: (view, event) => {
-                if (["Control", "Enter"].indexOf(event.key) > -1) {
-                    pressedKeys.value.push(event.key);
-                }
-                if (pressedKeys.value.join("-") === "Control-Enter") {
-                    event.preventDefault();
+  content: props.model ?? props.modelValue,
+  editable: props.editable,
+  editorProps: {
+    handleDOMEvents: {
+      keydown: (view, event) => {
+        if (["Control", "Enter"].indexOf(event.key) > -1) {
+          pressedKeys.value.push(event.key);
+        }
+        if (pressedKeys.value.join("-") === "Control-Enter") {
+          event.preventDefault();
 
-                    emit("update:modelValue", editor.value?.getJSON());
-                    emit("submitted", true);
-                }
-            },
-            keyup(view, event) {
-                pressedKeys.value = pressedKeys.value.filter(
-                    (key) => key !== event.key,
-                );
-            },
-        },
-        handlePaste: function (view, event, slice) {
-            const items = Array.from(event.clipboardData?.items || []).filter(
-                (obj) => obj.kind === "file",
-            );
-            chatStore.addFiles(items.map((obj) => obj.getAsFile()));
-        },
+          emit("update:modelValue", editor.value?.getJSON());
+          emit("submitted", true);
+        }
+      },
+      keyup(view, event) {
+        pressedKeys.value = pressedKeys.value.filter(
+          (key) => key !== event.key
+        );
+      },
     },
-    extensions: [
-        StarterKit,
-        Mention.configure({
-            HTMLAttributes: {
-                class: "mention",
-            },
-            suggestion: suggestion.plugin,
-        }),
-        Link.configure({}),
-        CodeBlockLowlight.configure({
-            lowlight,
-        }),
-        vacation,
-        drawIoExtension.configure({ openDialog: "dblclick" }),
-        tableExtension.configure({
-            resizable: true,
-            allowTableNodeSelection: true,
-        }),
-        TableRow,
-        TableHeader,
-        TableCell,
-        SmilieReplacer,
-        textToLink.convertTextToLink,
-        Markdown,
-    ],
-    onUpdate() {
+    handlePaste: function (view, event, slice) {
+      const items = Array.from(event.clipboardData?.items || []).filter(
+        (obj) => obj.kind === "file"
+      );
+      chatStore.addFiles(items.map((obj) => obj.getAsFile()));
     },
+  },
+  extensions: [
+    StarterKit,
+    Mention.configure({
+      HTMLAttributes: {
+        class: "mention",
+      },
+      suggestion: suggestion.plugin,
+    }),
+    Link.configure({}),
+    LinkPreviewExtension.configure({
+      defaultShowPreview: props.editable !== true, // Links start with previews disabled
+
+      // Replace the fetchMetadata function to use our Laravel backend
+      fetchMetadata: async (url) => {
+        const data = await window.axios
+          .post("/api/v1/link-preview", { url })
+          .then((res) => res.data);
+        console.log(data);
+
+        return {
+          url: data.url,
+          title: data.title || url,
+          description: data.description || "",
+          image: data.image || null,
+        };
+      },
+    }),
+    CodeBlockLowlight.configure({
+      lowlight,
+    }),
+    vacation,
+    drawIoExtension.configure({ openDialog: "dblclick" }),
+    tableExtension.configure({
+      resizable: true,
+      allowTableNodeSelection: true,
+    }),
+    TableRow,
+    TableHeader,
+    TableCell,
+    SmilieReplacer,
+    textToLink.convertTextToLink,
+    Markdown,
+  ],
+  onUpdate() {},
 });
 
 defineExpose({
-    editor,
+  editor,
 });
 </script>
 
 <template>
-    <editor-content :editor="editor" :class="props.cssClass" />
+  <editor-content
+    :editor="editor"
+    :class="props.cssClass"
+  />
 </template>
 
 <style scoped></style>

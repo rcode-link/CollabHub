@@ -183,6 +183,7 @@ self.onmessage = function(event) {
 
 // Helper function to show notifications with more options for GrapheneOS
 function showNotification(data) {
+  console.log(data);
   const options = {
     body: data.body || 'New notification',
     icon: data.icon || '/logo.png',

@@ -6,7 +6,7 @@
                 image-url="/images/logo.svg"
                 :to="{ name: 'home' }"
             >
-                <h1
+                        <h1
                     class="font-extrabold leading-none flex gap-0.5 items-center tracking-tight text-gray-900 text-2xl dark:text-white"
                 >
                     <fwb-avatar :img="userStore.company.avatar" />
