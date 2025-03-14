@@ -29,12 +29,16 @@ const emits = defineEmits(['update:modelValue','update:markdown']);
 watch(model, () => {
     if (model.value) {
         emits("update:modelValue", model.value);
-        emits(
-            "update:markdown",
-            editorRef.value?.editor?.storage.markdown.getMarkdown()
-        );
+        
+        // Only emit markdown update when we have a value
+        if (editorRef.value?.editor?.storage?.markdown) {
+            emits(
+                "update:markdown",
+                editorRef.value.editor.storage.markdown.getMarkdown()
+            );
+        }
     }
-});
+}, { deep: true });
 </script>
 <template>
     <div class="flex gap-1 items-center mb-2">

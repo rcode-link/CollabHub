@@ -103,8 +103,10 @@ class TaskController extends Controller
             $model = Task::create($data);
             $model->children()->attach($request->validated('related_tasks'));
 
-            foreach ($request->files as $file) {
-                $model->addMedia($file)->toMediaCollection('default');
+            if ($request->hasFile('file')) {
+                foreach ($request->file('file') as $file) {
+                    $model->addMedia($file)->toMediaCollection('default');
+                }
             }
             TaskCreatedEvent::dispatch($model);
             return new TaskResource($model);

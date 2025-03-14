@@ -23,9 +23,11 @@ export const setFormData = (form) => {
     }
     data.append("type_id", form.type_id.toString());
 
-    form.files?.forEach((obj, index) => {
-        data.append(`file.${index}`, obj);
-    });
+    if (form.files && form.files.length > 0) {
+        form.files.forEach((obj, index) => {
+            data.append(`file[${index}]`, obj);
+        });
+    }
 
     return data;
 };

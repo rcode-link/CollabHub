@@ -14,6 +14,10 @@ const props = defineProps({
   name: "",
   form: "",
   disabled: false,
+  projectId: {
+    type: [String, Number],
+    default: null
+  }
 });
 
 const emit = defineEmits(["update:modelValue"]);
@@ -26,11 +30,19 @@ const timer = ref(null);
 const loadUsers = () => {
   clearTimeout(timer);
   timer.value = setTimeout(() => {
+    // Use projectId prop if provided, otherwise fallback to route.params.project
+    const projectId = props.projectId || route.params.project;
+    
+    if (!projectId) {
+      users.value = { data: [] };
+      return;
+    }
+    
     axios
       .get(`/api/v1/users/project`, {
         params: {
           user: searchUsers.value,
-          project_id: route.params.project,
+          project_id: projectId,
         },
       })
       .then((res) => {
@@ -54,10 +66,20 @@ const unSelectUser = (e) => {
   currentValue.value = null;
   emit("update:modelValue", null);
 };
+// Watch both search users and projectId changes
 watch(
-  searchUsers,
+  [searchUsers, () => props.projectId],
   () => {
     loadUsers();
+    
+    // Reset selected user when project changes
+    if (currentValue.value) {
+      const projectId = props.projectId || route.params.project;
+      // We need to check if the selected user belongs to the new project
+      // For simplicity, we're resetting it here but you could add a check instead
+      currentValue.value = null;
+      emit("update:modelValue", null);
+    }
   },
   {
     immediate: true,

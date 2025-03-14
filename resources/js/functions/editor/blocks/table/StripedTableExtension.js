@@ -33,14 +33,14 @@ export default Extension.create({
             parseHTML: element => element.hasAttribute('data-striped'),
             renderHTML: attributes => {
               const attrs = { 'class': this.options.defaultTableClasses }
-              
+
               if (attributes.striped) {
                 return {
                   ...attrs,
                   'data-striped': 'true',
                 }
               }
-              
+
               return attrs
             },
           },
@@ -108,11 +108,11 @@ export default Extension.create({
         // Find if there's a table node selected or near the current selection
         const { selection } = state
         const { $from } = selection
-        
+
         // Find the closest table node and its position
         let tableNode = null
         let pos = null
-        
+
         for (let depth = $from.depth; depth > 0; depth--) {
           const node = $from.node(depth)
           if (node.type.name === 'table') {
@@ -121,32 +121,32 @@ export default Extension.create({
             break
           }
         }
-        
+
         if (tableNode && pos !== null && dispatch) {
           // Toggle the striped attribute
           const isStriped = tableNode.attrs.striped
-          
+
           // Create the transaction to update the table's attributes
           tr.setNodeMarkup(pos, undefined, {
             ...tableNode.attrs,
             striped: !isStriped
           })
-          
+
           dispatch(tr)
           return true
         }
-        
+
         return false
       },
-      
+
       setTableStriped: (striped) => ({ tr, state, dispatch }) => {
         const { selection } = state
         const { $from } = selection
-        
+
         // Find the closest table node and its position
         let tableNode = null
         let pos = null
-        
+
         for (let depth = $from.depth; depth > 0; depth--) {
           const node = $from.node(depth)
           if (node.type.name === 'table') {
@@ -155,29 +155,29 @@ export default Extension.create({
             break
           }
         }
-        
+
         if (tableNode && pos !== null && dispatch) {
           // Create the transaction to update the table's attributes
           tr.setNodeMarkup(pos, undefined, {
             ...tableNode.attrs,
             striped
           })
-          
+
           dispatch(tr)
           return true
         }
-        
+
         return false
       },
-      
+
       addElementAfterTable: (elementType) => ({ tr, state, dispatch }) => {
         const { selection } = state
         const { $from } = selection
-        
+
         // Find the closest table node and its position
         let tableNode = null
         let tablePos = null
-        
+
         for (let depth = $from.depth; depth > 0; depth--) {
           const node = $from.node(depth)
           if (node.type.name === 'table') {
@@ -186,29 +186,29 @@ export default Extension.create({
             break
           }
         }
-        
+
         if (tableNode && tablePos !== null && dispatch) {
           // Find the end position of the table
           const tableEndPos = tablePos + tableNode.nodeSize
-          
+
           // Get the node type for the element to insert
           const nodeType = state.schema.nodes[elementType]
-          
+
           if (!nodeType) {
             return false
           }
-          
+
           // Insert the new node after the table
           tr.insert(tableEndPos, nodeType.create())
-          
+
           // Set selection to the new node
           const resolvedPos = tr.doc.resolve(tableEndPos + 1)
           tr.setSelection(state.selection.constructor.near(resolvedPos))
-          
+
           dispatch(tr)
           return true
         }
-        
+
         return false
       }
     }
@@ -220,15 +220,15 @@ export default Extension.create({
       'Mod-Alt-s': () => this.editor.commands.toggleTableStriped(),
     }
   },
-  
+
   // Add plugins to detect selected tables and enhance table interaction
   addProseMirrorPlugins() {
     const pluginKey = new PluginKey('stripedTablePlugin')
-    
+
     return [
       new Plugin({
         key: pluginKey,
-        
+
         // Track table selection state
         state: {
           init() {
@@ -239,18 +239,18 @@ export default Extension.create({
               selectedColumn: null,
             }
           },
-          
+
           apply(tr, value, oldState, newState) {
             const { selection } = newState
             let tablePos = null
             let cellPos = null
             let rowPos = null
             let columnIndex = -1
-            
+
             // Try to find if selection is inside a table
             if (selection.$anchor) {
               const $pos = selection.$anchor
-              
+
               // Find table position by iterating through ancestors
               for (let i = $pos.depth; i > 0; i--) {
                 const node = $pos.node(i)
@@ -260,20 +260,20 @@ export default Extension.create({
                   rowPos = $pos.before(i)
                 } else if (node.type.name === 'tableCell' || node.type.name === 'tableHeader') {
                   cellPos = $pos.before(i)
-                  
+
                   // Try to determine column index
                   if (rowPos !== null) {
                     const rowNode = $pos.node($pos.depth - 1)
                     if (rowNode && rowNode.childCount) {
                       // Calculate column index based on cell position
                       for (let j = 0; j < rowNode.childCount; j++) {
-                        const childPos = rowPos + 1 // Start after row start token
-                        
+                        let childPos = rowPos + 1 // Start after row start token
+
                         if (childPos === cellPos) {
                           columnIndex = j
                           break
                         }
-                        
+
                         // Move to next cell
                         const cellNode = rowNode.child(j)
                         if (cellNode) {
@@ -285,7 +285,7 @@ export default Extension.create({
                 }
               }
             }
-            
+
             return {
               selectedTable: tablePos,
               selectedCell: cellPos,
@@ -294,16 +294,16 @@ export default Extension.create({
             }
           }
         },
-        
+
         // Add selection-specific classes for visual feedback
         props: {
           decorations: (state) => {
             const { doc } = state
             const pluginState = pluginKey.getState(state)
             if (!pluginState.selectedTable) return null
-            
+
             const decorations = []
-            
+
             // Highlight selected row if applicable
             if (pluginState.selectedRow !== null) {
               decorations.push(
@@ -312,7 +312,7 @@ export default Extension.create({
                 })
               )
             }
-            
+
             // Highlight selected cell if applicable
             if (pluginState.selectedCell !== null) {
               decorations.push(
@@ -321,26 +321,26 @@ export default Extension.create({
                 })
               )
             }
-            
+
             return DecorationSet.create(doc, decorations)
           }
         }
       })
     ]
   },
-  
+
   // Add custom node view for table using Vue component
   addNodeView() {
     return (props) => {
       // Determine if this is a top-level table or nested
       const { node, editor, getPos } = props;
       let isNested = false;
-      
+
       if (typeof getPos === 'function') {
         try {
           const pos = getPos();
           const $pos = editor?.view.state.doc.resolve(pos);
-          
+
           // If depth > 1, it's nested inside another element
           if ($pos && $pos.depth > 1) {
             isNested = true;
@@ -349,7 +349,7 @@ export default Extension.create({
           console.error('Error determining table nesting:', e);
         }
       }
-      
+
       // If it's nested, use the default node view without wrapper controls
       //if (isNested) {
       //  // Create a table element to hold content
@@ -382,7 +382,7 @@ export default Extension.create({
       //    }
       //  };
       //}
-      
+
       // For top-level tables, use our custom node view with BaseContainer wrapper
       return VueNodeViewRenderer(TableNodeView)(props);
     }

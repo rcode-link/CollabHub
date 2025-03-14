@@ -99,7 +99,7 @@ const resetForm = () => {
   form.name = "";
   form.description = "";
   form.user_id = null;
-  form.project_id = route.params.project ?? "";
+  form.project_id = route.params.project ?? form.project_id ?? "";
   form.type_id = "2";
   form.status_id = "";
   form.due_date = null;
@@ -125,7 +125,9 @@ watch(
 watch(
   () => route.params.project,
   () => {
-    form.project_id = route.params.project;
+    if (route.params.project) {
+      form.project_id = route.params.project;
+    }
   },
   {
     immediate: true,
@@ -133,7 +135,21 @@ watch(
   }
 );
 
+// Watch for project_id changes to reset user_id when project changes
+watch(
+  () => form.project_id,
+  (newProjectId, oldProjectId) => {
+    if (newProjectId !== oldProjectId && oldProjectId) {
+      // Reset user selection when project changes
+      form.user_id = null;
+    }
+  }
+);
+
 const submit = () => {
+  // Make sure we have the latest content from any editors that might not have triggered blur
+  document.activeElement?.blur();
+
   if (route.query.task) {
     delete form.files;
     form.related_tasks = form.related_tasks.map((obj) => {
@@ -163,16 +179,23 @@ const createNewTask = () => {
     .post("/api/v1/tasks", data)
     .then((task) => {
       resetForm();
-      console.log(task);
+      const taskId = task.data.data.task_id;
+      const taskName = task.data.data.name;
+      
       if (!createMore.value) {
         createTasks.toggleCreateTaskModal();
+        
+        // Redirect to the task page directly
+        router.push(`/open/${taskId}`);
+      } else {
+        // Show toast notification with click-to-open functionality
         toast.success(
-          `<p>Task ${task.data.data.name} created. </p><small>click to open</small>`,
+          `<p>Task ${taskName} created. </p><small>click to open</small>`,
           {
             theme: localStorage.getItem("color-theme") ?? "light",
             dangerouslyHTMLString: true,
             onClick: () => {
-              router.push(`/open/${task.data.data.task_id}`);
+              router.push(`/open/${taskId}`);
             },
           }
         );
@@ -290,7 +313,11 @@ const projectList = () => {
           </div>
           <div class="mb-4">
             <Label :forInput="'user'">Assigned to</Label>
-            <UsersSelectInput v-model="form.user_id" :key="form.user_id" />
+            <UsersSelectInput 
+              v-model="form.user_id" 
+              :project-id="form.project_id"
+              :key="form.project_id + '-' + form.user_id" 
+            />
             <Errors name="user_id" />
           </div>
 

@@ -66,6 +66,10 @@ const editor = useEditor({
           (key) => key !== event.key
         );
       },
+      blur(view, event) {
+        // Update the model value when focus leaves the editor
+        emit("update:modelValue", editor.value?.getJSON());
+      }
     },
     handlePaste: function (view, event, slice) {
       const items = Array.from(event.clipboardData?.items || []).filter(
@@ -117,7 +121,9 @@ const editor = useEditor({
     textToLink.convertTextToLink,
     Markdown,
   ],
-  onUpdate() {},
+  onUpdate: ({ editor }) => {
+    // Only emit on blur or when the form is submitted, not on every change
+  },
 });
 
 defineExpose({
