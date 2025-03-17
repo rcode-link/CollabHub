@@ -12,21 +12,26 @@ const userState = useUserStore();
 const route = useRoute();
 const props = defineProps({
     showCleanInput: {
-        type: Boolean
+        type: Boolean,
+        default: true
     },
     modelValue: {
-        type: [String, Number]
+        type: [String, Number],
+        default: ""
     },
     name: {
-        type: String
+        type: String,
+        default: ""
     },
     form: {
-        type: String
+        type: String,
+        default: ""
     },
     disabled: {
-        type: Boolean
+        type: Boolean,
+        default: false
     }
-})
+});
 
 const emit = defineEmits(["update:modelValue", 'selectedUser']);
 
