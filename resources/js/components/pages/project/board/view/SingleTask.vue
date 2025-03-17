@@ -19,7 +19,12 @@ const props = defineProps({
 
 const dragStarted = (e) => {
     boardsStore.setDraggedTaskId(props.obj);
-    e.dataTransfer?.setDragImage(e.target, 0, 0);
+    // Create a clone of the target for consistent drag image across browsers
+    if (e.dataTransfer) {
+        // Use setData to ensure drag operation works in Chromium
+        e.dataTransfer.setData('text/plain', props.obj.id.toString());
+        e.dataTransfer.effectAllowed = 'move';
+    }
 };
 const updateTask = () => {
     axios

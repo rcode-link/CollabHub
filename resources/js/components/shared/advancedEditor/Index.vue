@@ -155,25 +155,7 @@ const CustomHeading = Heading.extend({
 
 const listClasses =
     "";
-const CustomBulletList = BulletList.extend({
-    addNodeView() {
-        return (data) => customRenderData(data, CustomBlockView);
-    },
-    renderHTML({ HTMLAttributes }) {
-        // This creates a direct <ul> without wrapper divs
-        return [
-            "ul",
-            {
-                ...HTMLAttributes,
-                class: `${HTMLAttributes.class || ""} ${listClasses}`.trim(),
-            },
-            0,
-        ];
-    },
-    parseHTML() {
-        return [{ tag: "ul" }];
-    },
-});
+const CustomBulletList = BulletList;
 
 const CustomOrderedList = OrderedList.extend({
     addNodeView() {

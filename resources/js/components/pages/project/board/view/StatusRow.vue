@@ -60,7 +60,7 @@ onMounted(() => {
         <Card class="mb-4 sticky z-10 top-0">
             <h1>{{ status.title }}</h1>
         </Card>
-        <div @dragover="() => boardsStore.changeTaskStatus(status)">
+        <div @dragover.prevent="() => boardsStore.changeTaskStatus(status)">
             <template
                 v-for="obj in boardsStore.boardTasks[status.title]"
                 :key="obj"
