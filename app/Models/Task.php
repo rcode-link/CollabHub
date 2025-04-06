@@ -3,7 +3,6 @@
 namespace App\Models;
 
 use App\Helpers\HasChat;
-use Database\Factories\TaskFactory;
 use Eloquent;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
@@ -12,13 +11,11 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Support\Carbon;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\MediaLibrary\MediaCollections\Models\Collections\MediaCollection;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
-use \Illuminate\Database\Eloquent\Relations\HasManyThrough;
 
 /**
  * App\Models\Task
@@ -89,9 +86,15 @@ class Task extends Model implements HasMedia
 
     public function getTaskRelationsAttribute($value)
     {
-        $this->load('children', 'parents',
-            'children.type', 'children.owner', 'children.project',
-            'parents.type', 'parents.owner', 'parents.project',
+        $this->load(
+            'children',
+            'parents',
+            'children.type',
+            'children.owner',
+            'children.project',
+            'parents.type',
+            'parents.owner',
+            'parents.project',
         );
         // Merge collections and return single collection.
         return $this->children->merge($this->parents);

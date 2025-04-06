@@ -2,45 +2,110 @@
 @tailwind components;
 @tailwind utilities;
 
+@theme {
+    /* Custom Colors */
+    --color-primary-50: #2d8dff;
+    --color-primary-100: #378ef4;
+    --color-primary-200: #428fe9;
+    --color-primary-300: #4c90df;
+    --color-primary-400: #5791d4;
+    --color-primary-500: #4a90e2;
+    --color-primary-600: #969696;
+    --color-primary-700: #8b95a0;
+    --color-primary-800: #8194ab;
+    --color-primary-900: #7693b5;
+    --color-primary-950: #6c92c0;
+    /* Custom Fonts */
+    --font-sans: 'Roboto', 'Helvetica', 'Arial', 'ui-sans-serif', 'system-ui',
+        '-apple-system', 'Segoe UI', 'Noto Sans', 'sans-serif', 'Apple Color Emoji',
+        'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+    --font-body: 'Roboto', 'Helvetica', 'Arial', 'ui-sans-serif', 'system-ui',
+        '-apple-system', 'Segoe UI', 'Noto Sans', 'sans-serif', 'Apple Color Emoji',
+        'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+
+    /* Font Sizes */
+    --font-size-heading: 24px;
+    --font-size-subheading: 18px;
+    --font-size-body: 14px;
+
+    /* Font Weights */
+    --font-weight-bold: 700;
+    --font-weight-semibold: 600;
+    --font-weight-regular: 400;
+}
+
+/* Custom utilities for Flowbite components */
+@utility button-primary {
+    background-color: var(--color-primary-orange);
+    color: var(--color-text-light);
+    font-weight: var(--font-weight-bold);
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 0.375rem;
+    transition: background-color 0.3s ease;
+
+    @variant hover {
+        background-color: var(--color-primary-blue);
+    }
+}
+
+@utility button-secondary {
+    background-color: var(--color-secondary-darkBlue);
+    color: var(--color-text-light);
+    font-weight: var(--font-weight-semibold);
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 0.375rem;
+    transition: background-color 0.3s ease;
+
+    @variant hover {
+        background-color: var(--color-secondary-lightBlue);
+    }
+}
+
 .router-link-exact-active {
-    @apply font-bold text-blue-800 dark:text-blue-400
+    @apply font-bold text-blue-800 dark:text-blue-400;
 }
+
 a {
-    @apply font-medium text-blue-600 dark:text-blue-500 hover:underline
+    @apply font-medium text-blue-600 dark:text-blue-500 hover:underline;
 }
+
 .navbar-link {
-    @apply text-gray-900 hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent
+    @apply text-gray-900 hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent;
 }
 
 .router-link-active.navbar-link {
-    @apply font-bold text-blue-600 dark:text-blue-500
+    @apply font-bold text-blue-600 dark:text-blue-500;
 }
 
-.menu > ul {
-    @apply  w-full justify-around flex-row
+.menu>ul {
+    @apply w-full justify-around flex-row;
 }
 
-h1, h2, h3, h4,h5 {
-    @apply font-extrabold leading-none tracking-tight text-gray-900 dark:text-white
+h1,
+h2,
+h3,
+h4,
+h5 {
+    @apply font-extrabold leading-none tracking-tight text-gray-900 dark:text-white;
 }
 
-
-
-.input.big-input > .tiptap.ProseMirror {
+.input.big-input>.tiptap.ProseMirror {
     @apply min-h-[10rem] max-h-[20rem] overflow-auto;
 }
 
-
 .mention {
-    @apply text-blue-600 hover:underline dark:text-blue-500 no-underline
+    @apply text-blue-600 hover:underline dark:text-blue-500 no-underline;
 }
+
 .ProseMirror {
     outline: none;
 }
 
 .ProseMirror pre {
-    background: #0D0D0D;
-    color: #FFF;
+    background: #0d0d0d;
+    color: #fff;
     font-family: 'JetBrainsMono', monospace;
     padding: 0.75rem 1rem;
     border-radius: 0.5rem;
@@ -53,28 +118,47 @@ h1, h2, h3, h4,h5 {
     font-size: 0.8rem;
 }
 
-.ProseMirror pre .hljs-comment, .ProseMirror pre .hljs-quote {
+.ProseMirror pre .hljs-comment,
+.ProseMirror pre .hljs-quote {
     color: #616161;
 }
 
-.ProseMirror pre .hljs-variable, .ProseMirror pre .hljs-template-variable, .ProseMirror pre .hljs-attribute, .ProseMirror pre .hljs-tag, .ProseMirror pre .hljs-name, .ProseMirror pre .hljs-regexp, .ProseMirror pre .hljs-link, .ProseMirror pre .hljs-selector-id, .ProseMirror pre .hljs-selector-class {
-    color: #F98181;
+.ProseMirror pre .hljs-variable,
+.ProseMirror pre .hljs-template-variable,
+.ProseMirror pre .hljs-attribute,
+.ProseMirror pre .hljs-tag,
+.ProseMirror pre .hljs-name,
+.ProseMirror pre .hljs-regexp,
+.ProseMirror pre .hljs-link,
+.ProseMirror pre .hljs-selector-id,
+.ProseMirror pre .hljs-selector-class {
+    color: #f98181;
 }
 
-.ProseMirror pre .hljs-number, .ProseMirror pre .hljs-meta, .ProseMirror pre .hljs-built_in, .ProseMirror pre .hljs-builtin-name, .ProseMirror pre .hljs-literal, .ProseMirror pre .hljs-type, .ProseMirror pre .hljs-params {
-    color: #FBBC88;
+.ProseMirror pre .hljs-number,
+.ProseMirror pre .hljs-meta,
+.ProseMirror pre .hljs-built_in,
+.ProseMirror pre .hljs-builtin-name,
+.ProseMirror pre .hljs-literal,
+.ProseMirror pre .hljs-type,
+.ProseMirror pre .hljs-params {
+    color: #fbbc88;
 }
 
-.ProseMirror pre .hljs-string, .ProseMirror pre .hljs-symbol, .ProseMirror pre .hljs-bullet {
-    color: #B9F18D;
+.ProseMirror pre .hljs-string,
+.ProseMirror pre .hljs-symbol,
+.ProseMirror pre .hljs-bullet {
+    color: #b9f18d;
 }
 
-.ProseMirror pre .hljs-title, .ProseMirror pre .hljs-section {
-    color: #FAF594;
+.ProseMirror pre .hljs-title,
+.ProseMirror pre .hljs-section {
+    color: #faf594;
 }
 
-.ProseMirror pre .hljs-keyword, .ProseMirror pre .hljs-selector-tag {
-    color: #70CFF8;
+.ProseMirror pre .hljs-keyword,
+.ProseMirror pre .hljs-selector-tag {
+    color: #70cff8;
 }
 
 .ProseMirror pre .hljs-emphasis {
@@ -100,27 +184,47 @@ pre code {
     font-size: 0.8rem;
 }
 
-pre .hljs-comment, pre .hljs-quote {
+pre .hljs-comment,
+pre .hljs-quote {
     color: #616161;
 }
 
-pre .hljs-variable, pre .hljs-template-variable, pre .hljs-attribute, pre .hljs-tag, pre .hljs-name, pre .hljs-regexp, pre .hljs-link, pre .hljs-name, pre .hljs-selector-id, pre .hljs-selector-class {
+pre .hljs-variable,
+pre .hljs-template-variable,
+pre .hljs-attribute,
+pre .hljs-tag,
+pre .hljs-name,
+pre .hljs-regexp,
+pre .hljs-link,
+pre .hljs-name,
+pre .hljs-selector-id,
+pre .hljs-selector-class {
     color: #f98181;
 }
 
-pre .hljs-number, pre .hljs-meta, pre .hljs-built_in, pre .hljs-builtin-name, pre .hljs-literal, pre .hljs-type, pre .hljs-params {
+pre .hljs-number,
+pre .hljs-meta,
+pre .hljs-built_in,
+pre .hljs-builtin-name,
+pre .hljs-literal,
+pre .hljs-type,
+pre .hljs-params {
     color: #fbbc88;
 }
 
-pre .hljs-string, pre .hljs-symbol, pre .hljs-bullet {
+pre .hljs-string,
+pre .hljs-symbol,
+pre .hljs-bullet {
     color: #b9f18d;
 }
 
-pre .hljs-title, pre .hljs-section {
+pre .hljs-title,
+pre .hljs-section {
     color: #faf594;
 }
 
-pre .hljs-keyword, pre .hljs-selector-tag {
+pre .hljs-keyword,
+pre .hljs-selector-tag {
     color: #70cff8;
 }
 
@@ -136,7 +240,7 @@ pre .hljs-strong {
     font-style: italic;
 }
 
-.ProseMirror blockquote > p {
+.ProseMirror blockquote>p {
     display: inline;
 }
 
@@ -168,24 +272,21 @@ pre .hljs-strong {
     @apply text-lg;
 }
 
-
 .ProseMirror ol {
-    @apply pl-6
+    @apply pl-6;
 }
 
-.ProseMirror ol > li {
+.ProseMirror ol>li {
     @apply list-decimal;
 }
 
-
 .ProseMirror ul {
-    @apply pl-6
+    @apply pl-6;
 }
 
-.ProseMirror ul > li {
-    @apply list-disc ;
+.ProseMirror ul>li {
+    @apply list-disc;
 }
-
 
 .ProseMirror table td {
     min-width: 1vw;
@@ -212,148 +313,168 @@ pre .hljs-strong {
 }
 
 .input {
-    @apply bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500
+    @apply bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500;
 }
+
 /* Node Wrapper Styles */
 .node-wrapper {
-  position: relative;
-  padding: 0.5rem 0;
-  margin: 0.5rem 0;
-  transition: all 0.2s ease;
-  border-radius: 0.25rem;
+    position: relative;
+    padding: 0.5rem 0;
+    margin: 0.5rem 0;
+    transition: all 0.2s ease;
+    border-radius: 0.25rem;
 }
 
 .node-wrapper::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -12px;
-  bottom: 0;
-  width: 3px;
-  background-color: transparent;
-  transition: background-color 0.2s ease;
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -12px;
+    bottom: 0;
+    width: 3px;
+    background-color: transparent;
+    transition: background-color 0.2s ease;
 }
 
 .node-wrapper:hover::before {
-  background-color: #3b82f6; /* Tailwind blue-500 */
+    background-color: #3b82f6;
+    /* Tailwind blue-500 */
 }
 
 /* Container for the action buttons */
 .node-wrapper-actions {
-  position: absolute;
-  top: 0;
-  left: -40px;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  gap: 4px;
-  visibility: hidden;
-  opacity: 0;
-  transition: opacity 0.2s ease, visibility 0s linear 0.2s;
-  z-index: 10;
+    position: absolute;
+    top: 0;
+    left: -40px;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 4px;
+    visibility: hidden;
+    opacity: 0;
+    transition: opacity 0.2s ease, visibility 0s linear 0.2s;
+    z-index: 10;
 }
 
 .node-wrapper:hover .node-wrapper-actions {
-  visibility: visible;
-  opacity: 1;
-  transition: opacity 0.2s ease;
+    visibility: visible;
+    opacity: 1;
+    transition: opacity 0.2s ease;
 }
 
 /* Action buttons */
 .node-wrapper-action {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 28px;
-  height: 28px;
-  border-radius: 4px;
-  background-color: white;
-  border: 1px solid #e5e7eb; /* Tailwind gray-200 */
-  color: #6b7280; /* Tailwind gray-500 */
-  cursor: pointer;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
-  transition: all 0.2s ease;
-  padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 4px;
+    background-color: white;
+    border: 1px solid #e5e7eb;
+    /* Tailwind gray-200 */
+    color: #6b7280;
+    /* Tailwind gray-500 */
+    cursor: pointer;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+    transition: all 0.2s ease;
+    padding: 0;
 }
 
 .node-wrapper-action:hover {
-  background-color: #f3f4f6; /* Tailwind gray-100 */
-  color: #374151; /* Tailwind gray-700 */
+    background-color: #f3f4f6;
+    /* Tailwind gray-100 */
+    color: #374151;
+    /* Tailwind gray-700 */
 }
 
 .node-wrapper-action svg {
-  width: 16px;
-  height: 16px;
+    width: 16px;
+    height: 16px;
 }
 
 /* Move Up button */
 .node-wrapper-action.move-up:hover {
-  color: #2563eb; /* Tailwind blue-600 */
+    color: #2563eb;
+    /* Tailwind blue-600 */
 }
 
 /* Move Down button */
 .node-wrapper-action.move-down:hover {
-  color: #2563eb; /* Tailwind blue-600 */
+    color: #2563eb;
+    /* Tailwind blue-600 */
 }
 
 /* Delete button */
 .node-wrapper-action.delete:hover {
-  color: #dc2626; /* Tailwind red-600 */
+    color: #dc2626;
+    /* Tailwind red-600 */
 }
 
 /* Dark mode support */
 .dark .node-wrapper-action {
-  background-color: #1f2937; /* Tailwind gray-800 */
-  border-color: #374151; /* Tailwind gray-700 */
-  color: #9ca3af; /* Tailwind gray-400 */
+    background-color: #1f2937;
+    /* Tailwind gray-800 */
+    border-color: #374151;
+    /* Tailwind gray-700 */
+    color: #9ca3af;
+    /* Tailwind gray-400 */
 }
 
 .dark .node-wrapper-action:hover {
-  background-color: #111827; /* Tailwind gray-900 */
-  color: #e5e7eb; /* Tailwind gray-200 */
+    background-color: #111827;
+    /* Tailwind gray-900 */
+    color: #e5e7eb;
+    /* Tailwind gray-200 */
 }
 
 /* Specific styling for different node types */
 .heading-wrapper::before {
-  background-color: #3b82f6; /* Tailwind blue-500 */
+    background-color: #3b82f6;
+    /* Tailwind blue-500 */
 }
 
 .bulletList-wrapper::before,
 .orderedList-wrapper::before {
-  background-color: #10b981; /* Tailwind emerald-500 */
+    background-color: #10b981;
+    /* Tailwind emerald-500 */
 }
 
 .codeBlock-wrapper::before {
-  background-color: #6366f1; /* Tailwind indigo-500 */
+    background-color: #6366f1;
+    /* Tailwind indigo-500 */
 }
 
 .blockquote-wrapper::before {
-  background-color: #f59e0b; /* Tailwind amber-500 */
+    background-color: #f59e0b;
+    /* Tailwind amber-500 */
 }
 
 .table-wrapper::before {
-  background-color: #8b5cf6; /* Tailwind violet-500 */
+    background-color: #8b5cf6;
+    /* Tailwind violet-500 */
 }
 
 .drawIoExtension-wrapper::before {
-  background-color: #ec4899; /* Tailwind pink-500 */
+    background-color: #ec4899;
+    /* Tailwind pink-500 */
 }
 
 /* For smaller screens, move controls to top instead of side */
 @media (max-width: 768px) {
-  .node-wrapper {
-    padding-top: 1.5rem;
-  }
+    .node-wrapper {
+        padding-top: 1.5rem;
+    }
 
-  .node-wrapper-actions {
-    top: -8px;
-    left: 0;
-    height: auto;
-    flex-direction: row;
-    width: 100%;
-    justify-content: flex-start;
-  }
+    .node-wrapper-actions {
+        top: -8px;
+        left: 0;
+        height: auto;
+        flex-direction: row;
+        width: 100%;
+        justify-content: flex-start;
+    }
 }
 
 /*
@@ -363,106 +484,107 @@ pre .hljs-strong {
 
 /* Base styles for all tables */
 .ProseMirror table {
-  @apply w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400 border-collapse my-4;
+    @apply w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400 border-collapse my-4;
 }
 
 .ProseMirror thead {
-  @apply text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400;
+    @apply text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400;
 }
 
 .ProseMirror tr {
-  @apply bg-white border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200;
+    @apply bg-white border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200;
 }
 
 .ProseMirror th {
-  @apply px-6 py-3;
+    @apply px-6 py-3;
 }
 
 .ProseMirror td {
-  @apply px-6 py-4;
+    @apply px-6 py-4;
 }
 
 .ProseMirror tbody th {
-  @apply px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white;
+    @apply px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white;
 }
 
 /* Striped table styles that apply when the data-striped attribute is present */
-.ProseMirror table[data-striped="true"] tbody tr {
-  @apply odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700 border-gray-200;
+.ProseMirror table[data-striped='true'] tbody tr {
+    @apply odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700 border-gray-200;
 }
 
 /* Add wrapper styling */
 .ProseMirror .tableWrapper {
-  @apply relative overflow-x-auto shadow-md sm:rounded-lg;
+    @apply relative overflow-x-auto shadow-md sm:rounded-lg;
 }
 
 /* If you use TipTap's table extension with tableWrapper: true */
 .tableWrapper {
-  @apply relative overflow-x-auto shadow-md sm:rounded-lg;
+    @apply relative overflow-x-auto shadow-md sm:rounded-lg;
 }
 
 /* Print styles for image component with position classes */
 
 @media print {
-  /* Core print settings */
-  @page {
-    margin: 0.5cm;
-    size: auto;
-  }
 
-  body {
-    -webkit-print-color-adjust: exact !important;
-    print-color-adjust: exact !important;
-    color-adjust: exact !important;
-  }
+    /* Core print settings */
+    @page {
+        margin: 0.5cm;
+        size: auto;
+    }
 
+    body {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+        color-adjust: exact !important;
+    }
 
-  /* Size classes with !important for print override */
-  size[25] {
-    width: 25% !important;
-    max-width: 25% !important;
-  }
+    /* Size classes with !important for print override */
+    size[25] {
+        width: 25% !important;
+        max-width: 25% !important;
+    }
 
-  size[50] {
-    width: 50% !important;
-    max-width: 50% !important;
-  }
+    size[50] {
+        width: 50% !important;
+        max-width: 50% !important;
+    }
 
-  size[75] {
-    width: 75% !important;
-    max-width: 75% !important;
-  }
+    size[75] {
+        width: 75% !important;
+        max-width: 75% !important;
+    }
 
-  size[100] {
-    width: 100% !important;
-    max-width: 100% !important;
-  }
+    size[100] {
+        width: 100% !important;
+        max-width: 100% !important;
+    }
 
-  /* Position classes for print */
-  .position-left {
-    margin-right: auto !important;
-    margin-left: 0 !important;
-  }
+    /* Position classes for print */
+    .position-left {
+        margin-right: auto !important;
+        margin-left: 0 !important;
+    }
 
-  .position-right {
-    margin-left: auto !important;
-    margin-right: 0 !important;
-  }
+    .position-right {
+        margin-left: auto !important;
+        margin-right: 0 !important;
+    }
 
-  .position-center {
-    margin-left: auto !important;
-    margin-right: auto !important;
-  }
+    .position-center {
+        margin-left: auto !important;
+        margin-right: auto !important;
+    }
 
-  /* Text flow and page break controls */
-  p, div {
-    orphans: 3 !important;
-    widows: 3 !important;
-  }
+    /* Text flow and page break controls */
+    p,
+    div {
+        orphans: 3 !important;
+        widows: 3 !important;
+    }
 
-  /* Prevent image splitting across pages */
-  img {
-    page-break-inside: avoid !important;
-    break-inside: avoid !important;
-  }
+    /* Prevent image splitting across pages */
+    img {
+        page-break-inside: avoid !important;
+        break-inside: avoid !important;
+    }
 }
