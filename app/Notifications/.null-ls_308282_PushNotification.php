@@ -42,7 +42,7 @@ class PushNotification extends Notification
         return (new WebPushMessage)
             ->title('[new message]' . $this->message->user->name . ' sent you the message')
             ->body($messageData)
-            ->data(['chat_id' => $this->message->chat_id])
+            ->data(['chat_id' => $this->message->id])
             ->icon(
                 str_replace(
                     '//storage',
