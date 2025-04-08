@@ -23,6 +23,7 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Gate;
 use Laravel\Sanctum\HasApiTokens;
 use Laravel\Sanctum\PersonalAccessToken;
+use NotificationChannels\WebPush\HasPushSubscriptions;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\MediaLibrary\MediaCollections\Models\Collections\MediaCollection;
@@ -87,6 +88,7 @@ class User extends Authenticatable implements HasMedia
     use Notifiable;
     use InteractsWithMedia;
     use SoftDeletes;
+    use HasPushSubscriptions;
 
     /**
      * The attributes that are mass assignable.
@@ -160,7 +162,7 @@ class User extends Authenticatable implements HasMedia
             $chats = Chat::query()
                 ->whereHasMorph('chatable', Company::class)
                 ->with('users')
-                ->whereHas('users', fn (Builder $builder) => $builder->whereNot('user_id', $user->id))
+                ->whereHas('users', fn(Builder $builder) => $builder->whereNot('user_id', $user->id))
                 ->get();
 
             $messageContent = [
@@ -214,7 +216,7 @@ class User extends Authenticatable implements HasMedia
             ManagePermissionsEvent::dispatch();
         }
 
-        return $data->filter(fn ($obj) => $obj['users']->contains($this->id));
+        return $data->filter(fn($obj) => $obj['users']->contains($this->id));
     }
 
     public function manager(): BelongsTo

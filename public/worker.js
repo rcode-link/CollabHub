@@ -1,35 +1,46 @@
-// worker.js
-self.addEventListener('install', function (event) {
-  console.log('Service Worker installing.')
-  // Perform installation steps, e.g., caching assets
-  event.waitUntil(
-    caches.open('my-cache').then(function (cache) {
-      return cache.addAll(['/', '/index.html', '/styles.css', '/app.js'])
-    }),
-  )
-})
+self.addEventListener('push', event => {
+    console.log('Push event received:', event)
+    const data = event.data.json()
 
-self.addEventListener('activate', function (event) {
-  console.log('Service Worker activating.')
-  // Perform activation steps, e.g., cleaning up old caches
-  event.waitUntil(
-    caches.keys().then(function (cacheNames) {
-      return Promise.all(
-        cacheNames.map(function (cacheName) {
-          if (cacheName !== 'my-cache') {
-            return caches.delete(cacheName)
-          }
-        }),
-      )
-    }),
-  )
-})
-
-self.addEventListener('message', function (event) {
-  if (event.data.type === 'showNotification') {
-    self.registration.showNotification(event.data.title, {
-      body: event.data.body,
-      tag: 'single-notification',
+    // Show notification with the icon URL from the notification data
+    self.registration.showNotification(data.title, {
+        body: data.body,
+        icon: data.icon, // Use the icon URL from the notification data
+        data: {
+            chat_id: data.chat_id, // Ensure chat_id is included in the notification data
+        },
+        actions: [{ action: 'notification_action', title: 'View App' }],
     })
-  }
+})
+
+self.addEventListener('notificationclick', event => {
+    console.log('Notification click received:', event)
+
+    // Close the notification
+    event.notification.close()
+
+    // Get the chat_id from the notification data
+    const chatId = event.notification.data.chat_id
+    if (!chatId) {
+        console.error('Chat ID is undefined')
+        return
+    }
+
+    const notificationUrl = `/chat/${chatId}/view` // Construct the URL using the chat_id
+
+    event.waitUntil(
+        clients.matchAll({ type: 'window' }).then(windowClients => {
+            // Check if there is already a window/tab open with the target URL
+            for (let client of windowClients) {
+                // If so, focus it
+                if (client.url.endsWith(notificationUrl)) {
+                    return client.focus()
+                }
+            }
+            // If not, open a new window/tab with the target URL
+            if (clients.openWindow) {
+                return clients.openWindow(notificationUrl)
+            }
+        }),
+    )
 })

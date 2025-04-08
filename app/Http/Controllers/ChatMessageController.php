@@ -9,11 +9,13 @@ use App\Http\Requests\ChatMessageCreateRequest;
 use App\Http\Resources\ChatMessageResource;
 use App\Models\Chat;
 use App\Models\ChatMessage;
+use App\Notifications\PushNotification;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Http\Response;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Auth;
+use Notification;
 
 class ChatMessageController extends Controller
 {
@@ -56,7 +58,7 @@ class ChatMessageController extends Controller
                 });
         }
 
-        $chat->load('users');
+        $chat->load('users', 'users.pushSubscriptions');
         $message->messageViews()->insert($chat->users->pluck('id')->map(function ($user_id) use ($message) {
             return [
                 'user_id' => $user_id,
@@ -67,6 +69,7 @@ class ChatMessageController extends Controller
 
         $message->load('user', 'media', 'videocalls', 'parent', 'messageReactions');
         ChatUpdate::dispatch($chat->users->toArray(), $message);
+        Notification::send($chat->users, new PushNotification($message));
         ChatMessageCreated::dispatch($message);
         return response()->noContent();
     }

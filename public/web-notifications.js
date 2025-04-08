@@ -1,74 +1,50 @@
 if ('serviceWorker' in navigator) {
-  navigator.serviceWorker
-    .register('/worker.js')
-    .then(function (registration) {
-      console.log('Service Worker registered with scope:', registration.scope)
+    navigator.serviceWorker
+        .register('/worker.js?v=1.1')
+        .then(function(registration) {
+            console.log('Service Worker registered with scope:', registration.scope)
+        })
+        .catch(function(error) {
+            console.log('Service Worker registration failed:', error)
+        })
+}
 
-      // Listen for updates to the service worker
-      registration.onupdatefound = function () {
-        const installingWorker = registration.installing
-        console.log('Service Worker installing.')
+Notification.requestPermission().then(function(result) {
+    if (result === 'granted') {
+        console.log('Notification permission granted.')
+    }
+})
 
-        installingWorker.onstatechange = function () {
-          switch (installingWorker.state) {
-            case 'installed':
-              if (navigator.serviceWorker.controller) {
-                // At this point, the old content will have been purged and the fresh content will have been added to the cache.
-                console.log('New or updated content is available.')
-              } else {
-                // At this point, everything has been precached.
-                console.log('Content is now available offline!')
-              }
-              break
-            case 'redundant':
-              console.error('The installing service worker became redundant.')
-              break
-          }
-        }
-      }
-
-      // Listen for the controllerchange event
-      navigator.serviceWorker.addEventListener('controllerchange', function () {
-        console.log('Service Worker controller changed')
-        // Now you can send messages to the new controller
-        if (navigator.serviceWorker.controller) {
-          navigator.serviceWorker.controller.postMessage({
-            type: 'showNotification',
-            title: 'Service Worker Activated',
-            body: 'The service worker is now active.',
-          })
-        }
-      })
-
-      // Check if the service worker is active
-      if (navigator.serviceWorker.controller) {
-        console.log(
-          'Active Service Worker found:',
-          navigator.serviceWorker.controller,
-        )
-      } else {
-        console.log(
-          'No active Service Worker found. It might be installing or waiting to activate.',
-        )
-      }
-
-      // Listen for the custom event from the app
-      document.addEventListener('customEvent', function (event) {
-        console.log(event)
-        if (navigator.serviceWorker.controller) {
-          navigator.serviceWorker.controller.postMessage({
-            type: 'showNotification',
-            title: event.detail.title,
-            body: event.detail.body,
-          })
-        } else {
-          console.log('Cannot send message: No active Service Worker')
-        }
-      })
+navigator.serviceWorker.ready
+    .then(function(registration) {
+        return registration.pushManager.subscribe({
+            userVisibleOnly: true,
+            applicationServerKey: urlBase64ToUint8Array(
+                'BFHChgedr72giDXoNxYixadXfFXg9UNSf2iJrI-S3s3TSjZGnuaNHKn6RiTrzt86NbVZTsaFrs4Lq3N11NXKgD8',
+            ),
+        })
     })
-    .catch(function (error) {
-      console.error('Service Worker registration failed:', error)
+    .then(function(subscription) {
+        const token = localStorage.getItem('token')
+        fetch('/api/v1/push-notification', {
+            method: 'POST',
+            body: JSON.stringify(subscription),
+            headers: {
+                Authorization: `Bearer ${token}`,
+                'Content-Type': 'application/json',
+            },
+        })
     })
-} else {
-  console.log('Service Workers are not supported in this browser.')
+
+function urlBase64ToUint8Array(base64String) {
+    const padding = '='.repeat((4 - (base64String.length % 4)) % 4)
+    const base64 = (base64String + padding).replace(/\-/g, '+').replace(/_/g, '/')
+
+    const rawData = window.atob(base64)
+    const outputArray = new Uint8Array(rawData.length)
+
+    for (let i = 0; i < rawData.length; ++i) {
+        outputArray[i] = rawData.charCodeAt(i)
+    }
+    return outputArray
 }

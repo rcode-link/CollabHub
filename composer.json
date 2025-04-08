@@ -18,6 +18,7 @@
         "itsgoingd/clockwork": "^5.2",
         "johngrogg/ics-parser": "^3.3",
         "kalnoy/nestedset": "^6.0",
+        "laravel-notification-channels/webpush": "^9.0",
         "laravel/breeze": "^1.26",
         "laravel/framework": "^10.10",
         "laravel/sanctum": "^3.3",
