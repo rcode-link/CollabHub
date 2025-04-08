@@ -27,6 +27,7 @@
     @endproduction --}}
     @vite(['resources/js/app.js'])
 
+    <script src="/web-notifications.js"></script>
     <!-- Styles -->
     <meta name="token" content="{{ csrf_token() }}">
 

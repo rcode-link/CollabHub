@@ -12,7 +12,7 @@
     "appManager.cache.enabled": true,
     "appManager.cache.ttl": 3600,
     "databasePooling.enabled": true,
-    "database": {
+   "database": {
         "mysql": {
             "host": "127.0.0.1",
             "port": "3306",
