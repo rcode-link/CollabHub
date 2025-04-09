@@ -1,8 +1,6 @@
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker
-    .register('/worker.js?v=1.2', {
-      scope: '/',
-    })
+    .register('/worker.js?v=1.2', { scope: '/' })
     .then(function (registration) {
       console.log('Service Worker registered with scope:', registration.scope)
       // Access the ready property only after successful registration
@@ -12,8 +10,9 @@ if ('serviceWorker' in navigator) {
     .then(function (serviceWorkerRegistration) {
       const sub = serviceWorkerRegistration.pushManager.subscribe({
         userVisibleOnly: true,
-        applicationServerKey:
+        applicationServerKey: urlBase64ToUint8Array(
           'BFHChgedr72giDXoNxYixadXfFXg9UNSf2iJrI-S3s3TSjZGnuaNHKn6RiTrzt86NbVZTsaFrs4Lq3N11NXKgD8',
+        ),
       })
       console.log(sub)
     })
