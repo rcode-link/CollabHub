@@ -8,17 +8,14 @@ if ('serviceWorker' in navigator) {
     })
   navigator.serviceWorker.ready
     .then(function (serviceWorkerRegistration) {
-      console.log(serviceWorkerRegistration)
+      const sub = serviceWorkerRegistration.pushManager.subscribe({
+        userVisibleOnly: true,
+        applicationServerKey: urlBase64ToUint8Array(
+          'BFHChgedr72giDXoNxYixadXfFXg9UNSf2iJrI-S3s3TSjZGnuaNHKn6RiTrzt86NbVZTsaFrs4Lq3N11NXKgD8',
+        ),
+      })
+      console.log(sub)
     })
-    // .then(function (registration) {
-    //   // Subscribe to push notifications
-    //   return registration.pushManager.subscribe({
-    //     userVisibleOnly: true,
-    //     applicationServerKey: urlBase64ToUint8Array(
-    //       'BFHChgedr72giDXoNxYixadXfFXg9UNSf2iJrI-S3s3TSjZGnuaNHKn6RiTrzt86NbVZTsaFrs4Lq3N11NXKgD8',
-    //     ),
-    //   })
-    // })
     // .then(function (subscription) {
     //   const token = localStorage.getItem('token')
     //   fetch('/api/v1/push-notification', {
