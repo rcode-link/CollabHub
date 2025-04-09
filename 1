@@ -1,0 +1,357 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.router-link-exact-active {
+    @apply font-bold text-blue-800 dark:text-blue-400
+}
+a {
+    @apply font-medium text-blue-600 dark:text-blue-500 hover:underline
+}
+.navbar-link {
+    @apply text-gray-900 hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent
+}
+
+.router-link-active.navbar-link {
+    @apply font-bold text-blue-600 dark:text-blue-500
+}
+
+.menu > ul {
+    @apply  w-full justify-around flex-row
+}
+
+h1, h2, h3, h4,h5 {
+    @apply font-extrabold leading-none tracking-tight text-gray-900 dark:text-white
+}
+
+
+
+.input.big-input > .tiptap.ProseMirror {
+    @apply min-h-[10rem] max-h-[20rem] overflow-auto;
+}
+
+
+.mention {
+    @apply text-blue-600 hover:underline dark:text-blue-500 no-underline
+}
+.ProseMirror {
+    outline: none;
+}
+
+.ProseMirror pre {
+    background: #0D0D0D;
+    color: #FFF;
+    font-family: 'JetBrainsMono', monospace;
+    padding: 0.75rem 1rem;
+    border-radius: 0.5rem;
+}
+
+.ProseMirror pre code {
+    color: inherit;
+    padding: 0;
+    background: none;
+    font-size: 0.8rem;
+}
+
+.ProseMirror pre .hljs-comment, .ProseMirror pre .hljs-quote {
+    color: #616161;
+}
+
+.ProseMirror pre .hljs-variable, .ProseMirror pre .hljs-template-variable, .ProseMirror pre .hljs-attribute, .ProseMirror pre .hljs-tag, .ProseMirror pre .hljs-name, .ProseMirror pre .hljs-regexp, .ProseMirror pre .hljs-link, .ProseMirror pre .hljs-selector-id, .ProseMirror pre .hljs-selector-class {
+    color: #F98181;
+}
+
+.ProseMirror pre .hljs-number, .ProseMirror pre .hljs-meta, .ProseMirror pre .hljs-built_in, .ProseMirror pre .hljs-builtin-name, .ProseMirror pre .hljs-literal, .ProseMirror pre .hljs-type, .ProseMirror pre .hljs-params {
+    color: #FBBC88;
+}
+
+.ProseMirror pre .hljs-string, .ProseMirror pre .hljs-symbol, .ProseMirror pre .hljs-bullet {
+    color: #B9F18D;
+}
+
+.ProseMirror pre .hljs-title, .ProseMirror pre .hljs-section {
+    color: #FAF594;
+}
+
+.ProseMirror pre .hljs-keyword, .ProseMirror pre .hljs-selector-tag {
+    color: #70CFF8;
+}
+
+.ProseMirror pre .hljs-emphasis {
+    font-style: italic;
+}
+
+.ProseMirror pre .hljs-strong {
+    font-weight: 700;
+}
+
+pre {
+    background: #0d0d0d;
+    color: #fff;
+    font-family: 'JetBrainsMono', monospace;
+    padding: 0.75rem 1rem;
+    border-radius: 0.5rem;
+}
+
+pre code {
+    color: inherit;
+    padding: 0;
+    background: none;
+    font-size: 0.8rem;
+}
+
+pre .hljs-comment, pre .hljs-quote {
+    color: #616161;
+}
+
+pre .hljs-variable, pre .hljs-template-variable, pre .hljs-attribute, pre .hljs-tag, pre .hljs-name, pre .hljs-regexp, pre .hljs-link, pre .hljs-name, pre .hljs-selector-id, pre .hljs-selector-class {
+    color: #f98181;
+}
+
+pre .hljs-number, pre .hljs-meta, pre .hljs-built_in, pre .hljs-builtin-name, pre .hljs-literal, pre .hljs-type, pre .hljs-params {
+    color: #fbbc88;
+}
+
+pre .hljs-string, pre .hljs-symbol, pre .hljs-bullet {
+    color: #b9f18d;
+}
+
+pre .hljs-title, pre .hljs-section {
+    color: #faf594;
+}
+
+pre .hljs-keyword, pre .hljs-selector-tag {
+    color: #70cff8;
+}
+
+pre .hljs-emphasis {
+    font-style: italic;
+}
+
+pre .hljs-strong {
+    font-weight: 700;
+}
+
+.ProseMirror blockquote {
+    font-style: italic;
+}
+
+.ProseMirror blockquote > p {
+    display: inline;
+}
+
+.ProseMirror blockquote:before {
+    content: '“';
+}
+
+.ProseMirror blockquote:after {
+    content: '”';
+}
+
+.ProseMirror h1 {
+    @apply text-4xl;
+}
+
+.ProseMirror h2 {
+    @apply text-3xl;
+}
+
+.ProseMirror h3 {
+    @apply text-2xl;
+}
+
+.ProseMirror h4 {
+    @apply text-xl;
+}
+
+.ProseMirror h5 {
+    @apply text-lg;
+}
+
+
+.ProseMirror ol {
+    @apply pl-6
+}
+
+.ProseMirror ol > li {
+    @apply list-decimal;
+}
+
+
+.ProseMirror ul {
+    @apply pl-6
+}
+
+.ProseMirror ul > li {
+    @apply list-disc ;
+}
+
+
+.ProseMirror table td {
+    min-width: 1vw;
+}
+
+.my-custom-class {
+    width: 100%;
+}
+
+.ProseMirror table th {
+    border-right: 1px solid rgba(12, 12, 13, 0.1);
+    border-bottom: 1px solid rgba(12, 12, 13, 0.1);
+    border-top: 1px solid rgba(12, 12, 13, 0.1);
+}
+
+.ProseMirror table td {
+    border-right: 1px solid rgba(12, 12, 13, 0.1);
+    border-bottom: 1px solid rgba(12, 12, 13, 0.1);
+}
+
+.ProseMirror table td:first-child,
+.ProseMirror table th:first-child {
+    border-left: 1px solid rgba(12, 12, 13, 0.1);
+}
+
+.input {
+    @apply bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500
+}
+/* Node Wrapper Styles */
+.node-wrapper {
+  position: relative;
+  padding: 0.5rem 0;
+  margin: 0.5rem 0;
+  transition: all 0.2s ease;
+  border-radius: 0.25rem;
+}
+
+.node-wrapper::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -12px;
+  bottom: 0;
+  width: 3px;
+  background-color: transparent;
+  transition: background-color 0.2s ease;
+}
+
+.node-wrapper:hover::before {
+  background-color: #3b82f6; /* Tailwind blue-500 */
+}
+
+/* Container for the action buttons */
+.node-wrapper-actions {
+  position: absolute;
+  top: 0;
+  left: -40px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 4px;
+  visibility: hidden;
+  opacity: 0;
+  transition: opacity 0.2s ease, visibility 0s linear 0.2s;
+  z-index: 10;
+}
+
+.node-wrapper:hover .node-wrapper-actions {
+  visibility: visible;
+  opacity: 1;
+  transition: opacity 0.2s ease;
+}
+
+/* Action buttons */
+.node-wrapper-action {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 4px;
+  background-color: white;
+  border: 1px solid #e5e7eb; /* Tailwind gray-200 */
+  color: #6b7280; /* Tailwind gray-500 */
+  cursor: pointer;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  transition: all 0.2s ease;
+  padding: 0;
+}
+
+.node-wrapper-action:hover {
+  background-color: #f3f4f6; /* Tailwind gray-100 */
+  color: #374151; /* Tailwind gray-700 */
+}
+
+.node-wrapper-action svg {
+  width: 16px;
+  height: 16px;
+}
+
+/* Move Up button */
+.node-wrapper-action.move-up:hover {
+  color: #2563eb; /* Tailwind blue-600 */
+}
+
+/* Move Down button */
+.node-wrapper-action.move-down:hover {
+  color: #2563eb; /* Tailwind blue-600 */
+}
+
+/* Delete button */
+.node-wrapper-action.delete:hover {
+  color: #dc2626; /* Tailwind red-600 */
+}
+
+/* Dark mode support */
+.dark .node-wrapper-action {
+  background-color: #1f2937; /* Tailwind gray-800 */
+  border-color: #374151; /* Tailwind gray-700 */
+  color: #9ca3af; /* Tailwind gray-400 */
+}
+
+.dark .node-wrapper-action:hover {
+  background-color: #111827; /* Tailwind gray-900 */
+  color: #e5e7eb; /* Tailwind gray-200 */
+}
+
+/* Specific styling for different node types */
+.heading-wrapper::before {
+  background-color: #3b82f6; /* Tailwind blue-500 */
+}
+
+.bulletList-wrapper::before,
+.orderedList-wrapper::before {
+  background-color: #10b981; /* Tailwind emerald-500 */
+}
+
+.codeBlock-wrapper::before {
+  background-color: #6366f1; /* Tailwind indigo-500 */
+}
+
+.blockquote-wrapper::before {
+  background-color: #f59e0b; /* Tailwind amber-500 */
+}
+
+.table-wrapper::before {
+  background-color: #8b5cf6; /* Tailwind violet-500 */
+}
+
+.drawIoExtension-wrapper::before {
+  background-color: #ec4899; /* Tailwind pink-500 */
+}
+
+/* For smaller screens, move controls to top instead of side */
+@media (max-width: 768px) {
+  .node-wrapper {
+    padding-top: 1.5rem;
+  }
+
+  .node-wrapper-actions {
+    top: -8px;
+    left: 0;
+    height: auto;
+    flex-direction: row;
+    width: 100%;
+    justify-content: flex-start;
+  }
+}

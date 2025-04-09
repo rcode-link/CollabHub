@@ -17,7 +17,10 @@
 
     <div class="relative flex items-end">
       <div class="w-full">
-        <div v-if="activeMessage" class="p-1 text-sm font-bold">
+        <div
+          v-if="activeMessage"
+          class="p-1 text-sm font-bold"
+        >
           <div class="flex-1">Reply to:</div>
           <div class="response-message">
             <Editor
@@ -41,9 +44,9 @@
                   @click="() => chatMessageStore.setReplyToMessageId(null)"
                   color="red"
                   size="xs"
-                  >Yes</fwb-button
-                >
+                >Yes</fwb-button>
               </template>
+
             </InteractiveToast>
           </div>
         </div>
@@ -51,7 +54,6 @@
           ref="editorRef"
           v-model="chatMessageStore.message"
           css-class="input send-meessage-editor"
-          :submitOnEnter="true"
           @submitted="submit"
         />
       </div>
@@ -61,7 +63,9 @@
           type="file"
           class="hidden"
           id="addFile"
-          @change="value => chatMessageStore.addFiles(value.target.files)"
+          @change="
+                    (value) => chatMessageStore.addFiles(value.target.files)
+                "
           multiple
         />
         <label
@@ -84,7 +88,12 @@
           </svg>
         </label>
         <div>
-          <fwb-button color="default" type="submit" pill square>
+          <fwb-button
+            color="default"
+            type="submit"
+            pill
+            square
+          >
             <svg
               class="w-4 h-4"
               fill="currentColor"
@@ -104,61 +113,58 @@
   </form>
 </template>
 <script setup>
-import { computed, ref } from 'vue'
-import { chatDetails } from '@/store/chatStore.js'
-import { useRoute } from 'vue-router'
-import _ from 'lodash'
+import { computed, ref } from "vue";
+import { chatDetails } from "@/store/chatStore.js";
+import { useRoute } from "vue-router";
+import _ from "lodash";
 
-import { FwbButton } from 'flowbite-vue'
-import FilesComponent from './FilesComponent.vue'
-import Editor from '@/components/shared/Editor.vue'
-import TrashIcon from '@/components/shared/icons/TrashIcon.vue'
-import InteractiveToast from '@/components/shared/InteractiveToast.vue'
+import { FwbButton } from "flowbite-vue";
+import FilesComponent from "./FilesComponent.vue";
+import Editor from "@/components/shared/Editor.vue";
+import TrashIcon from "@/components/shared/icons/TrashIcon.vue";
+import InteractiveToast from "@/components/shared/InteractiveToast.vue";
 
 // import css
-import 'vue3-emoji-picker/css'
-import Emoji from '@/components/shared/Emoji.vue'
+import "vue3-emoji-picker/css";
+import Emoji from "@/components/shared/Emoji.vue";
 
 const props = defineProps({
   chatId: null,
-})
-const chatMessageStore = chatDetails()
-const route = useRoute()
-const editorRef = ref()
+});
+const chatMessageStore = chatDetails();
+const route = useRoute();
+const editorRef = ref();
 
 const activeMessage = computed(() => {
   return _.find(chatMessageStore.messages, {
     id: chatMessageStore.reply_to_message_id,
-  })
-})
+  });
+});
 const submit = () => {
-  const chatId = route.params.chatId ?? props.chatId
-  const form = new FormData()
-  const localEditor = editorRef.value.editor
-  console.log(localEditor.getJSON())
-  if (!localEditor.getText().trim().length) return
+  const chatId = route.params.chatId ?? props.chatId;
+  const form = new FormData();
 
-  form.append('message', JSON.stringify(localEditor.getJSON()))
+  form.append("message", JSON.stringify(editorRef.value.editor.getJSON()));
 
   chatMessageStore.files.forEach((file, index) => {
-    form.append(`files[${index}]`, file)
-  })
+    form.append(`files[${index}]`, file);
+  });
 
   if (chatMessageStore.reply_to_message_id !== null) {
-    form.append('parent_id', chatMessageStore.reply_to_message_id)
+    form.append("parent_id", chatMessageStore.reply_to_message_id);
   }
 
-  axios.post(`/api/v1/chats/${chatId}/message`, form)
+  axios.post(`/api/v1/chats/${chatId}/message`, form);
 
-  editorRef.value.editor.commands.setContent('')
-  chatMessageStore.resetMessageForm()
-  chatMessageStore.setReplyToMessageId(null)
-  chatMessageStore.setChatOnTopOfTheList(route.params.chatId)
-}
+  editorRef.value.editor.commands.setContent("");
+  chatMessageStore.resetMessageForm();
+  chatMessageStore.setReplyToMessageId(null);
+  chatMessageStore.setChatOnTopOfTheList(route.params.chatId);
+};
 
 // event callback
 function onSelectEmoji(emoji) {
-  editorRef.value.editor.commands.insertContent(emoji.i)
+  editorRef.value.editor.commands.insertContent(emoji.i);
 }
 </script>
 <style scoped>
