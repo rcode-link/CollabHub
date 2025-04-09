@@ -16,7 +16,6 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <link rel="apple-touch-icon" href="logo.png">
-<script src="http://localhost:8098"></script>
     {{-- @production
         @php
             $manifest = json_decode(file_get_contents(public_path('build/manifest.json')), true);
