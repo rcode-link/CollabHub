@@ -3,38 +3,53 @@ if ('serviceWorker' in navigator) {
     .register('/worker.js?v=1.2')
     .then(function (registration) {
       console.log('Service Worker registered with scope:', registration.scope)
-
-      // Request notification permission
-      Notification.requestPermission().then(function (permission) {
-        if (permission === 'granted') {
-          console.log('Notification permission granted.')
-
-          // Subscribe to push notifications
-          registration.pushManager
-            .subscribe({
-              userVisibleOnly: true,
-              applicationServerKey: urlBase64ToUint8Array(
-                'BFHChgedr72giDXoNxYixadXfFXg9UNSf2iJrI-S3s3TSjZGnuaNHKn6RiTrzt86NbVZTsaFrs4Lq3N11NXKgD8',
-              ),
-            })
-            .then(function (subscription) {
-              console.log('User is subscribed:', subscription)
-
-              // Send the subscription to your server
-              sendSubscriptionToServer(subscription)
-            })
-            .catch(function (error) {
-              console.error('Failed to subscribe the user: ', error)
-            })
-        } else {
-          console.warn('Notification permission denied.')
-        }
-      })
+      // Access the ready property only after successful registration
+      return registration.ready
     })
+  navigator.serviceWorker.ready
+    .then(function (serviceWorkerRegistration) {
+      console.log(serviceWorkerRegistration)
+    })
+    // .then(function (registration) {
+    //   // Subscribe to push notifications
+    //   return registration.pushManager.subscribe({
+    //     userVisibleOnly: true,
+    //     applicationServerKey: urlBase64ToUint8Array(
+    //       'BFHChgedr72giDXoNxYixadXfFXg9UNSf2iJrI-S3s3TSjZGnuaNHKn6RiTrzt86NbVZTsaFrs4Lq3N11NXKgD8',
+    //     ),
+    //   })
+    // })
+    // .then(function (subscription) {
+    //   const token = localStorage.getItem('token')
+    //   fetch('/api/v1/push-notification', {
+    //     method: 'POST',
+    //     body: JSON.stringify(subscription),
+    //     headers: {
+    //       Authorization: `Bearer ${token}`,
+    //       'Content-Type': 'application/json',
+    //     },
+    //   }).then(response => {
+    //     if (!response.ok) {
+    //       console.error('Push subscription failed:', response.statusText)
+    //     } else {
+    //       console.log('Push subscription successful.')
+    //     }
+    //   })
+    // })
     .catch(function (error) {
-      console.error('Service Worker registration failed:', error)
+      console.error('Service Worker or push subscription error:', error)
     })
+} else {
+  console.error('Service workers are not supported in this browser.')
 }
+
+Notification.requestPermission().then(function (result) {
+  if (result === 'granted') {
+    console.log('Notification permission granted.')
+  } else {
+    console.error('Notification permission denied.')
+  }
+})
 
 function urlBase64ToUint8Array(base64String) {
   const padding = '='.repeat((4 - (base64String.length % 4)) % 4)
@@ -47,8 +62,4 @@ function urlBase64ToUint8Array(base64String) {
     outputArray[i] = rawData.charCodeAt(i)
   }
   return outputArray
-}
-
-function sendSubscriptionToServer(subscription) {
-  // Implement this function to send the subscription to your server
 }
