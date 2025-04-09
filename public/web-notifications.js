@@ -1,6 +1,8 @@
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker
-    .register('/worker.js?v=1.2')
+    .register('/worker.js?v=1.2', {
+      scope: '/',
+    })
     .then(function (registration) {
       console.log('Service Worker registered with scope:', registration.scope)
       // Access the ready property only after successful registration
