@@ -3,49 +3,38 @@ if ('serviceWorker' in navigator) {
     .register('/worker.js?v=1.2')
     .then(function (registration) {
       console.log('Service Worker registered with scope:', registration.scope)
-      // Access the ready property only after successful registration
-      return registration.ready
-    })
-    .then(function (registration) {
-      // Subscribe to push notifications
-      return registration.pushManager.subscribe({
-        userVisibleOnly: true,
-        applicationServerKey: urlBase64ToUint8Array(
-          'BFHChgedr72giDXoNxYixadXfFXg9UNSf2iJrI-S3s3TSjZGnuaNHKn6RiTrzt86NbVZTsaFrs4Lq3N11NXKgD8',
-        ),
-      })
-    })
-    .then(function (subscription) {
-      const token = localStorage.getItem('token')
-      fetch('/api/v1/push-notification', {
-        method: 'POST',
-        body: JSON.stringify(subscription),
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-      }).then(response => {
-        if (!response.ok) {
-          console.error('Push subscription failed:', response.statusText)
-        } else {
-          console.log('Push subscription successful.')
-        }
-      })
     })
     .catch(function (error) {
-      console.error('Service Worker or push subscription error:', error)
+      console.log('Service Worker registration failed:', error)
     })
-} else {
-  console.error('Service workers are not supported in this browser.')
 }
 
 Notification.requestPermission().then(function (result) {
   if (result === 'granted') {
     console.log('Notification permission granted.')
-  } else {
-    console.error('Notification permission denied.')
   }
 })
+
+navigator.serviceWorker.ready
+  .then(function (registration) {
+    return registration.pushManager.subscribe({
+      userVisibleOnly: true,
+      applicationServerKey: urlBase64ToUint8Array(
+        'BFHChgedr72giDXoNxYixadXfFXg9UNSf2iJrI-S3s3TSjZGnuaNHKn6RiTrzt86NbVZTsaFrs4Lq3N11NXKgD8',
+      ),
+    })
+  })
+  .then(function (subscription) {
+    const token = localStorage.getItem('token')
+    fetch('/api/v1/push-notification', {
+      method: 'POST',
+      body: JSON.stringify(subscription),
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+    })
+  })
 
 function urlBase64ToUint8Array(base64String) {
   const padding = '='.repeat((4 - (base64String.length % 4)) % 4)
