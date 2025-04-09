@@ -12,8 +12,6 @@ if ('serviceWorker' in navigator) {
     .then(function (serviceWorkerRegistration) {
       const sub = serviceWorkerRegistration.pushManager.subscribe({
         userVisibleOnly: true,
-        applicationServerKey:
-          'BFHChgedr72giDXoNxYixadXfFXg9UNSf2iJrI-S3s3TSjZGnuaNHKn6RiTrzt86NbVZTsaFrs4Lq3N11NXKgD8',
       })
       console.log(sub)
     })
