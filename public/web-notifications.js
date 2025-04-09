@@ -10,15 +10,17 @@ if ('serviceWorker' in navigator) {
       }
     })
     .then(function (registration) {
-      if (registration.pushManager) {
-        return registration.pushManager.subscribe({
+      if (registration.active && registration.active.pushManager) {
+        return registration.active.pushManager.subscribe({
           userVisibleOnly: true,
           applicationServerKey: urlBase64ToUint8Array(
             'BFHChgedr72giDXoNxYixadXfFXg9UNSf2iJrI-S3s3TSjZGnuaNHKn6RiTrzt86NbVZTsaFrs4Lq3N11NXKgD8',
           ),
         })
       } else {
-        throw new Error('Push Manager is not available.')
+        throw new Error(
+          'Push Manager is not available on the active service worker.',
+        )
       }
     })
     .then(function (subscription) {
