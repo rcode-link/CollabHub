@@ -69,7 +69,7 @@ class ChatMessageController extends Controller
 
         $message->load('user', 'media', 'videocalls', 'parent', 'messageReactions');
         ChatUpdate::dispatch($chat->users->toArray(), $message);
-        Notification::send($chat->users->filter(fn($user) => $user->id == auth()->id()), new PushNotification($message));
+        Notification::send($chat->users->filter(fn($user) => $user->id != auth()->id()), new PushNotification($message));
         ChatMessageCreated::dispatch($message);
         return response()->noContent();
     }
