@@ -21,6 +21,7 @@ import { Markdown } from 'tiptap-markdown'
 import { useTextToLinkStore } from '@/store/textToLinkStore'
 import { LinkPreviewExtension } from '@/functions/editor/LinkPreviewExtension.js'
 import { useRouter } from 'vue-router'
+import _ from 'lodash'
 const chatStore = chatDetails()
 const router = useRouter()
 const props = defineProps({

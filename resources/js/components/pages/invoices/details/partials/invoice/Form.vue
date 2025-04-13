@@ -37,28 +37,28 @@ const save = () => {
 </script>
 
 <template>
-    <fwb-button size="xs" @click="() => (showModal = true)" class="ml-auto"
-        >Add Invoice</fwb-button
-    >
+  <fwb-button size="xs" @click="() => (showModal = true)" class="ml-auto"
+    >Add Invoice</fwb-button
+  >
 
-    <fwb-modal v-if="showModal" @close="modalClosed">
-        <template #header> Add new customer </template>
-        <template #body>
-            <div class="mb-4">
-                <Label forInput="number">Invoice number</Label>
-                <Text name="number" v-model="model.number"></Text>
-            </div>
-            <div class="mb-4">
-                <Label forInput="date">Date</Label>
-                <DatePicker name="date" v-model="model.date" />
-            </div>
-            <div class="mb-4">
-                <Label forInput="due_date">Due date</Label>
-                <DatePicker name="due_date" v-model="model.due_date" />
-            </div>
-        </template>
-        <template #footer>
-            <FwbButton @click="save">Save</FwbButton>
-        </template>
-    </fwb-modal>
+  <fwb-modal v-if="showModal" @close="modalClosed">
+    <template #header> Add new customer </template>
+    <template #body>
+      <div class="mb-4">
+        <Label forInput="number">Invoice number</Label>
+        <Text name="number" v-model="model.number"></Text>
+      </div>
+      <div class="mb-4">
+        <Label forInput="date">Date</Label>
+        <DatePicker name="date" v-model="model.date" />
+      </div>
+      <div class="mb-4">
+        <Label forInput="due_date">Due date</Label>
+        <DatePicker name="due_date" v-model="model.due_date" />
+      </div>
+    </template>
+    <template #footer>
+      <FwbButton @click="save">Save</FwbButton>
+    </template>
+  </fwb-modal>
 </template>
