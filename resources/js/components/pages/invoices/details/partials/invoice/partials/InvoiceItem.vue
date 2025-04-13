@@ -33,23 +33,23 @@ watch([price, qty], (oldVal, newVal) => {
 });
 </script>
 <template>
-  <fwb-table-row :key="index">
-    <fwb-table-cell>{{ Number(index) + 1 }}</fwb-table-cell>
-    <fwb-table-cell>{{ item.name ?? '' }}</fwb-table-cell>
-    <fwb-table-cell>
-      <Text v-model="price" type="number" />
-    </fwb-table-cell>
-    <fwb-table-cell>
-      <Text v-model="qty" type="number" />
-    </fwb-table-cell>
-    <fwb-table-cell></fwb-table-cell>
-    <fwb-table-cell>
-      {{ currencyPrint(Number(item.total), currency) }}
-    </fwb-table-cell>
-    <fwb-table-cell>
-      <fwb-button @click="deleteItem" color="red" size="xs">
-        <TrashIcon class="w-4 h-4" />
-      </fwb-button>
-    </fwb-table-cell>
-  </fwb-table-row>
+    <fwb-table-row :key="index">
+        <fwb-table-cell>{{ Number(index) + 1 }}</fwb-table-cell>
+        <fwb-table-cell>{{ item.name ?? '' }}</fwb-table-cell>
+        <fwb-table-cell>
+            <Text v-model="price" type="number" />
+        </fwb-table-cell>
+        <fwb-table-cell>
+            <Text class="w-4" v-model="qty" type="number" />
+        </fwb-table-cell>
+        <fwb-table-cell></fwb-table-cell>
+        <fwb-table-cell>
+            {{ currencyPrint(Number(item.total), currency) }}
+        </fwb-table-cell>
+        <fwb-table-cell>
+            <fwb-button @click="deleteItem" color="red" size="xs">
+                <TrashIcon class="w-4 h-4" />
+            </fwb-button>
+        </fwb-table-cell>
+    </fwb-table-row>
 </template>

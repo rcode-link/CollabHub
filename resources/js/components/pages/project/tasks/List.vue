@@ -138,42 +138,30 @@ const openTask = (obj) => {
                 <Text v-model="form.search" />
             </div>
             <div class="mb-4">
-                <fwb-select
-                    v-model="form.type_id"
-                    :options="[
-                        { value: null, name: 'Select task type' },
-                        ...taskTypesList.map((obj) => {
-                            return {
-                                value: obj.id,
-                                name: obj.title,
-                            };
-                        }),
-                    ]"
-                    label="Type"
-                />
+                <fwb-select v-model="form.type_id" :options="[
+                    { value: null, name: 'Select task type' },
+                    ...taskTypesList.map((obj) => {
+                        return {
+                            value: obj.id,
+                            name: obj.title,
+                        };
+                    }),
+                ]" label="Type" />
             </div>
             <div class="mb-4">
-                <fwb-select
-                    v-model="form.status_id"
-                    :options="[
-                        { value: null, name: 'Select status' },
-                        ...statuses.map((obj) => {
-                            return {
-                                value: obj.id,
-                                name: obj.title,
-                            };
-                        }),
-                    ]"
-                    label="Status"
-                />
+                <fwb-select v-model="form.status_id" :options="[
+                    { value: null, name: 'Select status' },
+                    ...statuses.map((obj) => {
+                        return {
+                            value: obj.id,
+                            name: obj.title,
+                        };
+                    }),
+                ]" label="Status" />
             </div>
             <div class="mb-4">
                 <Label>By assigned user</Label>
-                <UsersSelectInput
-                    :key="form.user_id"
-                    v-model="form.user_id"
-                    :show-clean-input="true"
-                />
+                <UsersSelectInput :key="form.user_id" v-model="form.user_id" :show-clean-input="true" />
             </div>
         </div>
 
@@ -181,31 +169,23 @@ const openTask = (obj) => {
             <fwb-table-head>
                 <fwb-table-head-cell>Id</fwb-table-head-cell>
                 <fwb-table-head-cell>Task</fwb-table-head-cell>
-                <fwb-table-head-cell class="hidden lg:block"
-                    >Description</fwb-table-head-cell
-                >
+                <fwb-table-head-cell class="hidden lg:block">Description</fwb-table-head-cell>
                 <fwb-table-head-cell>Relations</fwb-table-head-cell>
                 <fwb-table-head-cell>Tags</fwb-table-head-cell>
                 <fwb-table-head-cell>Type</fwb-table-head-cell>
                 <fwb-table-head-cell>User</fwb-table-head-cell>
             </fwb-table-head>
             <fwb-table-body>
-                <fwb-table-row
-                    v-for="obj in tasksStore.tasks.data"
-                    class="cursor-pointer"
-                    :key="JSON.stringify(obj)"
-                    @click="() => openTask(obj)"
-                >
+                <fwb-table-row v-for="obj in tasksStore.tasks.data" class="cursor-pointer" :key="JSON.stringify(obj)"
+                    @click="() => openTask(obj)">
                     <fwb-table-cell>
-                        <router-link
-                            :to="{
-                                ...route,
-                                query: {
-                                    ...route.query,
-                                    task: obj.task_id,
-                                },
-                            }"
-                        >
+                        <router-link :to="{
+                            ...route,
+                            query: {
+                                ...route.query,
+                                task: obj.task_id,
+                            },
+                        }">
                             {{ obj.task_id }}
                         </router-link>
                     </fwb-table-cell>
@@ -220,38 +200,26 @@ const openTask = (obj) => {
                         </div>
                     </fwb-table-cell>
                     <fwb-table-cell class="hidden lg:block">
-                        <Editor
-                            :model="obj.description"
-                            class="h-4 overflow-hidden"
-                            :editable="false"
-                        />
+                        <Editor :model="obj.description" class="h-4 overflow-hidden" :editable="false" />
                     </fwb-table-cell>
 
                     <fwb-table-cell>{{ obj.children_count }}</fwb-table-cell>
                     <fwb-table-cell>
                         <div class="flex gap-1 mt-2 flex-wrap">
-                            <fwb-badge
-                                v-for="(str, index) in obj.tags"
-                                :key="index"
-                                >{{ str }}</fwb-badge
-                            >
+                            <fwb-badge v-for="(str, index) in obj.tags" :key="index">{{ str }}</fwb-badge>
                         </div>
                     </fwb-table-cell>
                     <fwb-table-cell>
                         <fwb-badge>{{ obj.type.title }}</fwb-badge>
                     </fwb-table-cell>
-                    <fwb-table-cell class="" @click="(e) => e.preventDefault()">
+                    <fwb-table-cell @click="(e) => e.preventDefault()">
                         <User :show-name="false" :user="obj.user" />
                     </fwb-table-cell>
                 </fwb-table-row>
             </fwb-table-body>
         </fwb-table>
-        <TailwindPagination
-            class=""
-            :limit="3"
-            :data="tasksStore.tasks"
-            @pagination-change-page="(page) => (form.page = page)"
-        />
+        <TailwindPagination class="" :limit="3" :data="tasksStore.tasks"
+            @pagination-change-page="(page) => (form.page = page)" />
     </div>
 </template>
 
