@@ -1,93 +1,94 @@
 <script setup>
-import Modal from "../../../shared/Modal.vue";
-import { computed, ref, watch } from "vue";
-import UserIcon from "../../../shared/UserIcon.vue";
-import { useUserStore } from "../../../../store/user";
-import CheckBox from "../../../shared/CheckBox.vue";
-import { FwbButton } from "flowbite-vue";
-import Text from "../../../shared/Text.vue";
-import Label from "../../../shared/Label.vue";
-import Errors from "../../../shared/Errors.vue";
-import { useErrorsStore } from "../../../../store/errors";
+import Modal from '../../../shared/Modal.vue'
+import { computed, ref, watch } from 'vue'
+import UserIcon from '../../../shared/UserIcon.vue'
+import { useUserStore } from '../../../../store/user'
+import CheckBox from '../../../shared/CheckBox.vue'
+import { FwbButton } from 'flowbite-vue'
+import Text from '../../../shared/Text.vue'
+import Label from '../../../shared/Label.vue'
+import Errors from '../../../shared/Errors.vue'
+import { useErrorsStore } from '../../../../store/errors'
 
-const emits = defineEmits(["update"]);
-const userState = useUserStore();
-const errorsStore = useErrorsStore();
-const modal = ref(null);
-const response = ref({});
-const selected = ref([]);
-const title = ref("");
-const searchUsers = ref("");
+const emits = defineEmits(['update'])
+const userState = useUserStore()
+const errorsStore = useErrorsStore()
+const modal = ref(null)
+const response = ref({})
+const selected = ref([])
+const title = ref('')
+const searchUsers = ref('')
 const initState = () => {
-  response.value = {};
-  selected.value = [];
-  title.value = "";
-  searchUsers.value = "";
-};
+  response.value = {}
+  selected.value = []
+  title.value = ''
+  searchUsers.value = ''
+}
 
 const save = () => {
-  errorsStore.setErrors({});
+  errorsStore.setErrors({})
   axios
-    .post("/api/v1/chats", {
+    .post('/api/v1/chats', {
       user_id: selected.value,
       title: title.value,
     })
-    .then(() => {
-      emits("update");
-      modal.value.toggleModal();
+    .then(response => {
+      console.log(response)
+      emits('update')
+      modal.value.toggleModal()
     })
-    .catch((error) => {
+    .catch(error => {
       if (error.response.status === 422) {
-        errorsStore.setErrors(error.response.data.errors, "login");
+        errorsStore.setErrors(error.response.data.errors, 'login')
       }
       // globalErrorMessage.value = error.response.data.data;
-    });
-};
+    })
+}
 
 const load = () => {
   if (userState.company.id && modal.value?.isShowModal) {
-    axios.get(`/api/v1/company/users/${userState.company.id}`).then((res) => {
-      response.value = res.data;
-    });
+    axios.get(`/api/v1/company/users/${userState.company.id}`).then(res => {
+      response.value = res.data
+    })
   }
-};
+}
 
 watch(
   () => modal.value?.isShowModal,
   () => {
     if (!modal.value?.isShowModal) {
-      initState();
+      initState()
     }
-    load();
-  }
-);
+    load()
+  },
+)
 
 const results = computed(() => {
   if (!response.value.data) {
-    return [];
+    return []
   }
   const withoutMe = response.value.data.filter(
-    (obj) => obj.id !== userState.user.id
-  );
+    obj => obj.id !== userState.user.id,
+  )
   if (searchUsers.value.length >= 3) {
-    return withoutMe.filter((obj) => {
-      return obj.name.toLowerCase().includes(searchUsers.value.toLowerCase());
-    });
+    return withoutMe.filter(obj => {
+      return obj.name.toLowerCase().includes(searchUsers.value.toLowerCase())
+    })
   }
-  return withoutMe;
-});
+  return withoutMe
+})
 
 function selectionUpdated(val) {
   if (val.checked) {
-    selected.value.push(val.val);
-    return;
+    selected.value.push(val.val)
+    return
   }
-  selected.value.splice(selected.value.indexOf(val.val), 1);
+  selected.value.splice(selected.value.indexOf(val.val), 1)
 }
 
 defineExpose({
   modal,
-});
+})
 </script>
 
 <template>
@@ -164,5 +165,4 @@ defineExpose({
   </Modal>
 </template>
 
-<style scoped>
-</style>
+<style scoped></style>

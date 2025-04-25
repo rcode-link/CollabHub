@@ -1,32 +1,24 @@
 <template>
   <div
     @mouseenter="
-        () => {
-            hovered = true;
-            getMessageTime();
-        }
+      () => {
+        hovered = true
+        getMessageTime()
+      }
     "
     @mouseleave="
-            () => {
-                hovered = false;
-            }
-        "
+      () => {
+        hovered = false
+      }
+    "
     :class="{
-            'hover:bg-gray-100  focus:outline-none focus:ring-2  dark:hover:bg-gray-600  dark:focus:ring-gray-500':
-                message.videocall === null,
-            'flex rounded cursor-pointer mb-0.5 message-container': true,
-        }"
+      'hover:bg-gray-100  focus:outline-none focus:ring-2  dark:hover:bg-gray-600  dark:focus:ring-gray-500':
+        message.videocall === null,
+      'flex rounded cursor-pointer mb-0.5  ml-10 message-container': true,
+    }"
   >
-    <fwb-p :class="['mb-0 text-xs w-12  mt-1 ml-1', {
-            'opacity-0': true,
-        }]">
-    </fwb-p>
-
-    <div class="flex-1">
-      <div
-        class="text-xs font-bold"
-        v-if="message.parent"
-      >
+    <div class="flex-1 p-1">
+      <div class="text-xs font-bold" v-if="message.parent">
         <Editor
           class="reply-editor-class"
           :editable="false"
@@ -37,31 +29,25 @@
       <Editor
         ref="editor"
         :class="{
-                'ml-4 -mt-4': message.parent,
-            }"
+          'ml-4 -mt-4': message.parent,
+        }"
         :model="message.message"
         :editable="false"
       />
       <div class="flex gap-4 flex-wrap">
-        <PrintFiles
-          v-if="message.media.length"
-          :media="message.media"
-        />
+        <PrintFiles v-if="message.media.length" :media="message.media" />
       </div>
       <router-link
         v-if="message.videocall && message.videocall.slug"
         :to="{
-                name: 'video-call',
-                params: {
-                    slug: message.videocall.slug,
-                },
-            }"
+          name: 'video-call',
+          params: {
+            slug: message.videocall.slug,
+          },
+        }"
         :class="{ 'flex w-2/5': true }"
       >
-        <fwb-badge
-          type="red"
-          class="flex justify-start w-full gap-2 py-2 px-4"
-        >
+        <fwb-badge type="red" class="flex justify-start w-full gap-2 py-2 px-4">
           <PhoneIcon class="w-4 h-4" />
           Call
         </fwb-badge>
@@ -85,32 +71,30 @@
   </div>
 </template>
 <script setup>
-import Editor from "@/components/shared/Editor.vue";
-import PrintFiles from "@/components/shared/PrintFiles.vue";
-import { FwbBadge, FwbP } from "flowbite-vue";
-import { DateTime } from "luxon";
-import { computed, ref } from "vue";
-import _ from "lodash";
-import EclipsisVerticalIcon from "@/components/shared/icons/EclipsisVerticalIcon.vue";
+import Editor from '@/components/shared/Editor.vue'
+import PrintFiles from '@/components/shared/PrintFiles.vue'
+import { FwbBadge, FwbP } from 'flowbite-vue'
+import { DateTime } from 'luxon'
+import { computed, ref } from 'vue'
+import _ from 'lodash'
+import EclipsisVerticalIcon from '@/components/shared/icons/EclipsisVerticalIcon.vue'
 
-import ArrowUpCurvedIcon from "@/components/shared/icons/ArrowUpCurvedIcon.vue";
-import PhoneIcon from "@/components/shared/icons/PhoneIcon.vue";
-const hovered = ref(false);
+import ArrowUpCurvedIcon from '@/components/shared/icons/ArrowUpCurvedIcon.vue'
+import PhoneIcon from '@/components/shared/icons/PhoneIcon.vue'
+const hovered = ref(false)
 const props = defineProps({
   message: {},
-});
+})
 
-const messageTime = ref("");
+const messageTime = ref('')
 
 const getMessageTime = () => {
   messageTime.value = DateTime.fromISO(props.message.createdAt).toLocaleString(
-    DateTime.TIME_SIMPLE
-  );
-};
+    DateTime.TIME_SIMPLE,
+  )
+}
 
-const reactions = computed(() =>
-  _.groupBy(props.message.reactions, "reaction")
-);
+const reactions = computed(() => _.groupBy(props.message.reactions, 'reaction'))
 </script>
 <style scoped>
 .reply-editor-class {
@@ -121,5 +105,4 @@ const reactions = computed(() =>
 .message-container .date-time {
   opacity: 0;
 }
-
 </style>

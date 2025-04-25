@@ -8,72 +8,72 @@ import {
   ref,
   watch,
   nextTick,
-} from "vue";
-import { FwbButton } from "flowbite-vue";
-import { chatDetails } from "@/store/chatStore.js";
-import Footer from "./partials/messages/Footer.vue";
-import { useRoute, useRouter } from "vue-router";
-import ChatMessage from "./partials/messages/ChatMessage.vue";
-import Header from "./partials/messages/Header.vue";
-import ShowDate from "./partials/messages/ShowDate.vue";
-import ShowUser from "./partials/messages/ShowUser.vue";
-import useChatLogic from "../../../functions/useChatLogic";
-import _ from "lodash";
-import { DateTime } from "luxon";
-import { useTippy } from "vue-tippy";
-import MessageOptions from "./partials/messages/MessageOptions.vue";
+} from 'vue'
+import { FwbButton } from 'flowbite-vue'
+import { chatDetails } from '@/store/chatStore.js'
+import Footer from './partials/messages/Footer.vue'
+import { useRoute, useRouter } from 'vue-router'
+import ChatMessage from './partials/messages/ChatMessage.vue'
+import Header from './partials/messages/Header.vue'
+import ShowDate from './partials/messages/ShowDate.vue'
+import ShowUser from './partials/messages/ShowUser.vue'
+import useChatLogic from '../../../functions/useChatLogic'
+import _ from 'lodash'
+import { DateTime } from 'luxon'
+import { useTippy } from 'vue-tippy'
+import MessageOptions from './partials/messages/MessageOptions.vue'
 
-const chatStore = chatDetails();
-const route = useRoute();
-const router = useRouter();
-const page = ref(1);
-const messageContainerRef = ref(null);
+const chatStore = chatDetails()
+const route = useRoute()
+const router = useRouter()
+const page = ref(1)
+const messageContainerRef = ref(null)
 
-const chatLogic = useChatLogic(route.params.chatId, messageContainerRef);
-const messageMenuId = ref(null);
+const chatLogic = useChatLogic(route.params.chatId, messageContainerRef)
+const messageMenuId = ref(null)
 const form = reactive({
-  message: "",
+  message: '',
   files: [],
-});
+})
 
 watch(
   () => route.params.chatId,
   async (value, oldValue, onCleanup) => {
     if (oldValue) {
       //await axios.post(`/api/v1/chat/${chatLogic.chatId.value}/left`);
-      Echo.leave(`chat.${oldValue}`);
+      Echo.leave(`chat.${oldValue}`)
     }
     if (!route.params.chatId) {
-      return;
+      return
     }
-    console.log("load");
-    chatLogic.chatId.value = route.params.chatId;
-    chatLogic.listenForMessages(route.params.chatId);
-    chatLogic.resetMessages();
-    axios.get(`/api/v1/chats/${route.params.chatId}`).then((response) => {
-      chatStore.setActiveChat(response.data.data);
-    });
+    console.log('load')
+    chatLogic.chatId.value = route.params.chatId
+    chatLogic.listenForMessages(route.params.chatId)
+    chatLogic.resetMessages()
+    axios.get(`/api/v1/chats/${route.params.chatId}`).then(response => {
+      chatStore.setActiveChat(response.data.data)
+    })
 
     //axios.post(`/api/v1/chat/${route.params.chatId}/present`);
-    chatLogic.loadMessages();
+    chatLogic.loadMessages()
   },
   {
     immediate: true,
-  }
-);
+  },
+)
 
 onUpdated(() => {
   if (chatLogic.page.value !== 1) {
-    return;
+    return
   }
-  setTimeout(() => chatLogic.scrollToBottom());
-});
+  setTimeout(() => chatLogic.scrollToBottom())
+})
 
 onUnmounted(async () => {
-  await Echo.leave(`chat.${chatLogic.chatId.value}`);
+  await Echo.leave(`chat.${chatLogic.chatId.value}`)
 
-  chatLogic.chatId.value = null;
-});
+  chatLogic.chatId.value = null
+})
 </script>
 <template>
   <div class="chat-details">
@@ -84,35 +84,24 @@ onUnmounted(async () => {
       class="overflow-auto pb-2 message-container"
     >
       <!-- Loading indicator at top when loading older messages -->
-      <div
-        v-if="chatLogic.isLoadingMore"
-        class="text-center p-2 text-gray-500"
-      >
+      <div v-if="chatLogic.isLoadingMore" class="text-center p-2 text-gray-500">
         Loading older messages...
       </div>
 
-      <template
-        v-for="(obj, index) in chatStore.messages"
-        :key="obj"
-      >
-        <ShowDate :index="index" />
+      <template v-for="(obj, index) in chatStore.messages" :key="obj">
+        <!-- <ShowDate :index="index" /> -->
         <show-user
           :user="obj.user"
           :messageId="obj.id"
+          :messageDateTime="obj.createdAt"
         />
-        <ChatMessage
-          :message="obj"
-          :index="index"
-        />
+        <ChatMessage :message="obj" :index="index" />
       </template>
 
       <MessageOptions v-if="chatStore.selectedMessage" />
 
       <!-- Add invisible marker at the end for scrolling to bottom -->
-      <div
-        class="h-1 w-full"
-        id="messages-end"
-      ></div>
+      <div class="h-1 w-full" id="messages-end"></div>
     </main>
 
     <!-- New Messages Button (only show when not at bottom) -->

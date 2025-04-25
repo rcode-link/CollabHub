@@ -1,25 +1,40 @@
 <script setup>
-import { FwbAvatar, FwbP } from "flowbite-vue";
-import { computed } from "vue";
-import { chatDetails } from "@/store/chatStore.js";
+import { FwbAvatar, FwbP } from 'flowbite-vue'
+import { DateTime } from 'luxon'
+import { computed } from 'vue'
+import { chatDetails } from '@/store/chatStore.js'
 const { user, messageId } = defineProps({
   user: null,
   messageId: null,
-});
-const chatStore = chatDetails();
+  messageDateTime: null,
+})
+const chatStore = chatDetails()
 
 const showUser = computed(() => {
-  const prevMessage = chatStore.messages.findIndex(
-    (obj) => (obj.id == messageId)
-  );
+  const prevMessage = chatStore.messages.findIndex(obj => obj.id == messageId)
   // if the message index is zero that means its first message in the list
   if (prevMessage === 0) {
-    return true;
+    return true
   }
 
+  const isSameUser = user.id === chatStore.messages[prevMessage - 1].user.id
 
-  return user.id !== chatStore.messages[prevMessage - 1].user.id;
-});
+  if (!isSameUser) {
+    return true
+  }
+
+  const currentMessageDateTime = DateTime.fromISO(
+    chatStore.messages[prevMessage].createdAt,
+  )
+  const previusMessageDateTime = DateTime.fromISO(
+    chatStore.messages[prevMessage - 1].createdAt,
+  )
+  const diff = currentMessageDateTime
+    .diff(previusMessageDateTime, ['minute'])
+    .toObject()
+
+  return diff.minutes > 1
+})
 </script>
 <template>
   <router-link
@@ -32,8 +47,12 @@ const showUser = computed(() => {
       <div>
         {{ user.name }}
       </div>
-      <div class="text-xs mb-auto">
-        {{ user.email }}
+      <div class="text-xs text-gray-600 mb-auto">
+        {{
+          DateTime.fromISO(messageDateTime).toLocaleString(
+            DateTime.DATETIME_SHORT,
+          )
+        }}
       </div>
     </fwb-p>
   </router-link>
