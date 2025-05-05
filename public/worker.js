@@ -14,6 +14,24 @@ self.addEventListener('push', event => {
   })
 })
 
+// Shared display logic
+function displayNotification(data) {
+  const title = data.title || 'Fallback Title'
+  const options = {
+    body: data.body || 'Default body text',
+    icon: '/icon.png',
+  }
+  return self.registration.showNotification(title, options)
+}
+
+// Handle manual messages
+self.addEventListener('message', event => {
+  const data = event.data
+  if (data?.type === 'show-notification') {
+    event.waitUntil(displayNotification(data))
+  }
+})
+
 self.addEventListener('install', event => {
   console.log('Service Worker installing.')
   // Perform installation steps

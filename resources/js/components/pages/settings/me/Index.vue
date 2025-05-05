@@ -30,11 +30,26 @@ breadcrumb.setLinks([
   },
 ])
 const askForPermissions = () => {
+  if (!('Notification' in window) || !('serviceWorker' in navigator)) {
+    console.error('Notifications or Service Workers are not supported.')
+    return
+  }
+
   Notification.requestPermission().then(permission => {
-    // If the user accepts, let's create a notification
     if (permission === 'granted') {
-      const notification = new Notification('Hi there!')
-      // …
+      navigator.serviceWorker.ready.then(reg => {
+        if (reg.active) {
+          reg.active.postMessage({
+            type: 'show-notification',
+            title: 'Hello from app!',
+            body: 'This was triggered manually after permission',
+          })
+        } else {
+          console.error('No active service worker found.')
+        }
+      })
+    } else {
+      console.warn('Notification permission not granted.')
     }
   })
 }
