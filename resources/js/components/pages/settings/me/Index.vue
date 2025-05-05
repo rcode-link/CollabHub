@@ -37,17 +37,27 @@ const askForPermissions = () => {
 
   Notification.requestPermission().then(permission => {
     if (permission === 'granted') {
-      navigator.serviceWorker.ready.then(reg => {
-        if (reg.active) {
-          reg.active.postMessage({
-            type: 'show-notification',
-            title: 'Hello from app!',
-            body: 'This was triggered manually after permission',
+      navigator.serviceWorker.ready
+        .then(function (registration) {
+          return registration.pushManager.subscribe({
+            userVisibleOnly: true,
+            applicationServerKey: urlBase64ToUint8Array(
+              'BFHChgedr72giDXoNxYixadXfFXg9UNSf2iJrI-S3s3TSjZGnuaNHKn6RiTrzt86NbVZTsaFrs4Lq3N11NXKgD8',
+            ),
           })
-        } else {
-          console.error('No active service worker found.')
-        }
-      })
+        })
+        .then(function (subscription) {
+          console.log(subscription)
+          const token = localStorage.getItem('token')
+          fetch('/api/v1/push-notification', {
+            method: 'POST',
+            body: JSON.stringify(subscription),
+            headers: {
+              Authorization: `Bearer ${token}`,
+              'Content-Type': 'application/json',
+            },
+          })
+        })
     } else {
       console.warn('Notification permission not granted.')
     }
