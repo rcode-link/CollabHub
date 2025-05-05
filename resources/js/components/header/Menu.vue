@@ -1,5 +1,5 @@
 <template>
-  <fwb-navbar>
+  <fwb-navbar class="z-50">
     <template #logo>
       <router-link alt=" " image-url="/images/logo.svg" :to="{ name: 'home' }">
         <h1
@@ -14,74 +14,102 @@
       <fwb-navbar-collapse
         :is-show-menu="isShowMenu"
         is="div"
-        class="flex items-center mr-[-1rem] menu"
+        class="flex items-center mr-[-1rem] menu space-y-2"
       >
         <router-link
           alt=" "
-          class="flex justify-center items-center navbar-link"
+          class="flex md:justify-center md:items-center navbar-link"
           image-url="/images/logo.svg"
           :to="{ name: 'home' }"
         >
-          <tippy content="Home">
+          <tippy content="Home" class="flex space-x-2 items-center">
             <HomeIcon class="w-6 h-6" />
             <span v-if="useText">Home</span>
           </tippy>
         </router-link>
         <router-link
           alt=" "
-          class="flex justify-center items-center relative navbar-link"
+          class="flex md:justify-center md:items-center relative navbar-link"
           image-url="/images/logo.svg"
           :to="{ name: 'chat' }"
         >
-          <tippy content="Chat">
+          <tippy content="Chat" class="flex space-x-2 items-center">
             <ChatIcon class="w-6 h-6" />
             <span v-if="useText">Chat</span>
 
             <div
               v-if="userStore.newMessages"
-              class="w-2 h-2 ml-auto text-xs bg-red-700 text-white flex absolute top-0 right-0 justify-center items-center rounded-full text-center font-bold p-2 mr-3"
+              class="w-2 h-2 ml-auto text-xs bg-red-700 text-white flex absolute top-0 right-0 md:justify-center md:items-center rounded-full text-center font-bold p-2 mr-3"
             >
               {{ userStore.newMessages }}
             </div>
           </tippy>
         </router-link>
-        <router-link
-          alt=" "
-          class="flex justify-center items-center relative navbar-link"
-          :to="{ name: 'projects' }"
-        >
-          <tippy content="Projects">
-            <ArchiveBoxIcon class="w-6 h-6" />
-            <span v-if="useText">Projects</span>
-          </tippy>
-        </router-link>
+
         <router-link
           v-if="can(`can-view-billing-info.${userStore.company.id}`)"
-          class="flex justify-center items-center relative navbar-link"
+          class="flex md:justify-center md:items-center relative navbar-link"
           :to="{ name: 'invoices' }"
         >
-          <tippy content="Customers">
+          <tippy content="Customers" class="flex space-x-2 items-center">
             <BanknotesIcon class="w-6 h-6" />
+            <span v-if="useText">Invoices</span>
           </tippy>
         </router-link>
         <router-link
-          class="flex justify-center items-center relative navbar-link"
+          class="flex md:justify-center md:items-center relative navbar-link"
           :to="{ name: 'projects' }"
         >
-          <tippy content="Reports">
+          <tippy content="Reports" class="flex space-x-2 items-center">
             <ChartPieIcon class="w-6 h-6" />
+            <span v-if="useText">Reports</span>
           </tippy>
         </router-link>
+
+        <fwb-dropdown
+          text="Bottom"
+          :placement="isMobile ? '' : 'left'"
+          class="z-20 w-auto"
+        >
+          <template #trigger>
+            <div class="flex space-x-2 items-center">
+              <ArchiveBoxIcon class="w-6 h-6" />
+              <span v-if="useText">Projects</span>
+            </div>
+          </template>
+
+          <fwb-list-group class="w-72">
+            <div class="flex flex-col p-2">
+              <router-link
+                class="flex-1 h-full"
+                v-for="obj in projects.data"
+                :key="obj"
+                :to="{
+                  name: 'project.dashboard',
+                  params: {
+                    project: obj.id,
+                  },
+                }"
+              >
+                {{ obj.name }}
+              </router-link>
+            </div>
+          </fwb-list-group>
+        </fwb-dropdown>
         <CreateTaskForm />
 
-        <fwb-dropdown text="Bottom" placement="left" class="z-20 w-auto">
+        <fwb-dropdown
+          text="Bottom"
+          :placement="isMobile ? '' : 'left'"
+          class="z-20 w-auto"
+        >
           <template #trigger>
             <div class="w-75">
               <span class="sr-only">Open user menu</span>
               <fwb-avatar :img="userStore.user.avatar" />
             </div>
           </template>
-          <fwb-list-group class="w-72">
+          <fwb-list-group class="w-72 z-50">
             <fwb-list-group-item class="flex-col">
               <div class="flex gap-2 mr-auto">
                 <fwb-avatar :img="userStore.user.avatar" />
@@ -184,7 +212,7 @@
       </svg>
       <div
         v-if="userStore.newMessages"
-        class="w-2 h-2 ml-auto text-xs bg-red-700 text-white flex absolute top-0 right-0 justify-center items-center rounded-full text-center font-bold p-2 mr-3"
+        class="w-2 h-2 ml-auto text-xs bg-red-700 text-white flex absolute top-0 right-0 md:justify-center md:items-center rounded-full text-center font-bold p-2 mr-3"
       >
         {{ userStore.newMessages }}
       </div>
@@ -242,14 +270,34 @@ const themeData = {
   auto: 'auto',
 }
 
+function detectMob() {
+  const toMatch = [
+    /Android/i,
+    /webOS/i,
+    /iPhone/i,
+    /iPad/i,
+    /iPod/i,
+    /BlackBerry/i,
+    /Windows Phone/i,
+  ]
+
+  return toMatch.some(toMatchItem => {
+    return navigator.userAgent.match(toMatchItem)
+  })
+}
+
+const isMobile = detectMob()
+
 const userStore = useUserStore()
 const textToLinkStore = useTextToLinkStore()
 
 const router = useRouter()
-const useText = ref(false)
+const useText = ref(isMobile)
 const hideModal = ref(null)
 const createProjectRef = ref(null)
-
+const projects = ref({
+  data: [],
+})
 const logout = e => {
   e.preventDefault()
   window.Echo.disconnect()
@@ -258,6 +306,18 @@ const logout = e => {
     name: 'login',
   })
 }
+const load = (page = 1) => {
+  axios
+    .get('/api/v1/projects', {
+      params: {
+        page,
+      },
+    })
+    .then(res => {
+      projects.value = res.data
+    })
+}
+load()
 
 const submitForm = () => {
   createProjectRef.value.submit()
