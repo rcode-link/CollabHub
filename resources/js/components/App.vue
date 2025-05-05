@@ -1,7 +1,7 @@
 <template>
-    <div id="print" class="tiptap ProseMirror printOnly"></div>
-    <router-view></router-view>
-    <div id="append-container"></div>
+  <div id="print" class="tiptap ProseMirror printOnly"></div>
+  <router-view></router-view>
+  <div id="append-container"></div>
 </template>
 <script setup lang="js">
 import { onMounted } from "vue";
@@ -12,19 +12,26 @@ userStore.initTitleTracking();
 
 onMounted(() => {
     useInit();
+    Notification.requestPermission().then(function (result) {
+        if (result === 'granted') {
+            console.log('Notification permission granted.')
+        }
+    })
+
+
 });
 </script>
 
 <style>
 @media print {
-    .printOnly {
-        display: block;
-    }
+  .printOnly {
+    display: block;
+  }
 }
 
 @media screen {
-    .printOnly {
-        display: none;
-    }
+  .printOnly {
+    display: none;
+  }
 }
 </style>

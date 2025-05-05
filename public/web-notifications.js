@@ -9,12 +9,6 @@ if ('serviceWorker' in navigator) {
     })
 }
 
-Notification.requestPermission().then(function (result) {
-  if (result === 'granted') {
-    console.log('Notification permission granted.')
-  }
-})
-
 navigator.serviceWorker.ready
   .then(function (registration) {
     return registration.pushManager.subscribe({
