@@ -29,15 +29,7 @@ breadcrumb.setLinks([
     title: 'Profile Settings',
   },
 ])
-const pemissison = ref(false)
-onMounted(() => {
-  pemissison.value = Notification.permission === 'granted'
-})
-
 const askForPermissions = () => {
-  if (permission.value === true) {
-    return
-  }
   Notification.requestPermission().then(permission => {
     // If the user accepts, let's create a notification
     if (permission === 'granted') {
@@ -65,7 +57,7 @@ const askForPermissions = () => {
       </Card>
       <Card class="flex-col gap-6">
         <h1 class="font-bold text-xl">Push notificaionts</h1>
-        <FwbButton :disabled="permission" @click="askForPermissions"
+        <FwbButton @click="askForPermissions"
           >Allow push notificaions</FwbButton
         >
       </Card>
