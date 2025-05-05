@@ -167,7 +167,7 @@ const activeBoard = computed(() => {
             </div>
           </fwb-button>
         </template>
-        <fwb-list-group class="z-50">
+        <fwb-list-group>
           <fwb-list-group-item
             class="z-50 cursor-pointer"
             v-for="(str, key) in listForDropDown"

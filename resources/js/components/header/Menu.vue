@@ -1,5 +1,5 @@
 <template>
-  <fwb-navbar class="z-50">
+  <fwb-navbar class="">
     <template #logo>
       <router-link alt=" " image-url="/images/logo.svg" :to="{ name: 'home' }">
         <h1
@@ -80,19 +80,19 @@
 
           <fwb-list-group class="w-72">
             <div class="flex flex-col p-2">
-              <router-link
-                class="flex-1 h-full"
-                v-for="obj in projects.data"
-                :key="obj"
-                :to="{
-                  name: 'project.dashboard',
-                  params: {
-                    project: obj.id,
-                  },
-                }"
-              >
-                {{ obj.name }}
-              </router-link>
+              <fwb-list-group-item v-for="obj in projects.data" :key="obj">
+                <router-link
+                  class="w-full h-full"
+                  :to="{
+                    name: 'project.dashboard',
+                    params: {
+                      project: obj.id,
+                    },
+                  }"
+                >
+                  {{ obj.name }}
+                </router-link>
+              </fwb-list-group-item>
             </div>
           </fwb-list-group>
         </fwb-dropdown>
@@ -101,7 +101,7 @@
         <fwb-dropdown
           text="Bottom"
           :placement="isMobile ? '' : 'left'"
-          class="z-20 w-auto"
+          class="w-auto"
         >
           <template #trigger>
             <div class="w-75">
@@ -109,7 +109,7 @@
               <fwb-avatar :img="userStore.user.avatar" />
             </div>
           </template>
-          <fwb-list-group class="w-72 z-50">
+          <fwb-list-group class="w-72">
             <fwb-list-group-item class="flex-col">
               <div class="flex gap-2 mr-auto">
                 <fwb-avatar :img="userStore.user.avatar" />
