@@ -35,7 +35,7 @@ onMounted(() => {
 })
 
 const askForPermissions = () => {
-  if (permission) {
+  if (permission.value === true) {
     return
   }
   Notification.requestPermission().then(permission => {
