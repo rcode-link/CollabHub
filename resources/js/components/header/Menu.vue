@@ -72,7 +72,7 @@
           class="z-20 w-auto"
         >
           <template #trigger>
-            <div class="flex space-x-2 items-center">
+            <div class="h-full flex space-x-2 items-center">
               <ArchiveBoxIcon class="w-6 h-6" />
               <span v-if="useText">Projects</span>
             </div>
