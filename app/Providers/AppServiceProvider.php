@@ -9,6 +9,9 @@ use Dedoc\Scramble\Support\Generator\SecurityScheme;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\ServiceProvider;
 
+use App\Service\ServiceInterface;
+use App\Service\TimeSheetService;
+
 class AppServiceProvider extends ServiceProvider
 {
     /**
@@ -49,6 +52,9 @@ class AppServiceProvider extends ServiceProvider
             $openApi->secure(
                 SecurityScheme::http('bearer', 'JWT')
             );
+        });
+        $this->app->bind(ServiceInterface::class, function () {
+            return new TimeSheetService();
         });
 
         Model::preventLazyLoading();

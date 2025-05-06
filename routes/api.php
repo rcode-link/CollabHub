@@ -38,6 +38,7 @@ use App\Http\Controllers\InvoiceItemController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\LinkPreviewController;
 use App\Http\Controllers\PushNotificationController;
+use App\Http\Controllers\ReportController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -56,6 +57,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('/link-preview', [LinkPreviewController::class, 'fetch']);
 
     Route::apiResource('/share/board/', ShareBoardController::class);
+    Route::get('/report', [ReportController::class, 'index']);
 
     Route::get('/user', [ProfileController::class, 'view'])->name('api.view');
     Route::put('/user', [ProfileController::class, 'update'])->name('api.update');

@@ -41,9 +41,14 @@ class TimeSheet extends Model
         'start' => 'datetime',
         'end' => 'datetime'
     ];
-    
+
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function task(): BelongsTo
+    {
+        return $this->belongsTo(Task::class);
     }
 }
