@@ -23,7 +23,7 @@ const load = () => {
             title: obj.title,
             date: diffTime.toLocaleString(DateTime.DATE_SHORT),
             user_name: obj.user.name,
-            total_time: diff.hours ?? 0,
+            total_time: Math.abs(diff.hours ?? 0),
           }
         })),
     )
