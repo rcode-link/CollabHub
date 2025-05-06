@@ -58,7 +58,7 @@
         </router-link>
         <router-link
           class="flex md:justify-center md:items-center relative navbar-link"
-          :to="{ name: 'projects' }"
+          :to="{ name: 'reports' }"
         >
           <tippy content="Reports" class="flex space-x-2 items-center">
             <ChartPieIcon class="w-6 h-6" />
