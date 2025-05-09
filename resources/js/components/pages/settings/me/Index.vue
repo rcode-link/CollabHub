@@ -55,6 +55,43 @@ const revokePermissions = () => {
       "4. Use the dropdown menu to change the permission to 'Block' or 'Ask'.",
   )
 }
+
+function urlBase64ToUint8Array(base64String) {
+  const padding = '='.repeat((4 - (base64String.length % 4)) % 4)
+  const base64 = (base64String + padding).replace(/\-/g, '+').replace(/_/g, '/')
+
+  const rawData = window.atob(base64)
+  const outputArray = new Uint8Array(rawData.length)
+
+  for (let i = 0; i < rawData.length; ++i) {
+    outputArray[i] = rawData.charCodeAt(i)
+  }
+  return outputArray
+}
+const subscribeNotificaion = () => {
+  navigator.serviceWorker.ready
+    .then(function (registration) {
+      console.log(registration)
+      return registration.pushManager.subscribe({
+        userVisibleOnly: true,
+        applicationServerKey: urlBase64ToUint8Array(
+          'BFHChgedr72giDXoNxYixadXfFXg9UNSf2iJrI-S3s3TSjZGnuaNHKn6RiTrzt86NbVZTsaFrs4Lq3N11NXKgD8',
+        ),
+      })
+    })
+    .then(function (subscription) {
+      console.log(subscription)
+      const token = localStorage.getItem('token')
+      fetch('/api/v1/push-notification', {
+        method: 'POST',
+        body: JSON.stringify(subscription),
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      })
+    })
+}
 const askForPermissions = () => {
   if (!('Notification' in window) || !('serviceWorker' in navigator)) {
     console.error('Notifications or Service Workers are not supported.')
@@ -64,27 +101,6 @@ const askForPermissions = () => {
   Notification.requestPermission().then(permission => {
     permissionStatus.value = permission
     if (permission === 'granted') {
-      navigator.serviceWorker.ready
-        .then(function (registration) {
-          return registration.pushManager.subscribe({
-            userVisibleOnly: true,
-            applicationServerKey: urlBase64ToUint8Array(
-              'BFHChgedr72giDXoNxYixadXfFXg9UNSf2iJrI-S3s3TSjZGnuaNHKn6RiTrzt86NbVZTsaFrs4Lq3N11NXKgD8',
-            ),
-          })
-        })
-        .then(function (subscription) {
-          console.log(subscription)
-          const token = localStorage.getItem('token')
-          fetch('/api/v1/push-notification', {
-            method: 'POST',
-            body: JSON.stringify(subscription),
-            headers: {
-              Authorization: `Bearer ${token}`,
-              'Content-Type': 'application/json',
-            },
-          })
-        })
       navigator.serviceWorker.controller.postMessage({
         type: 'show-notification',
         title: 'Hello!',
@@ -114,16 +130,23 @@ const askForPermissions = () => {
       </Card>
       <Card class="flex-col gap-6">
         <h1 class="font-bold text-xl">Push notificaionts</h1>
-        <FwbButton
-          v-if="permissionStatus === 'granted'"
-          @click="revokePermissions"
-          >Disable notificaions
-        </FwbButton>
-        <FwbButton
-          v-if="permissionStatus !== 'granted'"
-          @click="askForPermissions"
-          >Allow push notificaions
-        </FwbButton>
+        <div class="flex gap-2">
+          <FwbButton
+            v-if="permissionStatus === 'granted'"
+            @click="revokePermissions"
+            >Disable notificaions
+          </FwbButton>
+          <FwbButton
+            v-if="permissionStatus !== 'granted'"
+            @click="askForPermissions"
+            >Allow push notificaions
+          </FwbButton>
+          <FwbButton
+            v-if="permissionStatus === 'granted'"
+            @click="subscribeNotificaion"
+            >Subscribe
+          </FwbButton>
+        </div>
       </Card>
 
       <Card class="flex-col gap-6" color="bg-gray-100 dark:bg-gray-700">
