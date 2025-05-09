@@ -66,36 +66,7 @@
           </tippy>
         </router-link>
 
-        <fwb-dropdown
-          text="Bottom"
-          :placement="isMobile ? '' : 'left'"
-          class="z-20 w-auto"
-        >
-          <template #trigger>
-            <div class="h-full flex space-x-2 items-center">
-              <ArchiveBoxIcon class="w-6 h-6" />
-              <span v-if="useText">Projects</span>
-            </div>
-          </template>
-
-          <fwb-list-group class="w-72">
-            <div class="flex flex-col p-2">
-              <fwb-list-group-item v-for="obj in projects.data" :key="obj">
-                <router-link
-                  class="w-full h-full"
-                  :to="{
-                    name: 'project.dashboard',
-                    params: {
-                      project: obj.id,
-                    },
-                  }"
-                >
-                  {{ obj.name }}
-                </router-link>
-              </fwb-list-group-item>
-            </div>
-          </fwb-list-group>
-        </fwb-dropdown>
+        <ProjectsDropDown />
         <CreateTaskForm />
 
         <fwb-dropdown
@@ -247,6 +218,7 @@ import { useRouter } from 'vue-router'
 import { ref } from 'vue'
 import { Tippy } from 'vue-tippy'
 import CreateProject from '../pages/project/Create.vue'
+import ProjectsDropDown from './ProjectsDropDown.vue'
 import Modal from '../shared/Modal.vue'
 import { useTasksStore } from '../../store/tasksStore.js'
 import { useTextToLinkStore } from '../../store/textToLinkStore'
@@ -257,7 +229,6 @@ import ComputerIcon from '../shared/icons/ComputerIcon.vue'
 import ChartPieIcon from '../shared/icons/ChartPieIcon.vue'
 import HomeIcon from '../shared/icons/HomeIcon.vue'
 import ChatIcon from '../shared/icons/ChatIcon.vue'
-import ArchiveBoxIcon from '../shared/icons/ArchiveBoxIcon.vue'
 import BanknotesIcon from '../shared/icons/BanknotesIcon.vue'
 import CreateTaskForm from '../pages/project/tasks/Form.vue'
 
@@ -295,30 +266,16 @@ const router = useRouter()
 const useText = ref(isMobile)
 const hideModal = ref(null)
 const createProjectRef = ref(null)
-const projects = ref({
-  data: [],
-})
 const logout = e => {
   e.preventDefault()
   window.Echo.disconnect()
   localStorage.removeItem('token')
-  router.push({
-    name: 'login',
+  axios.post('/api/v1/logout').then(() => {
+    router.push({
+      name: 'login',
+    })
   })
 }
-const load = (page = 1) => {
-  axios
-    .get('/api/v1/projects', {
-      params: {
-        page,
-      },
-    })
-    .then(res => {
-      projects.value = res.data
-    })
-}
-load()
-
 const submitForm = () => {
   createProjectRef.value.submit()
   textToLinkStore.load()

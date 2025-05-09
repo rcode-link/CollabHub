@@ -12,13 +12,9 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        User::factory()->create([
-            'email' => 'admin@admin.com'
-        ]);
         $this->call(PermissionSeeder::class);
         $this->call(TaskTypeSeeder::class);
         $this->call(TaskStatusesSeeder::class);
         $this->call(RoleSeeder::class);
-
     }
 }

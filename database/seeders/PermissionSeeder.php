@@ -141,10 +141,13 @@ class PermissionSeeder extends Seeder
                 'name' => 'Can Approve Vacation',
                 'slug' => Str::slug('Can Approve Vacation'),
             ],
+            [
+                'scope' => PermissionsScopes::Company->value,
+                'name' => 'Can See Timesheet Report',
+                'slug' => Str::slug('Can See Timesheet Report'),
+            ],
         ]);
 
         PermissionDefinition::insert($roles->whereNotIn('slug', PermissionDefinition::pluck('slug'))->toArray());
-
-
     }
 }

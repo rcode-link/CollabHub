@@ -18,21 +18,19 @@ class RoleSeeder extends Seeder
      */
     public function run(): void
     {
-        $admin = Role::create([
+        $admin = Role::updateOrCreate([
             'title' => 'Admin',
             'can_be_changed' => false
         ]);
 
-        $company = Company::create([
-            'name' => 'Company',
+        $company = Company::firstOrCreate([
             'is_costumer_company' => false
+        ], [
+            'name' => 'Company',
         ]);
 
-        $users = User::all();
         $admin->definitions()->attach(PermissionDefinition::all());
 
-        $admin->users()->attach($users);
-        $company->users()->attach($users);
         RoleResource::updateOrCreate([
             'role_id' => $admin->id,
             'resourcable_id' => $company->id,
@@ -40,17 +38,5 @@ class RoleSeeder extends Seeder
         ], []);
 
         ManagePermissionsEvent::dispatch();
-        $users->each(function (User $user) use ($company) {
-            $chat = Chat::create([
-                'title' => 'Sandbox',
-                'chatable_type' => $company::class,
-                'chatable_id' => $company->id
-            ]);
-
-            $chat->users()->attach($user);
-        });
-
-
-
     }
 }
