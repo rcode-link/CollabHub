@@ -29,6 +29,32 @@ breadcrumb.setLinks([
     title: 'Profile Settings',
   },
 ])
+const permissionStatus = ref(Notification.permission)
+
+const revokePermissions = () => {
+  window.alert(
+    'To revoke notification permissions, please follow these steps:\n\n' +
+      'Chrome:\n' +
+      '1. Click on the padlock icon in the address bar.\n' +
+      "2. Click on 'Site settings'.\n" +
+      "3. Find the 'Notifications' section.\n" +
+      "4. Use the dropdown menu to change the permission to 'Block' or 'Ask'.\n\n" +
+      'Firefox:\n' +
+      '1. Click on the padlock icon in the address bar.\n' +
+      "2. Click on 'Permissions'.\n" +
+      "3. Find the 'Notifications' section.\n" +
+      "4. Use the dropdown menu to change the permission to 'Block' or 'Ask'.\n\n" +
+      'Safari:\n' +
+      "1. Go to 'Safari' > 'Preferences' > 'Websites' > 'Notifications'.\n" +
+      '2. Find the website in the list.\n' +
+      "3. Use the dropdown menu to change the permission to 'Deny'.\n\n" +
+      'Edge:\n' +
+      '1. Click on the padlock icon in the address bar.\n' +
+      "2. Click on 'Permissions for this site'.\n" +
+      "3. Find the 'Notifications' section.\n" +
+      "4. Use the dropdown menu to change the permission to 'Block' or 'Ask'.",
+  )
+}
 const askForPermissions = () => {
   if (!('Notification' in window) || !('serviceWorker' in navigator)) {
     console.error('Notifications or Service Workers are not supported.')
@@ -36,6 +62,7 @@ const askForPermissions = () => {
   }
 
   Notification.requestPermission().then(permission => {
+    permissionStatus.value = permission
     if (permission === 'granted') {
       navigator.serviceWorker.ready
         .then(function (registration) {
@@ -58,6 +85,11 @@ const askForPermissions = () => {
             },
           })
         })
+      navigator.serviceWorker.controller.postMessage({
+        type: 'show-notification',
+        title: 'Hello!',
+        body: 'This is a notification message.',
+      })
     } else {
       console.warn('Notification permission not granted.')
     }
@@ -82,9 +114,16 @@ const askForPermissions = () => {
       </Card>
       <Card class="flex-col gap-6">
         <h1 class="font-bold text-xl">Push notificaionts</h1>
-        <FwbButton @click="askForPermissions"
-          >Allow push notificaions</FwbButton
-        >
+        <FwbButton
+          v-if="permissionStatus === 'granted'"
+          @click="revokePermissions"
+          >Disable notificaions
+        </FwbButton>
+        <FwbButton
+          v-if="permissionStatus !== 'granted'"
+          @click="askForPermissions"
+          >Allow push notificaions
+        </FwbButton>
       </Card>
 
       <Card class="flex-col gap-6" color="bg-gray-100 dark:bg-gray-700">
