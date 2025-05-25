@@ -16,8 +16,8 @@ class CalendarController extends Controller
 {
     public function getMyEvents(Request $request)
     {
-        $startDate = now()->set(['year' => $request->get('year'), 'month' => $request->get('month')])->startOf('month');
-        $endDate = now()->set(['year' => $request->get('year'), 'month' => $request->get('month')])->endOf('month');
+        $startDate = now()->set(['year' => $request->get('year', now()->year), 'month' => $request->get('month')])->startOf('month');
+        $endDate = now()->set(['year' => $request->get('year', now()->year), 'month' => $request->get('month')])->endOf('month');
         $events = Event::query()
             ->with('user', 'videocalls')
             ->where(function (Builder $query) {
@@ -80,7 +80,6 @@ class CalendarController extends Controller
         $event->delete();
 
         return response()->noContent();
-
     }
 
     public function insertCalendarItem(CreateEventRequest $request)
@@ -114,6 +113,5 @@ class CalendarController extends Controller
         $icalendarData = Event::convertToICalendarFormat();
         return response($icalendarData)
             ->header('Content-Type', 'text/calendar');
-
     }
 }
