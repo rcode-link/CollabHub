@@ -1,217 +1,157 @@
 <template>
-  <fwb-navbar class="">
-    <template #logo>
-      <router-link alt=" " image-url="/images/logo.svg" :to="{ name: 'home' }">
-        <h1
-          class="font-extrabold leading-none flex gap-0.5 items-center tracking-tight text-gray-900 text-2xl dark:text-white"
-        >
-          <fwb-avatar :img="userStore.company.avatar" />
-          {{ userStore.company.name }}
-        </h1>
-      </router-link>
-    </template>
-    <template #default="{ isShowMenu }">
-      <fwb-navbar-collapse
-        :is-show-menu="isShowMenu"
-        is="div"
-        class="flex items-center mr-[-1rem] menu space-y-2"
-      >
-        <router-link
-          alt=" "
-          class="flex md:justify-center md:items-center navbar-link"
-          image-url="/images/logo.svg"
-          :to="{ name: 'home' }"
-        >
-          <tippy content="Home" class="flex space-x-2 items-center">
-            <HomeIcon class="w-6 h-6" />
-            <span v-if="useText">Home</span>
-          </tippy>
-        </router-link>
-        <router-link
-          alt=" "
-          class="flex md:justify-center md:items-center relative navbar-link"
-          image-url="/images/logo.svg"
-          :to="{ name: 'chat' }"
-        >
-          <tippy content="Chat" class="flex space-x-2 items-center">
-            <ChatIcon class="w-6 h-6" />
-            <span v-if="useText">Chat</span>
+    <fwb-navbar class="">
+        <template #logo>
+            <router-link alt=" " image-url="/images/logo.svg" :to="{ name: 'home' }">
+                <h1
+                    class="font-extrabold leading-none flex gap-0.5 items-center tracking-tight text-gray-900 text-2xl dark:text-white">
+                    <fwb-avatar :img="userStore.company.avatar" />
+                    {{ userStore.company.name }}
+                </h1>
+            </router-link>
+        </template>
+        <template #default="{ isShowMenu }">
+            <fwb-navbar-collapse :is-show-menu="isShowMenu" is="div"
+                class="flex items-center mr-[-1rem] menu space-y-2">
+                <router-link alt=" " class="flex md:justify-center md:items-center navbar-link"
+                    image-url="/images/logo.svg" :to="{ name: 'home' }">
+                    <tippy content="Home" class="flex space-x-2 items-center">
+                        <HomeIcon class="w-6 h-6" />
+                        <span v-if="useText">Home</span>
+                    </tippy>
+                </router-link>
+                <router-link alt=" " class="flex md:justify-center md:items-center relative navbar-link"
+                    image-url="/images/logo.svg" :to="{ name: 'chat' }">
+                    <tippy content="Chat" class="flex space-x-2 items-center">
+                        <ChatIcon class="w-6 h-6" />
+                        <span v-if="useText">Chat</span>
 
-            <div
-              v-if="userStore.newMessages"
-              class="w-2 h-2 ml-auto text-xs bg-red-700 text-white flex absolute top-0 right-0 md:justify-center md:items-center rounded-full text-center font-bold p-2 mr-3"
-            >
-              {{ userStore.newMessages }}
+                        <div v-if="userStore.newMessages"
+                            class="w-2 h-2 ml-auto text-xs bg-red-700 text-white flex absolute top-0 right-0 md:justify-center md:items-center rounded-full text-center font-bold p-2 mr-3">
+                            {{ userStore.newMessages }}
+                        </div>
+                    </tippy>
+                </router-link>
+
+                <router-link v-if="can(`can-view-billing-info.${userStore.company.id}`)"
+                    class="flex md:justify-center md:items-center relative navbar-link" :to="{ name: 'invoices' }">
+                    <tippy content="Customers" class="flex space-x-2 items-center">
+                        <BanknotesIcon class="w-6 h-6" />
+                        <span v-if="useText">Invoices</span>
+                    </tippy>
+                </router-link>
+                <router-link v-if="can(`can-see-timesheet-report.${userStore.company.id}`, '')"
+                    class="flex md:justify-center md:items-center relative navbar-link" :to="{ name: 'reports' }">
+                    <tippy content="Reports" class="flex space-x-2 items-center">
+                        <ChartPieIcon class="w-6 h-6" />
+                        <span v-if="useText">Reports</span>
+                    </tippy>
+                </router-link>
+
+                <ProjectsDropDown />
+                <CreateTaskForm />
+
+                <fwb-dropdown text="Bottom" :placement="isMobile ? '' : 'left'" class="w-auto">
+                    <template #trigger>
+                        <div class="w-75">
+                            <span class="sr-only">Open user menu</span>
+                            <fwb-avatar :img="userStore.user.avatar" />
+                        </div>
+                    </template>
+                    <fwb-list-group class="w-72">
+                        <fwb-list-group-item class="flex-col">
+                            <div class="flex gap-2 mr-auto">
+                                <fwb-avatar :img="userStore.user.avatar" />
+                                <div>
+                                    <span class="block text-left text-sm text-gray-900 dark:text-white">
+                                        {{ userStore.user.name }}
+                                    </span>
+                                    <span
+                                        class="block text-sm overflow-hidden text-left text-gray-500 truncate dark:text-gray-400">
+                                        {{ userStore.user.email }}
+                                    </span>
+                                </div>
+                            </div>
+                        </fwb-list-group-item>
+                        <fwb-list-group-item>
+                            <div class="flex gap-4 justify-between w-full">
+                                <tippy content="Light theme" @click="() => changeTheme(themeData.light)">
+                                    <fwb-button :color="currentTheme === 'light' ? 'default' : 'alternative'
+                                        ">
+                                        <SunIcon class="w-4 h-4" />
+                                    </fwb-button>
+                                </tippy>
+                                <tippy content="Dark theme" @click="() => changeTheme(themeData.dark)">
+                                    <fwb-button :color="currentTheme === 'dark' ? 'default' : 'alternative'">
+                                        <MoonIcon class="w-4 h-4" />
+                                    </fwb-button>
+                                </tippy>
+                                <tippy content="System theme" @click="() => changeTheme(themeData.auto)">
+                                    <fwb-button :color="currentTheme === 'auto' ? 'default' : 'alternative'">
+                                        <ComputerIcon class="w-4 h-4" />
+                                    </fwb-button>
+                                </tippy>
+                            </div>
+                        </fwb-list-group-item>
+                        <fwb-list-group-item v-if="can(`can-create-project.${userStore.company.id}`, '')"
+                            @click="() => (hideModal = !hideModal)">
+                            <div
+                                class="cursor-pointer w-full block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">
+                                Add new project
+                            </div>
+                        </fwb-list-group-item>
+                        <fwb-list-group-item>
+                            <router-link :to="{ name: 'settings.base' }"
+                                class="block w-full px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
+                                Settings
+                            </router-link>
+                        </fwb-list-group-item>
+                        <fwb-list-group-item>
+                            <div class="py-2 w-full">
+                                <a href="#" @click="logout"
+                                    class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">Sign
+                                    out</a>
+                            </div>
+                        </fwb-list-group-item>
+                    </fwb-list-group>
+                </fwb-dropdown>
+            </fwb-navbar-collapse>
+        </template>
+        <template #menu-icon>
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg">
+                <path
+                    d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"
+                    stroke-linecap="round" stroke-linejoin="round" stroke-width="2" />
+            </svg>
+            <div v-if="userStore.newMessages"
+                class="w-2 h-2 ml-auto text-xs bg-red-700 text-white flex absolute top-0 right-0 md:justify-center md:items-center rounded-full text-center font-bold p-2 mr-3">
+                {{ userStore.newMessages }}
             </div>
-          </tippy>
-        </router-link>
+        </template>
+    </fwb-navbar>
+    <Modal :hide-modal="hideModal" @closed="() => (hideModal = false)">
+        <template #header>
+            <h1>Create new project</h1>
+        </template>
 
-        <router-link
-          v-if="can(`can-view-billing-info.${userStore.company.id}`)"
-          class="flex md:justify-center md:items-center relative navbar-link"
-          :to="{ name: 'invoices' }"
-        >
-          <tippy content="Customers" class="flex space-x-2 items-center">
-            <BanknotesIcon class="w-6 h-6" />
-            <span v-if="useText">Invoices</span>
-          </tippy>
-        </router-link>
-        <router-link
-          class="flex md:justify-center md:items-center relative navbar-link"
-          :to="{ name: 'reports' }"
-        >
-          <tippy content="Reports" class="flex space-x-2 items-center">
-            <ChartPieIcon class="w-6 h-6" />
-            <span v-if="useText">Reports</span>
-          </tippy>
-        </router-link>
-
-        <ProjectsDropDown />
-        <CreateTaskForm />
-
-        <fwb-dropdown
-          text="Bottom"
-          :placement="isMobile ? '' : 'left'"
-          class="w-auto"
-        >
-          <template #trigger>
-            <div class="w-75">
-              <span class="sr-only">Open user menu</span>
-              <fwb-avatar :img="userStore.user.avatar" />
-            </div>
-          </template>
-          <fwb-list-group class="w-72">
-            <fwb-list-group-item class="flex-col">
-              <div class="flex gap-2 mr-auto">
-                <fwb-avatar :img="userStore.user.avatar" />
-                <div>
-                  <span
-                    class="block text-left text-sm text-gray-900 dark:text-white"
-                  >
-                    {{ userStore.user.name }}
-                  </span>
-                  <span
-                    class="block text-sm overflow-hidden text-left text-gray-500 truncate dark:text-gray-400"
-                  >
-                    {{ userStore.user.email }}
-                  </span>
-                </div>
-              </div>
-            </fwb-list-group-item>
-            <fwb-list-group-item>
-              <div class="flex gap-4 justify-between w-full">
-                <tippy
-                  content="Light theme"
-                  @click="() => changeTheme(themeData.light)"
-                >
-                  <fwb-button
-                    :color="
-                      currentTheme === 'light' ? 'default' : 'alternative'
-                    "
-                  >
-                    <SunIcon class="w-4 h-4" />
-                  </fwb-button>
-                </tippy>
-                <tippy
-                  content="Dark theme"
-                  @click="() => changeTheme(themeData.dark)"
-                >
-                  <fwb-button
-                    :color="currentTheme === 'dark' ? 'default' : 'alternative'"
-                  >
-                    <MoonIcon class="w-4 h-4" />
-                  </fwb-button>
-                </tippy>
-                <tippy
-                  content="System theme"
-                  @click="() => changeTheme(themeData.auto)"
-                >
-                  <fwb-button
-                    :color="currentTheme === 'auto' ? 'default' : 'alternative'"
-                  >
-                    <ComputerIcon class="w-4 h-4" />
-                  </fwb-button>
-                </tippy>
-              </div>
-            </fwb-list-group-item>
-            <fwb-list-group-item
-              v-if="can(`can-create-project.${userStore.company.id}`, '')"
-              @click="() => (hideModal = !hideModal)"
-            >
-              <div
-                class="cursor-pointer w-full block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white"
-              >
-                Add new project
-              </div>
-            </fwb-list-group-item>
-            <fwb-list-group-item>
-              <router-link
-                :to="{ name: 'settings.base' }"
-                class="block w-full px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
-              >
-                Settings
-              </router-link>
-            </fwb-list-group-item>
-            <fwb-list-group-item>
-              <div class="py-2 w-full">
-                <a
-                  href="#"
-                  @click="logout"
-                  class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white"
-                  >Sign out</a
-                >
-              </div>
-            </fwb-list-group-item>
-          </fwb-list-group>
-        </fwb-dropdown>
-      </fwb-navbar-collapse>
-    </template>
-    <template #menu-icon>
-      <svg
-        class="w-6 h-6"
-        fill="none"
-        stroke="currentColor"
-        viewBox="0 0 24 24"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <path
-          d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          stroke-width="2"
-        />
-      </svg>
-      <div
-        v-if="userStore.newMessages"
-        class="w-2 h-2 ml-auto text-xs bg-red-700 text-white flex absolute top-0 right-0 md:justify-center md:items-center rounded-full text-center font-bold p-2 mr-3"
-      >
-        {{ userStore.newMessages }}
-      </div>
-    </template>
-  </fwb-navbar>
-  <Modal :hide-modal="hideModal" @closed="() => (hideModal = false)">
-    <template #header>
-      <h1>Create new project</h1>
-    </template>
-
-    <template #body>
-      <CreateProject ref="createProjectRef" />
-    </template>
-    <template #footer>
-      <fwb-button @click="submitForm"> Save </fwb-button>
-    </template>
-  </Modal>
+        <template #body>
+            <CreateProject ref="createProjectRef" />
+        </template>
+        <template #footer>
+            <fwb-button @click="submitForm"> Save </fwb-button>
+        </template>
+    </Modal>
 </template>
 
 <script setup>
 import {
-  FwbAvatar,
-  FwbButton,
-  FwbDropdown,
-  FwbListGroup,
-  FwbListGroupItem,
-  FwbNavbar,
-  FwbNavbarCollapse,
+    FwbAvatar,
+    FwbButton,
+    FwbDropdown,
+    FwbListGroup,
+    FwbListGroupItem,
+    FwbNavbar,
+    FwbNavbarCollapse,
 } from 'flowbite-vue'
 import { useUserStore } from '../../store/user'
 import { useRouter } from 'vue-router'
@@ -236,25 +176,25 @@ const createTasks = useTasksStore()
 const { can, rules } = useAbility()
 
 const themeData = {
-  light: 'light',
-  dark: 'dark',
-  auto: 'auto',
+    light: 'light',
+    dark: 'dark',
+    auto: 'auto',
 }
 
 function detectMob() {
-  const toMatch = [
-    /Android/i,
-    /webOS/i,
-    /iPhone/i,
-    /iPad/i,
-    /iPod/i,
-    /BlackBerry/i,
-    /Windows Phone/i,
-  ]
+    const toMatch = [
+        /Android/i,
+        /webOS/i,
+        /iPhone/i,
+        /iPad/i,
+        /iPod/i,
+        /BlackBerry/i,
+        /Windows Phone/i,
+    ]
 
-  return toMatch.some(toMatchItem => {
-    return navigator.userAgent.match(toMatchItem)
-  })
+    return toMatch.some(toMatchItem => {
+        return navigator.userAgent.match(toMatchItem)
+    })
 }
 
 const isMobile = detectMob()
@@ -267,30 +207,30 @@ const useText = ref(isMobile)
 const hideModal = ref(null)
 const createProjectRef = ref(null)
 const logout = e => {
-  e.preventDefault()
-  window.Echo.disconnect()
-  localStorage.removeItem('token')
-  axios.post('/api/v1/logout').then(() => {
-    router.push({
-      name: 'login',
+    e.preventDefault()
+    window.Echo.disconnect()
+    localStorage.removeItem('token')
+    axios.post('/api/v1/logout').then(() => {
+        router.push({
+            name: 'login',
+        })
     })
-  })
 }
 const submitForm = () => {
-  createProjectRef.value.submit()
-  textToLinkStore.load()
+    createProjectRef.value.submit()
+    textToLinkStore.load()
 }
 const html = document.getElementsByTagName('html')[0]
 const currentTheme = ref(localStorage.getItem('color-theme'))
 
 const changeTheme = theme => {
-  html.classList.remove(currentTheme.value)
+    html.classList.remove(currentTheme.value)
 
-  currentTheme.value = theme
+    currentTheme.value = theme
 
-  if (theme !== 'auto') {
-    html.classList.add(currentTheme.value)
-  }
-  localStorage.setItem('color-theme', currentTheme.value)
+    if (theme !== 'auto') {
+        html.classList.add(currentTheme.value)
+    }
+    localStorage.setItem('color-theme', currentTheme.value)
 }
 </script>
