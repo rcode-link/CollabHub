@@ -12,12 +12,15 @@ class TaskStatusesSeeder extends Seeder
      */
     public function run(): void
     {
+        if (TaskStatuses::count()) {
+            return;
+        }
         TaskStatuses::insert([
-           [
-               'title' => 'Open',
-               'order' => 0,
-               'open' => true
-           ],
+            [
+                'title' => 'Open',
+                'order' => 0,
+                'open' => true
+            ],
             [
                 'title' => 'In Progress',
                 'order' => 1,

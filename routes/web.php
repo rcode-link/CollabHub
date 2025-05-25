@@ -1,5 +1,6 @@
 <?php
 
+use App\Helpers\GenerateImage;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\CalendarController;
 use App\Http\Controllers\VideoCallController;
@@ -29,24 +30,14 @@ Route::match(['PROPFIND', 'GET'], '/calendar', [CalendarController::class, 'calD
 
 Route::get('/video-call/{video}/join', [VideoCallController::class, 'getVideoCallToken']);
 
-Route::post('/login', function () {
+Route::post('/login', function () {});
+Route::get('/test', function () {
 
-});
-Route::get('/generate-pdf-v2', function () {
-    $content = (new Tiptap\Editor([
-        'extensions' => [
-            new \Tiptap\Extensions\StarterKit([
-                'codeBlock' => false,
-            ]),
-        ]
-    ]))
-    ->setContent(File::whereId(1)->first()->content)
-    ->getHTML();
-$pdf = Pdf::loadView('pdf.document',['content' => $content]);
-    return $content;
-    return $pdf->stream();    // $invoice = Invoice::whereId(9)->with(['items', 'items.billingItem', 'company'])->firstOrFail();
-   // $company = Company::whereIsCostumerCompany(false)->firstOrFail();
-   // return view('pdf.invoice', ['model' => $invoice, 'company' => $company]);
+    GenerateImage::profileImage("Radan Stupar")->toPng()->save(public_path('foo.png'));
+    return  'ok';
+
+    // $company = Company::whereIsCostumerCompany(false)->firstOrFail();
+    // return view('pdf.invoice', ['model' => $invoice, 'company' => $company]);
 });
 
 
@@ -67,5 +58,4 @@ Route::middleware([\App\Http\Middleware\FrontendEnv::class])->group(function () 
     Route::fallback(function () {
         return view('welcome');
     });
-
 });

@@ -171,12 +171,11 @@ return [
         App\Providers\BroadcastServiceProvider::class,
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
-        App\Providers\TelescopeServiceProvider::class,
         Barryvdh\Snappy\ServiceProvider::class,
         MoneyDirective::class,
 
         //        Sabre => App\Providers\SabreUserManagerServiceProvider::class,
-//        App\Providers\CalendarServiceProvider::class,
+        //        App\Providers\CalendarServiceProvider::class,
     ])->toArray(),
 
     /*

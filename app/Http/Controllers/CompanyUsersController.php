@@ -37,6 +37,7 @@ class CompanyUsersController extends Controller
         $invite = Invitations::create([
             'company_id' => Auth::user()->company->first()->id,
             'number_of_invitations' => $request->get('number_of_invitations', 1),
+            'role_id' => $request->get('role', null),
             'registered' => []
         ]);
 

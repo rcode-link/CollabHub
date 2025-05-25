@@ -12,6 +12,9 @@ class TaskTypeSeeder extends Seeder
      */
     public function run(): void
     {
+        if (TaskType::count()) {
+            return;
+        }
         TaskType::insert([
             [
                 'title' => 'User Story',

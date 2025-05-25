@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Events\ManagePermissionsEvent;
+use App\Helpers\GenerateImage;
 use App\Http\Requests\RegisterRequest;
 use App\Models\Company;
 use App\Models\Invitations;
@@ -25,6 +26,7 @@ class RegisterController extends Controller
         DB::beginTransaction();
         try {
             $user = User::create($data);
+
 
             Role::whereId($invitation->role_id)->first()?->users()->attach($user);
             $user->company()->attach([

@@ -43,7 +43,7 @@ class AddAdminCommand extends Command
             ])->firstOrFail()->id
         ]);
 
-        $url = SigneRoute::make('invite.user', ['id' => $link->key], Carbon::now()->addMinutes(30));
+        $url = SigneRoute::make('invite.user', ['id' => $link->key,], Carbon::now()->addMinutes(30));
 
         Mail::to($this->argument('email'))->send(new WelcomeAdminEmail($url));
     }
