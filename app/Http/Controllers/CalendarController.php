@@ -16,8 +16,10 @@ class CalendarController extends Controller
 {
     public function getMyEvents(Request $request)
     {
-        $startDate = now()->set(['year' => $request->get('year', now()->year), 'month' => $request->get('month')])->startOf('month');
-        $endDate = now()->set(['year' => $request->get('year', now()->year), 'month' => $request->get('month')])->endOf('month');
+        $year = (int)$request->get('year', now()->year);
+        $month = (int)$request->get('month', now()->month);
+        $startDate = now()->set(['year' => $year, 'month' => $month])->startOf('month');
+        $endDate = now()->set(['year' => $year, 'month' => $month])->endOf('month');
         $events = Event::query()
             ->with('user', 'videocalls')
             ->where(function (Builder $query) {
