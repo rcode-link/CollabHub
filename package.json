@@ -9,6 +9,7 @@
         "@basitcodeenv/vue3-device-detect": "^1.0.3",
         "@casl/ability": "^6.7.2",
         "@casl/vue": "^2.2.2",
+        "@quantify/vue3-pivottable-plotly-renderer": "^1.0.2",
         "@rcode-link/tiptap-drawio": "^1.0.21",
         "@sentry/vue": "^7.119.2",
         "@tiptap/extension-bold": "^2.11.5",
