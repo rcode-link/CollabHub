@@ -18,14 +18,14 @@ export default (chatIdParam, messageContainerRef) => {
 
     const scrollMessageToView = (targetId) => {
         nextTick(() => {
-            const targetElement = document.getElementById(`message-${targetId}`);
-            const container = messageContainerRef.value;
-            if (targetElement && container) {
-                const itemPosition = targetElement.offsetTop;
-                container.scrollTop = itemPosition;
-            }
-            showScrollToBottom.value = 0;
-            lastMessageId.value = null;
+            // const targetElement = document.getElementById(`message-${targetId}`);
+            // const container = messageContainerRef.value;
+            // if (targetElement && container) {
+            //     const itemPosition = targetElement.offsetTop;
+            //     container.scrollTop = itemPosition;
+            // }
+            // showScrollToBottom.value = 0;
+            // lastMessageId.value = null;
         });
     }
     const listenForMessages = () => {
