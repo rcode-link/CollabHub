@@ -105,7 +105,6 @@ export default () => {
         sendNotificationEvent(data)
     }
     const sendNotificationEvent = data => {
-        console.log(data)
         const event = new CustomEvent('customEvent', {
             detail: {
                 title: `${data.message.user} messaged you`,

@@ -116,6 +116,7 @@ export default (chatIdParam, messageContainerRef) => {
     const scrollToBottom = () => {
         showScrollToBottom.value = 0;
         scrollToLastMessage.value = true;
+        if (!chatStore.messages.length) return;
         scrollMessageToView(chatStore.messages[chatStore.messages.length - 1].id);
     }
 

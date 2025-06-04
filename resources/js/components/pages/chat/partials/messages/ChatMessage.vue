@@ -14,19 +14,14 @@ const user = useUserStore();
 const router = useRouter();
 const route = useRoute();
 const props = defineProps({
-  index: null,
-  message: null,
+    index: null,
+    message: null,
 });
 </script>
 
 <template>
-  <div
-    class="flex flex-col mx-4 relative"
-    :id="`message-${message.id}`"
-  >
-    <PrintChatMessage
-      :message="message"
-      @click="() => { chatStore.setSelectedMessage(message.id); }"
-    />
-  </div>
+    <div class="flex flex-col mx-4 relative">
+        <PrintChatMessage :message="message" @mouseenter="() => { chatStore.setSelectedMessage(message.id); }"
+            @mouseleave="() => { chatStore.setSelectedMessage(null); }" />
+    </div>
 </template>
