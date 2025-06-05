@@ -1,4 +1,4 @@
-@servers(['web' => ['user@your-server-ip'], 'soketi' => 'root@soketi'])
+@servers(['web' => ['collabhub-server'], 'soketi' => 'root@soketi'])
 
 @task('install_dependencies', ['on' => 'web', 'php_version' => '8.3', 'node_version' => '--lts'])
     # Update package list
@@ -29,12 +29,20 @@
 @endtask
 @task("deploy", ['on' => 'web'])
     # Install Laravel dependencies
+
+    echo $password;
     cd /var/www/html
-    git pull
-    composer install
-    npm install
-    npm run dev
-    php artisan migrate --force
+
+    echo "{{ $password }}" | sudo -S sudo git pull origin main
+    echo "{{ $password }}" | sudo -S composer install
+    # echo "{{ $password }}" | sudo -S php artisan migrate --force
+    echo "{{ $password }}" | sudo -S npm install && npm run build
+    echo "{{ $password }}" | sudo -S chmod -R 777  storage/
+    echo "{{ $password }}" | sudo -S php artisan config:cache
+    echo "{{ $password }}" | sudo -S php artisan route:cache
+    echo "{{ $password }}" | sudo -S php artisan view:cache
+    echo "{{ $password }}" | sudo -S php artisan optimize
+
 @endtask
 
 @task("setupsoketi", ['on' => 'soketi'])
