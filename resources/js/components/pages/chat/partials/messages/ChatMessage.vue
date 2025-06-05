@@ -23,5 +23,7 @@ const props = defineProps({
     <div class="flex flex-col mx-4 relative">
         <PrintChatMessage :message="message" @mouseenter="() => { chatStore.setSelectedMessage(message.id); }"
             @mouseleave="() => { chatStore.setSelectedMessage(null); }" />
+
+
     </div>
 </template>

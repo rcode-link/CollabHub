@@ -56,7 +56,7 @@ class VideoCalls extends Model
         'users' => 'array'
     ];
 
-    public function callable (): \Illuminate\Database\Eloquent\Relations\MorphTo
+    public function callable(): \Illuminate\Database\Eloquent\Relations\MorphTo
     {
         return $this->morphTo();
     }
@@ -71,11 +71,6 @@ class VideoCalls extends Model
         $data = (new RoomServiceClient(host: config('livekit.url'), apiKey: config('livekit.key'), apiSecret: config('livekit.secret')));
 
         $listOfUsers = $data->listParticipants($this->slug);
-
-        // if video call has users in it then user can join
-        if ($listOfUsers->getParticipants()->count() > 0) {
-            return true;
-        }
 
         switch ($this->callable::class) {
             case Event::class:

@@ -16,7 +16,6 @@ export const chatDetails = defineStore("chatDetails", {
     }),
     actions: {
         setSelectedMessage(index) {
-
             if (this.selectedMessage == index) {
                 this.selectedMessage = null;
                 return;
@@ -87,7 +86,7 @@ export const chatDetails = defineStore("chatDetails", {
         },
         addMessages(messages) {
 
-            this.messages = _.uniq([...messages,...this.messages]);
+            this.messages = _.uniq([...messages, ...this.messages]);
         },
         updateMessage(message) {
             const index = _.findIndex(this.messages, {

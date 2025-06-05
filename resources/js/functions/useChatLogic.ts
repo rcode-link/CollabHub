@@ -18,14 +18,14 @@ export default (chatIdParam, messageContainerRef) => {
 
     const scrollMessageToView = (targetId) => {
         nextTick(() => {
-            // const targetElement = document.getElementById(`message-${targetId}`);
-            // const container = messageContainerRef.value;
-            // if (targetElement && container) {
-            //     const itemPosition = targetElement.offsetTop;
-            //     container.scrollTop = itemPosition;
-            // }
-            // showScrollToBottom.value = 0;
-            // lastMessageId.value = null;
+            const targetElement = document.getElementById(`message-${targetId}`);
+            const container = messageContainerRef.value;
+            if (targetElement && container) {
+                const itemPosition = targetElement.offsetTop;
+                container.scrollTop = itemPosition;
+            }
+            showScrollToBottom.value = 0;
+            lastMessageId.value = null;
         });
     }
     const listenForMessages = () => {
@@ -36,10 +36,6 @@ export default (chatIdParam, messageContainerRef) => {
                 chatStore.addMessage(data.message);
                 lastMessageId.value = data.message.id;
                 await nextTick();
-                if (scrollToLastMessage.value) {
-
-                    scrollMessageToView(data.message.id);
-                }
                 showScrollToBottom.value = 1;
             })
             .listen("ChatMessageUpdated", (data: any) => {
@@ -116,8 +112,11 @@ export default (chatIdParam, messageContainerRef) => {
     const scrollToBottom = () => {
         showScrollToBottom.value = 0;
         scrollToLastMessage.value = true;
-        if (!chatStore.messages.length) return;
-        scrollMessageToView(chatStore.messages[chatStore.messages.length - 1].id);
+        try {
+            scrollMessageToView(chatStore.messages[chatStore.messages.length - 1].id);
+        } catch (e) {
+            console.log('known error when scrolling')
+        }
     }
 
     return {
