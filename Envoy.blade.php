@@ -32,11 +32,10 @@
 
     echo $password;
     cd /var/www/html
-
     echo "{{ $password }}" | sudo -S sudo git pull origin main
-    echo "{{ $password }}" | sudo -S composer install
-    # echo "{{ $password }}" | sudo -S php artisan migrate --force
-    echo "{{ $password }}" | sudo -S npm install && npm run build
+    echo "{{ $password }}" | sudo -S composer install --no-dev
+    # echo "{{ $password }}" | sudo -S npm install
+    # echo "{{ $password }}" | sudo -S npm run build
     echo "{{ $password }}" | sudo -S chmod -R 777  storage/
     echo "{{ $password }}" | sudo -S php artisan config:cache
     echo "{{ $password }}" | sudo -S php artisan route:cache

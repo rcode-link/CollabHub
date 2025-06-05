@@ -61,7 +61,8 @@ watch(
 )
 
 onUpdated(() => {
-    if (chatLogic.page.value !== 1) {
+
+    if (chatLogic.page.value !== 1 || !chatLogic.scrollToLastMessage.value) {
         return
     }
     setTimeout(() => chatLogic.scrollToBottom())
@@ -76,7 +77,8 @@ onUnmounted(async () => {
 <template>
     <div class="chat-details">
         <Header />
-        <main ref="messageContainerRef" @scroll="chatLogic.scrolled" class="overflow-auto pb-2 message-container">
+        <main ref="messageContainerRef" @scroll="chatLogic.scrolled"
+            class="overflow-auto max-w-full pb-2 message-container">
             <!-- Loading indicator at top when loading older messages -->
             <div v-if="chatLogic.isLoadingMore" class="text-center p-2 text-gray-500">
                 Loading older messages...
