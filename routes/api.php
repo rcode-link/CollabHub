@@ -57,7 +57,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('/link-preview', [LinkPreviewController::class, 'fetch']);
 
     Route::apiResource('/share/board/', ShareBoardController::class);
-    Route::get('/report', [ReportController::class, 'index']);
+    Route::get('/report', [ReportController::class, 'index'])->name('api.reports');
 
     Route::get('/user', [ProfileController::class, 'view'])->name('api.view');
     Route::put('/user', [ProfileController::class, 'update'])->name('api.update');
@@ -94,7 +94,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::apiResource('/boards', BoardController::class);
     Route::put('/sprints/{sprint}/activate', [SprintController::class, 'activate'])->name('api.activate');
     Route::apiResource('/sprints', SprintController::class);
-    Route::post('/file-to-pdf', [FileController::class, 'exportPDF']);
+    Route::post('/file-to-pdf', [FileController::class, 'exportPDF'])->name('api.toPdf');
     Route::apiResource('/files', FileController::class);
     Route::get('/role/resources', [RoleController::class, 'getResource'])->name('api.getResource');
     Route::get('/role/resources/{role}', [RoleController::class, 'getAllResources'])->name('api.getAllResources');
@@ -115,7 +115,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
     Route::apiResource('/customers', CustomerCompanyController::class);
     Route::apiResource('/invoices-items', InvoiceItemController::class);
-    Route::get('/invoices/{invoice}/download', [InvoiceController::class, 'download']);
+    Route::get('/invoices/{invoice}/download', [InvoiceController::class, 'download'])->name('api.invoiceDownload');
     Route::apiResource('/invoices', InvoiceController::class);
     Route::apiResource('/payments', PaymentController::class);
     Route::apiResource('/currency', CurrencyController::class);
@@ -125,10 +125,10 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('/collaboration/{document}', function ($document) {
         EditorCollabEvent::dispatch(request()->all(), $document);
         return response()->noContent();
-    });
+    })->name('api.collab');
 
-    Route::post('/chat/{id}/present', [ChatController::class, 'present']);
-    Route::post('/chat/{id}/left', [ChatController::class, 'left']);
+    Route::post('/chat/{id}/present', [ChatController::class, 'present'])->name('api.chatPresent');
+    Route::post('/chat/{id}/left', [ChatController::class, 'left'])->name('api.chatLeft');
 
     \App\Helpers\Socket\BroadcastCustom::route();
 });
