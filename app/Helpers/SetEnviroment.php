@@ -14,8 +14,8 @@ class SetEnviroment
 
                 $res = $client->post(
                     config('app.license_provider') . "/api/settings?token=" . config('app.license_token'),
-                    array (
-                        'form_params' => array (
+                    array(
+                        'form_params' => array(
                             'subdomain' => $sitename,
                         )
                     )
@@ -28,7 +28,6 @@ class SetEnviroment
                     'error' => $e->getCode()
                 ]);
             }
-
         });
     }
     static function setup()
@@ -64,15 +63,10 @@ class SetEnviroment
         \Config::set('broadcasting.connections.pusher.app_id', $model->soket->id);
 
         \Config::set('media-library.prefix', '/' . $model->subdomain);
-        \Config::set("frontend", [
-            'VITE_APP_NAME' => $model->name,
-            'VITE_PUSHER_APP_KEY' => $model->soket->key,
-            'VITE_PUSHER_HOST' => env('VITE_PUSHER_HOST', null),
-            'VITE_PUSHER_PORT' => env('VITE_PUSHER_PORT', null),
-            'VITE_PUSHER_SCHEME' => env('VITE_PUSHER_SCHEME', null),
-            'VITE_PUSHER_APP_CLUSTER' => env('VITE_PUSHER_APP_CLUSTER', null),
-            'VITE_LIVEKIT_URL' => env('VITE_LIVEKIT_URL', null),
-        ]);
+        $frontendConfig = config('frontend');
+        $frontendConfig['VITE_APP_NAME'] = $model->name;
+        $frontendConfig['VITE_PUSHER_APP_KEY'] = $model->soket->key;;
+        \Config::set("frontend", $frontendConfig);
         \DB::reconnect();
         try {
             \DB::connection()->getPdo();
@@ -81,3 +75,4 @@ class SetEnviroment
         }
     }
 }
+
