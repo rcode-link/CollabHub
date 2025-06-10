@@ -45,7 +45,6 @@ watch(
         if (!route.params.chatId) {
             return
         }
-        console.log('load')
         chatLogic.chatId.value = route.params.chatId
         chatLogic.listenForMessages(route.params.chatId)
         chatLogic.resetMessages()
@@ -61,7 +60,6 @@ watch(
 )
 
 onUpdated(() => {
-
     if (chatLogic.page.value !== 1 || !chatLogic.scrollToLastMessage.value) {
         return
     }
