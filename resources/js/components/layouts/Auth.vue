@@ -1,10 +1,12 @@
 <script lang="js" setup>
+import { watch } from 'vue'
 //@ts-ignore
 import Menu from "../header/Menu.vue";
 //@ts-ignore
 import Breadcrumb from "../header/Breadcrumb.vue";
 import { FwbProgress } from "flowbite-vue";
-import { useProgressBarStore } from "../../store/progressBarStore";
+import { useProgressBarStore } from "@/store/progressBarStore";
+
 </script>
 
 <template>
@@ -14,6 +16,8 @@ import { useProgressBarStore } from "../../store/progressBarStore";
             <Breadcrumb class="mt-2" />
             <slot></slot>
         </div>
+
+
     </div>
 </template>
 <style scoped></style>

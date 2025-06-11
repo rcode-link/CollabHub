@@ -16,9 +16,8 @@
                 <PrintFiles v-if="message.media.length" :media="message.media" />
             </div>
             <router-link v-if="message.videocall && message.videocall.slug" :to="{
-                name: 'video-call',
-                params: {
-                    slug: message.videocall.slug,
+                query: {
+                    callId: message.videocall.slug,
                 },
             }" :class="{ 'flex w-2/5': true }">
                 <fwb-badge type="red" class="flex justify-start w-full gap-2 py-2 px-4">
@@ -26,7 +25,7 @@
                     Call
                 </fwb-badge>
             </router-link>
-            <div v-if="!message.videocall && Object.keys(reactions).length" class="flex mt-1">
+            <div v-if="Object.keys(reactions).length" class="flex mt-1">
                 <fwb-badge v-for="key in Object.keys(reactions)" size="sm" v-bind:key="key">
                     <template #icon>
                         {{ key }}

@@ -7,6 +7,7 @@ use Eloquent;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
+use Agence104\LiveKit\RoomCreateOptions;
 
 /**
  * App\Models\VideoCalls
@@ -61,6 +62,19 @@ class VideoCalls extends Model
         return $this->morphTo();
     }
 
+    private function getRoom($slug)
+    {
+
+        $data = (new RoomServiceClient(host: "https://" . config('livekit.url'), apiKey: config('livekit.key'), apiSecret: config('livekit.secret')));
+        $opts = (new RoomCreateOptions())
+            ->setName($slug)
+            ->setEmptyTimeout(10)
+            ->setMaxParticipants(3);
+
+        $data->createRoom($opts);
+        return $data;
+    }
+
     /**
      * @throws \Exception
      */
@@ -68,8 +82,7 @@ class VideoCalls extends Model
     {
         $current = Carbon::parse($currentTime)->setTimezone("UTC");
 
-        $data = (new RoomServiceClient(host: config('livekit.url'), apiKey: config('livekit.key'), apiSecret: config('livekit.secret')));
-
+        $data = $this->getRoom($this->slug);
         $listOfUsers = $data->listParticipants($this->slug);
 
         switch ($this->callable::class) {

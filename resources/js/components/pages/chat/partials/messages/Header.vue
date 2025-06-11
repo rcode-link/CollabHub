@@ -14,7 +14,7 @@ const router = useRouter();
 
 const startCall = () => {
     axios.post(`/api/v1/video-call/${route.params.chatId}/start`).then((res) => {
-        router.push(`/call/${res.data.slug}`);
+        router.push({ query: { callId: res.data.slug } });
     });
 };
 
