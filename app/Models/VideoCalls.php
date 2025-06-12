@@ -66,12 +66,13 @@ class VideoCalls extends Model
     {
 
         $data = (new RoomServiceClient(host: "https://" . config('livekit.url'), apiKey: config('livekit.key'), apiSecret: config('livekit.secret')));
-        $opts = (new RoomCreateOptions())
-            ->setName($slug)
-            ->setEmptyTimeout(10)
-            ->setMaxParticipants(3);
-
-        $data->createRoom($opts);
+        if (!$data->listRooms([$slug])->getRooms()->count()) {
+            $opts = (new RoomCreateOptions())
+                ->setName($slug)
+                ->setEmptyTimeout(10)
+                ->setMaxParticipants(3);
+            $data->createRoom($opts);
+        }
         return $data;
     }
 
@@ -84,6 +85,7 @@ class VideoCalls extends Model
 
         $data = $this->getRoom($this->slug);
         $listOfUsers = $data->listParticipants($this->slug);
+
 
         switch ($this->callable::class) {
             case Event::class:
@@ -110,7 +112,7 @@ class VideoCalls extends Model
                     return false;
                 }
 
-                if ($listOfUsers->getParticipants()->count() === 0 && $this->callable->user_id !== $user['id']) {
+                if ($listOfUsers->getParticipants()->count() === 0 && $this->callable->user_id != $user['id']) {
                     return false;
                 }
 
