@@ -1,7 +1,14 @@
 <script setup>
 import Auth from '../../layouts/Auth.vue'
 import { onMounted } from 'vue'
-import { FwbListGroup, FwbListGroupItem, FwbHeading, FwbImg, FwbP } from 'flowbite-vue'
+import {
+  FwbListGroup,
+  FwbListGroupItem,
+  FwbHeading,
+  FwbAvatar,
+  FwbImg,
+  FwbP,
+} from 'flowbite-vue'
 import Card from '../../shared/Card.vue'
 import { useAbility } from '@casl/vue'
 import { useUserStore } from '../../../store/user'
@@ -22,12 +29,10 @@ onMounted(() => {
 <template>
   <Auth>
     <div v-if="singleUserStore.user" class="grid md:gap-4 md:grid-cols-3">
-      <div class="">
-        <fwb-img
-          alt=""
-          img-class="rounded-lg transition-all duration-300 cursor-pointer filter grayscale hover:grayscale-0"
-          :src="`${singleUserStore.user.avatar}`"
-        />
+      <div>
+        <Card class="w-full justify-center">
+          <fwb-avatar size="xl" :img="`${singleUserStore.user.avatar}`" />
+        </Card>
         <fwb-list-group class="w-full mt-2">
           <fwb-list-group-item>
             <fwb-heading tag="h5">
@@ -61,7 +66,7 @@ onMounted(() => {
       </div>
       <div class="col-span-2 flex flex-col gap-4">
         Resources:
-        <fwb-list-group>
+        <fwb-list-group class="w-full">
           <UserInResources
             v-for="obj in singleUserStore.user.view_profile"
             :obj="obj"
