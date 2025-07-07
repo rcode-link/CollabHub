@@ -1,9 +1,12 @@
 <template>
+    <fwb-list-group-item>
   <router-link  :to="generateLink()">
     {{ obj.name }}
   </router-link>
+    </fwb-list-group-item>
 </template>
 <script setup>
+import { FwbListGroupItem } from 'flowbite-vue'
 const props = defineProps({
     obj: {}
 })
