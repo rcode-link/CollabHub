@@ -2,6 +2,7 @@
 import Label from "../../../../../../shared/Label.vue";
 import { FwbAccordion, FwbAccordionPanel, FwbButton } from "flowbite-vue";
 import { onMounted, reactive, ref } from "vue";
+import { DateTime } from "luxon";
 import { useRoute } from "vue-router";
 import { groupBy } from "lodash";
 import UserTimeSheet from "./UserTimeSheet.vue";
@@ -44,53 +45,55 @@ onMounted(() => {
 </script>
 
 <template>
-    <div>
-        <form
-            @submit.prevent="submit"
-            class="flex gap-4 flex-col md:flex-row items-baseline mb-4"
-        >
-            <div>
-                <Label for-input="start">Start date and time</Label>
-                <flat-pickr
-                    v-model="form.start"
-                    class="input"
-                    :config="{
-                        enableTime: true,
-                        altInput: true,
-                        time_24hr: true,
-                        dateFormat: 'Z',
-                        altFormat: 'd/m/Y H:i',
-                    }"
-                    :name="'start'"
-                />
-            </div>
-            <div>
-                <Label for-input="end">End date and time</Label>
-                <flat-pickr
-                    v-model="form.end"
-                    class="input"
-                    :config="{
-                        enableTime: true,
-                        altInput: true,
-                        time_24hr: true,
-                        dateFormat: 'Z',
-                        altFormat: 'd/m/Y H:i',
-                    }"
-                    :name="'end'"
-                />
-            </div>
-            <fwb-button class="mt-auto mb-1"> Save </fwb-button>
-        </form>
-        <fwb-accordion :open-first-item="false" class="pb-10">
-            <fwb-accordion-panel
-                v-if="model"
-                v-for="key in Object.keys(model)"
-                :key="key"
-            >
-                <UserTimeSheet :model="model[key]" @deleted="load" />
-            </fwb-accordion-panel>
-        </fwb-accordion>
-    </div>
+  <div>
+    <form
+      @submit.prevent="submit"
+      class="flex gap-4 flex-col md:flex-row items-baseline mb-4"
+    >
+      <div>
+        <Label for-input="start">Start date and time</Label>
+        <flat-pickr
+          v-model="form.start"
+          class="input"
+          :config="{
+            enableTime: true,
+            altInput: true,
+            time_24hr: true,
+            dateFormat: 'Z',
+            altFormat: 'd/m/Y H:i',
+          }"
+          :name="'start'"
+        />
+      </div>
+      <div>
+        <Label for-input="end">End date and time</Label>
+        <flat-pickr
+          v-model="form.end"
+          class="input"
+          :config="{
+            enableTime: true,
+            minDate: form.start,
+            maxDate: DateTime.now().toISO(),
+            altInput: true,
+            time_24hr: true,
+            dateFormat: 'Z',
+            altFormat: 'd/m/Y H:i',
+          }"
+          :name="'end'"
+        />
+      </div>
+      <fwb-button class="mt-auto mb-1"> Save </fwb-button>
+    </form>
+    <fwb-accordion :open-first-item="false" class="pb-10">
+      <fwb-accordion-panel
+        v-if="model"
+        v-for="key in Object.keys(model)"
+        :key="key"
+      >
+        <UserTimeSheet :model="model[key]" @deleted="load" />
+      </fwb-accordion-panel>
+    </fwb-accordion>
+  </div>
 </template>
 
 <style scoped></style>
