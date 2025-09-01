@@ -3,7 +3,7 @@ import { FwbModal, FwbButton } from "flowbite-vue";
 import Text from "@/components/shared/Text.vue";
 import Label from "@/components/shared/Label.vue";
 
-import { ref } from "vue";
+import { reactive, ref, watch, computed } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import DatePicker from "@/components/shared/DatePicker.vue";
 import { useInvoiceDetailsStore } from "@/store/invoiceDetailsStore";
@@ -18,14 +18,22 @@ const modalClosed = () => {
 const invoiceDetails = useInvoiceDetailsStore();
 
 const number = (props.numberOfInvoices + 1).toString().padStart(5, "0");
-const model = ref({
-    number: `INV-${invoiceDetails.companyData?.prefix}-${number}`,
+const inoviceNumber = computed(() => `INV-${invoiceDetails.companyData?.prefix}-${number}`);
+const model = reactive({
+    number: '',
     company_id: route.params.id.toString() ?? "",
     due_date: "",
     date: "",
 });
+watch(inoviceNumber,
+() => {
+model.number =  inoviceNumber;
+}, {
+immediate: true
+});
+
 const save = () => {
-    window.axios.post("/api/v1/invoices", model.value).then((res) => {
+    window.axios.post("/api/v1/invoices", model).then((res) => {
         router.push({
             name: "invoices.form",
             params: {

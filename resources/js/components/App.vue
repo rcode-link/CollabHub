@@ -1,19 +1,19 @@
 <template>
-    <div id="print" class="tiptap ProseMirror printOnly"></div>
-    <router-view></router-view>
-    <div id="append-container"></div>
-    <VideoCall v-if="videoStore.videoId" />
+  <div id="print" class="tiptap ProseMirror printOnly"></div>
+  <router-view></router-view>
+  <div id="append-container"></div>
+  <VideoCall v-if="videoStore.videoId" />
 </template>
 <script setup lang="js">
 
 import { useRoute } from 'vue-router'
-import { onMounted, watch } from "vue";
+import { onMounted, watch, defineAsyncComponent } from "vue";
 import useInit from "../functions/useInit.js";
 import { useUserStore } from '../store/user.js';
 const userStore = useUserStore();
 import { useVideoCallStore } from '@/store/videoCallStore'
 
-import VideoCall from '@/components/pages/video/Index.vue'
+const VideoCall = defineAsyncComponent(()=>import('@/components/pages/video/Index.vue') );
 userStore.initTitleTracking();
 
 const route = useRoute()
@@ -37,14 +37,14 @@ onMounted(() => {
 
 <style>
 @media print {
-    .printOnly {
-        display: block;
-    }
+  .printOnly {
+    display: block;
+  }
 }
 
 @media screen {
-    .printOnly {
-        display: none;
-    }
+  .printOnly {
+    display: none;
+  }
 }
 </style>
