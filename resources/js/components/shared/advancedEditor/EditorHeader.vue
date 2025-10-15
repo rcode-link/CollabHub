@@ -498,6 +498,11 @@ watch(isTableSelected, newVal => {
         </fwb-list-group-item>
         <fwb-list-group-item
           class="hover:bg-gray-100 cursor-pointer text-red-500"
+          @click="() => editor.chain().focus().deleteRow().run()"
+          >Delete row</fwb-list-group-item
+        >
+        <fwb-list-group-item
+          class="hover:bg-gray-100 cursor-pointer text-red-500"
           @click="e => buttonClicked(e, editor.commands.deleteTable())"
         >
           Delete table
