@@ -26,6 +26,7 @@ use Kalnoy\Nestedset\QueryBuilder;
  * @property-read Collection<int, File> $children
  * @property-read int|null $children_count
  * @property-read File|null $parent
+ *
  * @method static Collection<int, static> all($columns = ['*'])
  * @method static QueryBuilder|File ancestorsAndSelf($id, array $columns = [])
  * @method static QueryBuilder|File ancestorsOf($id, array $columns = [])
@@ -80,14 +81,20 @@ use Kalnoy\Nestedset\QueryBuilder;
  * @method static QueryBuilder|File whereUpdatedAt($value)
  * @method static QueryBuilder|File withDepth(string $as = 'depth')
  * @method static QueryBuilder|File withoutRoot()
+ *
  * @property string $entity_type
  * @property int $entity_id
+ *
  * @method static QueryBuilder|File whereEntityId($value)
  * @method static QueryBuilder|File whereEntityType($value)
  * @method static \Database\Factories\FileFactory factory($count = null, $state = [])
+ *
  * @property string|null $file_id
+ *
  * @method static QueryBuilder|File whereFileId($value)
+ *
  * @property-read Model|\Eloquent $entity
+ *
  * @method static Collection<int, static> all($columns = ['*'])
  * @method static Collection<int, static> get($columns = ['*'])
  * @method static Collection<int, static> all($columns = ['*'])
@@ -142,6 +149,7 @@ use Kalnoy\Nestedset\QueryBuilder;
  * @method static Collection<int, static> get($columns = ['*'])
  * @method static Collection<int, static> all($columns = ['*'])
  * @method static Collection<int, static> get($columns = ['*'])
+ *
  * @mixin Eloquent
  */
 class File extends Model
@@ -151,11 +159,12 @@ class File extends Model
 
     protected $guarded = [];
 
-    public function entity(){
+    public function entity()
+    {
         return $this->morphTo();
     }
 
     protected $casts = [
-        'content' => 'array'
+        'content' => 'array',
     ];
 }

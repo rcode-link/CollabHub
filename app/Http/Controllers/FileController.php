@@ -6,9 +6,10 @@ use App\Http\Requests\StoreFilesRequest;
 use App\Http\Requests\UpdateFilesRequest;
 use App\Models\File;
 use App\Models\Project;
+use App\Service\CreateFileService;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 
-use Barryvdh\DomPDF\Facade\Pdf;
 class FileController extends Controller
 {
     /**
@@ -19,42 +20,28 @@ class FileController extends Controller
         return File::query()
             ->where([
                 'entity_type' => Project::class,
-                'entity_id' => $request->get('entity_id', null)
+                'entity_id' => $request->get('entity_id', null),
             ])
             ->get()->toFlatTree();
     }
 
+    public function exportPDF(Request $request)
+    {
+        $pdf = Pdf::loadView('pdf.document', ['content' => $request->get('content')]);
 
-    public function exportPDF(Request $request){
-        $pdf = Pdf::loadView('pdf.document',['content' => $request->get('content')]);
         return $pdf->stream();    // $invoice = Invoice::whereId(9)->with(['items', 'items.billingItem', 'company'])->firstOrFail();
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreFilesRequest $request)
+    public function store(StoreFilesRequest $request, CreateFileService $createFileService)
     {
-        $data = $request->validated();
-
-
-        switch ($data['entity_type']) {
-            case 'project':
-                $data['entity_type'] = Project::class;
-                $numberOfFilesInProject = File::select('id')->where('entity_id', $request->get('entity_id'))
-                    ->where('entity_type', Project::class)->where('type', 'file')->orderByDesc('id')->first();
-                $projectKey = Project::whereId($request->get('entity_id'))->select('key')->firstOrFail();
-                \Log::info("numberOfFilesInProject", [$numberOfFilesInProject]);
-                $data['file_id'] = $projectKey->key . '-D-' . ($numberOfFilesInProject?->id ?? 0) + 1;
-                break;
-            default:
-
-        }
-
+        $data = $createFileService->prepareData($request->validated());
 
         $model = File::query()->create($data);
 
-        if (!$model->parent_id) {
+        if (! $model->parent_id) {
             $model->saveAsRoot();
         }
 
