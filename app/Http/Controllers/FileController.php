@@ -17,15 +17,15 @@ class FileController extends Controller
      */
     public function index(Request $request)
     {
-        if ($request->boolean('global')) {
-            return File::query()->get()->toFlatTree();
-        }
 
         return File::query()
-            ->where([
-                'entity_type' => Project::class,
-                'entity_id' => $request->get('entity_id', null),
-            ])
+            ->select('id', 'title', 'type', 'extension', 'parent_id', 'entity_type', 'entity_id', 'created_at', 'updated_at', 'file_id')
+            ->when($request->boolean('global', false) === false,
+                fn ($q) => $q
+                    ->where([
+                        'entity_type' => Project::class,
+                        'entity_id' => $request->get('entity_id', null),
+                    ]))
             ->get()->toFlatTree();
     }
 
