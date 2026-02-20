@@ -19,6 +19,7 @@ export const initAxios = () => {
     return config
   }
   const instance = axios.create({
+    baseURL: 'https://collabhub.rcode.link',
     headers: {
       Accept: 'application/json',
       Authorization: `Bearer ${localStorage.getItem('token')}`,
@@ -47,10 +48,13 @@ export const initAxios = () => {
         })
       }
       if (error.response.status === 500) {
-        toast.error('Someting went wrong, plese contact system administrator', {
-          //@ts-ignore
-          theme: localStorage.getItem('color-theme') ?? 'light',
-        })
+        toast.error(
+          'Something went wrong, please contact system administrator',
+          {
+            //@ts-ignore
+            theme: localStorage.getItem('color-theme') ?? 'light',
+          },
+        )
       }
       return Promise.reject(error)
     },

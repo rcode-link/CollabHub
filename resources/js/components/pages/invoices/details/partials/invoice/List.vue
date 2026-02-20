@@ -6,6 +6,7 @@ import { toast } from "vue3-toastify";
 import currencyPrint from "@/functions/currencyPrint";
 import InteractiveToast from "@/components/shared/InteractiveToast.vue";
 
+import { TailwindPagination } from "laravel-vue-pagination";
 import { useInvoiceDetailsStore } from "@/store/invoiceDetailsStore";
 import {
     FwbTable,
@@ -115,4 +116,10 @@ onMounted(() => {
       </fwb-table-row>
     </fwb-table-body>
   </fwb-table>
+  <TailwindPagination
+    v-if="invoices"
+    :limit="3"
+    :data="invoices"
+    @pagination-change-page="load"
+  />
 </template>
