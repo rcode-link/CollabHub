@@ -7,22 +7,23 @@ import HomeIcon from "../shared/icons/HomeIcon.vue";
 const store = useBreadcrumbStore();
 
 watch(() => store.getLinks, () => {
-
-    document.title = store.getLinks[store.getLinks.length - 1].title + ' - CollabHub ';
+    document.title = store.getLinks[store.getLinks.length - 1].title + ' - CollabHub';
 })
 </script>
+
 <template>
-    <fwb-breadcrumb
-        v-if="store.getLinks.length"
-        solid
-        class="space-x-1 md:space-x-1"
-    >
-        <template v-for="(obj, index) in store.getLinks" :key="index">
-            <router-link to="/">
-                <HomeIcon v-if="index === 0" class="w-5 h-5" />
-            </router-link>
+    <fwb-breadcrumb v-if="store.getLinks.length" solid class="space-x-1">
+        <!-- Home icon always links to / -->
+        <router-link
+            to="/"
+            class="inline-flex items-center text-gray-500 hover:text-blue-600 dark:text-gray-400 dark:hover:text-white"
+        >
+            <HomeIcon class="w-5 h-5" />
+        </router-link>
+
+        <!-- Remaining crumbs (skip the first "Home" entry since icon covers it) -->
+        <template v-for="(obj, index) in store.getLinks.slice(1)" :key="index">
             <svg
-                v-if="index > 0"
                 class="w-3 h-3 mx-1 text-gray-400"
                 aria-hidden="true"
                 xmlns="http://www.w3.org/2000/svg"
@@ -38,20 +39,22 @@ watch(() => store.getLinks, () => {
                 />
             </svg>
 
+            <!-- Clickable link (not the last crumb) -->
             <router-link
-                v-if="index < store.getLinks.length - 1"
+                v-if="index < store.getLinks.slice(1).length - 1"
                 :to="obj.link"
                 class="inline-flex items-center text-sm font-medium text-gray-700 hover:text-blue-600 dark:text-gray-400 dark:hover:text-white"
             >
                 {{ obj.title }}
             </router-link>
 
-            <div
+            <!-- Current page (last crumb, no link) -->
+            <span
                 v-else
-                class="text-sm font-medium text-gray-500 md:ml-2 dark:text-gray-400 inline-flex items-center"
+                class="text-sm font-medium text-gray-500 dark:text-gray-400"
             >
                 {{ obj.title }}
-            </div>
+            </span>
         </template>
     </fwb-breadcrumb>
     <div v-else class="mb-4"></div>

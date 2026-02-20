@@ -70,7 +70,7 @@ class ChatController extends Controller
     /**
      * Create new chat
      */
-    public function store(StoreChatRequest $request): Response
+    public function store(StoreChatRequest $request): JsonResponse
     {
         $data = $request->only('title');
         $data['chatable_type'] = User::class;
@@ -86,8 +86,10 @@ class ChatController extends Controller
             ];
         }));
 
-        return response()->noContent();
-        //
+        $chat->load('users');
+        $chat->loadCount('users');
+
+        return response()->json(['data' => new ChatResource($chat)], 201);
     }
 
     /**

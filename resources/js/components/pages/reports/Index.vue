@@ -4,6 +4,13 @@ import { ref, markRaw } from 'vue'
 import { DateTime } from 'luxon'
 import { FwbCard } from 'flowbite-vue'
 import Auth from '../../layouts/Auth.vue'
+import { useBreadcrumbStore } from '../../../store/breadcrumb'
+
+const breadcrumb = useBreadcrumbStore()
+breadcrumb.setLinks([
+    { link: '/', title: 'Home' },
+    { title: 'Reports' },
+])
 import { VuePivottableUi, Renderer } from 'vue-pivottable'
 import PlotlyRenderer from '@quantify/vue3-pivottable-plotly-renderer'
 

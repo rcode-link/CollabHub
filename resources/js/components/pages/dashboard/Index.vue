@@ -1,25 +1,24 @@
 <template>
     <Auth title="Start page">
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
+        <!-- Widget layout: messages + tasks (flex-1) | calendar (fixed right) -->
+        <div class="flex flex-col lg:flex-row gap-4 items-start">
+            <div class="flex flex-col gap-4 flex-1 w-full">
                 <NewMessages />
-            </div>
-            <div>
                 <Tasks />
             </div>
-            <div class="calendar-events">
+            <div class="w-full lg:w-1/3 flex-shrink-0">
                 <CalendarEvents />
             </div>
         </div>
     </Auth>
 </template>
+
 <script setup>
 import Auth from "../../layouts/Auth.vue";
 import { useBreadcrumbStore } from "@/store/breadcrumb";
 import NewMessages from "./partials/NewMessages.vue";
 import Tasks from "./partials/Tasks.vue";
 import CalendarEvents from "./partials/CalendarEvents.vue";
-import CalendarDetails from "./partials/calendar/Details.vue";
 
 const breadcrumb = useBreadcrumbStore();
 
@@ -30,15 +29,5 @@ breadcrumb.setLinks([
     },
 ]);
 </script>
-<style scoped>
-.calendar-events {
-    grid-column-start: 1;
-    grid-column-end: 3;
-}
-@media (max-width: 680px) {
-    .calendar-events {
-        grid-column-start: 1;
-        grid-column-end: 2;
-    }
-}
-</style>
+
+<style scoped></style>

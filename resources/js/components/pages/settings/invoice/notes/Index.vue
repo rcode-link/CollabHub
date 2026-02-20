@@ -2,6 +2,14 @@
 import { FwbButton } from "flowbite-vue";
 import Settings from "../../../../layouts/Settings.vue";
 import { onMounted, ref } from "vue";
+import { useBreadcrumbStore } from "@/store/breadcrumb";
+
+const breadcrumb = useBreadcrumbStore()
+breadcrumb.setLinks([
+    { link: '/', title: 'Home' },
+    { link: { name: 'settings.base' }, title: 'Settings' },
+    { title: 'Invoice Notes' },
+])
 import Card from "../../../../shared/Card.vue";
 import Editor from "@/components/pages/project/tasks/partisals/Form/Editor.vue";
 import Text from "../../../../shared/Text.vue";

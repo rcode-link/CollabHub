@@ -39,7 +39,7 @@ watch(
 
 <template>
   <Auth>
-    <div class="grid lg:grid-cols-3 grid-cols-1 gap-2 h-[80vh] relative">
+    <div class="grid lg:grid-cols-3 grid-cols-1 gap-2 h-[calc(100vh-86px)] relative">
       <fwb-button
         class="ml-auto lg:hidden h-8"
         @click="() => (showListInMobile = !showListInMobile)"

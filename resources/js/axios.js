@@ -19,7 +19,7 @@ export const initAxios = () => {
     return config
   }
   const instance = axios.create({
-    baseURL: 'https://collabhub.rcode.link',
+    //baseURL: 'https://collabhub.rcode.link',
     headers: {
       Accept: 'application/json',
       Authorization: `Bearer ${localStorage.getItem('token')}`,

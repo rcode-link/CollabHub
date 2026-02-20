@@ -20,12 +20,6 @@ breadcrumb.setLinks([
   },
   {
     title: 'Projects',
-    link: {
-      name: 'projects',
-    },
-  },
-  {
-    title: 'Index',
   },
 ])
 const load = (page = 1) => {

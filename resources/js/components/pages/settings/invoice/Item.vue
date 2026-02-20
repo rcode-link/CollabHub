@@ -1,6 +1,14 @@
 <script lang="js" setup>
 import { onMounted, ref } from "vue";
 import Settings from "../../../layouts/Settings.vue";
+import { useBreadcrumbStore } from "../../../../store/breadcrumb";
+
+const breadcrumb = useBreadcrumbStore()
+breadcrumb.setLinks([
+    { link: '/', title: 'Home' },
+    { link: { name: 'settings.base' }, title: 'Settings' },
+    { title: 'Invoice Items' },
+])
 import {
     FwbButton,
     FwbTable,

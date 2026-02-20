@@ -1,6 +1,14 @@
 <script setup lang="js">
 import Settings from "@/components/layouts/Settings.vue";
 import Text from "@/components/shared/Text.vue";
+import { useBreadcrumbStore } from "@/store/breadcrumb";
+
+const breadcrumb = useBreadcrumbStore()
+breadcrumb.setLinks([
+    { link: '/', title: 'Home' },
+    { link: { name: 'settings.base' }, title: 'Settings' },
+    { title: 'Measurement Units' },
+])
 import {
     FwbButton,
     FwbTable,

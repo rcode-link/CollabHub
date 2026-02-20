@@ -16,7 +16,7 @@
           <router-link
             class="w-full h-full"
             :to="{
-              name: 'project.dashboard',
+              name: 'project.board.view',
               params: {
                 project: lastProject.id,
               },
@@ -91,7 +91,7 @@ const handleOpenProject = obj => {
   localStorage.setItem('lastProject', obj.id)
   lastProjectId.value = obj.id
   router.push({
-    name: 'project.dashboard',
+    name: 'project.board.view',
     params: {
       project: obj.id,
     },

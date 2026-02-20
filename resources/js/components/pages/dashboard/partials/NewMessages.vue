@@ -1,9 +1,8 @@
 <script setup>
 
-import Card from "../../../shared/Card.vue";
-import {ref} from "vue";
+import { FwbCard, FwbAlert } from "flowbite-vue";
+import { ref } from "vue";
 import ChatUsersItem from "../../chat/partials/ChatUsersItem.vue";
-import {FwbAlert} from "flowbite-vue";
 
 const messages = ref([]);
 const loadNumberOfUnreadMessages = () => {
@@ -16,18 +15,17 @@ loadNumberOfUnreadMessages();
 </script>
 
 <template>
-    <Card class="flex-col">
+    <FwbCard class="flex flex-col h-full !max-w-none w-full p-5">
+        <h3 class="text-base font-semibold text-gray-900 dark:text-white mb-4">Recent Messages</h3>
         <ul v-for="obj in messages" :key="obj.id">
             <ChatUsersItem :obj="obj"/>
         </ul>
         <template v-if="messages.length === 0">
-            <fwb-alert type="info" >
-                <h1>No new messages</h1>
+            <fwb-alert type="info">
+                <span>No new messages</span>
             </fwb-alert>
         </template>
-    </Card>
+    </FwbCard>
 </template>
 
-<style scoped>
-
-</style>
+<style scoped></style>

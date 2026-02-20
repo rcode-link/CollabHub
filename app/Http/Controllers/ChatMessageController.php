@@ -74,6 +74,24 @@ class ChatMessageController extends Controller
         return response()->noContent();
     }
 
+    public function search(Request $request, Chat $chat): AnonymousResourceCollection
+    {
+        $q = trim($request->get('q', ''));
+
+        if (strlen($q) < 2) {
+            return ChatMessageResource::collection(collect([]));
+        }
+
+        $messages = $chat->messages()
+            ->with('user', 'media', 'videocalls', 'parent', 'messageReactions')
+            ->whereRaw('LOWER(CAST(message AS CHAR)) LIKE ?', ['%' . strtolower($q) . '%'])
+            ->orderByDesc('created_at')
+            ->limit(50)
+            ->get();
+
+        return ChatMessageResource::collection($messages);
+    }
+
     public function destroy(Request $request, $id)
     {
         $chatMessage = ChatMessage::query()->where('id', $id)->firstOrFail();

@@ -1,9 +1,8 @@
 <script setup lang="js">
-import Card from "@/components/shared/Card.vue";
-import { onMounted, onUnmounted, ref, computed } from "vue";
+import { FwbCard } from "flowbite-vue";
+import { onMounted, ref, computed } from "vue";
 import { DateTime } from "luxon";
 import { useRouter } from "vue-router";
-import WeekDay from "./calendar/WeekDay.vue";
 import {
     FwbButton,
     FwbDropdown,
@@ -34,23 +33,7 @@ onMounted(() => {
             calendar.load();
         }
     );
-
-    // Handle resize events to update mobile view status
-    window.addEventListener('resize', handleResize);
 });
-
-onUnmounted(() => {
-    // Clean up event listener when component is destroyed
-    window.removeEventListener('resize', handleResize);
-});
-
-// Window resize handler
-const handleResize = () => {
-    // Reset selected day when transitioning between mobile and desktop views
-    if (window.innerWidth >= 768 && selectedDay.value !== null) {
-        selectedDay.value = null;
-    }
-};
 
 const location = window.location.href;
 
@@ -115,11 +98,6 @@ const selectedDayEvents = computed(() => {
     return calendar.calendar.filter((obj) => obj.dates.indexOf(selectedDay.value) > -1);
 });
 
-// Check if we're on mobile view
-const isMobile = computed(() => {
-    return window.innerWidth < 768;
-});
-
 // Navigation between weeks
 const nextWeek = () => {
     if (selectedWeek.value < weekRanges.value.length - 1) {
@@ -174,7 +152,8 @@ const createNewEvent = () => {
 </script>
 
 <template>
-    <Card class="flex-col">
+    <FwbCard class="flex flex-col h-full !max-w-none w-full p-5">
+        <h3 class="text-base font-semibold text-gray-900 dark:text-white mb-4">Calendar</h3>
         <div class="flex gap-2 z-20 items-center flex-col">
             <!-- Date Controls Row -->
             <div class="flex flex-wrap gap-2 justify-between items-center w-full">
@@ -215,56 +194,21 @@ const createNewEvent = () => {
                 </div>
 
                 <!-- Action Buttons -->
-                <div class="sm:ml-auto sm:mr-0 flex m-auto w-full sm:w-auto mb-2 sm:mb-0 mt-2 sm:mt-0" role="group">
-                    <FwbButtonGroup class="w-full">
-                        <fwb-button color="blue" class="w-full sm:w-auto" size="sm" @click="goToToday">
-                            Today
-                        </fwb-button>
-                        <fwb-button color="alternative" class="w-full sm:w-auto flex justify-center" size="sm"
-                            @click="createNewEvent">
+                <div class="flex ml-auto" role="group">
+                    <FwbButtonGroup>
+                        <fwb-button color="blue" size="sm" @click="goToToday">Today</fwb-button>
+                        <fwb-button color="alternative" size="sm" @click="createNewEvent">
                             <PlusSquare class="w-4 h-4" />
                         </fwb-button>
                         <fwb-button color="alternative" size="sm" @click="() => showInfoModal = true">
                             <InfoIcon class="w-5 h-5" />
                         </fwb-button>
-
                     </FwbButtonGroup>
                 </div>
             </div>
         </div>
-        <!-- Desktop Calendar View -->
-        <div class="hidden md:grid grid-cols-7 w-full text-xs sm:text-sm overflow-hidden">
-            <!-- Weekday Headers -->
-            <div v-for="day in 7" :key="`desktop-header-${day}`" class="p-1 text-center font-medium">
-                <span>{{
-                    DateTime.now()
-                        .startOf("week")
-                        .plus({ day: day - 1 })
-                        .toFormat("EEE")
-                }}</span>
-            </div>
-
-            <!-- Empty cells for start of month -->
-            <div v-for="n in calendar.currentDate.startOf('month').weekday - 1" :key="`desktop-empty-${n}`"
-                class="bg-gray-50 dark:bg-gray-800" />
-
-            <!-- Calendar days with events -->
-            <WeekDay v-for="n in calendar.currentDate.endOf('month').day" :day="n.toString()" :key="`desktop-day-${n}`"
-                :isToday="DateTime.now()
-                    .set({
-                        year: calendar.selectedYear,
-                        month: calendar.selectedMonth,
-                        day: n,
-                    })
-                    .startOf('day')
-                    .diff(DateTime.now().startOf('day'), ['days'])
-                    .toObject().days === 0
-                    " :events="calendar.calendar.filter((obj) => obj.dates.indexOf(n) > -1)
-                        " />
-        </div>
-
-        <!-- Mobile Calendar View -->
-        <div class="md:hidden flex flex-col w-full">
+        <!-- Week view (compact, always shown) -->
+        <div class="flex flex-col w-full">
             <!-- Week Navigation -->
             <div class="flex justify-between items-center mb-2">
                 <fwb-button color="alternative" size="sm" @click="prevWeek" :disabled="selectedWeek === 0">
@@ -350,7 +294,7 @@ const createNewEvent = () => {
                 </div>
             </div>
         </div>
-    </Card>
+    </FwbCard>
     <Form v-if="calendar.showEditForm" />
     <CalendarDetails v-if="calendar.showCalendarDetails" />
     <Modal :hideModal="showInfoModal" @closed="showInfoModal = false">

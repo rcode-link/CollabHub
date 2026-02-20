@@ -2,6 +2,14 @@
 import Settings from "@/components/layouts/Settings.vue";
 import Card from "@/components/shared/Card.vue";
 import { onMounted, ref, watch } from "vue";
+import { useBreadcrumbStore } from "@/store/breadcrumb";
+
+const breadcrumb = useBreadcrumbStore()
+breadcrumb.setLinks([
+    { link: '/', title: 'Home' },
+    { link: { name: 'settings.base' }, title: 'Settings' },
+    { title: 'Company Information' },
+])
 import { FwbButton } from "flowbite-vue";
 import { useUserStore } from "@/store/user";
 import { toast } from "vue3-toastify";

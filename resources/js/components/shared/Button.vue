@@ -1,13 +1,25 @@
 <script setup>
+import { FwbButton } from 'flowbite-vue'
 
+defineProps({
+    color: { type: String, default: 'default' },
+    size: { type: String, default: 'md' },
+    outline: { type: Boolean, default: false },
+    type: { type: String, default: 'button' },
+    disabled: { type: Boolean, default: false },
+})
 </script>
 
 <template>
-    <button type="button" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">
+    <FwbButton
+        :color="color"
+        :size="size"
+        :outline="outline"
+        :type="type"
+        :disabled="disabled"
+    >
         <slot></slot>
-    </button>
+    </FwbButton>
 </template>
 
-<style scoped>
-
-</style>
+<style scoped></style>

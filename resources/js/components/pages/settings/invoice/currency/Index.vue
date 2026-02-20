@@ -10,6 +10,14 @@ import {
 } from "flowbite-vue";
 import Settings from "@/components/layouts/Settings.vue";
 import { onMounted, ref } from "vue";
+import { useBreadcrumbStore } from "@/store/breadcrumb";
+
+const breadcrumb = useBreadcrumbStore()
+breadcrumb.setLinks([
+    { link: '/', title: 'Home' },
+    { link: { name: 'settings.base' }, title: 'Settings' },
+    { title: 'Currency' },
+])
 import Form from "./Form.vue";
 import InteractiveToast from "@/components/shared/InteractiveToast.vue";
 import TableItem from "./partials/TableItem.vue";

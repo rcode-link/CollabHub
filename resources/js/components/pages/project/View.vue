@@ -78,7 +78,7 @@ watch(mobileView, () => {
 
 onMounted(() => {
   if (mobileView.value === null && route.name === 'project-details') {
-    mobileView.value = 'project.dashboard'
+    mobileView.value = 'project.board.view'
     return
   }
   mobileView.value = route.name
@@ -89,9 +89,8 @@ onBeforeUnmount(() => {
 })
 
 const listForDropDown = {
-  'project.dashboard': 'Dashboard',
-  'project.tasks': 'Backlog',
   'project.board.view': 'Boards',
+  'project.tasks': 'Backlog',
   'project.documents': 'Documents',
   'project.documents.settings': 'Settings',
 }
@@ -109,11 +108,11 @@ const activeBoard = computed(() => {
       <li>
         <router-link
           :to="{
-            name: 'project.dashboard',
+            name: 'project.board.view',
           }"
           class="router-link"
         >
-          Dashboard
+          Boards
         </router-link>
       </li>
       <li>
@@ -124,16 +123,6 @@ const activeBoard = computed(() => {
           class="router-link"
         >
           Backlog
-        </router-link>
-      </li>
-      <li>
-        <router-link
-          :to="{
-            name: 'project.board.view',
-          }"
-          class="router-link"
-        >
-          Boards
         </router-link>
       </li>
       <li>

@@ -1,23 +1,35 @@
 <?php
 
 use App\Events\EditorCollabEvent;
+use App\Http\Controllers\BillingItemController;
 use App\Http\Controllers\BoardController;
 use App\Http\Controllers\CalendarController;
 use App\Http\Controllers\ChatController;
 use App\Http\Controllers\ChatMessageController;
 use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\CompanyUsersController;
+use App\Http\Controllers\CurrencyController;
+use App\Http\Controllers\CustomerCompanyController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\EventController;
 use App\Http\Controllers\FileController;
 use App\Http\Controllers\InvitationsController;
+use App\Http\Controllers\InvoiceController;
+use App\Http\Controllers\InvoiceDataController;
+use App\Http\Controllers\InvoiceItemController;
+use App\Http\Controllers\LinkPreviewController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\MessageReactionController;
+use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\PusherController;
+use App\Http\Controllers\PushNotificationController;
 use App\Http\Controllers\RegisterController;
+use App\Http\Controllers\ReportController;
 use App\Http\Controllers\RoleController;
+use App\Http\Controllers\ShareBoardController;
 use App\Http\Controllers\SprintController;
 use App\Http\Controllers\TaskController;
 use App\Http\Controllers\TaskRelationController;
@@ -27,18 +39,6 @@ use App\Http\Controllers\TimeSheetController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\VacationRequestController;
 use App\Http\Controllers\VideoCallController;
-use App\Http\Controllers\EventController;
-use App\Http\Controllers\CustomerCompanyController;
-use App\Http\Controllers\InvoiceController;
-use App\Http\Controllers\ShareBoardController;
-use App\Http\Controllers\BillingItemController;
-use App\Http\Controllers\CurrencyController;
-use App\Http\Controllers\InvoiceDataController;
-use App\Http\Controllers\InvoiceItemController;
-use App\Http\Controllers\PaymentController;
-use App\Http\Controllers\LinkPreviewController;
-use App\Http\Controllers\PushNotificationController;
-use App\Http\Controllers\ReportController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -74,6 +74,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::apiResource('/company/invite', InvitationsController::class);
     Route::get('/chats/number-of-unread-messages', [ChatController::class, 'getNumberOfUnreadMessages'])->name('api.getNumberOfUnreadMessages');
     Route::get('/chats/{chat}/messages', [ChatMessageController::class, 'index'])->name('api.messages.index');
+    Route::get('/chats/{chat}/messages/search', [ChatMessageController::class, 'search'])->name('api.messages.search');
     Route::post('/chats/{chat}/message', [ChatMessageController::class, 'store'])->name('api.messages.store');
     Route::delete('/messages/{id}', [ChatMessageController::class, 'destroy'])->name('api.messages.destroy');
     Route::post('/video-call/{chat}/start', [VideoCallController::class, 'startVideoCall'])->name('api.startVideoCall');
@@ -124,6 +125,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
     Route::post('/collaboration/{document}', function ($document) {
         EditorCollabEvent::dispatch(request()->all(), $document);
+
         return response()->noContent();
     })->name('api.collab');
 

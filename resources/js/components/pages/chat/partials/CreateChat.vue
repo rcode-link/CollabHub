@@ -3,6 +3,7 @@ import Modal from '../../../shared/Modal.vue'
 import { computed, ref, watch } from 'vue'
 import UserIcon from '../../../shared/UserIcon.vue'
 import { useUserStore } from '../../../../store/user'
+import { useRouter } from 'vue-router'
 import CheckBox from '../../../shared/CheckBox.vue'
 import { FwbButton } from 'flowbite-vue'
 import Text from '../../../shared/Text.vue'
@@ -12,6 +13,7 @@ import { useErrorsStore } from '../../../../store/errors'
 
 const emits = defineEmits(['update'])
 const userState = useUserStore()
+const router = useRouter()
 const errorsStore = useErrorsStore()
 const modal = ref(null)
 const response = ref({})
@@ -33,9 +35,9 @@ const save = () => {
       title: title.value,
     })
     .then(response => {
-      console.log(response)
       emits('update')
       modal.value.toggleModal()
+      router.push({ name: 'chat-details', params: { chatId: response.data.data.id } })
     })
     .catch(error => {
       if (error.response.status === 422) {

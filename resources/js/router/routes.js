@@ -103,6 +103,7 @@ export default [
   {
     name: 'project-details',
     path: '/projects/:project',
+    redirect: to => ({ name: 'project.board.view', params: to.params }),
     component: () => import('../components/pages/project/View.vue'),
     children: [
       {

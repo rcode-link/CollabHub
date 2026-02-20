@@ -111,7 +111,7 @@ onUnmounted(async () => {
     margin: -1.5rem;
     grid-auto-rows: minmax(min-content, max-content);
     grid-template-rows: 64px 1fr auto;
-    height: 80vh;
+    height: calc(100vh - 86px);
     position: relative;
 }
 
