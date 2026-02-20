@@ -27,6 +27,7 @@ const userStore = useUserStore();
 const router = useRouter();
 onMounted(() => {
     calendar.load();
+    goToToday();
     window.Echo.private(`event.${userStore.user.id}`).listen(
         "CalendarEventUpdatedEvent",
         (__obj) => {
@@ -152,174 +153,254 @@ const createNewEvent = () => {
 </script>
 
 <template>
-    <FwbCard class="flex flex-col h-full !max-w-none w-full p-5">
-        <h3 class="text-base font-semibold text-gray-900 dark:text-white mb-4">Calendar</h3>
-        <div class="flex gap-2 z-20 items-center flex-col">
-            <!-- Date Controls Row -->
-            <div class="flex flex-wrap gap-2 justify-between items-center w-full">
-                <fwb-dropdown class="min-w-[120px]" :text="calendar.currentDate.toLocaleString({ month: 'long' })
-                    ">
-                    <fwb-list-group>
-                        <fwb-list-group-item class="cursor-pointer" v-for="month in 12" :key="`month_${month}`" @click="
-                            calendar.selectedMonth = DateTime.now()
-                                .startOf('year')
-                                .plus({ month: month - 1 }).month
-                            ">
-                            {{
-                                DateTime.now()
-                                    .startOf("year")
-                                    .plus({ month: month - 1 })
-                                    .toLocaleString({ month: "long" })
-                            }}
-                        </fwb-list-group-item>
-                    </fwb-list-group>
-                </fwb-dropdown>
+  <FwbCard class="flex flex-col h-full !max-w-none w-full p-5">
+    <h3 class="text-base font-semibold text-gray-900 dark:text-white mb-4">
+      Calendar
+    </h3>
+    <div class="flex gap-2 z-20 items-center flex-col">
+      <!-- Date Controls Row -->
+      <div class="flex flex-wrap gap-2 justify-between items-center w-full">
+        <fwb-dropdown
+          class="min-w-[120px]"
+          :text="calendar.currentDate.toLocaleString({ month: 'long' })"
+        >
+          <fwb-list-group>
+            <fwb-list-group-item
+              class="cursor-pointer"
+              v-for="month in 12"
+              :key="`month_${month}`"
+              @click="
+                calendar.selectedMonth = DateTime.now()
+                  .startOf('year')
+                  .plus({ month: month - 1 }).month
+              "
+            >
+              {{
+                DateTime.now()
+                  .startOf('year')
+                  .plus({ month: month - 1 })
+                  .toLocaleString({ month: 'long' })
+              }}
+            </fwb-list-group-item>
+          </fwb-list-group>
+        </fwb-dropdown>
 
-                <div class="flex gap-2 items-center">
-                    <fwb-button color="alternative" size="sm" @click="
-                        calendar.selectedYear = DateTime.now().set({
-                            year: calendar.selectedYear - 1,
-                        }).year
-                        ">
-                        <ArrowLeft class="w-3 h-3" />
-                    </fwb-button>
-                    <div class="text-sm font-medium">{{ calendar.selectedYear }}</div>
-                    <fwb-button color="alternative" size="sm" @click="
-                        calendar.selectedYear = DateTime.now().set({
-                            year: calendar.selectedYear + 1,
-                        }).year
-                        ">
-                        <ArrowRight class="w-3 h-3" />
-                    </fwb-button>
-                </div>
-
-                <!-- Action Buttons -->
-                <div class="flex ml-auto" role="group">
-                    <FwbButtonGroup>
-                        <fwb-button color="blue" size="sm" @click="goToToday">Today</fwb-button>
-                        <fwb-button color="alternative" size="sm" @click="createNewEvent">
-                            <PlusSquare class="w-4 h-4" />
-                        </fwb-button>
-                        <fwb-button color="alternative" size="sm" @click="() => showInfoModal = true">
-                            <InfoIcon class="w-5 h-5" />
-                        </fwb-button>
-                    </FwbButtonGroup>
-                </div>
-            </div>
+        <div class="flex gap-2 items-center">
+          <fwb-button
+            color="alternative"
+            size="sm"
+            @click="
+              calendar.selectedYear = DateTime.now().set({
+                year: calendar.selectedYear - 1,
+              }).year
+            "
+          >
+            <ArrowLeft class="w-3 h-3" />
+          </fwb-button>
+          <div class="text-sm font-medium">{{ calendar.selectedYear }}</div>
+          <fwb-button
+            color="alternative"
+            size="sm"
+            @click="
+              calendar.selectedYear = DateTime.now().set({
+                year: calendar.selectedYear + 1,
+              }).year
+            "
+          >
+            <ArrowRight class="w-3 h-3" />
+          </fwb-button>
         </div>
-        <!-- Week view (compact, always shown) -->
-        <div class="flex flex-col w-full">
-            <!-- Week Navigation -->
-            <div class="flex justify-between items-center mb-2">
-                <fwb-button color="alternative" size="sm" @click="prevWeek" :disabled="selectedWeek === 0">
-                    <ArrowLeft class="w-3 h-3" />
-                </fwb-button>
 
-                <span class="text-xs font-medium">
-                    Week {{ selectedWeek + 1 }} of {{ weekRanges.length }}
-                </span>
-                <fwb-button color="alternative" size="sm" @click="nextWeek"
-                    :disabled="selectedWeek === weekRanges.length - 1">
-                    <ArrowRight class="w-3 h-3" />
-                </fwb-button>
+        <!-- Action Buttons -->
+        <div class="flex ml-auto" role="group">
+          <FwbButtonGroup>
+            <fwb-button color="blue" size="sm" @click="goToToday"
+              >Today</fwb-button
+            >
+            <fwb-button color="alternative" size="sm" @click="createNewEvent">
+              <PlusSquare class="w-4 h-4" />
+            </fwb-button>
+            <fwb-button
+              color="alternative"
+              size="sm"
+              @click="() => (showInfoModal = true)"
+            >
+              <InfoIcon class="w-5 h-5" />
+            </fwb-button>
+          </FwbButtonGroup>
+        </div>
+      </div>
+    </div>
+    <!-- Week view (compact, always shown) -->
+    <div class="flex flex-col w-full">
+      <!-- Week Navigation -->
+      <div class="flex justify-between items-center my-2">
+        <fwb-button
+          color="alternative"
+          size="sm"
+          @click="prevWeek"
+          :disabled="selectedWeek === 0"
+        >
+          <ArrowLeft class="w-3 h-3" />
+        </fwb-button>
 
-            </div>
+        <span class="text-xs font-medium">
+          Week {{ selectedWeek + 1 }} of {{ weekRanges.length }}
+        </span>
+        <fwb-button
+          color="alternative"
+          size="sm"
+          @click="nextWeek"
+          :disabled="selectedWeek === weekRanges.length - 1"
+        >
+          <ArrowRight class="w-3 h-3" />
+        </fwb-button>
+      </div>
 
-            <!-- Mobile Week View -->
-            <div class="grid grid-cols-7 w-full text-xs overflow-hidden">
-                <!-- Weekday Headers -->
-                <div v-for="day in 7" :key="`mobile-header-${day}`" class="p-1 text-center font-medium">
-                    <span>{{
-                        DateTime.now()
-                            .startOf("week")
-                            .plus({ day: day - 1 })
-                            .toFormat("ccc")[0]
-                    }}</span>
-                </div>
+      <!-- Mobile Week View -->
+      <div class="grid grid-cols-7 w-full text-xs overflow-hidden">
+        <!-- Weekday Headers -->
+        <div
+          v-for="day in 7"
+          :key="`mobile-header-${day}`"
+          class="p-1 text-center font-medium"
+        >
+          <span>{{
+            DateTime.now()
+              .startOf('week')
+              .plus({ day: day - 1 })
+              .toFormat('ccc')[0]
+          }}</span>
+        </div>
 
-                <!-- Days for current week -->
-                <template v-for="(day, index) in currentWeekDays" :key="`mobile-day-${index}`">
-                    <div v-if="day === null" class="bg-gray-50 dark:bg-gray-800 p-1"></div>
-                    <div v-else @click="selectDay(day)" :class="`
+        <!-- Days for current week -->
+        <template
+          v-for="(day, index) in currentWeekDays"
+          :key="`mobile-day-${index}`"
+        >
+          <div
+            v-if="day === null"
+            class="bg-gray-50 dark:bg-gray-800 p-1"
+          ></div>
+          <div
+            v-else
+            @click="selectDay(day)"
+            :class="`
                             cursor-pointer border p-2 min-h-[50px] flex flex-col justify-between
-                            ${selectedDay === day ? 'bg-blue-50 dark:bg-blue-900 border-blue-400' : 'hover:bg-gray-50 dark:hover:bg-gray-700'}
-                            ${DateTime.now().set({
-                        year: calendar.selectedYear,
-                        month: calendar.selectedMonth,
-                        day: day,
-                    }).startOf('day').diff(DateTime.now().startOf('day'), ['days']).toObject().days === 0
-                            ? 'bg-gray-200 dark:bg-gray-600' : ''}
-                        `">
-                        <div class="font-medium">{{ day }}</div>
-                        <div v-if="calendar.calendar.filter(obj => obj.dates.indexOf(day) > -1).length > 0"
-                            class="w-2 h-2 rounded-full bg-blue-500 self-center mt-1">
-                        </div>
-                    </div>
-                </template>
-            </div>
+                            ${
+                              selectedDay === day
+                                ? 'bg-blue-50 dark:bg-blue-900 border-blue-400'
+                                : 'hover:bg-gray-50 dark:hover:bg-gray-700'
+                            }
+                            ${
+                              DateTime.now()
+                                .set({
+                                  year: calendar.selectedYear,
+                                  month: calendar.selectedMonth,
+                                  day: day,
+                                })
+                                .startOf('day')
+                                .diff(DateTime.now().startOf('day'), ['days'])
+                                .toObject().days === 0
+                                ? 'bg-gray-200 dark:bg-gray-600'
+                                : ''
+                            }
+                        `"
+          >
+            <div class="font-medium">{{ day }}</div>
+            <div
+              v-if="
+                calendar.calendar.filter(obj => obj.dates.indexOf(day) > -1)
+                  .length > 0
+              "
+              class="w-2 h-2 rounded-full bg-blue-500 self-center mt-1"
+            ></div>
+          </div>
+        </template>
+      </div>
 
-            <!-- Selected Day Events -->
-            <div v-if="selectedDay" class="mt-4 border-t pt-3">
-                <h3 class="font-medium mb-2">Events for {{ DateTime.now().set({
-                    year: calendar.selectedYear,
-                    month: calendar.selectedMonth,
-                    day: selectedDay,
-                }).toFormat('LLL d, yyyy') }}</h3>
+      <!-- Selected Day Events -->
+      <div v-if="selectedDay" class="mt-4 border-t pt-3">
+        <h3 class="font-medium mb-2">
+          Events for
+          {{
+            DateTime.now()
+              .set({
+                year: calendar.selectedYear,
+                month: calendar.selectedMonth,
+                day: selectedDay,
+              })
+              .toFormat('LLL d, yyyy')
+          }}
+        </h3>
 
-                <div v-if="selectedDayEvents.length === 0" class="text-sm text-gray-500">
-                    No events scheduled for this day
-                </div>
-
-                <div v-else class="flex flex-col gap-2">
-                    <div v-for="event in selectedDayEvents.sort((a, b) => new Date(a.start_time) - new Date(b.start_time))"
-                        :key="`event-${event.id}`"
-                        class="border p-3 rounded-md hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer"
-                        @click="openEvent(event.id)">
-                        <div class="flex justify-between">
-                            <fwb-badge :type="event.type === 'event' && event.user_id !== userStore.user.id ? 'default' :
-                                event.type === 'event' ? 'green' :
-                                    event.approved ? 'purple' : 'red'
-                                ">
-                                {{ event.type === 'event' ? 'Event' : 'Task' }}
-                            </fwb-badge>
-                            <div class="text-xs text-gray-500">
-                                {{ DateTime.fromISO(event.start_time).toFormat('h:mm a') }}
-                            </div>
-                        </div>
-                        <h4 class="font-medium mt-1">{{ event.summary }}</h4>
-                        <p v-if="event.description" class="text-sm text-gray-600 dark:text-gray-300 mt-1 line-clamp-2">
-                            {{ event.description }}
-                        </p>
-                    </div>
-                </div>
-            </div>
+        <div
+          v-if="selectedDayEvents.length === 0"
+          class="text-sm text-gray-500"
+        >
+          No events scheduled for this day
         </div>
-    </FwbCard>
-    <Form v-if="calendar.showEditForm" />
-    <CalendarDetails v-if="calendar.showCalendarDetails" />
-    <Modal :hideModal="showInfoModal" @closed="showInfoModal = false">
-        <template #header>
-            <h1 class="text-lg">Subscribe to calendar</h1>
-        </template>
-        <template #body>
-            Address: <b>{{ location }}calendar </b> <br />
-            username: <b>{{ userStore.user.email }}</b> <br />
-            password: <b>your password</b>
-            <h2>Note</h2>
-            <p>
-                Check on the internet how you can subscribe to
-                calendar with base base authentication.
-            </p>
-            <h4>For android:</h4>
-            <p>Use ICSx5 or some similar app</p>
-            <h4>For MacOS/iOS:</h4>
-            <p>
-                Open calendar click on calendars and subscribe to
-                calendars
-            </p>
-        </template>
-    </Modal>
 
+        <div v-else class="flex flex-col gap-2">
+          <div
+            v-for="event in selectedDayEvents.sort(
+              (a, b) => new Date(a.start_time) - new Date(b.start_time),
+            )"
+            :key="`event-${event.id}`"
+            class="border p-3 rounded-md hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer"
+            @click="openEvent(event.id)"
+          >
+            <div class="flex justify-between">
+              <fwb-badge
+                :type="
+                  event.type === 'event' && event.user_id !== userStore.user.id
+                    ? 'default'
+                    : event.type === 'event'
+                    ? 'green'
+                    : event.approved
+                    ? 'purple'
+                    : 'red'
+                "
+              >
+                {{ event.type === 'event' ? 'Event' : 'Task' }}
+              </fwb-badge>
+              <div class="text-xs text-gray-500">
+                {{ DateTime.fromISO(event.start_time).toFormat('h:mm a') }}
+              </div>
+            </div>
+            <h4 class="font-medium mt-1">{{ event.summary }}</h4>
+            <p
+              v-if="event.description"
+              class="text-sm text-gray-600 dark:text-gray-300 mt-1 line-clamp-2"
+            >
+              {{ event.description }}
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </FwbCard>
+  <Form v-if="calendar.showEditForm" />
+  <CalendarDetails v-if="calendar.showCalendarDetails" />
+  <Modal :hideModal="showInfoModal" @closed="showInfoModal = false">
+    <template #header>
+      <h1 class="text-lg">Subscribe to calendar</h1>
+    </template>
+    <template #body>
+      Address: <b>{{ location }}calendar </b> <br />
+      username: <b>{{ userStore.user.email }}</b> <br />
+      password: <b>your password</b>
+      <h2>Note</h2>
+      <p>
+        Check on the internet how you can subscribe to calendar with base base
+        authentication.
+      </p>
+      <h4>For android:</h4>
+      <p>Use ICSx5 or some similar app</p>
+      <h4>For MacOS/iOS:</h4>
+      <p>Open calendar click on calendars and subscribe to calendars</p>
+    </template>
+  </Modal>
 </template>
 
 <style scoped></style>

@@ -1,55 +1,79 @@
 <script setup>
+import FileImage from './icons/FileImage.vue'
+import { ref, onMounted, onUnmounted } from 'vue'
 
-import FileImage from "./icons/FileImage.vue";
-import {FwbImg, FwbP} from "flowbite-vue";
-import {ref} from "vue";
+defineProps({ media: Array, full: { type: Boolean, default: false } })
 
-defineProps({media: [], full: false})
+const lightbox = ref(null) // { path, name }
 
-const showImage = ref('');
-const open = (obj) => {
-    console.log(obj)
-    showImage.value = obj;
-}
+const open = (obj) => { lightbox.value = obj }
+const close = () => { lightbox.value = null }
+
+const onKey = (e) => { if (e.key === 'Escape') close() }
+onMounted(() => window.addEventListener('keydown', onKey))
+onUnmounted(() => window.removeEventListener('keydown', onKey))
 </script>
 
 <template>
-   <teleport to="#app">
-       <div v-if="showImage" class="fixed flex show-image top-0 left-0 right-0 bottom-0 bottom-0 bg-gray-50 z-50">
-           <fwb-img class="w-auto shadow p-2 h-auto max-h-full m-auto"
-                    :src="showImage" alt="" />
-           <div class="fixed cursor-pointer hover:underline top-5 right-5 z-[55]" @click="() => showImage = ''">Close</div>
-       </div>
-   </teleport>
-    <template v-for="obj in media">
-        <template v-if="obj.type.indexOf('image/') > -1">
-           <div>
-               <fwb-img @click="() => open(obj.path)" class="w-36 shadow p-2 h-auto"
-                        :src="obj.path" :alt="obj.name"/>
-               <p class="text-xs">
-                   {{ obj.name }}
-               </p>
-           </div>
-        </template>
-        <a v-else :class="{
-                  'flex py-2 px-2 my-4 flex-1 gap-4 items-center border rounded-xl': true,
-                 'w-fit': !full,
-                 'w-full': full
-                 }" :href="obj.path"
-           target="_blank">
-            <div>
-                <FileImage/>
+    <!-- Lightbox -->
+    <teleport to="#app">
+        <div
+            v-if="lightbox"
+            class="fixed inset-0 z-50 flex flex-col items-center justify-center bg-black/80 backdrop-blur-sm"
+            @click.self="close"
+        >
+            <img
+                :src="lightbox.path"
+                :alt="lightbox.name"
+                class="max-h-[85vh] max-w-[90vw] rounded-lg object-contain shadow-2xl"
+            />
+            <div class="mt-3 flex items-center gap-4">
+                <span class="text-sm text-gray-300">{{ lightbox.name }}</span>
+                <a
+                    :href="lightbox.path"
+                    target="_blank"
+                    class="rounded-lg bg-white/10 px-3 py-1.5 text-xs text-white hover:bg-white/20 transition"
+                >
+                    Open original
+                </a>
+                <button
+                    @click="close"
+                    class="rounded-lg bg-white/10 px-3 py-1.5 text-xs text-white hover:bg-white/20 transition"
+                >
+                    Close
+                </button>
             </div>
-            <div class="whitespace-nowrap overflow-hidden">
-                {{ obj.name }}
-                <fwb-p class="w-12 text-xs">
-                    {{ obj.type }} {{}}
-                </fwb-p>
+        </div>
+    </teleport>
+
+    <!-- Inline media -->
+    <template v-for="obj in media" :key="obj.name">
+        <!-- Image thumbnail -->
+        <div v-if="obj.type?.startsWith('image/')" class="inline-block">
+            <img
+                :src="obj.path"
+                :alt="obj.name"
+                @click="open(obj)"
+                class="w-36 h-auto rounded-lg shadow cursor-pointer object-cover hover:opacity-90 transition"
+            />
+            <p class="mt-0.5 text-xs text-gray-500 dark:text-gray-400 truncate w-36">{{ obj.name }}</p>
+        </div>
+
+        <!-- Non-image file -->
+        <a
+            v-else
+            :href="obj.path"
+            target="_blank"
+            :class="[
+                'flex items-center gap-3 rounded-xl border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 px-3 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 transition',
+                full ? 'w-full' : 'w-fit',
+            ]"
+        >
+            <FileImage class="h-8 w-8 flex-shrink-0 text-gray-400" />
+            <div class="min-w-0">
+                <p class="truncate text-sm font-medium text-gray-800 dark:text-gray-100">{{ obj.name }}</p>
+                <p class="text-xs text-gray-400">{{ obj.type }}</p>
             </div>
         </a>
     </template>
 </template>
-
-<style scoped>
-
-</style>

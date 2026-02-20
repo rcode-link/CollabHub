@@ -146,7 +146,7 @@ const activeBoard = computed(() => {
         </router-link>
       </li>
     </ul>
-    <div class="lg:hidden z-[40]">
+    <div class="lg:hidden">
       <fwb-dropdown text="Bottom" class="w-full">
         <template #trigger>
           <fwb-button class="cursor-pointer">

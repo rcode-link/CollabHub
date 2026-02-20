@@ -1,6 +1,6 @@
 <template>
     <form @submit.prevent="submit" class="border-t border-amber-50 dark:border-gray-900 p-6">
-        <div class="flex mb-1 flex-nowrap overflow-auto p-4" v-if="chatMessageStore.files.length > 0">
+        <div class="flex flex-wrap gap-2 mb-1 w-full p-4" v-if="chatMessageStore.files.length > 0">
             <FilesComponent v-for="(file, index) in chatMessageStore.files" :file="file" :index="index" :key="index" />
         </div>
 

@@ -1,11 +1,11 @@
 <template>
-  <div class="shadow p-1 flex min-w-[15vw] items-center gap-4 p-4">
-    <div class="flex flex-1 gap-4 ">
-      <div>
+  <div class="shadow rounded-lg flex w-48 items-center gap-3 p-3">
+    <div class="flex items-center gap-2 min-w-0 flex-1">
+      <div class="flex-shrink-0">
         <FileImage v-if="getFileType(file) === 'image'"/>
         <FileFile v-else/>
       </div>
-      <div class="whitespace-nowrap overflow-hidden">
+      <div class="truncate text-sm" :title="file.name">
         {{ file.name }}
       </div>
     </div>
