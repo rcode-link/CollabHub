@@ -1,22 +1,20 @@
 <template>
-  <div class="table-node-wrapper" :class="{ 'table-selected': isTableSelected }">
-    <BaseContainer
+  <BaseContainer
+    :editor="editor"
+    :node="node"
+    :deleteNode="deleteNode"
+    :getPos="getPos"
+    :selected="isTableSelected"
+  >
+    <TableToolbar
       :editor="editor"
       :node="node"
-      :deleteNode="deleteNode"
-      :getPos="getPos"
-      :selected="selected"
+      :isStriped="node.attrs.striped"
+      :selected="isTableSelected"
     >
-      <TableToolbar
-        :editor="editor"
-        :node="node"
-        :isStriped="node.attrs.striped"
-        :selected="isTableSelected"
-      >
-        <node-view-content />
-      </TableToolbar>
-    </BaseContainer>
-  </div>
+      <node-view-content />
+    </TableToolbar>
+  </BaseContainer>
 </template>
 
 <script setup>
@@ -113,15 +111,3 @@ onUnmounted(() => {
 });
 </script>
 
-<style>
-.table-node-wrapper {
-  position: relative;
-  margin: 1rem 0;
-  transition: all 0.2s ease-in-out;
-}
-
-.table-selected {
-  outline: 2px solid rgb(59, 130, 246);
-  border-radius: 4px;
-}
-</style>

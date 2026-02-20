@@ -1,16 +1,6 @@
 <script setup>
-import OrderedListIcon from '../icons/OrderedListIcon.vue'
-import QuoteIcon from '../icons/QuoteIcon.vue'
 import Modal from '../Modal.vue'
-
-import {
-  FwbButton,
-  FwbDropdown,
-  FwbListGroup,
-  FwbListGroupItem,
-  FwbButtonGroup,
-  FwbTextarea,
-} from 'flowbite-vue'
+import { FwbTextarea } from 'flowbite-vue'
 import TextBold from '../icons/TextBold.vue'
 import CodeIcon from '../icons/CodeIcon.vue'
 import BulletListIcon from '../icons/BulletListIcon.vue'
@@ -20,539 +10,157 @@ import DiagramIcon from '../icons/DiagramIcon.vue'
 import TextItalic from '../icons/TextItalic.vue'
 import UndoIcon from '../icons/UndoIcon.vue'
 import TableIcon from '../icons/TableIcon.vue'
-import { computed, ref, onMounted, watch } from 'vue'
+import QuoteIcon from '../icons/QuoteIcon.vue'
+import ToolbarBtn from './toolbar/ToolbarBtn.vue'
+import ToolbarSep from './toolbar/ToolbarSep.vue'
+import ToolbarDropdown from './toolbar/ToolbarDropdown.vue'
+import ToolbarItem from './toolbar/ToolbarItem.vue'
+import FilePdfIcon from '../icons/FilePdf.vue'
+import { computed, ref } from 'vue'
+import axios from 'axios'
 
-const props = defineProps({
-  editor: null,
-})
+const exportToPDF = () => {
+  document.getElementById('print').innerHTML = props.editor.getHTML()
+  window.print()
+}
+
+const props = defineProps({ editor: null })
 
 const markdown = ref('')
-const isTableSelected = ref(false)
-
-// Watch for changes in editor state to correctly detect table
-watch(
-  () => props.editor?.state?.selection,
-  () => {
-    if (!props.editor) return
-    updateTableState()
-  },
-  { deep: true },
-)
-
-// Also check whenever the component is updated
-onMounted(() => {
-  if (props.editor) {
-    updateTableState()
-  }
-})
-
 const handleInsertMarkdown = () => {
   props.editor.commands.insertContent(markdown.value)
   markdown.value = ''
 }
 
-// Function to check if we're inside a table
-const updateTableState = () => {
-  if (!props.editor) return
-
-  // Use the editor's state to find if we're in a table node
-  const { state } = props.editor
-  let currentNode = state.selection.$anchor.parent
-  let depth = state.selection.$anchor.depth
-
-  // Walk up the node tree to find if we're in a table
-  isTableSelected.value = false
-
-  while (depth > 0 && !isTableSelected.value) {
-    if (currentNode.type.name === 'table') {
-      isTableSelected.value = true
-      break
-    }
-    depth--
-    currentNode = state.selection.$anchor.node(depth)
-  }
-
-  // Alternative approach using the editor's isActive method
-  if (!isTableSelected.value) {
-    isTableSelected.value = props.editor.isActive('table')
+const imageInput = ref(null)
+const imageUploading = ref(false)
+const addImage = () => imageInput.value?.click()
+const handleImageFile = async (event) => {
+  const file = event.target.files?.[0]
+  if (!file) return
+  const form = new FormData()
+  form.append('image', file)
+  imageUploading.value = true
+  try {
+    const { data } = await axios.post('/api/v1/editor/images', form)
+    props.editor.chain().focus().setImage({ src: data.url, alt: file.name, title: file.name }).run()
+  } finally {
+    imageUploading.value = false
+    event.target.value = ''
   }
 }
 
-const addImage = function () {
-  const url = window.prompt('URL')
-
-  if (url) {
-    props.editor
-      .chain()
-      .focus()
-      .setImage({
-        src: url,
-        alt: 'Random image',
-        title: 'Random image from Unsplash',
-      })
-      .run()
-  }
+const insertTable = () => {
+  props.editor.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run()
+  props.editor.commands.addElementAfterTable('paragraph')
 }
-const textType = [
-  {
-    label: 'Paragraph',
-    name: 'paragraph',
-    param: {},
-  },
-  {
-    label: 'Heading 1',
-    name: 'heading',
-    param: { level: 1 },
-  },
-  {
-    label: 'Heading 2',
-    name: 'heading',
-    param: { level: 2 },
-  },
-  {
-    label: 'Heading 3',
-    name: 'heading',
-    param: { level: 3 },
-  },
-  {
-    label: 'Heading 4',
-    name: 'heading',
-    param: { level: 4 },
-  },
-  {
-    label: 'Heading 5',
-    name: 'heading',
-    param: { level: 5 },
-  },
+
+const textTypes = [
+  { label: 'Paragraph', cmd: () => props.editor.chain().focus().setParagraph().run() },
+  { label: 'Heading 1',  cmd: () => props.editor.chain().focus().toggleHeading({ level: 1 }).run() },
+  { label: 'Heading 2',  cmd: () => props.editor.chain().focus().toggleHeading({ level: 2 }).run() },
+  { label: 'Heading 3',  cmd: () => props.editor.chain().focus().toggleHeading({ level: 3 }).run() },
+  { label: 'Heading 4',  cmd: () => props.editor.chain().focus().toggleHeading({ level: 4 }).run() },
+  { label: 'Heading 5',  cmd: () => props.editor.chain().focus().toggleHeading({ level: 5 }).run() },
 ]
 
-const textTypeTitle = computed(() => {
-  const text = textType.filter(obj =>
-    props.editor.isActive(obj.name, obj.param),
-  )
-
-  if (text.length === 0) {
-    return 'Paragraph'
+const activeTextType = computed(() => {
+  for (let i = 1; i <= 5; i++) {
+    if (props.editor.isActive('heading', { level: i })) return `Heading ${i}`
   }
-
-  return text[0].label
-})
-
-const buttonClicked = (e, callback) => {
-  e?.preventDefault()
-  if (typeof callback !== 'object' || callback === null) {
-    return
-  }
-  callback()
-}
-
-// Log whenever table state changes (for debugging)
-watch(isTableSelected, newVal => {
-  console.log('Table selected:', newVal)
+  return 'Paragraph'
 })
 </script>
 
 <template>
-  <div
-    class="editor-toolbar p-2 flex flex-wrap items-center gap-2 bg-white border border-gray-200 rounded-t-lg shadow-sm dark:bg-gray-800 dark:border-gray-700"
-  >
-    <!-- Text Formatting Button Group -->
-    <fwb-button-group>
-      <div class="tooltip-container">
-        <fwb-button
-          :color="editor.isActive('bold') ? 'primary' : 'alternative'"
-          size="sm"
-          @click="
-            e => buttonClicked(e, editor.chain().focus().toggleBold().run())
-          "
-          :disabled="!editor.can().chain().focus().toggleBold().run()"
-        >
-          <div class="flex justify-center items-center">
-            <TextBold class="w-4 h-4" />
-          </div>
-        </fwb-button>
-        <span class="tooltip">Bold</span>
-      </div>
+  <div class="editor-toolbar flex items-center gap-0.5 px-3 py-1.5 bg-white dark:bg-gray-900 border-b border-gray-100 dark:border-gray-800">
 
-      <div class="tooltip-container">
-        <fwb-button
-          :color="editor.isActive('italic') ? 'primary' : 'alternative'"
-          size="sm"
-          @click="
-            e => buttonClicked(e, editor.chain().focus().toggleItalic().run())
-          "
-          :disabled="!editor.can().chain().focus().toggleItalic().run()"
-        >
-          <div class="flex justify-center items-center">
-            <TextItalic class="w-4 h-4" />
-          </div>
-        </fwb-button>
-        <span class="tooltip">Italic</span>
-      </div>
-
-      <div class="tooltip-container">
-        <fwb-button
-          :color="editor.isActive('strike') ? 'primary' : 'alternative'"
-          size="sm"
-          @click="
-            e => buttonClicked(e, editor.chain().focus().toggleStrike().run())
-          "
-          :disabled="!editor.can().chain().focus().toggleStrike().run()"
-        >
-          <div class="flex justify-center items-center">
-            <TextStroke class="w-4 h-4" />
-          </div>
-        </fwb-button>
-        <span class="tooltip">Strikethrough</span>
-      </div>
-    </fwb-button-group>
-
-    <!-- Text Style Dropdown -->
-    <fwb-dropdown placement="bottom">
+    <!-- Text type -->
+    <ToolbarDropdown>
       <template #trigger>
-        <fwb-button
-          @click="e => buttonClicked(e, null)"
-          color="alternative"
-          size="sm"
-          class="min-w-[120px]"
-        >
-          <div class="flex justify-center items-center">
-            <span>{{ textTypeTitle }}</span>
-            <svg
-              class="w-4 h-4 ml-2"
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke-width="1.5"
-              stroke="currentColor"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                d="M19.5 8.25l-7.5 7.5-7.5-7.5"
-              />
-            </svg>
-          </div>
-        </fwb-button>
+        {{ activeTextType }}
+        <svg class="w-3 h-3 ml-1 opacity-50" viewBox="0 0 20 20" fill="currentColor">
+          <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clip-rule="evenodd"/>
+        </svg>
       </template>
-      <fwb-list-group>
-        <fwb-list-group-item
-          class="hover:bg-gray-100 cursor-pointer"
-          @click="
-            e => buttonClicked(e, editor.chain().focus().setParagraph().run())
-          "
-        >
-          Paragraph
-        </fwb-list-group-item>
-        <fwb-list-group-item
-          class="hover:bg-gray-100 cursor-pointer text-2xl font-bold"
-          @click="
-            e =>
-              buttonClicked(
-                e,
-                editor.chain().focus().toggleHeading({ level: 1 }).run(),
-              )
-          "
-        >
-          Heading 1
-        </fwb-list-group-item>
-        <fwb-list-group-item
-          class="hover:bg-gray-100 cursor-pointer text-xl font-bold"
-          @click="
-            e =>
-              buttonClicked(
-                e,
-                editor.chain().focus().toggleHeading({ level: 2 }).run(),
-              )
-          "
-        >
-          Heading 2
-        </fwb-list-group-item>
-        <fwb-list-group-item
-          class="hover:bg-gray-100 cursor-pointer text-lg font-bold"
-          @click="
-            e =>
-              buttonClicked(
-                e,
-                editor.chain().focus().toggleHeading({ level: 3 }).run(),
-              )
-          "
-        >
-          Heading 3
-        </fwb-list-group-item>
-        <fwb-list-group-item
-          class="hover:bg-gray-100 cursor-pointer text-base font-bold"
-          @click="
-            e =>
-              buttonClicked(
-                e,
-                editor.chain().focus().toggleHeading({ level: 4 }).run(),
-              )
-          "
-        >
-          Heading 4
-        </fwb-list-group-item>
-        <fwb-list-group-item
-          class="hover:bg-gray-100 cursor-pointer text-sm font-bold"
-          @click="
-            e =>
-              buttonClicked(
-                e,
-                editor.chain().focus().toggleHeading({ level: 5 }).run(),
-              )
-          "
-        >
-          Heading 5
-        </fwb-list-group-item>
-      </fwb-list-group>
-    </fwb-dropdown>
+      <ToolbarItem v-for="t in textTypes" :key="t.label" @click="t.cmd()">{{ t.label }}</ToolbarItem>
+    </ToolbarDropdown>
 
-    <!-- Insert Dropdown -->
-    <fwb-dropdown placement="bottom">
+    <ToolbarSep />
+
+    <!-- Formatting -->
+    <ToolbarBtn :active="editor.isActive('bold')"   title="Bold (Ctrl+B)"    @click="editor.chain().focus().toggleBold().run()"><TextBold class="w-4 h-4"/></ToolbarBtn>
+    <ToolbarBtn :active="editor.isActive('italic')" title="Italic (Ctrl+I)"  @click="editor.chain().focus().toggleItalic().run()"><TextItalic class="w-4 h-4"/></ToolbarBtn>
+    <ToolbarBtn :active="editor.isActive('strike')" title="Strikethrough"    @click="editor.chain().focus().toggleStrike().run()"><TextStroke class="w-4 h-4"/></ToolbarBtn>
+    <ToolbarBtn :active="editor.isActive('codeBlock')" title="Code block"    @click="editor.chain().focus().toggleCodeBlock().run()"><CodeIcon class="w-4 h-4"/></ToolbarBtn>
+
+    <ToolbarSep />
+
+    <!-- Lists & blocks -->
+    <ToolbarBtn :active="editor.isActive('bulletList')"  title="Bullet list"    @click="editor.chain().focus().toggleBulletList().run()"><BulletListIcon class="w-4 h-4"/></ToolbarBtn>
+    <ToolbarBtn :active="editor.isActive('orderedList')" title="Numbered list"  @click="editor.chain().focus().toggleOrderedList().run()">
+      <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/>
+      </svg>
+    </ToolbarBtn>
+    <ToolbarBtn :active="editor.isActive('blockquote')" title="Quote" @click="editor.chain().focus().toggleBlockquote().run()"><QuoteIcon class="w-4 h-4"/></ToolbarBtn>
+
+    <ToolbarSep />
+
+    <!-- Insert -->
+    <ToolbarDropdown>
       <template #trigger>
-        <fwb-button
-          @click="e => buttonClicked(e, null)"
-          color="alternative"
-          size="sm"
-        >
-          <div class="flex justify-center items-center">
-            <span>Insert</span>
-            <svg
-              class="w-4 h-4 ml-2"
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke-width="1.5"
-              stroke="currentColor"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                d="M19.5 8.25l-7.5 7.5-7.5-7.5"
-              />
-            </svg>
-          </div>
-        </fwb-button>
+        <svg class="w-3.5 h-3.5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/>
+        </svg>
+        Insert
       </template>
-      <fwb-list-group>
-        <fwb-list-group-item
-          class="hover:bg-gray-100 cursor-pointer flex items-center"
-          @click="
-            e =>
-              buttonClicked(e, editor.chain().focus().toggleBlockquote().run())
-          "
-        >
-          <div class="flex items-center">
-            <QuoteIcon class="w-4 h-4 mr-2" />
-            Quote
-          </div>
-        </fwb-list-group-item>
-        <fwb-list-group-item
-          class="hover:bg-gray-100 cursor-pointer flex items-center"
-          @click="
-            e =>
-              buttonClicked(e, editor.chain().focus().toggleCodeBlock().run())
-          "
-        >
-          <div class="flex items-center">
-            <CodeIcon class="w-4 h-4 mr-2" />
-            Code
-          </div>
-        </fwb-list-group-item>
-        <fwb-list-group-item
-          class="hover:bg-gray-100 cursor-pointer flex items-center"
-          @click="addImage"
-        >
-          <div class="flex items-center">
-            <DiagramIcon class="w-4 h-4 mr-2" />
-            Image
-          </div>
-        </fwb-list-group-item>
-
-        <fwb-list-group-item
-          class="hover:bg-gray-100 cursor-pointer flex items-center"
-          @click="e => buttonClicked(e, editor.commands.insertDrawIo())"
-        >
-          <div class="flex items-center">
-            <DiagramIcon class="w-4 h-4 mr-2" />
-            Diagram
-          </div>
-        </fwb-list-group-item>
-        <fwb-list-group-item
-          class="hover:bg-gray-100 cursor-pointer flex items-center"
-          :class="{
-            'bg-gray-200 dark:bg-gray-700': editor.isActive('bulletList'),
-          }"
-          @click="
-            e =>
-              buttonClicked(e, editor.chain().focus().toggleBulletList().run())
-          "
-        >
-          <div class="flex items-center">
-            <BulletListIcon class="w-4 h-4 mr-2" />
-            Bullet List
-          </div>
-        </fwb-list-group-item>
-        <fwb-list-group-item
-          class="hover:bg-gray-100 cursor-pointer flex items-center"
-          @click="
-            e =>
-              buttonClicked(
-                e,
-                editor
-                  .chain()
-                  .focus()
-                  .insertTable({ rows: 3, cols: 3, withHeaderRow: true })
-                  .run(),
-              )
-          "
-        >
-          <div class="flex items-center">
-            <TableIcon class="w-4 h-4 mr-2" />
-            Table
-          </div>
-        </fwb-list-group-item>
-      </fwb-list-group>
-    </fwb-dropdown>
-
-    <!-- Table Controls Dropdown -->
-    <!-- Using our custom isTableSelected computed property instead of editor.isActive('table') -->
-    <fwb-dropdown v-if="editor.isActive('table')" placement="bottom">
-      <template #trigger>
-        <fwb-button
-          @click="e => buttonClicked(e, null)"
-          color="alternative"
-          size="sm"
-          class="bg-blue-100 border-blue-300 dark:bg-blue-900 dark:border-blue-700"
-        >
-          <div class="flex justify-center items-center">
-            <TableIcon class="w-4 h-4" />
-          </div>
-        </fwb-button>
+      <template #default="{ close }">
+        <ToolbarItem :disabled="imageUploading" @click="close(); addImage()">
+          <DiagramIcon class="w-4 h-4 opacity-50"/>
+          {{ imageUploading ? 'Uploading…' : 'Image' }}
+        </ToolbarItem>
+        <ToolbarItem @click="close(); insertTable()">
+          <TableIcon class="w-4 h-4 opacity-50"/>
+          Table
+        </ToolbarItem>
+        <ToolbarItem @click="close(); editor.commands.insertDrawIo()">
+          <DiagramIcon class="w-4 h-4 opacity-50"/>
+          Diagram
+        </ToolbarItem>
+        <ToolbarItem @click="close(); editor.chain().focus().setHorizontalRule().run()">
+          <svg class="w-4 h-4 opacity-50" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M4 12h16"/>
+          </svg>
+          Divider
+        </ToolbarItem>
       </template>
-      <fwb-list-group>
-        <fwb-list-group-item
-          class="hover:bg-gray-100 cursor-pointer"
-          @click="e => buttonClicked(e, editor.commands.toggleTableStriped())"
-        >
-          Stripped style
-        </fwb-list-group-item>
+    </ToolbarDropdown>
 
-        <fwb-list-group-item
-          class="hover:bg-gray-100 cursor-pointer"
-          @click="e => buttonClicked(e, editor.commands.addRowAfter())"
-        >
-          Add row after
-        </fwb-list-group-item>
-        <fwb-list-group-item
-          class="hover:bg-gray-100 cursor-pointer"
-          @click="e => buttonClicked(e, editor.commands.addRowBefore())"
-        >
-          Add row before
-        </fwb-list-group-item>
-        <fwb-list-group-item
-          class="hover:bg-gray-100 cursor-pointer"
-          @click="e => buttonClicked(e, editor.commands.addColumnAfter())"
-        >
-          Add column after
-        </fwb-list-group-item>
-        <fwb-list-group-item
-          class="hover:bg-gray-100 cursor-pointer"
-          @click="e => buttonClicked(e, editor.commands.addColumnBefore())"
-        >
-          Add column before
-        </fwb-list-group-item>
+    <input ref="imageInput" type="file" accept="image/*" class="hidden" @change="handleImageFile" />
 
-        <!-- New commands for our improved table extension -->
-        <fwb-list-group-item
-          class="hover:bg-gray-100 cursor-pointer"
-          @click="e => buttonClicked(e, editor.commands.setTableWidth('75%'))"
-        >
-          Set width to 75%
-        </fwb-list-group-item>
-        <fwb-list-group-item
-          class="hover:bg-gray-100 cursor-pointer"
-          @click="e => buttonClicked(e, editor.commands.setTableWidth('100%'))"
-        >
-          Set width to 100%
-        </fwb-list-group-item>
-        <fwb-list-group-item
-          class="hover:bg-gray-100 cursor-pointer"
-          @click="
-            e =>
-              buttonClicked(
-                e,
-                editor.commands.setTableBackgroundColor('#f3f4f6'),
-              )
-          "
-        >
-          Light gray background
-        </fwb-list-group-item>
-        <fwb-list-group-item
-          class="hover:bg-gray-100 cursor-pointer"
-          @click="
-            e => buttonClicked(e, editor.commands.setTableBackgroundColor(null))
-          "
-        >
-          Remove background
-        </fwb-list-group-item>
-        <fwb-list-group-item
-          class="hover:bg-gray-100 cursor-pointer text-red-500"
-          @click="() => editor.chain().focus().deleteRow().run()"
-          >Delete row</fwb-list-group-item
-        >
-        <fwb-list-group-item
-          class="hover:bg-gray-100 cursor-pointer text-red-500"
-          @click="e => buttonClicked(e, editor.commands.deleteTable())"
-        >
-          Delete table
-        </fwb-list-group-item>
-      </fwb-list-group>
-    </fwb-dropdown>
+    <!-- Markdown import -->
     <Modal>
       <template #button>
-        <fwb-button>MD</fwb-button>
+        <button class="tb-pill" title="Import Markdown">
+          <svg class="w-3.5 h-3.5 mr-1 opacity-60" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+          </svg>
+          MD
+        </button>
       </template>
-      <template #header> Import Markdown </template>
-      <template #body>
-        <fwb-textarea label="Enter markdown" v-model="markdown"></fwb-textarea
-      ></template>
-      <template #footer>
-        <fwb-button @click="handleInsertMarkdown">Insert</fwb-button>
-      </template>
+      <template #header>Import Markdown</template>
+      <template #body><fwb-textarea label="Paste markdown" v-model="markdown" /></template>
+      <template #footer><button class="tb-pill" @click="handleInsertMarkdown">Insert</button></template>
     </Modal>
 
-    <!-- History Controls -->
-    <div class="ml-auto">
-      <fwb-button-group>
-        <div class="tooltip-container">
-          <fwb-button
-            color="alternative"
-            size="sm"
-            @click="e => buttonClicked(e, editor.chain().focus().undo().run())"
-            :disabled="!editor.can().chain().focus().undo().run()"
-          >
-            <div class="flex justify-center items-center">
-              <RedoIcon class="w-4 h-4" />
-            </div>
-          </fwb-button>
-          <span class="tooltip">Undo</span>
-        </div>
-
-        <div class="tooltip-container">
-          <fwb-button
-            color="alternative"
-            size="sm"
-            @click="e => buttonClicked(e, editor.chain().focus().redo().run())"
-            :disabled="!editor.can().chain().focus().redo().run()"
-          >
-            <div class="flex justify-center items-center">
-              <UndoIcon class="w-4 h-4" />
-            </div>
-          </fwb-button>
-          <span class="tooltip">Redo</span>
-        </div>
-      </fwb-button-group>
+    <!-- Undo / Redo / PDF -->
+    <div class="ml-auto flex items-center gap-0.5">
+      <ToolbarSep />
+      <ToolbarBtn title="Undo (Ctrl+Z)" :disabled="!editor.can().chain().focus().undo().run()" @click="editor.chain().focus().undo().run()"><RedoIcon class="w-4 h-4"/></ToolbarBtn>
+      <ToolbarBtn title="Redo (Ctrl+Y)" :disabled="!editor.can().chain().focus().redo().run()" @click="editor.chain().focus().redo().run()"><UndoIcon class="w-4 h-4"/></ToolbarBtn>
+      <ToolbarSep />
+      <ToolbarBtn title="Export to PDF" @click="exportToPDF"><FilePdfIcon class="w-4 h-4"/></ToolbarBtn>
     </div>
   </div>
 </template>
@@ -561,46 +169,5 @@ watch(isTableSelected, newVal => {
 .editor-toolbar {
   border-bottom-left-radius: 0;
   border-bottom-right-radius: 0;
-}
-
-.tooltip-container {
-  position: relative;
-  display: inline-block;
-}
-
-.tooltip {
-  visibility: hidden;
-  width: auto;
-  background-color: rgba(0, 0, 0, 0.8);
-  color: #fff;
-  text-align: center;
-  border-radius: 4px;
-  padding: 5px 8px;
-  position: absolute;
-  z-index: 1;
-  bottom: 125%;
-  left: 50%;
-  transform: translateX(-50%);
-  opacity: 0;
-  transition: opacity 0.3s;
-  font-size: 12px;
-  white-space: nowrap;
-}
-
-.tooltip-container:hover .tooltip {
-  visibility: visible;
-  opacity: 1;
-}
-
-/* Arrow for the tooltip */
-.tooltip::after {
-  content: '';
-  position: absolute;
-  top: 100%;
-  left: 50%;
-  margin-left: -5px;
-  border-width: 5px;
-  border-style: solid;
-  border-color: rgba(0, 0, 0, 0.8) transparent transparent transparent;
 }
 </style>

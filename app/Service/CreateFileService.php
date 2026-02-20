@@ -9,7 +9,7 @@ class CreateFileService
 {
     public function prepareData($data)
     {
-        switch ($data['entity_type']) {
+        switch ($data['entity_type'] ?? null) {
             case 'project':
                 $projectKey = Project::whereId($data['entity_id'])->select('key')->firstOrFail();
 
@@ -20,7 +20,7 @@ class CreateFileService
 
                 return array_merge($data, ['file_id' => $key, 'entity_type' => Project::class]);
             default:
-                return null;
+                return array_merge($data, ['file_id' => null, 'entity_type' => null, 'entity_id' => null]);
         }
     }
 

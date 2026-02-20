@@ -4,14 +4,12 @@ import { Markdown } from 'tiptap-markdown'
 import { VueNodeViewRenderer } from '@tiptap/vue-3'
 import { Link } from '@tiptap/extension-link'
 import { ref, watch, computed } from 'vue'
-import { FwbButton, FwbCard } from 'flowbite-vue'
 import { createLowlight } from 'lowlight'
 import CodeBlockLowlight from '@tiptap/extension-code-block-lowlight'
-import FloppyDiskIcon from '../icons/FloppyDiskIcon.vue'
-import FilePdfIcon from '../icons/FilePdf.vue'
 import drawIoExtension from '@rcode-link/tiptap-drawio'
 import { useRoute } from 'vue-router'
 import EditorHeader from './EditorHeader.vue'
+import BubbleToolbar from './BubbleToolbar.vue'
 import hljs from 'highlight.js'
 import MobileMenu from './MobileMenu.vue'
 import Mention from '@tiptap/extension-mention'
@@ -46,6 +44,8 @@ import ParagraphNodeView from './blocks/Typograhpy/PharagraphNode.vue'
 import BulletListNodeView from './blocks/Typograhpy/BulletListNode.vue'
 import OrderedListNodeView from './blocks/Typograhpy/OrderedListNode.vue'
 import ListItemNodeView from './blocks/Typograhpy/ListItemNode.vue'
+import HorizontalRuleNodeView from './blocks/Typograhpy/HorizontalRuleNode.vue'
+import TableNodeView from './blocks/table/TableNodeView.vue'
 
 import Placeholder from '@tiptap/extension-placeholder'
 
@@ -69,6 +69,10 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
+  notion: {
+    type: Boolean,
+    default: false,
+  },
 })
 
 const textToLinkStore = useTextToLinkStore()
@@ -80,7 +84,7 @@ hljs.listLanguages().forEach(async lang => {
 })
 
 const route = useRoute()
-const emit = defineEmits(['update:modelValue', 'submitted'])
+const emit = defineEmits(['update:modelValue', 'submitted', 'ready'])
 
 const pressedKeys = ref([])
 const textToLink = useConvertTextToLink(textToLinkStore.items, router.push)
@@ -155,7 +159,18 @@ const CustomHeading = Heading.extend({
 })
 
 const listClasses = ''
-const CustomBulletList = BulletList
+
+const CustomBulletList = BulletList.extend({
+  addNodeView() {
+    return data => customRenderData(data, BulletListNodeView)
+  },
+})
+
+const CustomHorizontalRule = HorizontalRule.extend({
+  addNodeView() {
+    return data => customRenderData(data, HorizontalRuleNodeView)
+  },
+})
 
 const CustomOrderedList = OrderedList.extend({
   addNodeView() {
@@ -182,9 +197,14 @@ const CustomBlockquote = Blockquote.extend({
     return data => customRenderData(data, CustomBlockView)
   },
 })
-// Using StripedTable directly without custom node view
-// This prevents tables from getting the controls wrapper
-const CustomTable = StripedTable
+// Extend the Table *node* with the custom node view.
+// StripedTable is an Extension (not a Node), so its addNodeView() is ignored by TipTap.
+// We must attach the node view to the actual Table node.
+const CustomTable = Table.extend({
+  addNodeView() {
+    return props => VueNodeViewRenderer(TableNodeView)(props)
+  },
+})
 
 const generateId = prefix => `${prefix}-${Math.floor(Math.random() * 10000)}`
 // Define function to get extensions
@@ -223,7 +243,7 @@ const getExtensions = () => {
     Italic,
     Strike,
     HardBreak,
-    HorizontalRule,
+    CustomHorizontalRule,
     History,
     CustomImage.configure({
       inline: false,
@@ -244,11 +264,11 @@ const getExtensions = () => {
     }),
     SmilieReplacer,
     textToLink.convertTextToLink,
-    Table,
+    CustomTable,
     TableRow,
     TableCell,
     TableHeader,
-    CustomTable,
+    StripedTable,
     Placeholder.configure({
       placeholder: 'Write something …',
     }),
@@ -293,11 +313,7 @@ const editor = useEditor({
   extensions: getExtensions(),
 })
 
-const exportToPDF = () => {
-  console.log(editor.value)
-  document.getElementById('print').innerHTML = editor.value.getHTML()
-  window.print()
-}
+watch(editor, (e) => { if (e) emit('ready', e) }, { immediate: true })
 
 function cleanTiptapJson(rawData) {
   const json = { ...rawData }
@@ -334,56 +350,51 @@ function cleanTiptapJson(rawData) {
 
 <template>
   <div
-    class="w-full bg-white border border-gray-200 rounded-lg shadow-sm dark:bg-gray-800 dark:border-gray-700"
+    class="w-full bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 rounded-xl"
+    :class="{ 'notion-mode': notion }"
   >
-    <fwb-card-header class="p-0 border-b-0" v-if="editor">
-      <!-- Desktop toolbar -->
+    <!-- Static toolbar: shown only when NOT in notion mode -->
+    <div v-if="editor && !notion" class="flex-shrink-0">
       <div class="hidden lg:block">
         <EditorHeader :editor="editor" />
       </div>
-
-      <!-- Mobile toolbar -->
-      <MobileMenu v-if="editor" :editor="editor" class="block lg:hidden" />
-
-      <!-- Collaboration status indicator -->
+      <MobileMenu :editor="editor" class="block lg:hidden" />
       <div
         v-if="collaborative && documentId"
-        class="collab-status px-3 py-1 text-xs bg-blue-50 text-blue-700 dark:bg-blue-900 dark:text-blue-200 border-b border-gray-200 dark:border-gray-700"
+        class="px-3 py-1 text-xs bg-blue-50 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300 border-b border-gray-100 dark:border-gray-800"
       >
-        <span class="flex items-center">
-          <span
-            class="w-2 h-2 mr-1 rounded-full bg-green-500 animate-pulse"
-          ></span>
-          Collaborative mode enabled (Document #{{ documentId }})
+        <span class="flex items-center gap-1.5">
+          <span class="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></span>
+          Collaborative mode — Document #{{ documentId }}
         </span>
       </div>
-    </fwb-card-header>
+    </div>
 
-    <editor-content class="editor-content mb-4 sm:mb-0" :editor="editor" />
+    <!-- Bubble toolbar: shown in notion mode (appears on text selection) -->
+    <BubbleToolbar v-if="notion" :editor="editor" />
 
-    <fwb-card-footer
-      class="justify-end gap-2 bg-gray-50 dark:bg-gray-800 p-2 hidden md:flex"
-    >
-      <fwb-button color="light" size="sm" @click="exportToPDF">
-        <div class="flex flex-col justify-center items-center">
-          <FilePdfIcon class="w-4 h-4" />
-        </div>
-      </fwb-button>
-      <fwb-button size="sm" @click="submited">
-        <div class="flex flex-col justify-center items-center">
-          <FloppyDiskIcon class="w-4 h-4" />
-        </div>
-      </fwb-button>
-    </fwb-card-footer>
+    <!-- Slot for content injected between toolbar and editor (e.g. document title) -->
+    <div class="flex-shrink-0">
+      <slot name="before-content" />
+    </div>
+
+    <editor-content class="editor-content" :editor="editor" />
   </div>
 </template>
 
 <style>
 .editor-content {
-  @apply w-full p-3 bg-white dark:bg-gray-800;
-  height: calc(100vh - 150px);
-  overflow-y: auto;
+  @apply w-full bg-white dark:bg-gray-900;
+  padding: 1rem 1rem 3rem 2.5rem; /* extra left space for block handles */
+  min-height: 60vh;
 }
+
+/* Notion variant */
+.notion-mode .editor-content {
+  background: transparent;
+  padding: 0 2.5rem 4rem 3.5rem;
+}
+
 
 .editor-content > .tiptap.ProseMirror {
   @apply min-h-full w-full active:border-none focus:border-none focus:outline-0;
@@ -417,6 +428,12 @@ function cleanTiptapJson(rawData) {
 
 table {
   @apply w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400;
+}
+
+/* Strip paragraph margins inside list items — TipTap wraps li content in <p> by default */
+.tiptap li > p {
+  margin: 0;
+  display: inline;
 }
 
 /* Basic editor styles */

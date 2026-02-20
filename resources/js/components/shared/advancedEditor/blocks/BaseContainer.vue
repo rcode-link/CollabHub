@@ -1,107 +1,71 @@
 <template>
-  <node-view-wrapper :as="as" :class="{ 'wrapper': true, 'custom-block-wrapper': shouldShowControls }">
-    <div
-      class="flex items-center"
-      v-if="shouldShowControls"
-    >
-      <CustomControls
-        @removeNode="removeNode"
-        @moveUp="moveUp"
-        @moveDown="moveDown"
-      />
-
-      <slot name="options" />
-    </div>
-    <div class="custom-block-content">
+  <node-view-wrapper :as="as" :class="['block-wrapper', isFocused && 'block-wrapper--focused']">
+    <CustomControls
+      v-if="isEditable"
+      @removeNode="removeNode"
+      @moveUp="moveUp"
+      @moveDown="moveDown"
+    />
+    <slot name="options" />
+    <div class="block-content">
       <slot />
     </div>
   </node-view-wrapper>
 </template>
 
 <script setup>
-import { NodeViewWrapper, NodeViewContent } from "@tiptap/vue-3";
-import { computed } from "vue";
-import { useElementFocus } from "@/functions/editor/composables/useElementFocus";
-import CustomControls from "./CustomControls.vue";
+import { NodeViewWrapper } from '@tiptap/vue-3'
+import { computed } from 'vue'
+import { useElementFocus } from '@/functions/editor/composables/useElementFocus'
+import CustomControls from './CustomControls.vue'
 
 const props = defineProps({
-  as: {
-    default: "div",
-  },
-  editor: {
-    type: Object,
-  },
-  node: {
-    type: Object,
-  },
-  decorations: {
-    type: Array,
-    default: () => [],
-  },
-  selected: {
-    type: Boolean,
-    required: false,
-    default: false,
-  },
-  extension: {
-    type: Object,
-    required: false,
-  },
-  getPos: {
-    type: Function,
-    required: false,
-  },
-  updateAttributes: {
-    type: Function,
-    required: false,
-  },
-  deleteNode: {
-    type: Function,
-    required: true,
-  },
-});
+  as: { default: 'div' },
+  editor: { type: Object },
+  node: { type: Object },
+  decorations: { type: Array, default: () => [] },
+  selected: { type: Boolean, required: false, default: false },
+  extension: { type: Object, required: false },
+  getPos: { type: Function, required: false },
+  updateAttributes: { type: Function, required: false },
+  deleteNode: { type: Function, required: true },
+})
 
-// Use our focus tracking composable
-const { isFocused } = useElementFocus(props);
+const { isFocused } = useElementFocus(props)
 
-// Computed properties using the focus state
-const nodeType = computed(() => props.node.type.name);
+const isEditable = computed(() => !!props.editor?.isEditable)
 
-const depth = computed(() => props.editor?.state.selection.$from.depth);
-
-// Only show controls when the element is focused AND the editor is already initialized
-const shouldShowControls = computed(() => {
-  console.log(props);
-  if (!props.editor) return false;
-  // Don't show controls during initial load
-  if (!props.editor.isEditable) return false;
-
-  // Only show when focused
-  return isFocused.value;
-});
-
-// Your existing methods
 function moveUp() {
-  // Implementation
-  props.editor.commands.moveNodeUp();
+  props.editor.commands.moveNodeUp()
 }
 
 function moveDown() {
-  // Implementation
-  props.editor.commands.moveNodeDown();
+  props.editor.commands.moveNodeDown()
 }
 
 function removeNode() {
-  props.deleteNode();
+  props.deleteNode()
 }
 </script>
+
 <style>
-.custom-block-wrapper {
+.block-wrapper {
   position: relative;
-  @apply p-4 gap-3 dark:bg-gray-800 rounded-lg text-gray-800 bg-gray-50 border-gray-500 dark:text-gray-400;
+  width: 100%;
+  border-left: 2px solid transparent;
+  padding-left: 2px;
+  transition: border-left-color 0.15s ease;
 }
 
-.wrapper {
-  transition: all 0.2s ease-in;
+.block-wrapper--focused {
+  border-left-color: #bfdbfe;
+}
+
+.dark .block-wrapper--focused {
+  border-left-color: #3b82f6;
+}
+
+.block-content {
+  width: 100%;
 }
 </style>

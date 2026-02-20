@@ -176,6 +176,18 @@ export default [
     ],
   },
   {
+    name: 'documents',
+    path: '/documents',
+    component: () => import('../components/pages/documents/Index.vue'),
+    meta: { middleware: auth },
+  },
+  {
+    name: 'documents.editor',
+    path: '/documents/:id',
+    component: () => import('../components/pages/documents/Editor.vue'),
+    meta: { middleware: auth },
+  },
+  {
     path: '/reports',
 
     name: 'reports',

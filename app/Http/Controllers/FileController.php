@@ -17,6 +17,10 @@ class FileController extends Controller
      */
     public function index(Request $request)
     {
+        if ($request->boolean('global')) {
+            return File::query()->get()->toFlatTree();
+        }
+
         return File::query()
             ->where([
                 'entity_type' => Project::class,

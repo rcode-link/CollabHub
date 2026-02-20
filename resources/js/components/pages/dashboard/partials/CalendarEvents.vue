@@ -1,406 +1,276 @@
-<script setup lang="js">
-import { FwbCard } from "flowbite-vue";
-import { onMounted, ref, computed } from "vue";
-import { DateTime } from "luxon";
-import { useRouter } from "vue-router";
-import {
-    FwbButton,
-    FwbDropdown,
-    FwbListGroup,
-    FwbListGroupItem,
-    FwbBadge,
-    FwbButtonGroup,
-} from "flowbite-vue";
-import { useCalendarStore } from "@/store/calendarStore";
-import Form from "./calendar/Form.vue";
-import PlusSquare from "@/components/shared/icons/PlusSquare.vue";
-import ArrowLeft from "@/components/shared/icons/ArrowLeft.vue";
-import ArrowRight from "@/components/shared/icons/ArrowRight.vue";
-import InfoIcon from "@/components/shared/icons/InfoIcon.vue";
-import { useUserStore } from "@/store/user";
-import Modal from "@/components/shared/Modal.vue";
-import CalendarDetails from "./calendar/Details.vue";
+<script setup>
+import { onMounted, ref, computed } from 'vue'
+import { DateTime } from 'luxon'
+import { useRouter } from 'vue-router'
+import { useCalendarStore } from '@/store/calendarStore'
+import Card from '@/components/shared/Card.vue'
+import Button from '@/components/shared/Button.vue'
+import Modal from '@/components/shared/Modal.vue'
+import Form from './calendar/Form.vue'
+import PlusSquare from '@/components/shared/icons/PlusSquare.vue'
+import ArrowLeft from '@/components/shared/icons/ArrowLeft.vue'
+import ArrowRight from '@/components/shared/icons/ArrowRight.vue'
+import InfoIcon from '@/components/shared/icons/InfoIcon.vue'
+import { useUserStore } from '@/store/user'
+import CalendarDetails from './calendar/Details.vue'
 
-const showInfoModal = ref(false);
-const calendar = useCalendarStore();
-const userStore = useUserStore();
-const router = useRouter();
+const showInfoModal = ref(false)
+const calendar = useCalendarStore()
+const userStore = useUserStore()
+const router = useRouter()
+
 onMounted(() => {
-    calendar.load();
-    goToToday();
-    window.Echo.private(`event.${userStore.user.id}`).listen(
-        "CalendarEventUpdatedEvent",
-        (__obj) => {
-            calendar.load();
-        }
-    );
-});
+  calendar.load()
+  goToToday()
+  window.Echo.private(`event.${userStore.user.id}`).listen(
+    'CalendarEventUpdatedEvent',
+    () => { calendar.load() }
+  )
+})
 
-const location = window.location.href;
+const location = window.location.href
 
-// Mobile week view functionality
-const selectedWeek = ref(0); // 0 = first week, 1 = second week, etc.
-const selectedDay = ref(null);
+const selectedWeek = ref(0)
+const selectedDay = ref(null)
 
-// Get week range for current month
 const weekRanges = computed(() => {
-    const numDays = calendar.currentDate.endOf('month').day;
-    const firstWeekday = calendar.currentDate.startOf('month').weekday - 1;
-    const totalDays = numDays + firstWeekday;
-    const weekCount = Math.ceil(totalDays / 7);
+  const numDays = calendar.currentDate.endOf('month').day
+  const firstWeekday = calendar.currentDate.startOf('month').weekday - 1
+  const totalDays = numDays + firstWeekday
+  const weekCount = Math.ceil(totalDays / 7)
 
-    const weeks = [];
-    for (let i = 0; i < weekCount; i++) {
-        weeks.push({
-            start: i * 7 + 1 - firstWeekday,
-            end: Math.min((i + 1) * 7 - firstWeekday, numDays)
-        });
-    }
-    return weeks;
-});
+  const weeks = []
+  for (let i = 0; i < weekCount; i++) {
+    weeks.push({
+      start: i * 7 + 1 - firstWeekday,
+      end: Math.min((i + 1) * 7 - firstWeekday, numDays)
+    })
+  }
+  return weeks
+})
 
-// Get days for the currently selected week
 const currentWeekDays = computed(() => {
-    if (selectedWeek.value >= weekRanges.value.length) {
-        selectedWeek.value = 0;
-    }
+  if (selectedWeek.value >= weekRanges.value.length) {
+    selectedWeek.value = 0
+  }
+  const currentWeek = weekRanges.value[selectedWeek.value]
+  const days = []
+  if (selectedWeek.value === 0) {
+    const firstWeekday = calendar.currentDate.startOf('month').weekday - 1
+    for (let i = 0; i < firstWeekday; i++) { days.push(null) }
+  }
+  for (let day = Math.max(1, currentWeek.start); day <= currentWeek.end; day++) {
+    days.push(day)
+  }
+  return days
+})
 
-    const currentWeek = weekRanges.value[selectedWeek.value];
-    const days = [];
-
-    // Add empty days for start of first week
-    if (selectedWeek.value === 0) {
-        const firstWeekday = calendar.currentDate.startOf('month').weekday - 1;
-        for (let i = 0; i < firstWeekday; i++) {
-            days.push(null);
-        }
-    }
-
-    // Add days in the current week
-    for (let day = Math.max(1, currentWeek.start); day <= currentWeek.end; day++) {
-        days.push(day);
-    }
-
-    return days;
-});
-
-// Handle day selection
 const selectDay = (day) => {
-    if (day === selectedDay.value) {
-        selectedDay.value = null;
-    } else {
-        selectedDay.value = day;
-    }
-};
+  selectedDay.value = day === selectedDay.value ? null : day
+}
 
-// Get events for the selected day
 const selectedDayEvents = computed(() => {
-    if (!selectedDay.value) return [];
-    return calendar.calendar.filter((obj) => obj.dates.indexOf(selectedDay.value) > -1);
-});
+  if (!selectedDay.value) return []
+  return calendar.calendar.filter((obj) => obj.dates.indexOf(selectedDay.value) > -1)
+})
 
-// Navigation between weeks
 const nextWeek = () => {
-    if (selectedWeek.value < weekRanges.value.length - 1) {
-        selectedWeek.value++;
-        selectedDay.value = null;
-    }
-};
+  if (selectedWeek.value < weekRanges.value.length - 1) {
+    selectedWeek.value++
+    selectedDay.value = null
+  }
+}
 
 const prevWeek = () => {
-    if (selectedWeek.value > 0) {
-        selectedWeek.value--;
-        selectedDay.value = null;
-    }
-};
+  if (selectedWeek.value > 0) {
+    selectedWeek.value--
+    selectedDay.value = null
+  }
+}
 
-// Navigate to today
 const goToToday = () => {
-    // Use the store's goToToday to update the month and year
-    const today = calendar.goToToday();
-
-    // Find which week contains today
-    for (let i = 0; i < weekRanges.value.length; i++) {
-        const week = weekRanges.value[i];
-        if (today >= week.start && today <= week.end) {
-            selectedWeek.value = i;
-            break;
-        }
+  const today = calendar.goToToday()
+  for (let i = 0; i < weekRanges.value.length; i++) {
+    const week = weekRanges.value[i]
+    if (today >= week.start && today <= week.end) {
+      selectedWeek.value = i
+      break
     }
+  }
+  selectedDay.value = today
+}
 
-    // Select today
-    selectedDay.value = today;
-};
+const currentRoute = router.currentRoute.value
 
-// Get current route
-const currentRoute = router.currentRoute.value;
-
-// Open event details
 const openEvent = (eventId) => {
-    router.push({
-        query: { ...currentRoute.query, event: eventId.toString() }
-    });
-};
+  router.push({ query: { ...currentRoute.query, event: eventId.toString() } })
+}
 
-// Create new event
 const createNewEvent = () => {
-    // Add createNewEvent query parameter
-    router.push({
-        path: currentRoute.path,
-        query: { ...currentRoute.query, createNewEvent: 'true' }
-    });
-};
+  router.push({ path: currentRoute.path, query: { ...currentRoute.query, createNewEvent: 'true' } })
+}
+
+const eventBadgeClass = (event) => {
+  if (event.type === 'event' && event.user_id !== userStore.user.id)
+    return 'bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300'
+  if (event.type === 'event')
+    return 'bg-green-50 text-green-700 dark:bg-green-900/30 dark:text-green-400'
+  if (event.approved)
+    return 'bg-purple-50 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400'
+  return 'bg-red-50 text-red-700 dark:bg-red-900/30 dark:text-red-400'
+}
 </script>
 
 <template>
-  <FwbCard class="flex flex-col h-full !max-w-none w-full p-5">
-    <h3 class="text-base font-semibold text-gray-900 dark:text-white mb-4">
-      Calendar
-    </h3>
-    <div class="flex gap-2 z-20 items-center flex-col">
-      <!-- Date Controls Row -->
-      <div class="flex flex-wrap gap-2 justify-between items-center w-full">
-        <fwb-dropdown
-          class="min-w-[120px]"
-          :text="calendar.currentDate.toLocaleString({ month: 'long' })"
-        >
-          <fwb-list-group>
-            <fwb-list-group-item
-              class="cursor-pointer"
-              v-for="month in 12"
-              :key="`month_${month}`"
-              @click="
-                calendar.selectedMonth = DateTime.now()
-                  .startOf('year')
-                  .plus({ month: month - 1 }).month
-              "
-            >
-              {{
-                DateTime.now()
-                  .startOf('year')
-                  .plus({ month: month - 1 })
-                  .toLocaleString({ month: 'long' })
-              }}
-            </fwb-list-group-item>
-          </fwb-list-group>
-        </fwb-dropdown>
+  <Card>
+    <!-- Header -->
+    <div class="px-4 py-3 border-b border-gray-100 dark:border-gray-800">
+      <h3 class="text-sm font-semibold text-gray-900 dark:text-white">Calendar</h3>
+    </div>
 
-        <div class="flex gap-2 items-center">
-          <fwb-button
-            color="alternative"
-            size="sm"
-            @click="
-              calendar.selectedYear = DateTime.now().set({
-                year: calendar.selectedYear - 1,
-              }).year
-            "
+    <div class="px-4 py-3 flex flex-col gap-3">
+      <!-- Date controls -->
+      <div class="flex flex-wrap gap-2 items-center justify-between">
+        <!-- Month select -->
+        <select
+          :value="calendar.selectedMonth"
+          @change="calendar.selectedMonth = +$event.target.value"
+          class="text-sm bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 rounded-lg px-2.5 py-1.5 focus:outline-none focus:ring-1 focus:ring-blue-500 cursor-pointer"
+        >
+          <option
+            v-for="m in 12"
+            :key="m"
+            :value="DateTime.now().startOf('year').plus({ month: m - 1 }).month"
           >
+            {{ DateTime.now().startOf('year').plus({ month: m - 1 }).toLocaleString({ month: 'long' }) }}
+          </option>
+        </select>
+
+        <!-- Year navigation -->
+        <div class="flex items-center gap-2">
+          <Button variant="soft" size="sm" @click="calendar.selectedYear = DateTime.now().set({ year: calendar.selectedYear - 1 }).year">
             <ArrowLeft class="w-3 h-3" />
-          </fwb-button>
-          <div class="text-sm font-medium">{{ calendar.selectedYear }}</div>
-          <fwb-button
-            color="alternative"
-            size="sm"
-            @click="
-              calendar.selectedYear = DateTime.now().set({
-                year: calendar.selectedYear + 1,
-              }).year
-            "
-          >
+          </Button>
+          <span class="text-sm font-medium text-gray-700 dark:text-gray-300 min-w-[3rem] text-center">{{ calendar.selectedYear }}</span>
+          <Button variant="soft" size="sm" @click="calendar.selectedYear = DateTime.now().set({ year: calendar.selectedYear + 1 }).year">
             <ArrowRight class="w-3 h-3" />
-          </fwb-button>
+          </Button>
         </div>
 
-        <!-- Action Buttons -->
-        <div class="flex ml-auto" role="group">
-          <FwbButtonGroup>
-            <fwb-button color="blue" size="sm" @click="goToToday"
-              >Today</fwb-button
-            >
-            <fwb-button color="alternative" size="sm" @click="createNewEvent">
-              <PlusSquare class="w-4 h-4" />
-            </fwb-button>
-            <fwb-button
-              color="alternative"
-              size="sm"
-              @click="() => (showInfoModal = true)"
-            >
-              <InfoIcon class="w-5 h-5" />
-            </fwb-button>
-          </FwbButtonGroup>
+        <!-- Action buttons -->
+        <div class="flex items-center gap-1 ml-auto">
+          <Button variant="primary" size="sm" @click="goToToday">Today</Button>
+          <Button variant="soft" size="sm" @click="createNewEvent">
+            <PlusSquare class="w-4 h-4" />
+          </Button>
+          <Button variant="soft" size="sm" @click="showInfoModal = true">
+            <InfoIcon class="w-4 h-4" />
+          </Button>
         </div>
       </div>
-    </div>
-    <!-- Week view (compact, always shown) -->
-    <div class="flex flex-col w-full">
-      <!-- Week Navigation -->
-      <div class="flex justify-between items-center my-2">
-        <fwb-button
-          color="alternative"
-          size="sm"
-          @click="prevWeek"
-          :disabled="selectedWeek === 0"
-        >
-          <ArrowLeft class="w-3 h-3" />
-        </fwb-button>
 
-        <span class="text-xs font-medium">
+      <!-- Week navigation -->
+      <div class="flex justify-between items-center">
+        <Button variant="ghost" size="sm" :disabled="selectedWeek === 0" @click="prevWeek">
+          <ArrowLeft class="w-3 h-3" />
+        </Button>
+        <span class="text-xs text-gray-500 dark:text-gray-400 font-medium">
           Week {{ selectedWeek + 1 }} of {{ weekRanges.length }}
         </span>
-        <fwb-button
-          color="alternative"
-          size="sm"
-          @click="nextWeek"
-          :disabled="selectedWeek === weekRanges.length - 1"
-        >
+        <Button variant="ghost" size="sm" :disabled="selectedWeek === weekRanges.length - 1" @click="nextWeek">
           <ArrowRight class="w-3 h-3" />
-        </fwb-button>
+        </Button>
       </div>
 
-      <!-- Mobile Week View -->
-      <div class="grid grid-cols-7 w-full text-xs overflow-hidden">
-        <!-- Weekday Headers -->
+      <!-- Week grid -->
+      <div class="grid grid-cols-7 text-xs">
+        <!-- Day headers -->
         <div
           v-for="day in 7"
-          :key="`mobile-header-${day}`"
-          class="p-1 text-center font-medium"
+          :key="`hdr-${day}`"
+          class="py-1 text-center font-medium text-gray-400 dark:text-gray-500"
         >
-          <span>{{
-            DateTime.now()
-              .startOf('week')
-              .plus({ day: day - 1 })
-              .toFormat('ccc')[0]
-          }}</span>
+          {{ DateTime.now().startOf('week').plus({ day: day - 1 }).toFormat('ccc')[0] }}
         </div>
 
-        <!-- Days for current week -->
-        <template
-          v-for="(day, index) in currentWeekDays"
-          :key="`mobile-day-${index}`"
-        >
-          <div
-            v-if="day === null"
-            class="bg-gray-50 dark:bg-gray-800 p-1"
-          ></div>
+        <!-- Day cells -->
+        <template v-for="(day, index) in currentWeekDays" :key="`day-${index}`">
+          <div v-if="day === null" class="bg-gray-50 dark:bg-gray-800/30 min-h-[44px]" />
           <div
             v-else
             @click="selectDay(day)"
-            :class="`
-                            cursor-pointer border p-2 min-h-[50px] flex flex-col justify-between
-                            ${
-                              selectedDay === day
-                                ? 'bg-blue-50 dark:bg-blue-900 border-blue-400'
-                                : 'hover:bg-gray-50 dark:hover:bg-gray-700'
-                            }
-                            ${
-                              DateTime.now()
-                                .set({
-                                  year: calendar.selectedYear,
-                                  month: calendar.selectedMonth,
-                                  day: day,
-                                })
-                                .startOf('day')
-                                .diff(DateTime.now().startOf('day'), ['days'])
-                                .toObject().days === 0
-                                ? 'bg-gray-200 dark:bg-gray-600'
-                                : ''
-                            }
-                        `"
+            :class="[
+              'cursor-pointer border border-transparent min-h-[44px] p-1.5 flex flex-col items-center gap-1 rounded-lg transition-colors',
+              selectedDay === day
+                ? 'bg-blue-50 dark:bg-blue-900/30 border-blue-300 dark:border-blue-700'
+                : 'hover:bg-gray-50 dark:hover:bg-gray-800/50',
+              DateTime.now().set({ year: calendar.selectedYear, month: calendar.selectedMonth, day }).startOf('day').diff(DateTime.now().startOf('day'), ['days']).toObject().days === 0
+                ? 'font-bold text-blue-600 dark:text-blue-400'
+                : 'text-gray-700 dark:text-gray-300'
+            ]"
           >
-            <div class="font-medium">{{ day }}</div>
-            <div
-              v-if="
-                calendar.calendar.filter(obj => obj.dates.indexOf(day) > -1)
-                  .length > 0
-              "
-              class="w-2 h-2 rounded-full bg-blue-500 self-center mt-1"
-            ></div>
+            <span>{{ day }}</span>
+            <span
+              v-if="calendar.calendar.filter(obj => obj.dates.indexOf(day) > -1).length > 0"
+              class="w-1.5 h-1.5 rounded-full bg-blue-500"
+            />
           </div>
         </template>
       </div>
 
-      <!-- Selected Day Events -->
-      <div v-if="selectedDay" class="mt-4 border-t pt-3">
-        <h3 class="font-medium mb-2">
-          Events for
+      <!-- Selected day events -->
+      <div v-if="selectedDay" class="border-t border-gray-100 dark:border-gray-800 pt-3">
+        <p class="text-xs font-medium text-gray-500 dark:text-gray-400 mb-2">
           {{
             DateTime.now()
-              .set({
-                year: calendar.selectedYear,
-                month: calendar.selectedMonth,
-                day: selectedDay,
-              })
+              .set({ year: calendar.selectedYear, month: calendar.selectedMonth, day: selectedDay })
               .toFormat('LLL d, yyyy')
           }}
-        </h3>
+        </p>
 
-        <div
-          v-if="selectedDayEvents.length === 0"
-          class="text-sm text-gray-500"
-        >
-          No events scheduled for this day
-        </div>
+        <p v-if="selectedDayEvents.length === 0" class="text-sm text-gray-400 dark:text-gray-500">
+          No events scheduled
+        </p>
 
         <div v-else class="flex flex-col gap-2">
           <div
-            v-for="event in selectedDayEvents.sort(
-              (a, b) => new Date(a.start_time) - new Date(b.start_time),
-            )"
+            v-for="event in selectedDayEvents.sort((a, b) => new Date(a.start_time) - new Date(b.start_time))"
             :key="`event-${event.id}`"
-            class="border p-3 rounded-md hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer"
+            class="border border-gray-100 dark:border-gray-800 rounded-lg p-2.5 hover:bg-gray-50 dark:hover:bg-gray-800/50 cursor-pointer transition-colors"
             @click="openEvent(event.id)"
           >
-            <div class="flex justify-between">
-              <fwb-badge
-                :type="
-                  event.type === 'event' && event.user_id !== userStore.user.id
-                    ? 'default'
-                    : event.type === 'event'
-                    ? 'green'
-                    : event.approved
-                    ? 'purple'
-                    : 'red'
-                "
-              >
+            <div class="flex justify-between items-center mb-1">
+              <span :class="['inline-flex items-center px-2 py-0.5 rounded-md text-xs font-medium', eventBadgeClass(event)]">
                 {{ event.type === 'event' ? 'Event' : 'Task' }}
-              </fwb-badge>
-              <div class="text-xs text-gray-500">
-                {{ DateTime.fromISO(event.start_time).toFormat('h:mm a') }}
-              </div>
+              </span>
+              <span class="text-xs text-gray-400">{{ DateTime.fromISO(event.start_time).toFormat('h:mm a') }}</span>
             </div>
-            <h4 class="font-medium mt-1">{{ event.summary }}</h4>
-            <p
-              v-if="event.description"
-              class="text-sm text-gray-600 dark:text-gray-300 mt-1 line-clamp-2"
-            >
+            <p class="text-sm font-medium text-gray-800 dark:text-white">{{ event.summary }}</p>
+            <p v-if="event.description" class="text-xs text-gray-500 dark:text-gray-400 mt-0.5 line-clamp-2">
               {{ event.description }}
             </p>
           </div>
         </div>
       </div>
     </div>
-  </FwbCard>
+  </Card>
+
   <Form v-if="calendar.showEditForm" />
   <CalendarDetails v-if="calendar.showCalendarDetails" />
+
   <Modal :hideModal="showInfoModal" @closed="showInfoModal = false">
-    <template #header>
-      <h1 class="text-lg">Subscribe to calendar</h1>
-    </template>
+    <template #header>Subscribe to calendar</template>
     <template #body>
-      Address: <b>{{ location }}calendar </b> <br />
-      username: <b>{{ userStore.user.email }}</b> <br />
-      password: <b>your password</b>
-      <h2>Note</h2>
-      <p>
-        Check on the internet how you can subscribe to calendar with base base
-        authentication.
-      </p>
-      <h4>For android:</h4>
-      <p>Use ICSx5 or some similar app</p>
-      <h4>For MacOS/iOS:</h4>
-      <p>Open calendar click on calendars and subscribe to calendars</p>
+      <div class="flex flex-col gap-2 text-sm">
+        <div><span class="text-gray-500">Address:</span> <strong>{{ location }}calendar</strong></div>
+        <div><span class="text-gray-500">Username:</span> <strong>{{ userStore.user.email }}</strong></div>
+        <div><span class="text-gray-500">Password:</span> <strong>your password</strong></div>
+        <p class="text-gray-500 text-xs mt-2">
+          Check online for how to subscribe to a CalDAV calendar with basic authentication.<br />
+          <strong>Android:</strong> Use ICSx⁵ or similar.<br />
+          <strong>macOS/iOS:</strong> Open Calendar → subscribe to calendars.
+        </p>
+      </div>
     </template>
   </Modal>
 </template>
-
-<style scoped></style>

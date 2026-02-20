@@ -286,6 +286,11 @@ pre .hljs-strong {
   @apply list-disc;
 }
 
+.tiptap li > p {
+  margin: 0;
+  display: inline;
+}
+
 .ProseMirror table td {
   min-width: 1vw;
 }

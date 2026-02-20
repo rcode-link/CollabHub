@@ -1,273 +1,181 @@
 <template>
-  <div class="table-toolbar">
-    <!-- Top toolbar - always visible for basic controls -->
-    <div class="top-toolbar" :class="{ 'toolbar-visible': selected }">
-      <div class="toolbar-row primary-actions">
-        <FwbButton
-          :color="isStriped ? 'primary' : 'light'" 
-          size="sm"
+  <div class="table-shell">
+    <!-- Toolbar — visible when table is focused -->
+    <div v-if="selected" class="table-controls">
+      <!-- Row group -->
+      <div class="ctrl-group">
+        <span class="ctrl-label">Rows</span>
+        <button class="ctrl-btn" title="Add row above" @click="editor.commands.addRowBefore()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 10h18M3 14h18M12 6V3m0 0-2 2m2-2 2 2"/>
+          </svg>
+        </button>
+        <button class="ctrl-btn" title="Add row below" @click="editor.commands.addRowAfter()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 10h18M3 14h18M12 18v3m0 0 2-2m-2 2-2-2"/>
+          </svg>
+        </button>
+        <button class="ctrl-btn ctrl-btn-danger" title="Delete row" @click="editor.commands.deleteRow()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 10h18M3 14h18M5 18l14-12"/>
+          </svg>
+        </button>
+      </div>
+
+      <div class="ctrl-sep" />
+
+      <!-- Column group -->
+      <div class="ctrl-group">
+        <span class="ctrl-label">Cols</span>
+        <button class="ctrl-btn" title="Add column before" @click="editor.commands.addColumnBefore()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M9 3v18M15 3v18M6 12H3m0 0 2-2m-2 2 2 2"/>
+          </svg>
+        </button>
+        <button class="ctrl-btn" title="Add column after" @click="editor.commands.addColumnAfter()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M9 3v18M15 3v18M18 12h3m0 0-2-2m2 2-2 2"/>
+          </svg>
+        </button>
+        <button class="ctrl-btn ctrl-btn-danger" title="Delete column" @click="editor.commands.deleteColumn()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M9 3v18M15 3v18M5 5l14 14"/>
+          </svg>
+        </button>
+      </div>
+
+      <div class="ctrl-sep" />
+
+      <!-- Style -->
+      <div class="ctrl-group">
+        <button
+          :class="['ctrl-btn ctrl-btn-text', isStriped && 'ctrl-btn-active']"
+          title="Toggle striped rows"
           @click="editor.commands.toggleTableStriped()"
-          title="Toggle striped"
-          class="table-action-btn"
         >
-          <span class="flex items-center">
-            <svg xmlns="http://www.w3.org/2000/svg" class="icon" viewBox="0 0 24 24" width="16" height="16">
-              <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 5h16M4 9h16M4 13h16M4 17h16"/>
-            </svg>
-            <span class="ml-1">Striped</span>
-          </span>
-        </FwbButton>
-        
-        <FwbButton
-          color="red"
-          size="sm"
-          @click="editor.commands.deleteTable()"
-          title="Delete table"
-          class="ml-auto table-action-btn"
-        >
-          <span class="flex items-center">
-            <svg xmlns="http://www.w3.org/2000/svg" class="icon" viewBox="0 0 24 24" width="16" height="16">
-              <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7h16M10 11v6M14 11v6M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2l1-12M9 7V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v3"/>
-            </svg>
-            <span class="ml-1">Delete</span>
-          </span>
-        </FwbButton>
+          Striped
+        </button>
       </div>
-      
-      <!-- Row operations -->
-      <div v-if="selected" class="toolbar-row">
-        <div class="toolbar-section">
-          <div class="toolbar-label">Rows</div>
-          <div class="toolbar-buttons">
-            <FwbButton
-              color="light"
-              size="sm"
-              @click="editor.commands.addRowBefore()"
-              title="Add row above"
-              class="table-action-icon-btn"
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" class="icon" viewBox="0 0 24 24" width="16" height="16">
-                <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 18h16M4 12h16M4 6h16M12 3v3M12 9v3M12 15v3M12 21v3"/>
-              </svg>
-            </FwbButton>
-            
-            <FwbButton
-              color="light"
-              size="sm"
-              @click="editor.commands.addRowAfter()"
-              title="Add row below"
-              class="table-action-icon-btn"
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" class="icon" viewBox="0 0 24 24" width="16" height="16">
-                <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 18h16M4 12h16M4 6h16M12 3v3M12 9v3M12 15v3M12 21v3"/>
-              </svg>
-            </FwbButton>
-            
-            <FwbButton
-              color="light"
-              size="sm"
-              @click="editor.commands.deleteRow()"
-              title="Delete row"
-              class="table-action-icon-btn"
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" class="icon" viewBox="0 0 24 24" width="16" height="16">
-                <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 6h18M3 12h18M3 18h18M23 12H1"/>
-              </svg>
-            </FwbButton>
-          </div>
-        </div>
-        
-        <!-- Column operations -->
-        <div class="toolbar-section">
-          <div class="toolbar-label">Columns</div>
-          <div class="toolbar-buttons">
-            <FwbButton
-              color="light"
-              size="sm"
-              @click="editor.commands.addColumnBefore()"
-              title="Add column before"
-              class="table-action-icon-btn"
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" class="icon" viewBox="0 0 24 24" width="16" height="16">
-                <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 4v16M12 4v16M18 4v16M3 12h18"/>
-              </svg>
-            </FwbButton>
-            
-            <FwbButton
-              color="light"
-              size="sm"
-              @click="editor.commands.addColumnAfter()"
-              title="Add column after"
-              class="table-action-icon-btn"
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" class="icon" viewBox="0 0 24 24" width="16" height="16">
-                <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 4v16M12 4v16M18 4v16M3 12h18"/>
-              </svg>
-            </FwbButton>
-            
-            <FwbButton
-              color="light"
-              size="sm"
-              @click="editor.commands.deleteColumn()"
-              title="Delete column"
-              class="table-action-icon-btn"
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" class="icon" viewBox="0 0 24 24" width="16" height="16">
-                <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 3v18M12 3v18M18 3v18M12 3H6M12 21H6"/>
-              </svg>
-            </FwbButton>
-          </div>
-        </div>
-      </div>
+
+      <!-- Delete table — pushed right -->
+      <button
+        class="ctrl-btn ctrl-btn-danger ctrl-btn-text ml-auto"
+        title="Delete table"
+        @click="editor.commands.deleteTable()"
+      >
+        Delete table
+      </button>
     </div>
-    
-    <!-- Table content slot -->
+
+    <!-- Table content -->
     <slot />
-    
-    <!-- Bottom toolbar -->
-    <div class="bottom-toolbar" :class="{ 'toolbar-visible': selected }">
-      <div class="toolbar-section">
-        <div class="toolbar-label">Insert after table</div>
-        <div class="toolbar-buttons">
-          <FwbButton
-            color="light"
-            size="sm"
-            @click="editor.commands.addElementAfterTable('paragraph')"
-            title="Add text below"
-            class="table-action-btn"
-          >
-            <span class="flex items-center">
-              <svg xmlns="http://www.w3.org/2000/svg" class="icon" viewBox="0 0 24 24" width="16" height="16">
-                <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h12"/>
-              </svg>
-              <span class="ml-1">Text</span>
-            </span>
-          </FwbButton>
-          
-          <FwbButton
-            color="light"
-            size="sm"
-            @click="editor.commands.addElementAfterTable('heading')"
-            title="Add heading below"
-            class="table-action-btn"
-          >
-            <span class="flex items-center">
-              <svg xmlns="http://www.w3.org/2000/svg" class="icon" viewBox="0 0 24 24" width="16" height="16">
-                <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 4v16M17 4v16M3 12h18"/>
-              </svg>
-              <span class="ml-1">Heading</span>
-            </span>
-          </FwbButton>
-        </div>
-      </div>
-    </div>
   </div>
 </template>
 
 <script setup>
-import { FwbButton } from "flowbite-vue";
-
-const props = defineProps({
-  editor: {
-    type: Object,
-    required: true,
-  },
-  node: {
-    type: Object,
-    required: true,
-  },
-  isStriped: {
-    type: Boolean,
-    default: false,
-  },
-  selected: {
-    type: Boolean,
-    default: false,
-  }
-});
+defineProps({
+  editor: { type: Object, required: true },
+  node: { type: Object, required: true },
+  isStriped: { type: Boolean, default: false },
+  selected: { type: Boolean, default: false },
+})
 </script>
 
-<style>
-.table-toolbar {
+<style scoped>
+.table-shell {
   width: 100%;
 }
 
-.top-toolbar, .bottom-toolbar {
+.table-controls {
   display: flex;
-  flex-direction: column;
+  align-items: center;
   gap: 4px;
-  padding: 6px;
-  background-color: rgb(243, 244, 246);
-  border: 1px solid rgb(229, 231, 235);
-  transition: all 0.2s ease-in-out;
-}
-
-.top-toolbar {
-  border-top-left-radius: 4px;
-  border-top-right-radius: 4px;
-  border-bottom: none;
-}
-
-.bottom-toolbar {
-  border-bottom-left-radius: 4px;
-  border-bottom-right-radius: 4px;
-  border-top: none;
-}
-
-.toolbar-row {
-  display: flex;
-  gap: 8px;
-  margin-bottom: 4px;
+  padding: 4px 6px;
+  margin-bottom: 2px;
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
   flex-wrap: wrap;
 }
 
-.toolbar-section {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  margin-right: 12px;
+:global(.dark) .table-controls {
+  background: #111827;
+  border-color: #374151;
 }
 
-.toolbar-label {
-  font-size: 0.75rem;
-  color: #6b7280;
-  font-weight: 500;
-}
-
-.toolbar-buttons {
-  display: flex;
-  gap: 4px;
-}
-
-.toolbar-visible {
-  background-color: rgb(239, 246, 255);
-  border-color: rgb(191, 219, 254);
-}
-
-.primary-actions {
-  padding-bottom: 4px;
-}
-
-.table-action-btn {
-  transition: all 0.2s ease;
-}
-
-.table-action-icon-btn {
-  padding: 0.25rem !important;
-  height: 28px;
-  width: 28px;
+.ctrl-group {
   display: flex;
   align-items: center;
+  gap: 2px;
+}
+
+.ctrl-label {
+  font-size: 0.65rem;
+  font-weight: 600;
+  color: #9ca3af;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 0 4px 0 2px;
+  user-select: none;
+}
+
+.ctrl-btn {
+  display: inline-flex;
+  align-items: center;
   justify-content: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 4px;
+  color: #6b7280;
+  transition: background 0.1s, color 0.1s;
+  flex-shrink: 0;
+}
+.ctrl-btn svg {
+  width: 14px;
+  height: 14px;
+}
+.ctrl-btn:hover {
+  background: #e5e7eb;
+  color: #111827;
+}
+:global(.dark) .ctrl-btn {
+  color: #9ca3af;
+}
+:global(.dark) .ctrl-btn:hover {
+  background: #374151;
+  color: #f9fafb;
+}
+.ctrl-btn-text {
+  width: auto;
+  padding: 0 8px;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+.ctrl-btn-active {
+  background: #eff6ff;
+  color: #2563eb;
+}
+:global(.dark) .ctrl-btn-active {
+  background: #1e3a8a;
+  color: #93c5fd;
+}
+.ctrl-btn-danger:hover {
+  background: #fee2e2;
+  color: #dc2626;
+}
+:global(.dark) .ctrl-btn-danger:hover {
+  background: #450a0a;
+  color: #f87171;
 }
 
-/* Animation for toolbar visibility */
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+.ctrl-sep {
+  width: 1px;
+  height: 16px;
+  background: #e5e7eb;
+  margin: 0 2px;
+  flex-shrink: 0;
 }
-
-.toolbar-visible .toolbar-row:not(.primary-actions) {
-  animation: fadeIn 0.3s ease-in-out;
+:global(.dark) .ctrl-sep {
+  background: #374151;
 }
 </style>

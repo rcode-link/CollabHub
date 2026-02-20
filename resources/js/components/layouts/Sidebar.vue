@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, reactive, computed, watch, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import {
     FwbAvatar,
@@ -7,10 +7,12 @@ import {
     FwbDropdown,
     FwbListGroup,
     FwbListGroupItem,
+    FwbModal,
 } from 'flowbite-vue'
 import { Tippy } from 'vue-tippy'
 import { useAbility } from '@casl/vue'
 import { useUserStore } from '../../store/user'
+import { useTasksStore } from '../../store/tasksStore'
 import HomeIcon from '../shared/icons/HomeIcon.vue'
 import ChatIcon from '../shared/icons/ChatIcon.vue'
 import BanknotesIcon from '../shared/icons/BanknotesIcon.vue'
@@ -25,6 +27,7 @@ import ArrowDownIcon from '../shared/icons/ArrowDownIcon.vue'
 
 const { can } = useAbility()
 const userStore = useUserStore()
+const tasksStore = useTasksStore()
 const router = useRouter()
 
 const sidebarOpen = ref(false)
@@ -47,6 +50,38 @@ const loadProjects = () => {
 onMounted(() => {
     loadProjects()
 })
+
+// New project modal
+const newProjectModal = ref(false)
+const saving = ref(false)
+const newProject = reactive({ name: '', key: '' })
+
+watch(() => newProject.name, (name) => {
+    const words = name.trim().split(/\s+/).filter(Boolean)
+    if (words.length === 1) {
+        newProject.key = words[0].slice(0, 5).toUpperCase()
+    } else {
+        newProject.key = words.map(w => w[0]).join('').slice(0, 5).toUpperCase()
+    }
+})
+
+const openNewProject = () => {
+    newProject.name = ''
+    newProject.key = ''
+    newProjectModal.value = true
+}
+
+const createProject = () => {
+    if (!newProject.name.trim() || !newProject.key.trim()) return
+    saving.value = true
+    window.axios.post('/api/v1/projects', { ...newProject }).then(res => {
+        newProjectModal.value = false
+        loadProjects()
+        router.push({ name: 'project-details', params: { project: res.data.id } })
+    }).finally(() => {
+        saving.value = false
+    })
+}
 
 const handleOpenProject = (obj) => {
     localStorage.setItem('lastProject', obj.id)
@@ -122,6 +157,17 @@ const changeTheme = (theme) => {
 
         <!-- Navigation -->
         <nav class="flex-1 overflow-y-auto px-3 py-4 space-y-1">
+            <!-- New task CTA -->
+            <button
+                @click="tasksStore.toggleCreateTaskModal(); closeSidebar()"
+                class="flex w-full items-center justify-center gap-2 rounded-lg bg-blue-600 px-3 py-2 mb-3 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-500 active:bg-blue-700"
+            >
+                <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                </svg>
+                New task
+            </button>
+
             <router-link
                 :to="{ name: 'home' }"
                 class="sidebar-nav-link"
@@ -146,6 +192,18 @@ const changeTheme = (theme) => {
                 </span>
             </router-link>
 
+            <router-link
+                :to="{ name: 'documents' }"
+                class="sidebar-nav-link"
+                @click="closeSidebar"
+            >
+                <svg class="w-5 h-5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                        d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+                <span>Documents</span>
+            </router-link>
+
             <!-- Projects collapsible -->
             <div>
                 <button
@@ -163,6 +221,15 @@ const changeTheme = (theme) => {
                     />
                 </button>
                 <div v-if="projectsOpen" class="mt-1 ml-4 space-y-1">
+                    <button
+                        @click="openNewProject"
+                        class="flex w-full items-center gap-1.5 rounded-md bg-blue-600 px-2 py-1.5 text-xs font-medium text-white transition hover:bg-blue-500 mb-2"
+                    >
+                        <svg class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                        </svg>
+                        New project
+                    </button>
                     <input
                         v-model="projectSearch"
                         type="text"
@@ -278,4 +345,46 @@ const changeTheme = (theme) => {
             </fwb-dropdown>
         </div>
     </aside>
+
+    <!-- New project modal -->
+    <fwb-modal v-if="newProjectModal" @close="newProjectModal = false">
+        <template #header>
+            <h2 class="text-base font-semibold">New project</h2>
+        </template>
+        <template #body>
+            <div class="space-y-4">
+                <div>
+                    <label class="block mb-1.5 text-sm font-medium text-gray-900 dark:text-white">Project name</label>
+                    <input
+                        v-model="newProject.name"
+                        placeholder="e.g. Marketing Website"
+                        @keydown.enter="createProject"
+                        class="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-3 py-2 text-sm text-gray-900 dark:text-white placeholder-gray-400 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                    />
+                </div>
+                <div>
+                    <label class="block mb-1.5 text-sm font-medium text-gray-900 dark:text-white">
+                        Project key
+                        <span class="ml-1 text-xs font-normal text-gray-400">(document prefix)</span>
+                    </label>
+                    <input
+                        v-model="newProject.key"
+                        placeholder="e.g. MKT"
+                        @keydown.enter="createProject"
+                        class="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-3 py-2 text-sm text-gray-900 dark:text-white font-mono placeholder-gray-400 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                    />
+                    <p class="mt-1 text-xs text-gray-400">Short uppercase identifier, unique per project</p>
+                </div>
+            </div>
+        </template>
+        <template #footer>
+            <fwb-button
+                @click="createProject"
+                :disabled="!newProject.name.trim() || !newProject.key.trim() || saving"
+            >
+                {{ saving ? 'Creating…' : 'Create project' }}
+            </fwb-button>
+            <fwb-button color="alternative" @click="newProjectModal = false">Cancel</fwb-button>
+        </template>
+    </fwb-modal>
 </template>

@@ -7,9 +7,7 @@
     :getPos="getPos"
     :selected="selected"
   >
-        <ul  class="max-w-md space-y-1 text-gray-500 list-disc list-inside dark:text-gray-400">
-     <node-view-content />
-        </ul>
+    <node-view-content as="ul" class="pl-5 list-disc text-gray-500 dark:text-gray-400" />
   </BaseContianer>
 </template>
 

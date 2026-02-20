@@ -26,8 +26,8 @@ class StoreFilesRequest extends FormRequest
             'content' => ['nullable', 'array'],
             'parent_id' => ['nullable', 'exists:files,id'],
             'type' => ['required', 'in:folder,file'],
-            'entity_id' => ['numeric'],
-            'entity_type' => ['string']
+            'entity_id' => ['nullable', 'numeric'],
+            'entity_type' => ['nullable', 'string']
         ];
     }
 }
