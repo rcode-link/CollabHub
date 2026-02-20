@@ -1,9 +1,8 @@
 <script setup lang="js">
 import { useLiveKit } from "../../../functions/liveKit";
 import { useVideoCallStore } from '@/store/videoCallStore'
-import { useRoute } from 'vue-router'
 //@ts-ignore
-import { reactive, watch } from "vue";
+import { reactive } from "vue";
 
 //@ts-ignore
 import VideoOptions from "./partials/VideoOptions.vue";
@@ -27,9 +26,7 @@ const start = async (obj) => {
     model.enableCamera = obj.enableCamera;
     model.enableMicrophone = obj.enableMicrophone;
     model.shareScreen = obj.shareScreen;
-    if (!obj.token) {
-        return;
-    }
+    if (!obj.token) return;
     model.token = obj.token;
     liveKit.token = obj.token;
     await liveKit.initRoom();
@@ -40,42 +37,16 @@ const start = async (obj) => {
 
 <template>
     <div :class="{
-        'fixed call-container  z-50': true,
-        'top-0 left-0 bottom-0 bg-gray-100 dark:bg-gray-900 right-0': videoCall.size === 'fullScreen',
-        'w-72 h-20 shadow overflow-hidden rounded bg-gray-900 bottom-4 right-4': videoCall.size !== 'fullScreen',
+        'fixed z-50': true,
+        'call-container top-0 left-0 bottom-0 right-0 bg-gray-900': videoCall.size === 'fullScreen',
+        'w-72 h-20 bottom-4 right-4 shadow-2xl overflow-hidden rounded-xl bg-gray-900': videoCall.size !== 'fullScreen',
     }">
         <WelcomeScreen v-if="model.token === null" @update="start" />
-        <div v-if="model.token">
-            <VideoOptions />
+        <div v-if="model.token" class="relative h-full">
             <PrintTracks :class="{
                 'opacity-0 pointer-events-none': videoCall.size !== 'fullScreen',
             }" />
+            <VideoOptions />
         </div>
     </div>
 </template>
-<style scoped>
-.grid {
-    @apply flex flex-wrap justify-center h-screen items-center gap-1;
-}
-
-.screen-share {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    @apply justify-center h-screen items-center gap-1;
-}
-
-.calls-enter-active,
-.calls-leave-active {
-    opacity: 1;
-    transition: all 0.1s ease;
-}
-
-.calls-enter-from,
-.calls-leave-to {
-    opacity: 0;
-}
-
-.calls-leave-active {
-    position: absolute;
-}
-</style>

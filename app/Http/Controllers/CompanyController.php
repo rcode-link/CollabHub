@@ -21,9 +21,7 @@ class CompanyController extends Controller
         $comapny = Company::whereIn('id', $permission)->firstOrFail();
         return array_merge(
             $comapny->toArray(),
-            [
-                'avatar' => $comapny->getFirstMediaUrl('avatar')
-            ]
+            ['avatar' => mediaUrl($comapny->getFirstMedia('avatar'))]
         );
     }
 
@@ -55,9 +53,7 @@ class CompanyController extends Controller
         $this->authorize('view', $company);
         return array_merge(
             $company->toArray(),
-            [
-                'avatar' => $company->getFirstMediaUrl('avatar')
-            ]
+            ['avatar' => mediaUrl($company->getFirstMedia('avatar'))]
         );
     }
 

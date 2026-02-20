@@ -13,6 +13,7 @@ use App\Http\Controllers\CustomerCompanyController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\FileController;
+use App\Http\Controllers\ForgotPasswordController;
 use App\Http\Controllers\InvitationsController;
 use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\InvoiceDataController;
@@ -28,6 +29,7 @@ use App\Http\Controllers\PusherController;
 use App\Http\Controllers\PushNotificationController;
 use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\ReportController;
+use App\Http\Controllers\ResetPasswordController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\ShareBoardController;
 use App\Http\Controllers\SprintController;
@@ -53,6 +55,7 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::middleware(['auth:sanctum'])->group(function () {
+
     Route::apiResource('/push-notification', PushNotificationController::class);
     Route::post('/link-preview', [LinkPreviewController::class, 'fetch']);
 
@@ -133,9 +136,17 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('/chat/{id}/left', [ChatController::class, 'left'])->name('api.chatLeft');
 
     \App\Helpers\Socket\BroadcastCustom::route();
+
+    Route::post('/logout', function (\Illuminate\Http\Request $request) {
+        $request->user()->currentAccessToken()->delete();
+
+        return response()->noContent();
+    })->name('api.logout');
 });
 Route::post('/register', RegisterController::class)->name('api.register');
 Route::post('/login', LoginController::class)->name('api.login');
+Route::post('/forgot-password', ForgotPasswordController::class)->name('api.forgot-password');
+Route::post('/reset-password', ResetPasswordController::class)->name('api.reset-password');
 Route::get('/video-call/{video}/join', [VideoCallController::class, 'getVideoCallToken'])->name('api.get.getVideoCallToken');
 Route::put('/video-call/{video}/join', [VideoCallController::class, 'getVideoCallToken'])->name('api.put.getVideoCallToken');
 Route::post('/webhook', [PusherController::class, 'webhook'])->name('api.webhook');

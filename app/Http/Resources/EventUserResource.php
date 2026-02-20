@@ -19,7 +19,7 @@ class EventUserResource extends JsonResource
             'attending' => $this->pivot->attending,
             'name' => $this->name,
             'email' => $this->email,
-            'avatar' => $this->getFirstMediaUrl('avatar'),
+            'avatar' => mediaUrl($this->getFirstMedia('avatar')),
         ];
     }
 }

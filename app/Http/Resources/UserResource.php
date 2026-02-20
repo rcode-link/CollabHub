@@ -54,7 +54,7 @@ class UserResource extends JsonResource
             'id' => $this->id,
             'name' => $this->name,
             'email' => $this->email,
-            'avatar' => str_replace('//storage', '/storage', $this->getFirstMediaUrl('avatar')),
+            'avatar' => mediaUrl($this->getFirstMedia('avatar')),
             'start_work_time' => $this->start_work_time,
             'end_work_time' => $this->end_work_time,
             'deleted_at' => $this->deleted_at,

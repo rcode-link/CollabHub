@@ -93,7 +93,7 @@ class ChatResource extends JsonResource
             return [
                 'title' => $user?->name,
                 'type' => ChatTypes::USER->value,
-                'avatar' => str_replace('//storage', '/storage', $user?->getFirstMediaUrl('avatar')),
+                'avatar' => mediaUrl($user?->getFirstMedia('avatar')),
                 'chatable_id' => $user->id,
             ];
         }

@@ -1,5 +1,4 @@
 <script setup>
-import { ref } from "vue";
 import { FwbButton } from "flowbite-vue";
 import { chatDetails } from "../../../../../store/chatStore.js";
 import { useRoute, useRouter } from "vue-router";
@@ -7,12 +6,11 @@ import PhoneIcon from "../../../../shared/icons/PhoneIcon.vue";
 import UserIcon from "../../../../shared/UserIcon.vue";
 import Task from "../../../../shared/icons/Task.vue";
 import EarthIcon from "../../../../shared/icons/EarthIcon.vue";
-import SearchMessages from "./SearchMessages.vue";
 
+const emit = defineEmits(['toggleSearch']);
 const chatStore = chatDetails();
 const route = useRoute();
 const router = useRouter();
-const showSearch = ref(false);
 
 const startCall = () => {
     axios.post(`/api/v1/video-call/${route.params.chatId}/start`).then((res) => {
@@ -45,7 +43,7 @@ const makeLink = () => {
 
         <div class="flex items-center gap-2 ml-auto flex-shrink-0">
             <!-- Search toggle -->
-            <fwb-button color="alternative" outline square @click="showSearch = true">
+            <fwb-button color="alternative" outline square @click="emit('toggleSearch')">
                 <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                         d="M21 21l-4.35-4.35M17 11A6 6 0 1 1 5 11a6 6 0 0 1 12 0z" />
@@ -59,8 +57,6 @@ const makeLink = () => {
             </fwb-button>
         </div>
 
-        <!-- Search overlay (covers the whole chat-details area via absolute positioning) -->
-        <SearchMessages v-if="showSearch" @close="showSearch = false" />
     </header>
 </template>
 

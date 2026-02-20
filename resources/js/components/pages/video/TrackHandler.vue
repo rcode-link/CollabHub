@@ -1,78 +1,79 @@
 <script setup lang="ts">
-//@ts-ignore
-import { FwbButton, FwbBadge } from "flowbite-vue";
 import MicrophoneSlashIcon from "../../shared/icons/MicrophoneSlashIcon.vue";
 import { computed } from "vue";
 import { Track } from "livekit-client";
 
-const props = withDefaults(
-    defineProps<{
-        tracks: Track[];
-        userImage?: string;
-        enableAudio: boolean;
-        name: string;
-    }>(),
-    {
-        userImage:
-            "https://imgs.search.brave.com/GrTMprW4fg05XTsfzacsNofnbaMJuXlbLIXZqUAn9vg/rs:fit:860:0:0/g:ce/aHR0cHM6Ly90NC5m/dGNkbi5uZXQvanBn/LzAwLzY0LzY3LzI3/LzM2MF9GXzY0Njcy/NzM2X1U1a3BkR3M5/a2VVbGw4Q1JRM3Az/WWFFdjJNNnFrVlk1/LmpwZw",
-    }
-);
+const props = defineProps<{
+    tracks: Track[];
+    enableAudio: boolean;
+    name: string;
+}>();
+
 const filterTracks = computed(() => {
     if (!props.enableAudio) {
         return props.tracks.filter((obj) => obj.kind !== Track.Kind.Audio);
     }
-
     return props.tracks;
 });
 
 const isAudioMuted = computed(() => {
     const data = props.tracks.filter((obj) => obj.kind === Track.Kind.Audio);
-    if (data.length) {
-        return data[0].isMuted;
-    }
-
+    if (data.length) return data[0].isMuted;
     return true;
 });
 
 const isVideoDisabled = computed(() => {
     const data = props.tracks.filter((obj) => obj.kind === Track.Kind.Video);
-    if (data.length) {
-        return data[0].isMuted;
-    }
-
+    if (data.length) return data[0].isMuted;
     return true;
 });
+
+const initials = computed(() => {
+    return (props.name ?? '?')
+        .split(' ')
+        .map((w: string) => w[0])
+        .join('')
+        .toUpperCase()
+        .slice(0, 2);
+});
 </script>
+
 <template>
-    <div class="flex-1 relative player">
+    <div class="relative overflow-hidden rounded-2xl bg-gray-800 player">
+        <!-- Active video tracks -->
         <template v-for="track in filterTracks" :key="track.sid">
             <component
                 v-if="!track.isMuted"
                 :is="track.kind"
                 autoplay="true"
-                class="w-full"
                 playsInline="true"
+                class="h-full w-full object-cover"
                 :srcObject="track.mediaStream"
             />
         </template>
-        <div
-            v-if="isVideoDisabled"
-            class="bg-black flex h-full justify-center items-center"
-        >
-            <img :src="userImage" class="max-h-fit h-24" alt="" />
+
+        <!-- Camera off: show initials avatar -->
+        <div v-if="isVideoDisabled" class="absolute inset-0 flex items-center justify-center bg-gray-800">
+            <div
+                class="flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-br from-orange-500 to-blue-600 text-lg font-bold text-white select-none shadow-lg"
+            >
+                {{ initials }}
+            </div>
         </div>
-        <fwb-button
-            color="red"
-            v-if="isAudioMuted"
-            class="absolute right-1 bottom-1"
-        >
-            <MicrophoneSlashIcon class="w-4 h-4" />
-        </fwb-button>
-        <div class="username bg-white absolute bottom-1 left-1 px-2 rounded">
-            {{ name }}
+
+        <!-- Bottom gradient overlay with name + muted indicator -->
+        <div class="absolute inset-x-0 bottom-0 flex items-center justify-between bg-gradient-to-t from-black/70 to-transparent px-3 py-2.5">
+            <span class="text-xs font-medium text-white truncate drop-shadow">{{ name }}</span>
+            <div
+                v-if="isAudioMuted"
+                class="flex items-center gap-0.5 rounded-full bg-red-500/90 px-1.5 py-0.5 shadow"
+            >
+                <MicrophoneSlashIcon class="h-3 w-3 text-white" />
+            </div>
         </div>
     </div>
 </template>
+
 <style scoped>
 .player {
     aspect-ratio: 16/9;

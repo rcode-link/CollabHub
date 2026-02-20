@@ -43,13 +43,7 @@ class PushNotification extends Notification
             ->title('[new message]' . $this->message->user->name . ' sent you the message')
             ->body($messageData)
             ->data(['chat_id' => $this->message->chat_id])
-            ->icon(
-                str_replace(
-                    '//storage',
-                    '/storage',
-                    $this->message->user->getFirstMediaUrl('avatar')
-                )
-            )
+            ->icon(mediaUrl($this->message->user->getFirstMedia('avatar')))
             ->action('View App', 'notification_action');
     }
 }

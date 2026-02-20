@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 204 48" fill="none">
+  <defs>
+    <linearGradient id="iconGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#FF9500"/>
+      <stop offset="100%" stop-color="#4A90E2"/>
+    </linearGradient>
+
+    <mask id="hubMask">
+      <rect x="0" y="4" width="40" height="40" rx="10" fill="white"/>
+
+      <!-- Spokes (node-center → hub-center; circles trim the ends) -->
+      <line x1="20" y1="14" x2="20" y2="24" stroke="black" stroke-width="2.5" stroke-linecap="round"/>
+      <line x1="10" y1="34" x2="20" y2="24" stroke="black" stroke-width="2.5" stroke-linecap="round"/>
+      <line x1="30" y1="34" x2="20" y2="24" stroke="black" stroke-width="2.5" stroke-linecap="round"/>
+
+      <!-- Outer nodes — 7.5 px from every nearby edge (same as top dot) -->
+      <circle cx="20" cy="14" r="2.5" fill="black"/>  <!-- top:   14-2.5-4=7.5px from top   -->
+      <circle cx="10" cy="34" r="2.5" fill="black"/>  <!-- left:  10-2.5=7.5px  bot: 44-34-2.5=7.5px -->
+      <circle cx="30" cy="34" r="2.5" fill="black"/>  <!-- right: 40-30-2.5=7.5px bot: 7.5px -->
+
+      <!-- Center hub -->
+      <circle cx="20" cy="24" r="4"   fill="black"/>
+    </mask>
+  </defs>
+
+  <rect x="0" y="4" width="40" height="40" rx="10" fill="url(#iconGrad)" mask="url(#hubMask)"/>
+
+  <text
+    x="52" y="33"
+    font-family="-apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', Helvetica, Arial, sans-serif"
+    font-size="24" font-weight="800" letter-spacing="-0.6"
+  >
+    <tspan fill="#1F2937">Collab</tspan><tspan fill="#4A90E2">Hub</tspan>
+  </text>
+</svg>

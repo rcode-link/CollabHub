@@ -24,6 +24,7 @@
         "laravel/framework": "^12.15.0",
         "laravel/sanctum": "^4.1.1",
         "laravel/tinker": "^2.8",
+        "league/flysystem-aws-s3-v3": "^3.0",
         "league/flysystem-webdav": "^3.21",
         "moneyphp/money": "^4.5",
         "predis/predis": "*",

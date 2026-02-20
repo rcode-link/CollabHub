@@ -4,45 +4,42 @@ import CogsIcon from "../../../shared/icons/CogsIcon.vue";
 //@ts-ignore
 import DeviceSelectorItem from "./DeviceSelectorItem.vue";
 //@ts-ignore
-import {
-  FwbButton,
-  FwbDropdown,
-  FwbListGroup,
-  FwbListGroupItem,
-} from "flowbite-vue";
+import { FwbDropdown } from "flowbite-vue";
+
 const liveKit = useLiveKit();
 </script>
+
 <template>
-    <fwb-dropdown text="Audio input" placement="top">
+    <fwb-dropdown placement="top">
         <template #trigger>
-            <fwb-button pill square>
-                <CogsIcon class="w-6 h-6" />
-            </fwb-button>
+            <button
+                type="button"
+                title="Audio & video settings"
+                class="flex h-10 w-10 items-center justify-center rounded-full bg-gray-700 text-white shadow-md transition hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 focus:ring-offset-gray-900"
+            >
+                <CogsIcon class="h-5 w-5" />
+            </button>
         </template>
         <template #default>
-            <div>
-                <fwb-list-group>
-                    <fwb-list-group-item>
-                        <p class="font-bold text-lg">Video</p>
-                    </fwb-list-group-item>
-
-                    <DeviceSelectorItem
-                        type="videoinput"
-                        v-for="(obj, i) in liveKit.videoDevices"
-                        :key="i"
-                        :device="obj"
-                    />
-
-                    <fwb-list-group-item>
-                        <p class="font-bold text-lg">Audio</p>
-                    </fwb-list-group-item>
-                    <DeviceSelectorItem
-                        type="audioinput"
-                        v-for="(obj, i) in liveKit.audioDevices"
-                        :key="i"
-                        :device="obj"
-                    />
-                </fwb-list-group>
+            <div class="min-w-[200px] rounded-xl bg-gray-800 border border-gray-700 shadow-xl overflow-hidden">
+                <div class="px-3 py-2 text-xs font-semibold uppercase tracking-wide text-gray-400 border-b border-gray-700">
+                    Video input
+                </div>
+                <DeviceSelectorItem
+                    type="videoinput"
+                    v-for="(obj, i) in liveKit.videoDevices"
+                    :key="i"
+                    :device="obj"
+                />
+                <div class="px-3 py-2 text-xs font-semibold uppercase tracking-wide text-gray-400 border-y border-gray-700">
+                    Audio input
+                </div>
+                <DeviceSelectorItem
+                    type="audioinput"
+                    v-for="(obj, i) in liveKit.audioDevices"
+                    :key="i"
+                    :device="obj"
+                />
             </div>
         </template>
     </fwb-dropdown>

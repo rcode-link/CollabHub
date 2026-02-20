@@ -22,8 +22,10 @@ import _ from 'lodash'
 import { DateTime } from 'luxon'
 import { useTippy } from 'vue-tippy'
 import MessageOptions from './partials/messages/MessageOptions.vue'
+import SearchMessages from './partials/messages/SearchMessages.vue'
 
 const chatStore = chatDetails()
+const showSearch = ref(false)
 const route = useRoute()
 const router = useRouter()
 const page = ref(1)
@@ -74,7 +76,8 @@ onUnmounted(async () => {
 </script>
 <template>
     <div class="chat-details">
-        <Header />
+        <Header @toggle-search="showSearch = true" />
+        <SearchMessages v-if="showSearch" @close="showSearch = false" />
         <main ref="messageContainerRef" @scroll="chatLogic.scrolled"
             class="overflow-auto max-w-full pb-2 message-container">
             <!-- Loading indicator at top when loading older messages -->

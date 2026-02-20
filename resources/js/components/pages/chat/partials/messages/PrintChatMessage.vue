@@ -6,12 +6,10 @@
     }" :id="`message-${message.id}`">
         <div class="flex-1 p-1">
             <div class="text-xs font-bold" v-if="message.parent">
-                <Editor class="reply-editor-class" :editable="false" :model="message.parent.text" />
+                <RenderMessage class="reply-editor-class" :content="message.parent.text" />
                 <ArrowUpCurvedIcon class="w-4 h-4 text-gray-800 dark:text-gray-300" />
             </div>
-            <Editor ref="editor" :class="{
-                'ml-4 -mt-4': message.parent,
-            }" :model="message.message" :editable="false" />
+            <RenderMessage :class="{ 'ml-4 -mt-4': message.parent }" :content="message.message" />
             <div class="flex gap-4 flex-wrap">
                 <PrintFiles v-if="message.media.length" :media="message.media" />
             </div>
@@ -37,17 +35,14 @@
     </div>
 </template>
 <script setup>
-import Editor from '@/components/shared/Editor.vue'
+import RenderMessage from '@/components/shared/RenderMessage.vue'
 import PrintFiles from '@/components/shared/PrintFiles.vue'
 import { FwbBadge, FwbP } from 'flowbite-vue'
 import { DateTime } from 'luxon'
-import { computed, ref } from 'vue'
+import { computed } from 'vue'
 import _ from 'lodash'
-import EclipsisVerticalIcon from '@/components/shared/icons/EclipsisVerticalIcon.vue'
-
 import ArrowUpCurvedIcon from '@/components/shared/icons/ArrowUpCurvedIcon.vue'
 import PhoneIcon from '@/components/shared/icons/PhoneIcon.vue'
-const hovered = ref(false)
 const props = defineProps({
     message: {},
 })

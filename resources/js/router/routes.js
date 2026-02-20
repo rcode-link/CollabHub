@@ -232,6 +232,16 @@ export default [
     component: () => import('../components/pages/Register.vue'),
   },
   {
+    name: 'forgot-password',
+    path: '/forgot-password',
+    component: () => import('../components/pages/ForgotPassword.vue'),
+  },
+  {
+    name: 'reset-password',
+    path: '/reset-password',
+    component: () => import('../components/pages/ResetPassword.vue'),
+  },
+  {
     name: 'video-call',
     path: '/call/:slug',
     component: () => import('../components/pages/video/Index.vue'),

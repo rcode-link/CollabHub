@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use App\Helpers\SetEnviroment;
 use Dedoc\Scramble\Scramble;
+use Illuminate\Auth\Notifications\ResetPassword;
 use Dedoc\Scramble\Support\Generator\OpenApi;
 use Dedoc\Scramble\Support\Generator\SecurityScheme;
 use Illuminate\Database\Eloquent\Model;
@@ -29,6 +30,10 @@ class AppServiceProvider extends ServiceProvider
     {
 
         SetEnviroment::setup();
+
+        ResetPassword::createUrlUsing(function ($notifiable, $token) {
+            return config('app.url').'/reset-password?token='.$token.'&email='.urlencode($notifiable->getEmailForPasswordReset());
+        });
 
         \Illuminate\Routing\Route::macro('subdomain', function ($uri, $action) {
             $domain = request()->getHost();

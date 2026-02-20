@@ -1,150 +1,198 @@
 <script setup>
-import { onMounted, reactive, ref } from "vue";
-import Text from "../shared/Text.vue";
-import { useErrorsStore } from "../../store/errors";
-import Errors from "../shared/Errors.vue";
-import { useRoute, useRouter } from "vue-router";
-import Card from "../shared/Card.vue";
-import Label from "../shared/Label.vue";
-import Button from "../shared/Button.vue";
-import DangerAlert from "../shared/DangerAlert.vue";
-import { FwbCheckbox, FwbToggle } from "flowbite-vue";
+import { onMounted, reactive, ref, computed } from 'vue'
+import { useErrorsStore } from '../../store/errors'
+import { useRoute, useRouter } from 'vue-router'
 
-const router = useRouter();
-const route = useRoute();
-const errorsStore = useErrorsStore();
-const globalErrorMessage = ref("");
+const router = useRouter()
+const route = useRoute()
+const errorsStore = useErrorsStore()
+
+const globalErrorMessage = ref('')
+const loading = ref(false)
+
 const form = reactive({
-  email: null,
-  password: null,
-});
+  email: '',
+  name: '',
+  password: '',
+  password_confirmation: '',
+})
+
+const passwordChecks = computed(() => ({
+  length: form.password?.length >= 8,
+  uppercase: /[A-Z]/.test(form.password),
+  number: /[0-9]/.test(form.password),
+  special: /[@$!%*#?_&]/.test(form.password),
+}))
 
 onMounted(() => {
-  if (localStorage.getItem("token")) {
-    router.push({
-      name: "home",
-    });
+  if (localStorage.getItem('token')) {
+    router.push({ name: 'home' })
   }
-});
+})
 
 const register = () => {
-  errorsStore.setErrors({});
-  axios
-    .post("/api/v1/register", {
-      ...form,
-      id: route.query.id,
-    })
-    .then(() => {
-      router.push("/login");
-    })
-    .catch((error) => {
-      if (error.response.status === 422) {
-        globalErrorMessage.value = error.response.data.message;
-        errorsStore.setErrors(error.response.data.errors, "login");
-        return;
-      }
+  errorsStore.setErrors({})
+  globalErrorMessage.value = ''
+  loading.value = true
 
-      globalErrorMessage.value = error.response.data.data;
-    });
-};
+  axios
+    .post('/api/v1/register', { ...form, id: route.query.id })
+    .then(() => {
+      router.push('/login')
+    })
+    .catch(error => {
+      if (error.response.status === 422) {
+        globalErrorMessage.value = error.response.data.message
+        errorsStore.setErrors(error.response.data.errors, 'login')
+        return
+      }
+      globalErrorMessage.value = error.response.data.data
+    })
+    .finally(() => {
+      loading.value = false
+    })
+}
 </script>
 
 <template>
-  <div class="flex h-screen justify-center items-center">
-    <div class="w-full">
-      <Card class="max-w-lg m-auto">
-        <form @submit.prevent="register" class="w-full grid gap-6">
-          <h2 class="text-3xl font-bold">Register</h2>
-          <DangerAlert v-if="globalErrorMessage !== ''">
-            {{ globalErrorMessage }}
-          </DangerAlert>
+  <div class="min-h-screen flex">
+    <!-- Left branding panel -->
+    <div class="hidden lg:flex lg:w-1/2 flex-col justify-between p-12 bg-gradient-to-br from-orange-400 via-orange-500 to-blue-500 text-white">
+      <div>
+        <img src="@/assets/logo.svg" alt="CollabHub" class="h-10 brightness-0 invert" />
+      </div>
+      <div class="space-y-6">
+        <h1 class="text-4xl font-bold leading-tight">
+          Join your team<br />on CollabHub
+        </h1>
+        <p class="text-orange-100 text-lg">
+          Create your account and start collaborating with your team today.
+        </p>
+      </div>
+      <p class="text-orange-200 text-sm">© {{ new Date().getFullYear() }} CollabHub. All rights reserved.</p>
+    </div>
+
+    <!-- Right form panel -->
+    <div class="flex-1 flex items-center justify-center px-6 py-12 bg-white dark:bg-gray-900">
+      <div class="w-full max-w-md">
+        <!-- Mobile logo -->
+        <div class="lg:hidden mb-8 flex justify-center">
+          <img src="@/assets/logo.svg" alt="CollabHub" class="h-10 dark:brightness-0 dark:invert" />
+        </div>
+
+        <div class="mb-8">
+          <h2 class="text-2xl font-bold text-gray-900 dark:text-white">Create an account</h2>
+          <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Fill in the details below to get started</p>
+        </div>
+
+        <!-- Error alert -->
+        <div
+          v-if="globalErrorMessage"
+          class="mb-4 p-4 rounded-lg bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-400 text-sm"
+        >
+          {{ globalErrorMessage }}
+        </div>
+
+        <form @submit.prevent="register" class="space-y-4">
           <div>
-            <Label :forInput="'email'">Email</Label>
-            <Text
-              type="text"
+            <label for="reg-email" class="block mb-1.5 text-sm font-medium text-gray-700 dark:text-gray-300">
+              Email address
+            </label>
+            <input
+              id="reg-email"
               v-model="form.email"
-              id="email"
-              :name="'email'"
-              form="'login'"
-              placeholder="Email"
+              type="email"
+              autocomplete="email"
+              required
+              placeholder="you@example.com"
+              class="w-full px-3.5 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
             />
-            <Errors name="email" />
-          </div>
-          <div>
-            <Label :forInput="'fullName'">Full Name</Label>
-            <Text
-              type="text"
-              v-model="form.name"
-              id="fullName"
-              :name="'name'"
-              form="'login'"
-              placeholder="Full Name"
-            />
-            <Errors name="name" />
-          </div>
-          <div>
-            <Label :forInput="'password'">Password</Label>
-            <Text
-              type="password"
-              v-model="form.password"
-              :name="'password'"
-              id="password"
-              form="'login'"
-              placeholder="New Password"
-            />
-            <Errors name="password" />
-            <ul class="mt-2">
-              <li>
-                <fwb-checkbox
-                  label="Min 8. characters"
-                  disabled
-                  :model-value="form.password?.length >= 8"
-                />
-              </li>
-              <li>
-                <fwb-checkbox
-                  label="At least one uppercase letter"
-                  disabled
-                  :model-value="/[A-Z]/.test(form.password)"
-                />
-              </li>
-              <li>
-                <fwb-checkbox
-                  label="At least one numeric character"
-                  disabled
-                  :model-value="/[0-9]/.test(form.password)"
-                />
-              </li>
-              <li>
-                <fwb-checkbox
-                  label="At least one special character (@$!%*#?_&)"
-                  disabled
-                  :model-value="/[@$!%*#?_&]/.test(form.password)"
-                />
-              </li>
-            </ul>
-          </div>
-          <div>
-            <Label :forInput="'password_confirmation'">Confirm Password</Label>
-            <Text
-              type="password"
-              v-model="form.password_confirmation"
-              id="password_confirmation"
-              :name="'password_confirmation'"
-              form="'login'"
-              placeholder="Confirm Password"
-            />
-            <Errors name="password_confirmation" />
           </div>
 
-          <div class="card-actions justify-end">
-            <Button type="submit" class="btn btn-primary">Register</Button>
+          <div>
+            <label for="reg-name" class="block mb-1.5 text-sm font-medium text-gray-700 dark:text-gray-300">
+              Full name
+            </label>
+            <input
+              id="reg-name"
+              v-model="form.name"
+              type="text"
+              autocomplete="name"
+              required
+              placeholder="Jane Smith"
+              class="w-full px-3.5 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
+            />
           </div>
+
+          <div>
+            <label for="reg-password" class="block mb-1.5 text-sm font-medium text-gray-700 dark:text-gray-300">
+              Password
+            </label>
+            <input
+              id="reg-password"
+              v-model="form.password"
+              type="password"
+              autocomplete="new-password"
+              required
+              placeholder="••••••••"
+              class="w-full px-3.5 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
+            />
+            <!-- Password strength indicators -->
+            <div class="mt-2.5 grid grid-cols-2 gap-1.5">
+              <div
+                v-for="(check, key) in [
+                  { label: '8+ characters', key: 'length' },
+                  { label: 'Uppercase letter', key: 'uppercase' },
+                  { label: 'Number', key: 'number' },
+                  { label: 'Special character', key: 'special' },
+                ]"
+                :key="key"
+                class="flex items-center gap-1.5 text-xs"
+                :class="passwordChecks[check.key] ? 'text-green-600 dark:text-green-400' : 'text-gray-400 dark:text-gray-500'"
+              >
+                <svg v-if="passwordChecks[check.key]" class="w-3.5 h-3.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                </svg>
+                <svg v-else class="w-3.5 h-3.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <circle cx="12" cy="12" r="10" stroke-width="2" />
+                </svg>
+                {{ check.label }}
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <label for="reg-confirm" class="block mb-1.5 text-sm font-medium text-gray-700 dark:text-gray-300">
+              Confirm password
+            </label>
+            <input
+              id="reg-confirm"
+              v-model="form.password_confirmation"
+              type="password"
+              autocomplete="new-password"
+              required
+              placeholder="••••••••"
+              class="w-full px-3.5 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
+            />
+          </div>
+
+          <button
+            type="submit"
+            :disabled="loading"
+            class="w-full py-2.5 px-4 rounded-lg bg-blue-600 hover:bg-blue-700 disabled:opacity-60 disabled:cursor-not-allowed text-white text-sm font-semibold transition focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 mt-2"
+          >
+            <span v-if="loading">Creating account…</span>
+            <span v-else>Create account</span>
+          </button>
         </form>
-      </Card>
+
+        <p class="mt-6 text-center text-sm text-gray-500 dark:text-gray-400">
+          Already have an account?
+          <router-link :to="{ name: 'login' }" class="text-blue-600 dark:text-blue-400 font-medium hover:underline">
+            Sign in
+          </router-link>
+        </p>
+      </div>
     </div>
   </div>
 </template>
-
-<style scoped>
-</style>
