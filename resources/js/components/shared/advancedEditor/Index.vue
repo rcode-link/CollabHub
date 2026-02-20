@@ -313,7 +313,13 @@ const editor = useEditor({
   extensions: getExtensions(),
 })
 
-watch(editor, (e) => { if (e) emit('ready', e) }, { immediate: true })
+watch(
+  editor,
+  e => {
+    if (e) emit('ready', e)
+  },
+  { immediate: true },
+)
 
 function cleanTiptapJson(rawData) {
   const json = { ...rawData }
@@ -364,7 +370,9 @@ function cleanTiptapJson(rawData) {
         class="px-3 py-1 text-xs bg-blue-50 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300 border-b border-gray-100 dark:border-gray-800"
       >
         <span class="flex items-center gap-1.5">
-          <span class="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></span>
+          <span
+            class="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"
+          ></span>
           Collaborative mode — Document #{{ documentId }}
         </span>
       </div>
@@ -385,19 +393,17 @@ function cleanTiptapJson(rawData) {
 <style>
 .editor-content {
   @apply w-full bg-white dark:bg-gray-900;
-  padding: 1rem 1rem 3rem 2.5rem; /* extra left space for block handles */
   min-height: 60vh;
 }
 
 /* Notion variant */
 .notion-mode .editor-content {
   background: transparent;
-  padding: 0 2.5rem 4rem 3.5rem;
 }
 
-
 .editor-content > .tiptap.ProseMirror {
-  @apply min-h-full w-full active:border-none focus:border-none focus:outline-0;
+  @apply min-h-full w-full active:border-none focus:border-none focus:outline-0 overflow-hidden;
+  padding: 0 2.5rem 4rem 3.5rem;
 }
 
 .editor-content > .tiptap.ProseMirror-focused {
@@ -476,6 +482,9 @@ table {
 
 .tiptap .selected-table-row {
   background-color: rgba(0, 100, 255, 0.05);
+}
+.tiptap table {
+  border-collapse: collapse;
 }
 
 .tiptap .selected-table-cell {
