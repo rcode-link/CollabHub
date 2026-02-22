@@ -1,115 +1,93 @@
 <script setup>
-import Card from "../../../../shared/Card.vue";
 import { useRoute, useRouter } from "vue-router";
-import { FwbBadge, FwbButton, FwbCheckbox, FwbSelect } from "flowbite-vue";
 import { onBeforeUnmount, onMounted, reactive, ref, watch } from "vue";
+import { useBreadcrumbStore } from "@/store/breadcrumb";
+import { useBoardsState } from "@/store/boards";
+import Button from "@/components/shared/Button.vue";
+import UsersSelectInput from "@/components/shared/SelectUsersInProject.vue";
 import { TailwindPagination } from "laravel-vue-pagination";
-import Label from "../../../../shared/Label.vue";
-import Text from "../../../../shared/Text.vue";
-import UsersSelectInput from "../../../../shared/SelectUsersInProject.vue";
-import { useBreadcrumbStore } from "../../../../../store/breadcrumb";
-import { useBoardsState } from "../../../../../store/boards";
-import InteractiveToast from "../../../../shared/InteractiveToast.vue";
+import { DateTime } from "luxon";
 
 const route = useRoute();
 const router = useRouter();
-const added = ref([]);
-const timer = ref(null);
-const tasks = ref({
-    data: [],
-});
-const taskTypesList = ref([]);
-const statuses = ref([]);
 const breadcrumbStore = useBreadcrumbStore();
 const boardsState = useBoardsState();
 
+const tasks = ref({ data: [], meta: {} });
+const taskTypesList = ref([]);
+const statuses = ref([]);
+const added = ref([]);
+const timer = ref(null);
+const loading = ref(false);
+const confirmRemoveId = ref(null);
+
 const form = reactive({
     type_id: null,
-    search: null,
+    search: "",
     status_id: null,
     user_id: null,
     page: 1,
     in_sprint: 0,
 });
+
 const loadTasks = () => {
-    axios
-        .get("/api/v1/sprint/tasks", {
-            params: {
-                sprint_id: route.params.sprint,
-                project_id: route.params.project,
-                ...form,
-            },
-        })
-        .then((res) => (tasks.value = res.data));
+    loading.value = true;
+    axios.get("/api/v1/sprint/tasks", {
+        params: {
+            sprint_id: route.params.sprint,
+            project_id: route.params.project,
+            ...form,
+        },
+    }).then((res) => {
+        tasks.value = res.data;
+    }).finally(() => {
+        loading.value = false;
+    });
 };
+
 const load = () => {
     loadTasks();
-    axios
-        .get(`/api/v1/tasks-statuses/`, {
-            params: {
-                project_id: route.params.project,
-            },
-        })
-        .then((res) => {
-            statuses.value = res.data.data;
-        });
+    axios.get(`/api/v1/tasks-statuses/`, {
+        params: { project_id: route.params.project },
+    }).then((res) => { statuses.value = res.data.data; });
 
     axios.get("/api/v1/task-types").then((res) => {
         taskTypesList.value = res.data;
     });
 };
 
-const changePage = (page) => {
-    form.page = page;
-};
+const changePage = (page) => { form.page = page; };
 
-watch(
-    () => form,
-    (value, oldValue, onCleanup) => {
-        added.value = [];
-        router.push({
-            query: form,
-        });
-
-        clearTimeout(timer.value);
-        timer.value = setTimeout(() => loadTasks(), 300);
-    },
-    {
-        deep: true,
-    }
-);
+watch(() => form, () => {
+    added.value = [];
+    router.push({ query: { ...form } });
+    clearTimeout(timer.value);
+    timer.value = setTimeout(() => loadTasks(), 300);
+}, { deep: true });
 
 const addTaskToSprint = ({ id }) => {
-    axios
-        .put("/api/v1/sprint/tasks", {
-            sprint_id: route.params.sprint,
-            task_id: id,
-        })
-        .then(() => {
-            added.value.push(id);
-        });
+    axios.put("/api/v1/sprint/tasks", {
+        sprint_id: route.params.sprint,
+        task_id: id,
+    }).then(() => { added.value.push(id); });
 };
 
 const handleRemoveFromSprint = ({ id }) => {
-    axios
-        .delete("/api/v1/sprint/tasks", {
-            data: {
-                sprint_id: route.params.sprint,
-                task_id: id,
-            },
-        })
-        .then(() => {
-            loadTasks();
-        });
+    axios.delete("/api/v1/sprint/tasks", {
+        data: { sprint_id: route.params.sprint, task_id: id },
+    }).then(() => {
+        confirmRemoveId.value = null;
+        loadTasks();
+    });
 };
 
 onMounted(() => {
-    form.search = route.query.search;
+    form.search = route.query.search ?? "";
     form.page = route.query.page ?? 1;
-    form.user_id = route.query.user_id;
-    form.type_id = route.query.type_id;
-    form.status_id = route.query.status_id;
-    form.in_sprint = route.query.in_sprint;
+    form.user_id = route.query.user_id ?? null;
+    form.type_id = route.query.type_id ?? null;
+    form.status_id = route.query.status_id ?? null;
+    form.in_sprint = route.query.in_sprint ?? 0;
     load();
 
     const breadcrumItems = [
@@ -117,156 +95,195 @@ onMounted(() => {
             link: {
                 name: "project.board.view",
                 params: {
-                    board: boardsState.activeBoard.id,
-                    sprint: boardsState.activeSprint.id,
+                    board: boardsState.activeBoard?.id,
+                    sprint: boardsState.activeSprint?.id,
                 },
             },
-            title: boardsState.activeBoard.title,
+            title: boardsState.activeBoard?.title,
         },
     ];
 
-    if (boardsState.activeSprint.title) {
+    if (boardsState.activeSprint?.title) {
         breadcrumItems.push({
             link: {
                 name: "project.board.view",
                 params: {
-                    board: boardsState.activeBoard.id,
-                    sprint: boardsState.activeSprint.id,
+                    board: boardsState.activeBoard?.id,
+                    sprint: boardsState.activeSprint?.id,
                 },
             },
             title: boardsState.activeSprint.title,
         });
     }
 
-    breadcrumItems.push({
-        title: "Add tasks",
-    });
-
+    breadcrumItems.push({ title: "Manage tasks" });
     breadcrumbStore.addEntry(breadcrumItems);
 });
 
-onBeforeUnmount(() => {
-    breadcrumbStore.addEntry([]);
-});
+onBeforeUnmount(() => { breadcrumbStore.addEntry([]); });
 </script>
 
 <template>
-    <Card class="gap-4 flex-col md:flex-row items-center">
-        <div class="mb-4 w-full">
-            <Label>Title or Description</Label>
-            <Text v-model="form.search" />
-        </div>
-        <div class="mb-4 w-full">
-            <fwb-select
-                v-model="form.type_id"
-                :options="[
-                    { value: null, name: 'Select task type' },
-                    ...taskTypesList.map((obj) => {
-                        return {
-                            value: obj.id,
-                            name: obj.title,
-                        };
-                    }),
-                ]"
-                label="Type"
-            />
-        </div>
-        <div class="mb-4 w-full">
-            <fwb-select
-                v-model="form.status_id"
-                :options="[
-                    { value: null, name: 'Select status' },
-                    ...statuses.map((obj) => {
-                        return {
-                            value: obj.id,
-                            name: obj.title,
-                        };
-                    }),
-                ]"
-                label="Status"
-            />
-        </div>
-        <div class="mb-4 w-full">
-            <Label>By assigned user</Label>
-            <UsersSelectInput
-                :key="form.user_id"
-                v-model="form.user_id"
-                :show-clean-input="true"
-            />
-        </div>
-        <fwb-checkbox
-            class="flex-1"
-            v-model="form.in_sprint"
-            label="Tasks in sprint"
-        />
-    </Card>
-    <Card class="flex-col overflow-auto">
-        <div
-            class="grid min-w-[600px] grid-cols-7 border-b font-bold p-1 gap-1"
-        >
-            <div>Id</div>
-            <div class="col-span-3">Task</div>
-            <div>Status</div>
-            <div>Type</div>
-            <div></div>
-        </div>
-        <div
-            v-for="obj in tasks.data"
-            :key="obj"
-            class="grid min-w-[600px] gap-1 grid-cols-7 items-center border-b p-1 hover:bg-gray-100 dark:hover:bg-gray-900"
-        >
-            <div>
-                {{ obj.task_id }}
-            </div>
-            <div class="col-span-3">{{ obj.name }}</div>
-            <div>
-                <fwb-badge :type="obj.status?.open ? 'default' : 'green'">{{
-                    obj.status?.title
-                }}</fwb-badge>
-            </div>
-            <div>{{ obj.type.title }}</div>
-            <div class="flex justify-end">
-                <fwb-button
-                    v-if="!form.in_sprint"
-                    :key="added.length"
-                    :disabled="added.indexOf(obj.id) > -1"
-                    size="xs"
-                    @click="() => addTaskToSprint(obj)"
-                    class="ml-auto"
-                    >Add
-                </fwb-button>
-                <InteractiveToast v-if="form.in_sprint">
-                    <template #trigger>
-                        <fwb-button size="xs" color="red">
-                            Remove from sprint
-                        </fwb-button>
-                    </template>
-                    <template #title>
-                        You are about to remove task from sprint.
-                    </template>
-                    <template #content>
-                        Are you sure you want to remove
-                        <b>{{ obj.name }}</b> from sprint?
-                    </template>
-                    <template #actions>
-                        <fwb-button
-                            size="xs"
-                            color="red"
-                            @click="() => handleRemoveFromSprint(obj)"
-                        >
-                            Yes remove it!
-                        </fwb-button>
-                    </template>
-                </InteractiveToast>
-            </div>
-        </div>
-        <TailwindPagination
-            class="mt-4"
-            :data="tasks"
-            :limit="3"
-            @pagination-change-page="changePage"
-        />
-    </Card>
-</template>
+    <div class="space-y-3">
 
-<style scoped></style>
+        <!-- Filters -->
+        <div class="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 shadow-sm">
+            <div class="flex items-center justify-between px-5 py-3.5 border-b border-gray-100 dark:border-gray-700">
+                <h2 class="text-sm font-semibold text-gray-900 dark:text-white">Manage tasks</h2>
+                <!-- Sprint toggle -->
+                <label class="flex items-center gap-2 cursor-pointer">
+                    <div class="relative">
+                        <input type="checkbox" class="sr-only" v-model="form.in_sprint" true-value="1" false-value="0" />
+                        <div class="w-8 h-4 rounded-full transition-colors"
+                            :class="form.in_sprint == 1 ? 'bg-blue-500' : 'bg-gray-200 dark:bg-gray-600'"></div>
+                        <div class="absolute top-0.5 left-0.5 w-3 h-3 rounded-full bg-white shadow transition-transform"
+                            :class="form.in_sprint == 1 ? 'translate-x-4' : 'translate-x-0'"></div>
+                    </div>
+                    <span class="text-xs text-gray-600 dark:text-gray-300">In sprint only</span>
+                </label>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 p-4">
+                <!-- Search -->
+                <div class="relative">
+                    <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-gray-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+                    </svg>
+                    <input
+                        v-model="form.search"
+                        type="text"
+                        placeholder="Search tasks…"
+                        class="w-full pl-8 pr-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-sm text-gray-900 dark:text-white placeholder-gray-400 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                    />
+                </div>
+
+                <!-- Type filter -->
+                <select
+                    v-model="form.type_id"
+                    class="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-3 py-2 text-sm text-gray-900 dark:text-white focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                >
+                    <option :value="null">All types</option>
+                    <option v-for="t in taskTypesList" :key="t.id" :value="t.id">{{ t.title }}</option>
+                </select>
+
+                <!-- Status filter -->
+                <select
+                    v-model="form.status_id"
+                    class="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-3 py-2 text-sm text-gray-900 dark:text-white focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                >
+                    <option :value="null">All statuses</option>
+                    <option v-for="s in statuses" :key="s.id" :value="s.id">{{ s.title }}</option>
+                </select>
+
+                <!-- User filter -->
+                <UsersSelectInput
+                    :key="form.user_id"
+                    v-model="form.user_id"
+                    :show-clean-input="true"
+                />
+            </div>
+        </div>
+
+        <!-- Task table -->
+        <div class="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 shadow-sm overflow-hidden">
+            <!-- Column headers -->
+            <div class="flex items-center gap-3 border-b border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-700/40 px-4 py-2">
+                <div class="w-20 flex-shrink-0 text-xs font-medium uppercase tracking-wide text-gray-400">ID</div>
+                <div class="flex-1 text-xs font-medium uppercase tracking-wide text-gray-400">Task</div>
+                <div class="w-28 flex-shrink-0 text-xs font-medium uppercase tracking-wide text-gray-400 hidden sm:block">Status</div>
+                <div class="w-24 flex-shrink-0 text-xs font-medium uppercase tracking-wide text-gray-400 hidden md:block">Type</div>
+                <div class="w-32 flex-shrink-0"></div>
+            </div>
+
+            <!-- Loading -->
+            <div v-if="loading" class="flex justify-center py-10">
+                <svg class="w-5 h-5 animate-spin text-blue-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21 12a9 9 0 11-6.219-8.56"/>
+                </svg>
+            </div>
+
+            <!-- Empty state -->
+            <div v-else-if="!tasks.data?.length" class="flex flex-col items-center py-12 text-center">
+                <svg class="w-8 h-8 text-gray-300 dark:text-gray-600 mb-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+                </svg>
+                <p class="text-sm text-gray-500 dark:text-gray-400">No tasks found</p>
+                <p class="text-xs text-gray-400 dark:text-gray-500 mt-0.5">Try adjusting your filters</p>
+            </div>
+
+            <!-- Rows -->
+            <template v-else>
+                <div
+                    v-for="obj in tasks.data"
+                    :key="obj.id"
+                    class="flex items-center gap-3 px-4 py-3 border-b border-gray-50 dark:border-gray-700/50 hover:bg-gray-50 dark:hover:bg-gray-700/30 transition-colors"
+                >
+                    <!-- Task ID -->
+                    <div class="w-20 flex-shrink-0">
+                        <span class="text-xs font-mono text-gray-400 dark:text-gray-500">{{ obj.task_id }}</span>
+                    </div>
+
+                    <!-- Task name -->
+                    <div class="flex-1 min-w-0">
+                        <p class="text-sm text-gray-900 dark:text-white truncate">{{ obj.name }}</p>
+                    </div>
+
+                    <!-- Status badge -->
+                    <div class="w-28 flex-shrink-0 hidden sm:block">
+                        <span
+                            class="inline-flex items-center px-2 py-0.5 rounded-md text-xs font-medium"
+                            :class="obj.status?.open
+                                ? 'bg-blue-50 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400'
+                                : 'bg-green-50 text-green-700 dark:bg-green-900/30 dark:text-green-400'"
+                        >
+                            {{ obj.status?.title }}
+                        </span>
+                    </div>
+
+                    <!-- Type -->
+                    <div class="w-24 flex-shrink-0 hidden md:block">
+                        <span class="text-xs text-gray-500 dark:text-gray-400">{{ obj.type?.title }}</span>
+                    </div>
+
+                    <!-- Action -->
+                    <div class="w-32 flex-shrink-0 flex justify-end">
+                        <!-- Add to sprint -->
+                        <Button
+                            v-if="!form.in_sprint || form.in_sprint == 0"
+                            size="sm"
+                            :disabled="added.includes(obj.id)"
+                            :variant="added.includes(obj.id) ? 'soft' : 'primary'"
+                            @click="addTaskToSprint(obj)"
+                        >
+                            <svg v-if="added.includes(obj.id)" class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M20 6L9 17l-5-5"/>
+                            </svg>
+                            {{ added.includes(obj.id) ? 'Added' : 'Add to sprint' }}
+                        </Button>
+
+                        <!-- Remove from sprint -->
+                        <template v-else>
+                            <div v-if="confirmRemoveId === obj.id" class="flex items-center gap-1.5">
+                                <span class="text-xs text-gray-500 dark:text-gray-400">Remove?</span>
+                                <Button size="sm" variant="danger" @click="handleRemoveFromSprint(obj)">Yes</Button>
+                                <Button size="sm" variant="ghost" @click="confirmRemoveId = null">No</Button>
+                            </div>
+                            <Button v-else size="sm" variant="soft" @click="confirmRemoveId = obj.id">
+                                Remove
+                            </Button>
+                        </template>
+                    </div>
+                </div>
+            </template>
+
+            <!-- Pagination -->
+            <div v-if="tasks.meta?.last_page > 1" class="px-4 py-3 border-t border-gray-100 dark:border-gray-700">
+                <TailwindPagination
+                    :data="tasks"
+                    :limit="3"
+                    @pagination-change-page="changePage"
+                />
+            </div>
+        </div>
+    </div>
+</template>

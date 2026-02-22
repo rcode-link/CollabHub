@@ -39,10 +39,10 @@ const handleImageFile = async (event) => {
   const file = event.target.files?.[0]
   if (!file) return
   const form = new FormData()
-  form.append('image', file)
+  form.append('file', file)
   imageUploading.value = true
   try {
-    const { data } = await axios.post('/api/v1/editor/images', form)
+    const { data } = await axios.post('/api/v1/editor/files', form)
     props.editor.chain().focus().setImage({ src: data.url, alt: file.name, title: file.name }).run()
   } finally {
     imageUploading.value = false

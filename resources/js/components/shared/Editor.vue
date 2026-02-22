@@ -1,5 +1,7 @@
 <script setup>
 import { EditorContent, useEditor } from '@tiptap/vue-3'
+import Placeholder from '@tiptap/extension-placeholder'
+import Image from '@tiptap/extension-image'
 import StarterKit from '@tiptap/starter-kit'
 import { Link } from '@tiptap/extension-link'
 import { ref, computed } from 'vue'
@@ -31,6 +33,7 @@ const props = defineProps({
   defaultShowPreview: true,
   editable: true,
   submitOnEnter: false,
+  placeholder: { type: String, default: '' },
 })
 
 const pressedKeys = ref([])
@@ -136,6 +139,8 @@ const editor = useEditor({
     SmilieReplacer,
     textToLink.convertTextToLink,
     Markdown,
+    Image.configure({ inline: false, allowBase64: false }),
+    ...(props.placeholder ? [Placeholder.configure({ placeholder: props.placeholder })] : []),
   ],
   onUpdate: ({ editor }) => {
     _.debounce(() => emit('update:modelValue', editor.value?.getJSON()), 300)

@@ -7,6 +7,10 @@
     :getPos="getPos"
     :selected="selected"
   >
+    <template #options="{ isFocused }">
+      <TextToolbar :editor="editor" :node="node" :isFocused="isFocused" />
+    </template>
+
     <node-view-content as="ul" class="pl-5 list-disc text-gray-500 dark:text-gray-400" />
   </BaseContianer>
 </template>
@@ -15,6 +19,7 @@
 import { computed } from "vue";
 import { NodeViewContent } from "@tiptap/vue-3";
 import BaseContianer from "../BaseContainer.vue";
+import TextToolbar from "../TextToolbar.vue";
 
 // Props from TipTap
 const props = defineProps({

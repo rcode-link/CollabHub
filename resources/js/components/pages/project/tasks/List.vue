@@ -27,6 +27,7 @@ const form = reactive({
   search: null,
   status_id: null,
   user_id: null,
+  tag: null,
   page: 1,
 })
 
@@ -71,6 +72,7 @@ onMounted(() => {
   form.user_id = route.query.user_id
   form.type_id = route.query.type_id
   form.status_id = route.query.status_id
+  form.tag = route.query.tag ?? null
 
   initData()
   breadcrumbStore.addEntry([{ link: '', title: 'Tasks' }])
@@ -88,28 +90,52 @@ const selectClass = 'w-full text-sm bg-white dark:bg-gray-900 border border-gray
 <template>
   <div class="flex flex-col gap-4 pb-2">
     <!-- Filters -->
-    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-      <div>
-        <Label>Title or Description</Label>
-        <Text v-model="form.search" />
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
+      <!-- Search -->
+      <div class="relative">
+        <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-gray-400 pointer-events-none" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+        </svg>
+        <input
+          v-model="form.search"
+          type="text"
+          placeholder="Search tasks…"
+          :class="[selectClass, 'pl-9']"
+        />
       </div>
-      <div>
-        <Label>Type</Label>
-        <select v-model="form.type_id" :class="selectClass">
-          <option :value="null">All types</option>
-          <option v-for="obj in taskTypesList" :key="obj.id" :value="obj.id">{{ obj.title }}</option>
-        </select>
-      </div>
-      <div>
-        <Label>Status</Label>
-        <select v-model="form.status_id" :class="selectClass">
-          <option :value="null">All statuses</option>
-          <option v-for="obj in statuses" :key="obj.id" :value="obj.id">{{ obj.title }}</option>
-        </select>
-      </div>
-      <div>
-        <Label>By assigned user</Label>
-        <UsersSelectInput :key="form.user_id" v-model="form.user_id" :show-clean-input="true" />
+      <!-- Type -->
+      <select v-model="form.type_id" :class="selectClass">
+        <option :value="null">All types</option>
+        <option v-for="obj in taskTypesList" :key="obj.id" :value="obj.id">{{ obj.title }}</option>
+      </select>
+      <!-- Status -->
+      <select v-model="form.status_id" :class="selectClass">
+        <option :value="null">All statuses</option>
+        <option v-for="obj in statuses" :key="obj.id" :value="obj.id">{{ obj.title }}</option>
+      </select>
+      <!-- Assignee -->
+      <UsersSelectInput :key="form.user_id" v-model="form.user_id" :show-clean-input="true" />
+      <!-- Tag -->
+      <div class="relative">
+        <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-gray-400 pointer-events-none" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/>
+        </svg>
+        <input
+          v-model="form.tag"
+          type="text"
+          placeholder="Filter by tag…"
+          :class="[selectClass, 'pl-9 pr-8']"
+          :style="form.tag ? 'border-color: #3b82f6; background: rgba(59,130,246,.06);' : ''"
+        />
+        <button
+          v-if="form.tag"
+          @click="form.tag = null"
+          class="absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200"
+        >
+          <svg class="w-3.5 h-3.5" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
+          </svg>
+        </button>
       </div>
     </div>
 
@@ -151,13 +177,19 @@ const selectClass = 'w-full text-sm bg-white dark:bg-gray-900 border border-gray
               <Editor :model="obj.description" class="h-4 overflow-hidden text-xs text-gray-500" :editable="false" />
             </td>
             <td class="px-4 py-2.5 text-gray-500 dark:text-gray-400">{{ obj.children_count }}</td>
-            <td class="px-4 py-2.5">
+            <td class="px-4 py-2.5" @click.stop>
               <div class="flex gap-1 flex-wrap">
-                <span
+                <button
                   v-for="(str, index) in obj.tags"
                   :key="index"
-                  class="inline-flex items-center px-2 py-0.5 rounded-md text-xs font-medium bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300"
-                >{{ str }}</span>
+                  type="button"
+                  @click="form.tag = form.tag === str ? null : str"
+                  class="inline-flex items-center px-2 py-0.5 rounded-md text-xs font-medium transition-colors"
+                  :class="form.tag === str
+                    ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-400 ring-1 ring-blue-300 dark:ring-blue-700'
+                    : 'bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300 hover:bg-blue-50 hover:text-blue-700 dark:hover:bg-blue-900/30 dark:hover:text-blue-400'"
+                  :title="form.tag === str ? 'Clear tag filter' : 'Filter by this tag'"
+                >{{ str }}</button>
               </div>
             </td>
             <td class="px-4 py-2.5">

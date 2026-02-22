@@ -1,10 +1,9 @@
 <template>
   <div class="table-shell">
     <!-- Toolbar — visible when table is focused -->
-    <div v-if="selected" class="table-controls">
+    <div v-if="selected" class="table-controls" title="Table options">
       <!-- Row group -->
       <div class="ctrl-group">
-        <span class="ctrl-label">Rows</span>
         <button class="ctrl-btn" title="Add row above" @click="editor.commands.addRowBefore()">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
             <path d="M3 10h18M3 14h18M12 6V3m0 0-2 2m2-2 2 2"/>
@@ -26,7 +25,6 @@
 
       <!-- Column group -->
       <div class="ctrl-group">
-        <span class="ctrl-label">Cols</span>
         <button class="ctrl-btn" title="Add column before" @click="editor.commands.addColumnBefore()">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
             <path d="M9 3v18M15 3v18M6 12H3m0 0 2-2m-2 2 2 2"/>
@@ -107,16 +105,6 @@ defineProps({
   display: flex;
   align-items: center;
   gap: 2px;
-}
-
-.ctrl-label {
-  font-size: 0.65rem;
-  font-weight: 600;
-  color: #9ca3af;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  padding: 0 4px 0 2px;
-  user-select: none;
 }
 
 .ctrl-btn {

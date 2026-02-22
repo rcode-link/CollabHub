@@ -176,6 +176,12 @@ export default [
     ],
   },
   {
+    name: 'shared.document',
+    path: '/d/:token',
+    component: () => import('../components/pages/shared/SharedDocument.vue'),
+    // No auth middleware — publicly accessible
+  },
+  {
     name: 'documents',
     path: '/documents',
     component: () => import('../components/pages/documents/Index.vue'),

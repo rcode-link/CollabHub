@@ -9,48 +9,64 @@
   >
 
     <template #options>
-      <fwb-button-group class="ml-auto">
-        <fwb-button
-          @click="() => updateAttributes({ size: '25' })"
-          size="sm"
-          color="alternative"
-        >25%</fwb-button>
-        <fwb-button
-          @click="() => updateAttributes({ size: '50' })"
-          size="sm"
-          color="alternative"
-        >50%</fwb-button>
-        <fwb-button
-          @click="() => updateAttributes({ size: '75' })"
-          size="sm"
-          color="alternative"
-        >75%</fwb-button>
-        <fwb-button
-          @click="() => updateAttributes({ size: '100' })"
-          size="sm"
-          color="alternative"
-        >100%</fwb-button>
+      <div v-if="selected" class="img-controls" title="Image options">
+        <!-- Size group -->
+        <div class="ctrl-group">
+          <button
+            :class="['ctrl-btn ctrl-btn-text', node.attrs.size === '25' && 'ctrl-btn-active']"
+            title="25% width"
+            @click="() => updateAttributes({ size: '25' })"
+          >25%</button>
+          <button
+            :class="['ctrl-btn ctrl-btn-text', node.attrs.size === '50' && 'ctrl-btn-active']"
+            title="50% width"
+            @click="() => updateAttributes({ size: '50' })"
+          >50%</button>
+          <button
+            :class="['ctrl-btn ctrl-btn-text', node.attrs.size === '75' && 'ctrl-btn-active']"
+            title="75% width"
+            @click="() => updateAttributes({ size: '75' })"
+          >75%</button>
+          <button
+            :class="['ctrl-btn ctrl-btn-text', node.attrs.size === '100' && 'ctrl-btn-active']"
+            title="100% width"
+            @click="() => updateAttributes({ size: '100' })"
+          >100%</button>
+        </div>
 
-                <fwb-button
-color="alternative"
-                    size="sm" disabled>|</fwb-button>
-        <fwb-button
-          @click="() => updateAttributes({ position: 'left' })"
-          size="sm"
-          color="alternative"
-        >Left</fwb-button>
-        <fwb-button
-          @click="() => updateAttributes({ position: 'center' })"
-          size="sm"
-          color="alternative"
-        >Center</fwb-button>
-        <fwb-button
-          @click="() => updateAttributes({ position: 'right' })"
-          size="sm"
-          color="alternative"
-        >Right</fwb-button>
+        <div class="ctrl-sep" />
 
-      </fwb-button-group>
+        <!-- Position group -->
+        <div class="ctrl-group">
+          <button
+            :class="['ctrl-btn', node.attrs.position === 'left' && 'ctrl-btn-active']"
+            title="Align left"
+            @click="() => updateAttributes({ position: 'left' })"
+          >
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3 6h18M3 12h12M3 18h8"/>
+            </svg>
+          </button>
+          <button
+            :class="['ctrl-btn', node.attrs.position === 'center' && 'ctrl-btn-active']"
+            title="Align center"
+            @click="() => updateAttributes({ position: 'center' })"
+          >
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3 6h18M6 12h12M8 18h8"/>
+            </svg>
+          </button>
+          <button
+            :class="['ctrl-btn', node.attrs.position === 'right' && 'ctrl-btn-active']"
+            title="Align right"
+            @click="() => updateAttributes({ position: 'right' })"
+          >
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3 6h18M9 12h12M13 18h8"/>
+            </svg>
+          </button>
+        </div>
+      </div>
     </template>
     <div
       v-if="selected"
@@ -87,14 +103,12 @@ color="alternative"
 //        ></div>
 //      </div>
 import BaseContianer from "../BaseContainer.vue";
-import { FwbP, FwbInput, FwbButtonGroup, FwbButton } from "flowbite-vue";
+import { FwbP, FwbInput } from "flowbite-vue";
 export default {
   name: "ResizableImage",
 
   components: {
     BaseContianer,
-    FwbButton,
-    FwbButtonGroup,
     FwbInput,
     FwbP,
   },
@@ -220,6 +234,81 @@ export default {
 </script>
 
 <style>
+.img-controls {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 6px;
+  margin-bottom: 2px;
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  flex-wrap: wrap;
+}
+
+.dark .img-controls {
+  background: #111827;
+  border-color: #374151;
+}
+
+.ctrl-group {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.ctrl-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 4px;
+  color: #6b7280;
+  transition: background 0.1s, color 0.1s;
+  flex-shrink: 0;
+}
+.ctrl-btn svg {
+  width: 14px;
+  height: 14px;
+}
+.ctrl-btn:hover {
+  background: #e5e7eb;
+  color: #111827;
+}
+.dark .ctrl-btn {
+  color: #9ca3af;
+}
+.dark .ctrl-btn:hover {
+  background: #374151;
+  color: #f9fafb;
+}
+.ctrl-btn-text {
+  width: auto;
+  padding: 0 8px;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+.ctrl-btn-active {
+  background: #eff6ff;
+  color: #2563eb;
+}
+.dark .ctrl-btn-active {
+  background: #1e3a8a;
+  color: #93c5fd;
+}
+
+.ctrl-sep {
+  width: 1px;
+  height: 16px;
+  background: #e5e7eb;
+  margin: 0 2px;
+  flex-shrink: 0;
+}
+.dark .ctrl-sep {
+  background: #374151;
+}
+
 .resizable-image-wrapper {
   display: block;
   position: relative;

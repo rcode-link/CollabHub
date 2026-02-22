@@ -60,10 +60,7 @@ class TaskResource extends JsonResource
             'description' => $this->description,
             'status' => $this->whenLoaded('taskSprintData', function () {
                 $mapped = $this->taskSprintData->map(fn($obj) => array_merge($obj->status->toArray(), ['sprint' => $obj?->sprint]));
-                if ((\request()->has('board_id') || \request()->has('sprint_id')) && !\request()->has('fullList')) {
-                    return $mapped->first();
-                }
-                return $mapped;
+                return $mapped->first();
             }),
             'type' => $this->whenLoaded('type', function () {
                 return $this->type;
@@ -80,7 +77,13 @@ class TaskResource extends JsonResource
             }),
             'due_date' => $this->due_date === null ? null : Carbon::parse($this->due_date),
             'tags' => $this->tags,
-            'media' => $this->when(\request()->routeIs('tasks.show'), function () {
+            'parent_task' => $this->when(\request()->get('group_by') === 'parent', function () {
+                return $this->whenLoaded('parents', function () {
+                    $parent = $this->parents->first();
+                    return $parent ? ['id' => $parent->id, 'name' => $parent->name, 'task_id' => $parent->task_id] : null;
+                });
+            }),
+            'media' => $this->when(\request()->routeIs('apitasks.show'), function () {
                 return $this->whenLoaded('media', function () {
                     return MediaResource::collection($this->media);
                 });

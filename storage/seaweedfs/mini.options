@@ -1,0 +1,14 @@
+#!/bin/bash
+# Mini server configuration
+# Format: option=value (no leading dash)
+# This file is loaded on startup if it exists
+
+filer.port=8888
+master.port=9333
+s3.config=/Users/radanstupar/projects/CollabHub/storage/seaweedfs/s3.json
+s3.port=8333
+volume.port=8080
+
+# Auto-calculated volume size based on total disk capacity
+# Delete this line to force recalculation on next startup
+master.volumeSizeLimitMB=1024

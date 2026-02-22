@@ -35,7 +35,6 @@ class GenerateProfileImageJob implements ShouldQueue
 
         $this->user
             ->addMedia($path_to_image)
-            ->usingDisk('s3')
-            ->toMediaCollection('avatar');
+            ->toMediaCollection('avatar', 's3');
     }
 }

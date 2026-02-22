@@ -4,6 +4,7 @@ import { ref, watch } from 'vue'
 const emit = defineEmits(['closed'])
 const props = defineProps({
   hideModal: { type: Boolean, default: false },
+  size: { type: String, default: 'md' }, // md | lg | xl | 2xl | 3xl
 })
 
 const isOpen = ref(false)
@@ -33,7 +34,10 @@ defineExpose({ toggleModal, closeModal: close, isShowModal: isOpen })
         <div class="absolute inset-0 bg-black/40 backdrop-blur-sm" @click="close" />
 
         <!-- Panel -->
-        <div class="relative w-full max-w-md bg-white dark:bg-gray-900 rounded-2xl shadow-xl border border-gray-100 dark:border-gray-800 flex flex-col max-h-[90vh]">
+        <div :class="[
+          'relative w-full bg-white dark:bg-gray-900 rounded-2xl shadow-xl border border-gray-100 dark:border-gray-800 flex flex-col max-h-[90vh]',
+          { 'max-w-md': size === 'md', 'max-w-lg': size === 'lg', 'max-w-xl': size === 'xl', 'max-w-2xl': size === '2xl', 'max-w-3xl': size === '3xl' }
+        ]">
           <!-- Header -->
           <div class="flex items-center justify-between px-5 py-4 border-b border-gray-100 dark:border-gray-800">
             <div class="text-sm font-semibold text-gray-900 dark:text-white">

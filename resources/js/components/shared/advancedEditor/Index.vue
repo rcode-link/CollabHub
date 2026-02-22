@@ -2,6 +2,8 @@
 import { EditorContent, useEditor } from '@tiptap/vue-3'
 import { Markdown } from 'tiptap-markdown'
 import { VueNodeViewRenderer } from '@tiptap/vue-3'
+import { NodeSelection, TextSelection, Plugin } from '@tiptap/pm/state'
+import { ReplaceStep } from '@tiptap/pm/transform'
 import { Link } from '@tiptap/extension-link'
 import { ref, watch, computed } from 'vue'
 import { createLowlight } from 'lowlight'
@@ -9,7 +11,7 @@ import CodeBlockLowlight from '@tiptap/extension-code-block-lowlight'
 import drawIoExtension from '@rcode-link/tiptap-drawio'
 import { useRoute } from 'vue-router'
 import EditorHeader from './EditorHeader.vue'
-import BubbleToolbar from './BubbleToolbar.vue'
+import DrawIONodeView from './blocks/drawio/DrawIONodeView.vue'
 import hljs from 'highlight.js'
 import MobileMenu from './MobileMenu.vue'
 import Mention from '@tiptap/extension-mention'
@@ -50,6 +52,7 @@ import TableNodeView from './blocks/table/TableNodeView.vue'
 import Placeholder from '@tiptap/extension-placeholder'
 
 import { MoveNode } from '@/functions/editor/extensions/MoveBlock.js'
+import { Extension } from '@tiptap/core'
 import CustomImage from '@/functions/editor/blocks/imageNode/ImageNode.js'
 import { useTextToLinkStore } from '@/store/textToLinkStore'
 import { useRouter } from 'vue-router'
@@ -249,7 +252,19 @@ const getExtensions = () => {
       inline: false,
       allowBase64: true,
     }),
-    drawIoExtension.configure({
+    drawIoExtension.extend({
+      addNodeView() {
+        return props => VueNodeViewRenderer(DrawIONodeView)(props)
+      },
+      addAttributes() {
+        return {
+          ...this.parent?.(),
+          size: { default: '100' },
+          position: { default: 'center' },
+          drawioXml: { default: null },
+        }
+      },
+    }).configure({
       openDialog: 'dblclick',
     }),
     Mention.configure({
@@ -284,6 +299,89 @@ const getExtensions = () => {
     // Cursors.configure({
     //   labelDuration: 2000,
     // }),
+
+    // Ensure a paragraph always follows block nodes like images/diagrams,
+    // so the user can always click after them to type.
+    Extension.create({
+      name: 'trailingParagraph',
+      addProseMirrorPlugins() {
+        return [
+          new Plugin({
+            appendTransaction(_, __, newState) {
+              const { doc, tr, schema } = newState
+              const lastNode = doc.lastChild
+              if (lastNode && lastNode.type !== schema.nodes.paragraph) {
+                return tr.insert(doc.content.size, schema.nodes.paragraph.create())
+              }
+            },
+          }),
+        ]
+      },
+    }),
+
+    // When an image/diagram node is selected (NodeSelection), intercept
+    // Enter and printable characters: insert a new paragraph AFTER the node
+    // and type there instead of replacing the node.
+    // filterTransaction acts as a safety net to block any "type to replace node"
+    // transaction that slips through (e.g. from beforeinput events).
+    Extension.create({
+      name: 'blockNodeKeyProtect',
+      addProseMirrorPlugins() {
+        return [
+          new Plugin({
+            filterTransaction(tr, state) {
+              const { selection } = state
+              if (!selection.node) return true
+              const selectedNodeType = selection.node.type
+              const { from, to } = selection
+              for (const step of tr.steps) {
+                if (
+                  step instanceof ReplaceStep &&
+                  step.from === from &&
+                  step.to === to &&
+                  step.slice.content.size > 0
+                ) {
+                  // Allow attribute updates: same node type replacing itself
+                  // (setNodeMarkup on leaf nodes creates a ReplaceStep of the same type)
+                  const firstChild = step.slice.content.firstChild
+                  if (firstChild && firstChild.type === selectedNodeType) {
+                    continue
+                  }
+                  // Block "type to replace node" transactions (user typing over a selected node)
+                  return false
+                }
+              }
+              return true
+            },
+            props: {
+              handleKeyDown(view, event) {
+                const { selection } = view.state
+                if (!selection.node) return false
+
+                if (
+                  event.key === 'Enter' ||
+                  (event.key.length === 1 && !event.ctrlKey && !event.metaKey && !event.altKey)
+                ) {
+                  const pos = selection.to
+                  const { state } = view
+                  const tr = state.tr.insert(pos, state.schema.nodes.paragraph.create())
+                  if (event.key !== 'Enter') {
+                    tr.insertText(event.key, pos + 1)
+                    tr.setSelection(TextSelection.create(tr.doc, pos + 1 + event.key.length))
+                  } else {
+                    tr.setSelection(TextSelection.create(tr.doc, pos + 1))
+                  }
+                  view.dispatch(tr)
+                  requestAnimationFrame(() => view.focus())
+                  return true
+                }
+                return false
+              },
+            },
+          }),
+        ]
+      },
+    }),
   ]
 
   return extensions
@@ -378,9 +476,6 @@ function cleanTiptapJson(rawData) {
       </div>
     </div>
 
-    <!-- Bubble toolbar: shown in notion mode (appears on text selection) -->
-    <BubbleToolbar v-if="notion" :editor="editor" />
-
     <!-- Slot for content injected between toolbar and editor (e.g. document title) -->
     <div class="flex-shrink-0">
       <slot name="before-content" />
@@ -403,7 +498,7 @@ function cleanTiptapJson(rawData) {
 
 .editor-content > .tiptap.ProseMirror {
   @apply min-h-full w-full active:border-none focus:border-none focus:outline-0 overflow-hidden;
-  padding: 0 2.5rem 4rem 3.5rem;
+  padding: 1rem;
 }
 
 .editor-content > .tiptap.ProseMirror-focused {

@@ -84,6 +84,30 @@ Billing settings:
 
 </details>
 
+## Requirements
+
+### SeaweedFS
+
+SeaweedFS is required as the S3-compatible storage backend for file and media uploads. The `weed` binary must be installed and available in your `$PATH`.
+
+**macOS:**
+```bash
+brew install seaweedfs
+```
+
+**Linux:**
+```bash
+curl -L https://github.com/seaweedfs/seaweedfs/releases/latest/download/linux_amd64.tar.gz | tar -xz
+sudo mv weed /usr/local/bin/
+```
+
+Verify installation:
+```bash
+weed version
+```
+
+Once installed, SeaweedFS starts automatically when you run `php artisan solo`.
+
 ## For develpers
 
 Application is written in laravel and vue3 SPA.

@@ -14,6 +14,7 @@ use App\Models\Sprint;
 use App\Models\Task;
 use App\Models\TaskRelation;
 use App\Models\TaskSprint;
+use App\Models\TaskStatuses;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -240,13 +241,37 @@ class TaskController extends Controller
             'status_id' => ['required']
         ]);
 
+        $taskSprint = TaskSprint::whereTaskId($request->get('task_id'))
+            ->whereSprintId($request->get('sprint_id'))
+            ->with(['status' => fn($q) => $q->select('id', 'title')])
+            ->first();
+
+        $oldStatusTitle = $taskSprint?->status?->title ?? 'Unknown';
+
         TaskSprint::whereTaskId($request->get('task_id'))
             ->whereSprintId($request->get('sprint_id'))
             ->update([
                 'task_status_id' => $request->get('status_id')
             ]);
 
+        $newStatus = TaskStatuses::whereId($request->get('status_id'))->first();
+        $newStatusTitle = $newStatus?->title ?? 'Unknown';
+
         $task = Task::whereId($request->get('task_id'))->with('media', 'owner', 'createdBy', 'type', 'chat')->first();
+
+        if ($task->chat && $oldStatusTitle !== $newStatusTitle) {
+            $task->chat->sendMessage([
+                'type' => 'doc',
+                'content' => [[
+                    'type' => 'paragraph',
+                    'content' => [[
+                        'type' => 'text',
+                        'text' => "Status changed from \"{$oldStatusTitle}\" to \"{$newStatusTitle}\""
+                    ]]
+                ]]
+            ]);
+        }
+
         TaskUpdatedEvent::dispatch($task, null);
         return response()->noContent();
     }

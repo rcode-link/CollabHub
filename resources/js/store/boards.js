@@ -1,7 +1,7 @@
 import { defineStore } from "pinia";
 import { computed, ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
-import { findIndex, toNumber, find, isArray } from "lodash";
+import { findIndex, toNumber, find } from "lodash";
 
 export const useBoardsState = defineStore("boards", () => {
     const boards = ref([]);
@@ -64,12 +64,7 @@ export const useBoardsState = defineStore("boards", () => {
         if (index === -1) {
             return;
         }
-        let status = task.status;
-        if (isArray(task.status)) {
-            status = find(status, (obj) => {
-                return obj.sprint.id === toNumber(route.params.sprint);
-            });
-        }
+        const status = task.status;
         boardTasks.value[statusTitle.title].splice(index, 1);
         boardTasks.value[status.title].push(task);
     }

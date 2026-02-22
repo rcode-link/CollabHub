@@ -4,7 +4,6 @@ import { useBreadcrumbStore } from '../../../store/breadcrumb'
 import Card from '../../shared/Card.vue'
 import { ref, watch } from 'vue'
 import Users from './partials/LeftChatManu.vue'
-import MenuIcon from '../../shared/icons/MenuIcon.vue'
 import { useRoute } from 'vue-router'
 
 const route = useRoute()
@@ -27,14 +26,6 @@ watch(
 <template>
   <Auth>
     <div class="grid lg:grid-cols-3 grid-cols-1 gap-2 h-[calc(100vh-86px)] relative">
-      <!-- Mobile toggle -->
-      <button
-        class="ml-auto lg:hidden h-8 w-8 inline-flex items-center justify-center rounded-lg text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
-        @click="showListInMobile = !showListInMobile"
-      >
-        <MenuIcon class="w-4 h-4" />
-      </button>
-
       <!-- Chat list panel -->
       <div
         :class="[

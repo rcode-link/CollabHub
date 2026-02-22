@@ -49,11 +49,35 @@ class FilterTasks
             ]);
         });
 
+        // sprint_id without status_id (grouping by assignee/type on the board)
+        $task->when($request->has('sprint_id') && !$request->has('status_id'), function (Builder $query) use ($request) {
+            $query->with([
+                'taskSprintData' => function (HasMany $builder) use ($request) {
+                    $builder
+                        ->with([
+                            'status' => fn(HasOne $query) => $query->select('id', 'title', 'board_id'),
+                            'status.board' => fn(BelongsTo $query) => $query->select('id', 'title'),
+                            'sprint' => fn(HasOne $query) => $query->select('id', 'title')
+                        ])
+                        ->where('sprint_id', $request->get('sprint_id'));
+                },
+            ]);
+            $query->whereHas('taskSprintData', fn(Builder $builder) => $builder->where('sprint_id', $request->get('sprint_id')));
+        });
+
         $task->when($request->has('search'), function (Builder $query) use ($request) {
             $query->where(function (Builder $builder) use ($request) {
                 $builder->where('name', 'like', '%' . $request->get('search') . '%')
                     ->orWhere('description', 'like', '%' . $request->get('search') . '%');
             });
+        });
+
+        $task->when($request->filled('tag'), function (Builder $query) use ($request) {
+            $query->where('tags', 'like', '%"' . $request->get('tag') . '"%');
+        });
+
+        $task->when($request->get('group_by') === 'parent', function (Builder $query) {
+            $query->with(['parents' => fn($q) => $q->select('tasks.id', 'tasks.name', 'tasks.task_id')]);
         });
 
         return $task;

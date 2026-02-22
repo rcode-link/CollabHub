@@ -1,29 +1,20 @@
 <script setup>
-
-import _ from "lodash";
 import TaskStatusDropdown from "./TaskStatusDropdown.vue";
 
 defineProps({
     status: null,
     taskId: null,
 })
-
 </script>
 
 <template>
   <template v-if="status">
-    <div v-if="_.isArray(status)"  v-for="obj in status" class="grid grid-cols-2 gap-1 border-b pb-1 pt-1">
-      <div>
-          {{ obj.board?.title }}
-          <template v-if="obj.sprint.title">
-              ({{ obj.sprint.title }})
-          </template>
-      </div>
-        <TaskStatusDropdown :obj="obj" :taskId="taskId"/>
+    <div class="text-xs text-gray-400 dark:text-gray-500 mb-1.5" v-if="status.board?.title">
+      {{ status.board.title }}
+      <span v-if="status.sprint?.title">({{ status.sprint.title }})</span>
     </div>
-    <div>
-        <TaskStatusDropdown v-if="!_.isArray(status)" :obj="status" :taskId="taskId"/>
-    </div>
+    <TaskStatusDropdown :obj="status" :taskId="taskId" />
   </template>
+  <p v-else class="text-sm text-gray-400 dark:text-gray-500">—</p>
 </template>
 

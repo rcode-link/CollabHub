@@ -7,6 +7,10 @@
     :getPos="getPos"
     :selected="selected"
   >
+    <template #options="{ isFocused }">
+      <TextToolbar :editor="editor" :node="node" :isFocused="isFocused" />
+    </template>
+
     <FwbP>
       <node-view-content />
     </FwbP>
@@ -17,6 +21,7 @@
 <script setup>
 import { NodeViewContent } from "@tiptap/vue-3";
 import BaseContianer from "../BaseContainer.vue";
+import TextToolbar from "../TextToolbar.vue";
 import { FwbP } from "flowbite-vue";
 
 // Props from TipTap

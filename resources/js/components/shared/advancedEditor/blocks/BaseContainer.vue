@@ -1,7 +1,7 @@
 <template>
   <node-view-wrapper
     :as="as"
-    :class="['block-wrapper', isFocused && 'block-wrapper--focused']"
+    :class="['block-wrapper', isFocused && isEditable && 'block-wrapper--focused']"
   >
     <input
       ref="imageInput"
@@ -10,11 +10,11 @@
       class="hidden"
       @change="handleImageFile"
     />
-    <slot name="options" />
+    <slot name="options" :isFocused="isFocused && isEditable" />
     <div class="block-content">
       <slot />
     </div>
-    <div v-if="isFocused" class="item-options">
+    <div v-if="isFocused && isEditable" class="item-options">
       <CustomControls
         v-if="isEditable"
         @removeNode="removeNode"
@@ -24,15 +24,7 @@
       <div>
         <ToolbarItem
           :disabled="imageUploading"
-          @click="
-            editor
-              .chain()
-              .focus()
-              .insertContent({
-                type: 'paragraph',
-              })
-              .run()
-          "
+          @click="insertParagraphAfter"
         >
           <svg
             class="w-4 h-4"
@@ -179,15 +171,22 @@ const handleImageFile = async event => {
   const file = event.target.files?.[0]
   if (!file) return
   const form = new FormData()
-  form.append('image', file)
+  form.append('file', file)
   imageUploading.value = true
   try {
-    const { data } = await axios.post('/api/v1/editor/images', form)
+    const { data } = await axios.post('/api/v1/editor/files', form)
+    const insertPos = props.getPos() + props.node.nodeSize
     props.editor
       .chain()
-      .focus()
-      .setImage({ src: data.url, alt: file.name, title: file.name })
+      .insertContentAt(insertPos, {
+        type: 'resizableImage',
+        attrs: { src: data.url, alt: file.name, title: file.name },
+      })
+      .focus(insertPos + 1)
       .run()
+  } catch (err) {
+    console.error('Image upload failed:', err)
+    alert('Image upload failed. Please try again.')
   } finally {
     imageUploading.value = false
     event.target.value = ''
@@ -213,6 +212,15 @@ function moveDown() {
 
 function removeNode() {
   props.deleteNode()
+}
+
+function insertParagraphAfter() {
+  const insertPos = props.getPos() + props.node.nodeSize
+  props.editor
+    .chain()
+    .insertContentAt(insertPos, { type: 'paragraph' })
+    .focus(insertPos + 1)
+    .run()
 }
 </script>
 

@@ -1,6 +1,6 @@
 <script setup>
 import { ref, reactive, computed, watch, onMounted } from 'vue'
-import { useRouter } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
 import {
     FwbAvatar,
     FwbButton,
@@ -23,17 +23,19 @@ import SunIcon from '../shared/icons/SunIcon.vue'
 import MoonIcon from '../shared/icons/MoonIcon.vue'
 import ComputerIcon from '../shared/icons/ComputerIcon.vue'
 import MenuIcon from '../shared/icons/MenuIcon.vue'
-import ArrowDownIcon from '../shared/icons/ArrowDownIcon.vue'
 
 const { can } = useAbility()
 const userStore = useUserStore()
 const tasksStore = useTasksStore()
 const router = useRouter()
+const route = useRoute()
 
 const sidebarOpen = ref(false)
-const projectsOpen = ref(false)
+const step = ref('main')
+const transitionName = ref('slide-left')
 const projects = ref([])
 const projectSearch = ref('')
+const currentProject = ref({ id: null, name: '' })
 
 const filteredProjects = computed(() =>
     projects.value.filter(obj =>
@@ -85,13 +87,52 @@ const createProject = () => {
 
 const handleOpenProject = (obj) => {
     localStorage.setItem('lastProject', obj.id)
+    goToProjectStep(obj)
     sidebarOpen.value = false
     router.push({ name: 'project.board.view', params: { project: obj.id } })
+}
+
+const goToProjects = () => {
+    transitionName.value = 'slide-left'
+    step.value = 'projects'
+}
+
+const goToMain = () => {
+    transitionName.value = 'slide-right'
+    step.value = 'main'
+}
+
+const goToProjectStep = (project) => {
+    currentProject.value = project
+    transitionName.value = 'slide-left'
+    step.value = 'project'
+}
+
+const backFromProject = () => {
+    transitionName.value = 'slide-right'
+    step.value = 'projects'
 }
 
 const closeSidebar = () => {
     sidebarOpen.value = false
 }
+
+// Auto-activate project step based on current route
+watch(() => route.params.project, (projectId) => {
+    if (!projectId) {
+        if (step.value === 'project') step.value = 'main'
+        return
+    }
+    const found = projects.value.find(p => String(p.id) === String(projectId))
+    if (found) {
+        currentProject.value = found
+    } else {
+        window.axios.get(`/api/v1/projects/${projectId}`).then(res => {
+            currentProject.value = res.data
+        })
+    }
+    step.value = 'project'
+}, { immediate: true })
 
 const logout = (e) => {
     e.preventDefault()
@@ -119,29 +160,38 @@ const changeTheme = (theme) => {
     <!-- Mobile overlay -->
     <div
         v-if="sidebarOpen"
-        class="fixed inset-0 z-20 bg-black bg-opacity-50 lg:hidden"
+        class="fixed inset-0 z-50 bg-black bg-opacity-50 lg:hidden"
         @click="sidebarOpen = false"
     />
 
-    <!-- Mobile hamburger toggle -->
-    <button
-        class="fixed top-3 left-3 z-40 lg:hidden p-2 rounded-lg bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-sm"
-        @click="sidebarOpen = !sidebarOpen"
-    >
-        <span class="sr-only">Toggle sidebar</span>
-        <MenuIcon class="w-5 h-5 text-gray-600 dark:text-gray-300" />
-        <span
-            v-if="userStore.newMessages"
-            class="absolute -top-1 -right-1 w-4 h-4 text-xs bg-red-600 text-white flex items-center justify-center rounded-full font-bold"
+    <!-- Mobile header bar -->
+    <header class="fixed top-0 left-0 right-0 z-40 h-14 lg:hidden flex items-center gap-3 px-4 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
+        <router-link :to="{ name: 'home' }" class="flex items-center gap-2 no-underline min-w-0" @click="closeSidebar">
+            <fwb-avatar :img="userStore.company.avatar" size="sm" />
+            <span class="font-extrabold text-gray-900 dark:text-white truncate text-sm">
+                {{ userStore.company.name }}
+            </span>
+        </router-link>
+
+        <button
+            class="ml-auto relative p-2 rounded-lg text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+            @click="sidebarOpen = true"
         >
-            {{ userStore.newMessages }}
-        </span>
-    </button>
+            <span class="sr-only">Open sidebar</span>
+            <MenuIcon class="w-5 h-5" />
+            <span
+                v-if="userStore.newMessages"
+                class="absolute -top-1 -right-1 w-4 h-4 text-xs bg-red-600 text-white flex items-center justify-center rounded-full font-bold"
+            >
+                {{ userStore.newMessages }}
+            </span>
+        </button>
+    </header>
 
     <!-- Sidebar -->
     <aside
         :class="[
-            'fixed inset-y-0 left-0 z-30 w-64 flex flex-col bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 transition-transform duration-200',
+            'fixed inset-y-0 left-0 z-50 w-64 flex flex-col bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 transition-transform duration-200',
             sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
         ]"
     >
@@ -153,124 +203,198 @@ const changeTheme = (theme) => {
                     {{ userStore.company.name }}
                 </span>
             </router-link>
+            <!-- Close button — mobile only, inside sidebar -->
+            <button
+                class="ml-auto lg:hidden p-1.5 rounded-lg text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-700"
+                @click="sidebarOpen = false"
+            >
+                <span class="sr-only">Close sidebar</span>
+                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </button>
         </div>
 
-        <!-- Navigation -->
-        <nav class="flex-1 overflow-y-auto px-3 py-4 space-y-1">
-            <!-- New task CTA -->
+        <!-- New task CTA — always visible across all steps -->
+        <div class="px-3 pt-3 pb-1 flex-shrink-0">
             <button
                 @click="tasksStore.toggleCreateTaskModal(); closeSidebar()"
-                class="flex w-full items-center justify-center gap-2 rounded-lg bg-blue-600 px-3 py-2 mb-3 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-500 active:bg-blue-700"
+                class="flex w-full items-center justify-center gap-2 rounded-lg bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-500 active:bg-blue-700"
             >
                 <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
                 </svg>
                 New task
             </button>
+        </div>
 
-            <router-link
-                :to="{ name: 'home' }"
-                class="sidebar-nav-link"
-                @click="closeSidebar"
-            >
-                <HomeIcon class="w-5 h-5 flex-shrink-0" />
-                <span>Home</span>
-            </router-link>
+        <!-- Navigation (multistep) -->
+        <div class="flex-1 overflow-hidden relative">
+            <Transition :name="transitionName">
 
-            <router-link
-                :to="{ name: 'chat' }"
-                class="sidebar-nav-link"
-                @click="closeSidebar"
-            >
-                <ChatIcon class="w-5 h-5 flex-shrink-0" />
-                <span>Chat</span>
-                <span
-                    v-if="userStore.newMessages"
-                    class="ml-auto inline-flex items-center justify-center min-w-[1.25rem] h-5 px-1 text-xs font-bold text-white bg-red-600 rounded-full"
-                >
-                    {{ userStore.newMessages }}
-                </span>
-            </router-link>
+                <!-- Step: Main -->
+                <nav v-if="step === 'main'" key="main" class="absolute inset-0 overflow-y-auto px-3 py-4 space-y-1">
+                    <router-link :to="{ name: 'home' }" class="sidebar-nav-link" @click="closeSidebar">
+                        <HomeIcon class="w-5 h-5 flex-shrink-0" />
+                        <span>Home</span>
+                    </router-link>
 
-            <router-link
-                :to="{ name: 'documents' }"
-                class="sidebar-nav-link"
-                @click="closeSidebar"
-            >
-                <svg class="w-5 h-5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
-                        d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                </svg>
-                <span>Documents</span>
-            </router-link>
+                    <router-link :to="{ name: 'chat' }" class="sidebar-nav-link" @click="closeSidebar">
+                        <ChatIcon class="w-5 h-5 flex-shrink-0" />
+                        <span>Chat</span>
+                        <span
+                            v-if="userStore.newMessages"
+                            class="ml-auto inline-flex items-center justify-center min-w-[1.25rem] h-5 px-1 text-xs font-bold text-white bg-red-600 rounded-full"
+                        >
+                            {{ userStore.newMessages }}
+                        </span>
+                    </router-link>
 
-            <!-- Projects collapsible -->
-            <div>
-                <button
-                    type="button"
-                    class="sidebar-nav-link w-full"
-                    @click="projectsOpen = !projectsOpen"
-                >
-                    <ArchiveBoxIcon class="w-5 h-5 flex-shrink-0" />
-                    <span>Projects</span>
-                    <ArrowDownIcon
-                        :class="[
-                            'ml-auto w-4 h-4 flex-shrink-0 transition-transform duration-150',
-                            projectsOpen ? 'rotate-180' : ''
-                        ]"
-                    />
-                </button>
-                <div v-if="projectsOpen" class="mt-1 ml-4 space-y-1">
-                    <button
-                        @click="openNewProject"
-                        class="flex w-full items-center gap-1.5 rounded-md bg-blue-600 px-2 py-1.5 text-xs font-medium text-white transition hover:bg-blue-500 mb-2"
-                    >
-                        <svg class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                    <router-link :to="{ name: 'documents' }" class="sidebar-nav-link" @click="closeSidebar">
+                        <svg class="w-5 h-5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                         </svg>
-                        New project
+                        <span>Documents</span>
+                    </router-link>
+
+                    <button type="button" class="sidebar-nav-link w-full" @click="goToProjects">
+                        <ArchiveBoxIcon class="w-5 h-5 flex-shrink-0" />
+                        <span>Projects</span>
+                        <svg class="ml-auto w-4 h-4 flex-shrink-0 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                        </svg>
                     </button>
+
+                    <router-link
+                        v-if="can(`can-view-billing-info.${userStore.company.id}`)"
+                        :to="{ name: 'invoices' }"
+                        class="sidebar-nav-link"
+                        @click="closeSidebar"
+                    >
+                        <BanknotesIcon class="w-5 h-5 flex-shrink-0" />
+                        <span>Invoices</span>
+                    </router-link>
+
+                    <router-link
+                        v-if="can(`can-see-timesheet-report.${userStore.company.id}`, '')"
+                        :to="{ name: 'reports' }"
+                        class="sidebar-nav-link"
+                        @click="closeSidebar"
+                    >
+                        <ChartPieIcon class="w-5 h-5 flex-shrink-0" />
+                        <span>Reports</span>
+                    </router-link>
+                </nav>
+
+                <!-- Step: Project -->
+                <nav v-else-if="step === 'project'" key="project" class="absolute inset-0 overflow-y-auto px-3 py-4 space-y-1">
+                    <!-- Back + project name -->
+                    <div class="flex items-center gap-2 mb-4 px-1">
+                        <button
+                            class="p-1.5 rounded-lg text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors flex-shrink-0"
+                            @click="backFromProject"
+                        >
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                            </svg>
+                        </button>
+                        <span class="text-sm font-semibold text-gray-900 dark:text-white truncate">
+                            {{ currentProject.name }}
+                        </span>
+                    </div>
+
+                    <router-link
+                        :to="{ name: 'project.board.view', params: { project: currentProject.id } }"
+                        class="sidebar-nav-link"
+                        @click="closeSidebar"
+                    >
+                        <svg class="w-5 h-5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10a2 2 0 002 2h2a2 2 0 002-2M9 7a2 2 0 012-2h2a2 2 0 012 2m0 10V7m0 10a2 2 0 002 2h2a2 2 0 002-2V7a2 2 0 00-2-2h-2a2 2 0 00-2 2" />
+                        </svg>
+                        <span>Boards</span>
+                    </router-link>
+
+                    <router-link
+                        :to="{ name: 'project.tasks', params: { project: currentProject.id } }"
+                        class="sidebar-nav-link"
+                        @click="closeSidebar"
+                    >
+                        <svg class="w-5 h-5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 6h16M4 10h16M4 14h16M4 18h16" />
+                        </svg>
+                        <span>Backlog</span>
+                    </router-link>
+
+                    <router-link
+                        :to="{ name: 'project.documents', params: { project: currentProject.id } }"
+                        class="sidebar-nav-link"
+                        @click="closeSidebar"
+                    >
+                        <svg class="w-5 h-5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                        </svg>
+                        <span>Documents</span>
+                    </router-link>
+
+                    <router-link
+                        :to="{ name: 'project.documents.settings', params: { project: currentProject.id } }"
+                        class="sidebar-nav-link"
+                        @click="closeSidebar"
+                    >
+                        <CogsIcon class="w-5 h-5 flex-shrink-0" />
+                        <span>Settings</span>
+                    </router-link>
+                </nav>
+
+                <!-- Step: Projects -->
+                <nav v-else key="projects" class="absolute inset-0 overflow-y-auto px-3 py-4 space-y-1">
+                    <!-- Back + header -->
+                    <div class="flex items-center gap-2 mb-3">
+                        <button
+                            class="p-1.5 rounded-lg text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                            @click="goToMain"
+                        >
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                            </svg>
+                        </button>
+                        <span class="text-sm font-semibold text-gray-900 dark:text-white">Projects</span>
+                        <button
+                            @click="openNewProject"
+                            class="ml-auto flex items-center gap-1 rounded-md bg-blue-600 px-2 py-1 text-xs font-medium text-white transition hover:bg-blue-500"
+                        >
+                            <svg class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                            </svg>
+                            New
+                        </button>
+                    </div>
+
                     <input
                         v-model="projectSearch"
                         type="text"
                         placeholder="Search projects..."
                         class="w-full text-xs px-2 py-1.5 mb-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-blue-500"
                     />
+
                     <router-link
                         v-for="proj in filteredProjects"
                         :key="proj.id"
                         :to="{ name: 'project.board.view', params: { project: proj.id } }"
-                        class="sidebar-nav-link text-sm py-1.5"
+                        class="sidebar-nav-link"
                         @click="handleOpenProject(proj)"
                     >
                         <span class="truncate">{{ proj.name }}</span>
                     </router-link>
+
                     <div v-if="filteredProjects.length === 0" class="text-xs text-gray-400 px-3 py-1.5">
                         No projects found
                     </div>
-                </div>
-            </div>
+                </nav>
 
-            <router-link
-                v-if="can(`can-view-billing-info.${userStore.company.id}`)"
-                :to="{ name: 'invoices' }"
-                class="sidebar-nav-link"
-                @click="closeSidebar"
-            >
-                <BanknotesIcon class="w-5 h-5 flex-shrink-0" />
-                <span>Invoices</span>
-            </router-link>
-
-            <router-link
-                v-if="can(`can-see-timesheet-report.${userStore.company.id}`, '')"
-                :to="{ name: 'reports' }"
-                class="sidebar-nav-link"
-                @click="closeSidebar"
-            >
-                <ChartPieIcon class="w-5 h-5 flex-shrink-0" />
-                <span>Reports</span>
-            </router-link>
-        </nav>
+            </Transition>
+        </div>
 
         <!-- Bottom section -->
         <div class="border-t border-gray-200 dark:border-gray-700 px-3 py-4 space-y-2 flex-shrink-0">
@@ -388,3 +512,20 @@ const changeTheme = (theme) => {
         </template>
     </fwb-modal>
 </template>
+
+<style scoped>
+/* Forward: main → projects */
+.slide-left-enter-active,
+.slide-left-leave-active,
+.slide-right-enter-active,
+.slide-right-leave-active {
+    transition: transform 0.22s ease, opacity 0.22s ease;
+}
+
+.slide-left-enter-from  { transform: translateX(100%); opacity: 0; }
+.slide-left-leave-to    { transform: translateX(-100%); opacity: 0; }
+
+/* Back: projects → main */
+.slide-right-enter-from { transform: translateX(-100%); opacity: 0; }
+.slide-right-leave-to   { transform: translateX(100%); opacity: 0; }
+</style>

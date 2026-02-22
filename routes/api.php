@@ -54,6 +54,9 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+// Public: read-only access to a shared document via share token
+Route::get('/shared/d/{token}', [FileController::class, 'showShared'])->name('api.shared.document');
+
 Route::middleware(['auth:sanctum'])->group(function () {
 
     Route::apiResource('/push-notification', PushNotificationController::class);
@@ -99,8 +102,13 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::put('/sprints/{sprint}/activate', [SprintController::class, 'activate'])->name('api.activate');
     Route::apiResource('/sprints', SprintController::class);
     Route::post('/file-to-pdf', [FileController::class, 'exportPDF'])->name('api.toPdf');
+    Route::post('/files/{file}/share', [FileController::class, 'share'])->name('api.files.share');
+    Route::delete('/files/{file}/share', [FileController::class, 'unshare'])->name('api.files.unshare');
     Route::apiResource('/files', FileController::class);
-    Route::post('/editor/images', [\App\Http\Controllers\EditorImageController::class, 'store'])->name('api.editor.images.store');
+    Route::post('/editor/files', [\App\Http\Controllers\EditorFileController::class, 'store'])->name('api.editor.files.store');
+    // Legacy alias — kept for backwards compatibility
+    Route::post('/editor/images', [\App\Http\Controllers\EditorFileController::class, 'store'])->name('api.editor.images.store');
+    Route::post('/editor/drawio', [\App\Http\Controllers\DrawioImageController::class, 'store'])->name('api.editor.drawio.store');
     Route::get('/role/resources', [RoleController::class, 'getResource'])->name('api.getResource');
     Route::get('/role/resources/{role}', [RoleController::class, 'getAllResources'])->name('api.getAllResources');
     Route::post('/role/resources/{role}', [RoleController::class, 'addResource'])->name('api.addResource');

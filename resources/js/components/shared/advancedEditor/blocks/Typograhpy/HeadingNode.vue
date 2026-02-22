@@ -6,6 +6,9 @@
     :getPos="getPos"
     :selected="selected"
   >
+    <template #options="{ isFocused }">
+      <TextToolbar :editor="editor" :node="node" :isFocused="isFocused" />
+    </template>
 
     <fwb-heading
       :tag="`h${level}`"
@@ -22,6 +25,7 @@ import { ref, computed } from 'vue'
 import { NodeViewWrapper, NodeViewContent } from '@tiptap/vue-3'
 import { FwbHeading } from 'flowbite-vue'
 import BaseContianer from "../BaseContainer.vue";
+import TextToolbar from "../TextToolbar.vue";
 
 // Props from TipTap
 const props = defineProps({

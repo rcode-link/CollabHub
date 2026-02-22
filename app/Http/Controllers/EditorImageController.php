@@ -15,13 +15,10 @@ class EditorImageController extends Controller
         ]);
 
         $file = $request->file('image');
-        $extension = $file->getClientOriginalExtension();
-        $path = 'editor-images/'.Str::uuid().'.'.$extension;
+        $path = 'editor-images/'.Str::uuid().'.'.$file->getClientOriginalExtension();
 
-        Storage::disk('s3')->put($path, file_get_contents($file), 'private');
+        Storage::disk('s3')->put($path, file_get_contents($file), 'public');
 
-        $url = Storage::disk('s3')->temporaryUrl($path, now()->addHours(24));
-
-        return response()->json(['url' => $url]);
+        return response()->json(['url' => Storage::disk('s3')->url($path)]);
     }
 }
