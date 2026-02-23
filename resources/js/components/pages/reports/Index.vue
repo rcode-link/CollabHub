@@ -3,8 +3,8 @@
 import { ref, markRaw } from 'vue'
 import { DateTime } from 'luxon'
 import { FwbCard } from 'flowbite-vue'
-import Auth from '../../layouts/Auth.vue'
-import { useBreadcrumbStore } from '../../../store/breadcrumb'
+import Auth from '@/components/layouts/Auth.vue'
+import { useBreadcrumbStore } from '@/store/breadcrumb'
 
 const breadcrumb = useBreadcrumbStore()
 breadcrumb.setLinks([

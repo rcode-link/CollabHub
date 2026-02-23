@@ -2,9 +2,9 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import type { MediaResource } from './MediaResource';
-import type { TaskType } from './TaskType';
-import type { UserResource } from './UserResource';
+import type { MediaResource } from '@/types/models/MediaResource';
+import type { TaskType } from '@/types/models/TaskType';
+import type { UserResource } from '@/types/models/UserResource';
 export type TaskResource = {
     id: number;
     name: string;

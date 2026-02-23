@@ -1,11 +1,11 @@
 <script setup>
-import Text from "../../shared/Text.vue";
-import Label from "../../shared/Label.vue";
-import Errors from "../../shared/Errors.vue";
+import Text from "@/components/shared/Text.vue";
+import Label from "@/components/shared/Label.vue";
+import Errors from "@/components/shared/Errors.vue";
 import { reactive, ref, watch } from "vue";
-import Editor from "../../shared/Editor.vue";
+import Editor from "@/components/shared/Editor.vue";
 import { FwbButton } from "flowbite-vue";
-import { useErrorsStore } from "../../../store/errors";
+import { useErrorsStore } from "@/store/errors";
 import { useRouter } from "vue-router";
 
 const globalErrorMessage = ref("");

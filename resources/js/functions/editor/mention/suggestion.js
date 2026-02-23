@@ -1,8 +1,8 @@
 import { VueRenderer } from '@tiptap/vue-3'
 import { tippy } from 'vue-tippy'
 
-import MentionList from './MentionList.vue'
-import { useUserStore } from "../../../store/user";
+import MentionList from '@/functions/editor/mention/MentionList.vue'
+import { useUserStore } from "@/store/user";
 
 export default function useSuggestion() {
 

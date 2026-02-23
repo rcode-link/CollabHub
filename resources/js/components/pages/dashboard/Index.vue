@@ -14,11 +14,11 @@
 </template>
 
 <script setup>
-import Auth from "../../layouts/Auth.vue";
+import Auth from "@/components/layouts/Auth.vue";
 import { useBreadcrumbStore } from "@/store/breadcrumb";
-import NewMessages from "./partials/NewMessages.vue";
-import Tasks from "./partials/Tasks.vue";
-import CalendarEvents from "./partials/CalendarEvents.vue";
+import NewMessages from "@/components/pages/dashboard/partials/NewMessages.vue";
+import Tasks from "@/components/pages/dashboard/partials/Tasks.vue";
+import CalendarEvents from "@/components/pages/dashboard/partials/CalendarEvents.vue";
 
 const breadcrumb = useBreadcrumbStore();
 

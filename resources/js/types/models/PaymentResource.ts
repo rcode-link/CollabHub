@@ -2,7 +2,7 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import type { InvoiceResource } from './InvoiceResource';
+import type { InvoiceResource } from '@/types/models/InvoiceResource';
 export type PaymentResource = {
     id: string;
     value: string;

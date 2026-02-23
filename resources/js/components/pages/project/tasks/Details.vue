@@ -1,20 +1,20 @@
 <script setup>
 import { useRoute, useRouter } from "vue-router";
 import { computed, onMounted, ref, watch } from "vue";
-import Editor from "../../../shared/Editor.vue";
-import User from "./User.vue";
+import Editor from "@/components/shared/Editor.vue";
+import User from "@/components/pages/project/tasks/User.vue";
 import useClipboard from "vue-clipboard3";
-import PrintFiles from "../../../shared/PrintFiles.vue";
-import Comments from "./partisals/details/Comments.vue";
-import UsersSelectInput from "../../../shared/SelectUsersInProject.vue";
-import { useTasksStore } from "../../../../store/tasksStore.js";
-import Relations from "./partisals/details/Relations.vue";
+import PrintFiles from "@/components/shared/PrintFiles.vue";
+import Comments from "@/components/pages/project/tasks/partisals/details/Comments.vue";
+import UsersSelectInput from "@/components/shared/SelectUsersInProject.vue";
+import { useTasksStore } from "@/store/tasksStore.js";
+import Relations from "@/components/pages/project/tasks/partisals/details/Relations.vue";
 import { DateTime } from "luxon";
 import { Tippy } from "vue-tippy";
-import TimeSheet from "./partisals/details/time_sheet/index.vue";
-import CopyIcon from "../../../shared/icons/CopyIcon.vue";
-import TaskPrintStatus from "./partisals/details/TaskPrintStatus.vue";
-import PencilIcon from "../../../shared/icons/PencilIcon.vue";
+import TimeSheet from "@/components/pages/project/tasks/partisals/details/time_sheet/index.vue";
+import CopyIcon from "@/components/shared/icons/CopyIcon.vue";
+import TaskPrintStatus from "@/components/pages/project/tasks/partisals/details/TaskPrintStatus.vue";
+import PencilIcon from "@/components/shared/icons/PencilIcon.vue";
 
 const { toClipboard } = useClipboard();
 const route = useRoute();

@@ -1,9 +1,9 @@
 <script setup lang="js">
-import Card from "../../../../shared/Card.vue";
+import Card from "@/components/shared/Card.vue";
 import { FwbButton, FwbHeading, FwbSelect } from "flowbite-vue";
-import Label from "../../../../shared/Label.vue";
+import Label from "@/components/shared/Label.vue";
 import { reactive, ref, watch } from "vue";
-import { useRoleStore } from "../../../../../store/roleStore";
+import { useRoleStore } from "@/store/roleStore";
 import { toast } from "vue3-toastify";
 
 const roleStore = useRoleStore();

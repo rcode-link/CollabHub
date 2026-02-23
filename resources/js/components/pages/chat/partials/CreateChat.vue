@@ -1,15 +1,15 @@
 <script setup>
-import Modal from '../../../shared/Modal.vue'
-import Button from '../../../shared/Button.vue'
+import Modal from '@/components/shared/Modal.vue'
+import Button from '@/components/shared/Button.vue'
 import { computed, ref, watch } from 'vue'
-import UserIcon from '../../../shared/UserIcon.vue'
-import { useUserStore } from '../../../../store/user'
+import UserIcon from '@/components/shared/UserIcon.vue'
+import { useUserStore } from '@/store/user'
 import { useRouter } from 'vue-router'
-import CheckBox from '../../../shared/CheckBox.vue'
-import Text from '../../../shared/Text.vue'
-import Label from '../../../shared/Label.vue'
-import Errors from '../../../shared/Errors.vue'
-import { useErrorsStore } from '../../../../store/errors'
+import CheckBox from '@/components/shared/CheckBox.vue'
+import Text from '@/components/shared/Text.vue'
+import Label from '@/components/shared/Label.vue'
+import Errors from '@/components/shared/Errors.vue'
+import { useErrorsStore } from '@/store/errors'
 
 const emits = defineEmits(['update'])
 const userState = useUserStore()

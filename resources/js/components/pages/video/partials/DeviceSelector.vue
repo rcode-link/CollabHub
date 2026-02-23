@@ -1,8 +1,8 @@
 <script lang="js" setup>
-import { useLiveKit } from "../../../../functions/liveKit";
-import CogsIcon from "../../../shared/icons/CogsIcon.vue";
+import { useLiveKit } from "@/functions/liveKit";
+import CogsIcon from "@/components/shared/icons/CogsIcon.vue";
 //@ts-ignore
-import DeviceSelectorItem from "./DeviceSelectorItem.vue";
+import DeviceSelectorItem from "@/components/pages/video/partials/DeviceSelectorItem.vue";
 //@ts-ignore
 import { FwbDropdown } from "flowbite-vue";
 

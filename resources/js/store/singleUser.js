@@ -1,7 +1,7 @@
 import { defineStore } from "pinia";
 import { ref } from "vue";
 import { useRoute } from "vue-router";
-import { useBreadcrumbStore } from "./breadcrumb.js";
+import { useBreadcrumbStore } from "@/store/breadcrumb.js";
 import { toast } from "vue3-toastify";
 
 export const useSingleUserStore = defineStore("singleUserStore", () => {

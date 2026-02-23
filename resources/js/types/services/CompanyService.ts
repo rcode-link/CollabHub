@@ -2,10 +2,10 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import type { Company } from '../models/Company';
-import type { CancelablePromise } from '../core/CancelablePromise';
-import { OpenAPI } from '../core/OpenAPI';
-import { request as __request } from '../core/request';
+import type { Company } from '@/types/models/Company';
+import type { CancelablePromise } from '@/types/core/CancelablePromise';
+import { OpenAPI } from '@/types/core/OpenAPI';
+import { request as __request } from '@/types/core/request';
 export class CompanyService {
     /**
      * Returns list of keys for editor to autocomplete

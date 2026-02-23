@@ -1,15 +1,15 @@
 <script setup>
-import Auth from '../../layouts/Auth.vue'
-import { useBreadcrumbStore } from '../../../store/breadcrumb'
+import Auth from '@/components/layouts/Auth.vue'
+import { useBreadcrumbStore } from '@/store/breadcrumb'
 import { ref, reactive, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { TailwindPagination } from 'laravel-vue-pagination'
 import { FwbButton } from 'flowbite-vue'
-import Card from '../../shared/Card.vue'
-import Editor from '../../shared/Editor.vue'
-import Modal from '../../shared/Modal.vue'
-import Label from '../../shared/Label.vue'
-import Text from '../../shared/Text.vue'
+import Card from '@/components/shared/Card.vue'
+import Editor from '@/components/shared/Editor.vue'
+import Modal from '@/components/shared/Modal.vue'
+import Label from '@/components/shared/Label.vue'
+import Text from '@/components/shared/Text.vue'
 
 const breadcrumb = useBreadcrumbStore()
 const router = useRouter()

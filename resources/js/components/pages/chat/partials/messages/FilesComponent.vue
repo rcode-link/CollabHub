@@ -34,12 +34,12 @@
   </div>
 </template>
 <script setup>
-import InteractiveToast from "../../../../shared/InteractiveToast.vue";
+import InteractiveToast from "@/components/shared/InteractiveToast.vue";
 import {FwbButton} from "flowbite-vue";
-import FileImage from "../../../../shared/icons/FileImage.vue";
-import FileFile from "../../../../shared/icons/FileFile.vue";
+import FileImage from "@/components/shared/icons/FileImage.vue";
+import FileFile from "@/components/shared/icons/FileFile.vue";
 import {ref} from "vue";
-import {chatDetails} from "../../../../../store/chatStore.js";
+import {chatDetails} from "@/store/chatStore.js";
 
 const files = chatDetails()
 

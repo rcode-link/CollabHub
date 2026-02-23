@@ -1,8 +1,8 @@
 <script setup lang="js">
 import { useAbility } from "@casl/vue";
-import { useRoleStore } from "../../../../store/roleStore";
-import { useUserStore } from "../../../../store/user";
-import CreateRoleModal from "../../../pages/settings/role/partials/CreateRoleModal.vue";
+import { useRoleStore } from "@/store/roleStore";
+import { useUserStore } from "@/store/user";
+import CreateRoleModal from "@/components/pages/settings/role/partials/CreateRoleModal.vue";
 
 import {
     FwbListGroup,

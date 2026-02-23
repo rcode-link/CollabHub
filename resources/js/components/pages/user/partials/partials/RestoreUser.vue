@@ -1,8 +1,8 @@
 <script setup>
 
 import {FwbButton, FwbP} from "flowbite-vue";
-import InteractiveToast from "../../../../shared/InteractiveToast.vue";
-import {useSingleUserStore} from "../../../../../store/singleUser";
+import InteractiveToast from "@/components/shared/InteractiveToast.vue";
+import {useSingleUserStore} from "@/store/singleUser";
 const  singleUserStore = useSingleUserStore();
 </script>
 

@@ -1,5 +1,5 @@
 import {mergeAttributes, Node, VueNodeViewRenderer} from '@tiptap/vue-3'
-import Vacation from "./Vacation.vue";
+import Vacation from "@/components/shared/vacationPlugin/Vacation.vue";
 
 export default Node.create({
     name: 'vacation',

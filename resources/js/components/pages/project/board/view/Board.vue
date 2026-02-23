@@ -1,12 +1,13 @@
 <script setup lang="js">
-import { useBoardsState } from "../../../../../store/boards";
+import { useBoardsState } from "@/store/boards";
 import { computed, onBeforeUnmount, onMounted, provide, reactive, ref, watch } from "vue";
 import { useRoute } from "vue-router";
-import StatusRow from "./StatusRow.vue";
+import StatusRow from "@/components/pages/project/board/view/StatusRow.vue";
 import { debounce, findIndex } from "lodash";
-import { useBreadcrumbStore } from "../../../../../store/breadcrumb";
-import { onClickOutside } from "@vueuse/core";
+import { useBreadcrumbStore } from "@/store/breadcrumb";
+import { useDropdown } from "@/composables/useDropdown";
 import UserIcon from "@/components/shared/UserIcon.vue";
+import UiSelect from "@/components/shared/ui/Select.vue";
 
 const route = useRoute();
 const boardState = useBoardsState();
@@ -20,8 +21,7 @@ provide("setTagFilter", (tag) => { filters.tag = filters.tag === tag ? "" : tag;
 const taskTypes = ref([]);
 const filterUsers = ref([]);
 const userSearch = ref("");
-const userDropdownEl = ref(null);
-const userDropdownOpen = ref(false);
+const { open: userDropdownOpen, el: userDropdownEl, toggle: toggleUserDropdown } = useDropdown();
 
 window.axios.get("/api/v1/task-types").then((r) => { taskTypes.value = r.data; });
 
@@ -34,7 +34,6 @@ const loadFilterUsers = debounce(() => {
 }, 300);
 
 watch(userSearch, loadFilterUsers, { immediate: true });
-onClickOutside(userDropdownEl, () => { userDropdownOpen.value = false; });
 
 const selectedFilterUser = computed(() =>
     filterUsers.value.find((u) => u.id === filters.user_id)
@@ -48,6 +47,7 @@ const selectFilterUser = (user) => {
     userDropdownOpen.value = false;
     userSearch.value = "";
 };
+
 
 const clearFilters = () => {
     filters.search = "";
@@ -70,13 +70,11 @@ watch(groupBy, (val) => { localStorage.setItem(storageKey.value, val); });
 
 const groupByLabel = computed(() => groupByOptions.find(o => o.value === groupBy.value)?.label ?? 'None');
 
-const groupDropdownEl = ref(null);
-const groupDropdownOpen = ref(false);
-onClickOutside(groupDropdownEl, () => { groupDropdownOpen.value = false; });
+const { open: groupDropdownOpen, el: groupDropdownEl, toggle: toggleGroupDropdown, close: closeGroupDropdown } = useDropdown();
 
 const selectGroupBy = (val) => {
     groupBy.value = val;
-    groupDropdownOpen.value = false;
+    closeGroupDropdown();
 };
 
 // ---- Board logic ----
@@ -168,13 +166,10 @@ onBeforeUnmount(() => {
                 </div>
 
                 <!-- Type filter -->
-                <select
-                    v-model="filters.type_id"
-                    class="py-1.5 pl-3 pr-8 text-sm rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 transition-colors cursor-pointer"
-                >
+                <UiSelect v-model="filters.type_id" class="!w-auto">
                     <option :value="null">All types</option>
                     <option v-for="t in taskTypes" :key="t.id" :value="t.id">{{ t.title }}</option>
-                </select>
+                </UiSelect>
 
                 <!-- Tag filter -->
                 <div class="relative flex items-center">
@@ -205,7 +200,7 @@ onBeforeUnmount(() => {
                 <!-- User filter -->
                 <div class="relative" ref="userDropdownEl">
                     <button
-                        @click="userDropdownOpen = !userDropdownOpen"
+                        @click="toggleUserDropdown()"
                         class="flex items-center gap-1.5 py-1.5 pl-2.5 pr-2 text-sm rounded-lg border transition-colors"
                         :class="filters.user_id
                             ? 'border-blue-300 dark:border-blue-700 text-blue-700 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20'
@@ -279,7 +274,7 @@ onBeforeUnmount(() => {
                 <!-- Group by -->
                 <div class="relative" ref="groupDropdownEl">
                     <button
-                        @click="groupDropdownOpen = !groupDropdownOpen"
+                        @click="toggleGroupDropdown()"
                         class="flex items-center gap-1.5 py-1.5 pl-2.5 pr-2 text-sm rounded-lg border transition-colors"
                         :class="groupBy !== 'status'
                             ? 'border-blue-300 dark:border-blue-700 text-blue-700 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20'

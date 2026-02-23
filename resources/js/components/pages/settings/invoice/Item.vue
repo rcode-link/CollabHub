@@ -1,7 +1,7 @@
 <script lang="js" setup>
 import { onMounted, ref } from "vue";
-import Settings from "../../../layouts/Settings.vue";
-import { useBreadcrumbStore } from "../../../../store/breadcrumb";
+import Settings from "@/components/layouts/Settings.vue";
+import { useBreadcrumbStore } from "@/store/breadcrumb";
 
 const breadcrumb = useBreadcrumbStore()
 breadcrumb.setLinks([
@@ -18,8 +18,8 @@ import {
     FwbTableHeadCell,
     FwbTableRow,
 } from "flowbite-vue";
-import AddItem from "./partials/AddItem.vue";
-import InteractiveToast from "../../../shared/InteractiveToast.vue";
+import AddItem from "@/components/pages/settings/invoice/partials/AddItem.vue";
+import InteractiveToast from "@/components/shared/InteractiveToast.vue";
 
 const items = ref();
 

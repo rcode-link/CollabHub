@@ -1,7 +1,7 @@
 <script setup>
 
 import {FwbTable, FwbTableBody, FwbTableCell, FwbTableHead, FwbTableHeadCell, FwbTableRow} from "flowbite-vue";
-import UserIcon from "../../../shared/UserIcon.vue";
+import UserIcon from "@/components/shared/UserIcon.vue";
 import {onMounted, ref} from "vue";
 import {useRoute} from "vue-router";
 

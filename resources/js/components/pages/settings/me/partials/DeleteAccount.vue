@@ -1,6 +1,6 @@
 <script setup>
 
-import InteractiveToast from "../../../../shared/InteractiveToast.vue";
+import InteractiveToast from "@/components/shared/InteractiveToast.vue";
 import {FwbButton} from "flowbite-vue";
 </script>
 

@@ -1,8 +1,8 @@
 <script setup>
-import { useDocumentsStore } from '../../../store/documentsStore.js'
-import DocumentPrintTree from '../project/documents/partials/DocumentPrintTree.vue'
-import { useBreadcrumbStore } from '../../../store/breadcrumb'
-import Auth from '../../layouts/Auth.vue'
+import { useDocumentsStore } from '@/store/documentsStore.js'
+import DocumentPrintTree from '@/components/pages/project/documents/partials/DocumentPrintTree.vue'
+import { useBreadcrumbStore } from '@/store/breadcrumb'
+import Auth from '@/components/layouts/Auth.vue'
 import { onMounted, provide } from 'vue'
 import { useRouter } from 'vue-router'
 

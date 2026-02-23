@@ -1,5 +1,5 @@
 <script setup>
-import Auth from "../layouts/Auth.vue";
+import Auth from "@/components/layouts/Auth.vue";
 </script>
 
 <template>

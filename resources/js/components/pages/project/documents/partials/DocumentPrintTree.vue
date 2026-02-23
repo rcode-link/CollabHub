@@ -1,5 +1,5 @@
 <script setup>
-import DocumentItem from './DocumentItem.vue'
+import DocumentItem from '@/components/pages/project/documents/partials/DocumentItem.vue'
 import { computed, inject, nextTick, ref } from 'vue'
 
 const fileStore = inject('fileStore')

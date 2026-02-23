@@ -1,5 +1,5 @@
 <script setup>
-import TaskStatusDropdown from "./TaskStatusDropdown.vue";
+import TaskStatusDropdown from "@/components/pages/project/tasks/partisals/details/TaskStatusDropdown.vue";
 
 defineProps({
     status: null,

@@ -1,8 +1,8 @@
 <script setup lang="js">
 import { computed } from "vue";
-import { useLiveKit } from "../../../../functions/liveKit";
-import CameraIcon from "../../../shared/icons/CameraIcon.vue";
-import CameraSlashIcon from "../../../shared/icons/CameraSlashIcon.vue";
+import { useLiveKit } from "@/functions/liveKit";
+import CameraIcon from "@/components/shared/icons/CameraIcon.vue";
+import CameraSlashIcon from "@/components/shared/icons/CameraSlashIcon.vue";
 
 const liveKit = useLiveKit();
 

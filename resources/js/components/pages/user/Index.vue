@@ -1,5 +1,5 @@
 <script setup>
-import Auth from '../../layouts/Auth.vue'
+import Auth from '@/components/layouts/Auth.vue'
 import { onMounted } from 'vue'
 import {
   FwbListGroup,
@@ -9,12 +9,12 @@ import {
   FwbImg,
   FwbP,
 } from 'flowbite-vue'
-import Card from '../../shared/Card.vue'
+import Card from '@/components/shared/Card.vue'
 import { useAbility } from '@casl/vue'
-import { useUserStore } from '../../../store/user'
-import AdminView from './partials/AdminView.vue'
-import { useSingleUserStore } from '../../../store/singleUser'
-import UserInResources from './UserInResources.vue'
+import { useUserStore } from '@/store/user'
+import AdminView from '@/components/pages/user/partials/AdminView.vue'
+import { useSingleUserStore } from '@/store/singleUser'
+import UserInResources from '@/components/pages/user/UserInResources.vue'
 
 const { can, rules } = useAbility()
 const userStore = useUserStore()

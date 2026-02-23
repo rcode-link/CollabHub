@@ -1,6 +1,6 @@
 <script setup>
-import Editor from '../project/documents/Editor.vue'
-import Auth from '../../layouts/Auth.vue'
+import Editor from '@/components/pages/project/documents/Editor.vue'
+import Auth from '@/components/layouts/Auth.vue'
 </script>
 
 <template>

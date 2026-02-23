@@ -48,12 +48,12 @@
 <script setup lang="js">
 import { useVideoCallStore } from "@/store/videoCallStore";
 const videoCall = useVideoCallStore();
-import DeviceSelector from "./DeviceSelector.vue";
-import MaxMinControl from "./MaxMinControl.vue";
-import EndCallOption from "./EndCallOption.vue";
-import ToggleCameraOption from "./ToggleCameraOption.vue";
-import ToggleMicrophoneOption from "./ToggleMicrophoneOption.vue";
-import ToggleScreenShareOption from "./ToggleScreenShareOption.vue";
+import DeviceSelector from "@/components/pages/video/partials/DeviceSelector.vue";
+import MaxMinControl from "@/components/pages/video/partials/MaxMinControl.vue";
+import EndCallOption from "@/components/pages/video/partials/EndCallOption.vue";
+import ToggleCameraOption from "@/components/pages/video/partials/ToggleCameraOption.vue";
+import ToggleMicrophoneOption from "@/components/pages/video/partials/ToggleMicrophoneOption.vue";
+import ToggleScreenShareOption from "@/components/pages/video/partials/ToggleScreenShareOption.vue";
 </script>
 
 <style scoped>

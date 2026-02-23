@@ -1,11 +1,11 @@
 <script setup lang="js">
-import Label from "../../../../../../shared/Label.vue";
+import Label from "@/components/shared/Label.vue";
 import { FwbAccordion, FwbAccordionPanel, FwbButton } from "flowbite-vue";
 import { onMounted, reactive, ref } from "vue";
 import { DateTime } from "luxon";
 import { useRoute } from "vue-router";
 import { groupBy } from "lodash";
-import UserTimeSheet from "./UserTimeSheet.vue";
+import UserTimeSheet from "@/components/pages/project/tasks/partisals/details/time_sheet/UserTimeSheet.vue";
 import flatPickr from "vue-flatpickr-component";
 
 

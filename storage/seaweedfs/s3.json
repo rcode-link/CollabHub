@@ -1,0 +1,16 @@
+{
+    "identities": [
+        {
+            "name": "admin",
+            "credentials": [
+                {
+                    "accessKey": "AJHH8CEFB5BHAB5D81UE",
+                    "secretKey": "+R9Lid26Vz5qUcS\/g+gf6aTdht2rQqNkpGm4k0CJ"
+                }
+            ],
+            "actions": [
+                "Admin"
+            ]
+        }
+    ]
+}

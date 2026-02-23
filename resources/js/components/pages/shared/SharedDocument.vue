@@ -1,7 +1,7 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
-import AdvancedEditor from '../../shared/advancedEditor/Index.vue'
+import AdvancedEditor from '@/components/shared/advancedEditor/Index.vue'
 
 const route = useRoute()
 const document = ref(null)

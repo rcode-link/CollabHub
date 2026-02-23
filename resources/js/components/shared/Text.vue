@@ -1,6 +1,6 @@
 <script lang="js" setup>
 import { onMounted, ref, computed } from "vue";
-import { useErrorsStore } from "../../store/errors";
+import { useErrorsStore } from "@/store/errors";
 
 const errors = useErrorsStore();
 const props = defineProps({

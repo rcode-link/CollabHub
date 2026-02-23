@@ -2,12 +2,12 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import type { Project } from '../models/Project';
-import type { ProjectResource } from '../models/ProjectResource';
-import type { UserResource } from '../models/UserResource';
-import type { CancelablePromise } from '../core/CancelablePromise';
-import { OpenAPI } from '../core/OpenAPI';
-import { request as __request } from '../core/request';
+import type { Project } from '@/types/models/Project';
+import type { ProjectResource } from '@/types/models/ProjectResource';
+import type { UserResource } from '@/types/models/UserResource';
+import type { CancelablePromise } from '@/types/core/CancelablePromise';
+import { OpenAPI } from '@/types/core/OpenAPI';
+import { request as __request } from '@/types/core/request';
 export class ProjectService {
     /**
      * Display a listing of the resource

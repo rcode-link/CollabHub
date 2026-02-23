@@ -104,7 +104,7 @@ export const MoveNode = Extension.create({
 // 
 // import { Editor } from '@tiptap/core'
 // import StarterKit from '@tiptap/starter-kit'
-// import { MoveNode } from './move-node'
+// import { MoveNode } from '@/functions/editor/extensions/move-node'
 // 
 // const editor = new Editor({
 //   element: document.querySelector('.editor'),

@@ -2,10 +2,10 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import type { ChatResource } from '../models/ChatResource';
-import type { CancelablePromise } from '../core/CancelablePromise';
-import { OpenAPI } from '../core/OpenAPI';
-import { request as __request } from '../core/request';
+import type { ChatResource } from '@/types/models/ChatResource';
+import type { CancelablePromise } from '@/types/core/CancelablePromise';
+import { OpenAPI } from '@/types/core/OpenAPI';
+import { request as __request } from '@/types/core/request';
 export class ChatService {
     /**
      * @returns any

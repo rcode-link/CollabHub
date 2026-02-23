@@ -41,17 +41,17 @@
     </Modal>
 </template>
 <script setup>
-import Modal from "../../../../shared/Modal.vue";
-import { useRoleStore } from "../../../../../store/roleStore";
+import Modal from "@/components/shared/Modal.vue";
+import { useRoleStore } from "@/store/roleStore";
 import { FwbAlert, FwbButton, FwbSelect } from "flowbite-vue";
-import Label from "../../../../shared/Label.vue";
+import Label from "@/components/shared/Label.vue";
 import { reactive, ref, watch } from "vue";
-import { useUserStore } from "../../../../../store/user";
-import Button from "../../../../shared/Button.vue";
+import { useUserStore } from "@/store/user";
+import Button from "@/components/shared/Button.vue";
 import useClipboard from 'vue-clipboard3'
 import 'flatpickr/dist/flatpickr.css';
-import DatePicker from "../../../../shared/DatePicker.vue";
-import Text from "../../../../shared/Text.vue";
+import DatePicker from "@/components/shared/DatePicker.vue";
+import Text from "@/components/shared/Text.vue";
 
 const role = useRoleStore();
 console.log();

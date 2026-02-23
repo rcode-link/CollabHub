@@ -2,11 +2,11 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import type { ChatResource } from '../models/ChatResource';
-import type { TaskResource } from '../models/TaskResource';
-import type { CancelablePromise } from '../core/CancelablePromise';
-import { OpenAPI } from '../core/OpenAPI';
-import { request as __request } from '../core/request';
+import type { ChatResource } from '@/types/models/ChatResource';
+import type { TaskResource } from '@/types/models/TaskResource';
+import type { CancelablePromise } from '@/types/core/CancelablePromise';
+import { OpenAPI } from '@/types/core/OpenAPI';
+import { request as __request } from '@/types/core/request';
 export class DashboardService {
     /**
      * @returns any Array of `ChatResource`

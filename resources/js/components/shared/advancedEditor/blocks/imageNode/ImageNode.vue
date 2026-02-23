@@ -102,7 +102,7 @@
 //          @mousedown.prevent="startResizing($event, 'bottomRight')"
 //        ></div>
 //      </div>
-import BaseContianer from "../BaseContainer.vue";
+import BaseContianer from "@/components/shared/advancedEditor/blocks/BaseContainer.vue";
 import { FwbP, FwbInput } from "flowbite-vue";
 export default {
   name: "ResizableImage",

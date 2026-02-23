@@ -6,13 +6,13 @@ import { useCalendarStore } from '@/store/calendarStore'
 import Card from '@/components/shared/Card.vue'
 import Button from '@/components/shared/Button.vue'
 import Modal from '@/components/shared/Modal.vue'
-import Form from './calendar/Form.vue'
+import Form from '@/components/pages/dashboard/partials/calendar/Form.vue'
 import PlusSquare from '@/components/shared/icons/PlusSquare.vue'
 import ArrowLeft from '@/components/shared/icons/ArrowLeft.vue'
 import ArrowRight from '@/components/shared/icons/ArrowRight.vue'
 import InfoIcon from '@/components/shared/icons/InfoIcon.vue'
 import { useUserStore } from '@/store/user'
-import CalendarDetails from './calendar/Details.vue'
+import CalendarDetails from '@/components/pages/dashboard/partials/calendar/Details.vue'
 
 const showInfoModal = ref(false)
 const calendar = useCalendarStore()

@@ -1,6 +1,6 @@
 <script setup>
-import Card from "../../shared/Card.vue";
-import { useBreadcrumbStore } from "../../../store/breadcrumb";
+import Card from "@/components/shared/Card.vue";
+import { useBreadcrumbStore } from "@/store/breadcrumb";
 import { watch } from "vue";
 import { useRoute } from "vue-router";
 const breadcrumbStore = useBreadcrumbStore();

@@ -1,8 +1,8 @@
 <script setup lang="js">
 import _ from "lodash";
-import AddPermissionsModal from "./AddPermissionsModal.vue";
-import Card from "../../../../shared/Card.vue";
-import { useRoleStore } from "../../../../../store/roleStore";
+import AddPermissionsModal from "@/components/pages/settings/role/partials/AddPermissionsModal.vue";
+import Card from "@/components/shared/Card.vue";
+import { useRoleStore } from "@/store/roleStore";
 const roleStore = useRoleStore();
 </script>
 

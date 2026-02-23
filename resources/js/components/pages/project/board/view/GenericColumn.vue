@@ -58,7 +58,7 @@
 <script setup>
 import { computed, onMounted, ref, watch } from 'vue';
 import { useRoute } from 'vue-router';
-import SingleTask from './SingleTask.vue';
+import SingleTask from '@/components/pages/project/board/view/SingleTask.vue';
 import UserIcon from '@/components/shared/UserIcon.vue';
 
 const route = useRoute();

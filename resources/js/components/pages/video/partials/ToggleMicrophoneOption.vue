@@ -1,8 +1,8 @@
 <script setup lang="js">
 import { computed } from "vue";
-import { useLiveKit } from "../../../../functions/liveKit";
-import MicrophoneIcon from "../../../shared/icons/MicrophoneIcon.vue";
-import MicrophoneSlashIcon from "../../../shared/icons/MicrophoneSlashIcon.vue";
+import { useLiveKit } from "@/functions/liveKit";
+import MicrophoneIcon from "@/components/shared/icons/MicrophoneIcon.vue";
+import MicrophoneSlashIcon from "@/components/shared/icons/MicrophoneSlashIcon.vue";
 
 const liveKit = useLiveKit();
 

@@ -7,7 +7,7 @@ import {
     receiveTransaction,
     sendableSteps,
 } from "prosemirror-collab";
-import { useUserStore } from "../../../store/user.js";
+import { useUserStore } from "@/store/user.js";
 import { debounce } from "lodash";
 
 /**

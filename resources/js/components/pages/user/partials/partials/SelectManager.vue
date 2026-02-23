@@ -1,9 +1,9 @@
 <script lang="js" setup>
 //@ts-ignore
-import SelectUsersInCompany from "../../../../shared/SelectUsersInCompany.vue";
-import { useSingleUserStore } from "../../../../../store/singleUser.js";
+import SelectUsersInCompany from "@/components/shared/SelectUsersInCompany.vue";
+import { useSingleUserStore } from "@/store/singleUser.js";
 //@ts-ignore
-import Label from "../../../../shared/Label.vue";
+import Label from "@/components/shared/Label.vue";
 const singleUserStore = useSingleUserStore();
 </script>
 

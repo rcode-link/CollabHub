@@ -1,6 +1,6 @@
 <script lang="js" setup>
-import Text from "../../shared/Text.vue";
-import Label from "../../shared/Label.vue";
+import Text from "@/components/shared/Text.vue";
+import Label from "@/components/shared/Label.vue";
 
 import { ref, watch } from "vue";
 import CompnayBillingInformation from "@/components/shared/forms/company/CompnayBillingInformation.vue";

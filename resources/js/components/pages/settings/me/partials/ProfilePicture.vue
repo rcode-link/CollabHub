@@ -1,9 +1,9 @@
 <script setup>
 import { onMounted, reactive, watch } from 'vue'
-import { useUserStore } from '../../../../../store/user'
-import Button from '../../../../shared/Button.vue'
+import { useUserStore } from '@/store/user'
+import Button from '@/components/shared/Button.vue'
 import { useObjectUrl } from '@vueuse/core'
-import useInit from '../../../../../functions/useInit.js'
+import useInit from '@/functions/useInit.js'
 import { toast } from 'vue3-toastify'
 
 const userStore = useUserStore()

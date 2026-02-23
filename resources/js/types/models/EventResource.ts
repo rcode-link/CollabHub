@@ -2,8 +2,8 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import type { EventUserResource } from './EventUserResource';
-import type { UserResource } from './UserResource';
+import type { EventUserResource } from '@/types/models/EventUserResource';
+import type { UserResource } from '@/types/models/UserResource';
 export type EventResource = {
     summary: string;
     id: number;

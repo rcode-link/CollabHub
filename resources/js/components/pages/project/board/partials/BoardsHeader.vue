@@ -3,7 +3,7 @@
         <!-- Board selector -->
         <div class="relative flex-shrink-0" ref="boardDropdownEl">
             <button
-                @click="boardOpen = !boardOpen"
+                @click="toggleBoardDropdown()"
                 class="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-sm font-semibold text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
             >
                 <KanbanIcon class="w-4 h-4 text-blue-500 flex-shrink-0" v-if="boardsState.activeBoard?.type === 'kanban'" />
@@ -61,7 +61,7 @@
             v-if="can(`can-update-board.${route.params.project}`)"
         >
             <button
-                @click="settingsOpen = !settingsOpen"
+                @click="toggleSettingsDropdown()"
                 class="p-1.5 rounded-lg text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
                 title="Board settings"
             >
@@ -104,14 +104,14 @@
 <script setup>
 import { computed, ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
-import { onClickOutside } from "@vueuse/core";
-import KanbanIcon from "../../../../shared/icons/KanbanIcon.vue";
-import ScrumIcon from "../../../../shared/icons/ScrumIcon.vue";
-import { useBoardsState } from "../../../../../store/boards";
-import SelectSprintHeader from "./SelectSprintHeader.vue";
-import Modal from "../../../../shared/Modal.vue";
-import BoardForm from "./Form.vue";
-import CogsIcon from "../../../../shared/icons/CogsIcon.vue";
+import { useDropdown } from "@/composables/useDropdown";
+import KanbanIcon from "@/components/shared/icons/KanbanIcon.vue";
+import ScrumIcon from "@/components/shared/icons/ScrumIcon.vue";
+import { useBoardsState } from "@/store/boards";
+import SelectSprintHeader from "@/components/pages/project/board/partials/SelectSprintHeader.vue";
+import Modal from "@/components/shared/Modal.vue";
+import BoardForm from "@/components/pages/project/board/partials/Form.vue";
+import CogsIcon from "@/components/shared/icons/CogsIcon.vue";
 import _ from "lodash";
 import { useAbility } from "@casl/vue";
 
@@ -121,13 +121,8 @@ const boardsState = useBoardsState();
 const boardModalRef = ref(null);
 const { can } = useAbility();
 
-const boardOpen = ref(false);
-const settingsOpen = ref(false);
-const boardDropdownEl = ref(null);
-const settingsDropdownEl = ref(null);
-
-onClickOutside(boardDropdownEl, () => { boardOpen.value = false; });
-onClickOutside(settingsDropdownEl, () => { settingsOpen.value = false; });
+const { open: boardOpen, el: boardDropdownEl, toggle: toggleBoardDropdown } = useDropdown();
+const { open: settingsOpen, el: settingsDropdownEl, toggle: toggleSettingsDropdown } = useDropdown();
 
 const shouldSprintSelectionBeVisible = computed(
     () => boardsState.getActiveBoard?.type === "scrum"

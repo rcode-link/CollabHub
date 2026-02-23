@@ -2,10 +2,10 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import type { InvitationResource } from '../models/InvitationResource';
-import type { CancelablePromise } from '../core/CancelablePromise';
-import { OpenAPI } from '../core/OpenAPI';
-import { request as __request } from '../core/request';
+import type { InvitationResource } from '@/types/models/InvitationResource';
+import type { CancelablePromise } from '@/types/core/CancelablePromise';
+import { OpenAPI } from '@/types/core/OpenAPI';
+import { request as __request } from '@/types/core/request';
 export class InvitationsService {
     /**
      * Display a listing of the resource

@@ -1,5 +1,5 @@
 <script setup>
-import DocumentPrintTree from './DocumentPrintTree.vue'
+import DocumentPrintTree from '@/components/pages/project/documents/partials/DocumentPrintTree.vue'
 import { inject, ref } from 'vue'
 import { DateTime } from 'luxon'
 

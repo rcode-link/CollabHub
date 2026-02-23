@@ -1,11 +1,11 @@
 <script setup>
 import { computed, onBeforeUnmount, ref, onMounted } from "vue";
-import useChatLogic from "../../../../../../functions/useChatLogic";
-import ChatMessage from "../../../../chat/partials/messages/ChatMessage.vue";
+import useChatLogic from "@/functions/useChatLogic";
+import ChatMessage from "@/components/pages/chat/partials/messages/ChatMessage.vue";
 
-import ShowUser from '../../../../chat/partials/messages/ShowUser.vue'
-import { chatDetails } from "../../../../../../store/chatStore.js";
-import MessagesFooter from "../../../../chat/partials/messages/Footer.vue";
+import ShowUser from '@/components/pages/chat/partials/messages/ShowUser.vue'
+import { chatDetails } from "@/store/chatStore.js";
+import MessagesFooter from "@/components/pages/chat/partials/messages/Footer.vue";
 
 const messageContainerRef = ref(null)
 const props = defineProps({

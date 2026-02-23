@@ -20,8 +20,8 @@
 
 <script setup>
 import { NodeViewContent } from "@tiptap/vue-3";
-import BaseContianer from "../BaseContainer.vue";
-import TextToolbar from "../TextToolbar.vue";
+import BaseContianer from "@/components/shared/advancedEditor/blocks/BaseContainer.vue";
+import TextToolbar from "@/components/shared/advancedEditor/blocks/TextToolbar.vue";
 import { FwbP } from "flowbite-vue";
 
 // Props from TipTap

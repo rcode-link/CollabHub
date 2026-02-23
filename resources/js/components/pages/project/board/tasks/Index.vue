@@ -7,6 +7,9 @@ import Button from "@/components/shared/Button.vue";
 import UsersSelectInput from "@/components/shared/SelectUsersInProject.vue";
 import { TailwindPagination } from "laravel-vue-pagination";
 import { DateTime } from "luxon";
+import UiToggle from "@/components/shared/ui/Toggle.vue";
+import UiSelect from "@/components/shared/ui/Select.vue";
+import UiBadge from "@/components/shared/ui/Badge.vue";
 
 const route = useRoute();
 const router = useRouter();
@@ -131,16 +134,10 @@ onBeforeUnmount(() => { breadcrumbStore.addEntry([]); });
             <div class="flex items-center justify-between px-5 py-3.5 border-b border-gray-100 dark:border-gray-700">
                 <h2 class="text-sm font-semibold text-gray-900 dark:text-white">Manage tasks</h2>
                 <!-- Sprint toggle -->
-                <label class="flex items-center gap-2 cursor-pointer">
-                    <div class="relative">
-                        <input type="checkbox" class="sr-only" v-model="form.in_sprint" true-value="1" false-value="0" />
-                        <div class="w-8 h-4 rounded-full transition-colors"
-                            :class="form.in_sprint == 1 ? 'bg-blue-500' : 'bg-gray-200 dark:bg-gray-600'"></div>
-                        <div class="absolute top-0.5 left-0.5 w-3 h-3 rounded-full bg-white shadow transition-transform"
-                            :class="form.in_sprint == 1 ? 'translate-x-4' : 'translate-x-0'"></div>
-                    </div>
-                    <span class="text-xs text-gray-600 dark:text-gray-300">In sprint only</span>
-                </label>
+                <UiToggle
+                    :model-value="form.in_sprint == 1"
+                    @update:model-value="val => form.in_sprint = val ? 1 : 0"
+                >In sprint only</UiToggle>
             </div>
 
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 p-4">
@@ -158,22 +155,16 @@ onBeforeUnmount(() => { breadcrumbStore.addEntry([]); });
                 </div>
 
                 <!-- Type filter -->
-                <select
-                    v-model="form.type_id"
-                    class="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-3 py-2 text-sm text-gray-900 dark:text-white focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
-                >
+                <UiSelect v-model="form.type_id">
                     <option :value="null">All types</option>
                     <option v-for="t in taskTypesList" :key="t.id" :value="t.id">{{ t.title }}</option>
-                </select>
+                </UiSelect>
 
                 <!-- Status filter -->
-                <select
-                    v-model="form.status_id"
-                    class="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-3 py-2 text-sm text-gray-900 dark:text-white focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
-                >
+                <UiSelect v-model="form.status_id">
                     <option :value="null">All statuses</option>
                     <option v-for="s in statuses" :key="s.id" :value="s.id">{{ s.title }}</option>
-                </select>
+                </UiSelect>
 
                 <!-- User filter -->
                 <UsersSelectInput
@@ -230,14 +221,9 @@ onBeforeUnmount(() => { breadcrumbStore.addEntry([]); });
 
                     <!-- Status badge -->
                     <div class="w-28 flex-shrink-0 hidden sm:block">
-                        <span
-                            class="inline-flex items-center px-2 py-0.5 rounded-md text-xs font-medium"
-                            :class="obj.status?.open
-                                ? 'bg-blue-50 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400'
-                                : 'bg-green-50 text-green-700 dark:bg-green-900/30 dark:text-green-400'"
-                        >
+                        <UiBadge :color="obj.status?.open ? 'blue' : 'green'" size="xs">
                             {{ obj.status?.title }}
-                        </span>
+                        </UiBadge>
                     </div>
 
                     <!-- Type -->

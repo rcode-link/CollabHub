@@ -19,7 +19,7 @@ import {
     FwbTableRow,
 } from "flowbite-vue";
 import { onMounted, ref } from "vue";
-import Form from "./Form.vue";
+import Form from "@/components/pages/settings/invoice/mesurment_units/Form.vue";
 const model = ref({
     val: "",
 });

@@ -1,6 +1,6 @@
 <script setup>
 import { ref, onMounted } from 'vue';
-import AdvancedEditor from '../shared/advancedEditor/Index.vue';
+import AdvancedEditor from '@/components/shared/advancedEditor/Index.vue';
 
 // Props for the collaborative editor demo
 const props = defineProps({

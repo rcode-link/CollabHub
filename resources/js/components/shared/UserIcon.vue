@@ -1,6 +1,6 @@
 <script setup lang="js">
 import { FwbAvatar } from "flowbite-vue";
-import { useUserStore } from "../../store/user";
+import { useUserStore } from "@/store/user";
 import { toNumber } from "lodash";
 const userState = useUserStore();
 

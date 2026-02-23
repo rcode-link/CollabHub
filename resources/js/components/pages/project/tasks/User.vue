@@ -1,6 +1,6 @@
 <script setup>
 
-import UserIcon from "../../../shared/UserIcon.vue";
+import UserIcon from "@/components/shared/UserIcon.vue";
 
 defineProps({
   user: {},

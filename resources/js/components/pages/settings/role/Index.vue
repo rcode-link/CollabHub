@@ -1,13 +1,13 @@
 <script setup lang="js">
 import { computed, onMounted, ref, watch } from "vue";
-import Settings from "../../../layouts/Settings.vue";
-import { useRoleStore } from "../../../../store/roleStore";
-import Permissions from "./partials/Permissions.vue";
+import Settings from "@/components/layouts/Settings.vue";
+import { useRoleStore } from "@/store/roleStore";
+import Permissions from "@/components/pages/settings/role/partials/Permissions.vue";
 import { FwbButton, FwbInput, FwbTab, FwbTabs } from "flowbite-vue";
-import Users from "./partials/Users.vue";
-import { useBreadcrumbStore } from "../../../../store/breadcrumb";
-import InteractiveToast from "../../../shared/InteractiveToast.vue";
-import Resource from "./partials/Resource.vue";
+import Users from "@/components/pages/settings/role/partials/Users.vue";
+import { useBreadcrumbStore } from "@/store/breadcrumb";
+import InteractiveToast from "@/components/shared/InteractiveToast.vue";
+import Resource from "@/components/pages/settings/role/partials/Resource.vue";
 import { toast } from "vue3-toastify";
 import { useRoute } from "vue-router";
 

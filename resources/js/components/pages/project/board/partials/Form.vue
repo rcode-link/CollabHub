@@ -132,10 +132,10 @@
 <script setup>
 import { reactive, ref } from "vue";
 import { useRoute } from "vue-router";
-import { useBoardsState } from "../../../../../store/boards";
-import KanbanIcon from "../../../../shared/icons/KanbanIcon.vue";
-import ScrumIcon from "../../../../shared/icons/ScrumIcon.vue";
-import Button from "../../../../shared/Button.vue";
+import { useBoardsState } from "@/store/boards";
+import KanbanIcon from "@/components/shared/icons/KanbanIcon.vue";
+import ScrumIcon from "@/components/shared/icons/ScrumIcon.vue";
+import Button from "@/components/shared/Button.vue";
 
 const route = useRoute();
 const boardsState = useBoardsState();

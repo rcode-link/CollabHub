@@ -2,7 +2,7 @@
 import { FwbModal, FwbButton } from "flowbite-vue";
 
 import { onMounted, ref } from "vue";
-import Form from "./Form.vue";
+import Form from "@/components/pages/invoices/Form.vue";
 
 const emit = defineEmits(['update']);
     defineProps(

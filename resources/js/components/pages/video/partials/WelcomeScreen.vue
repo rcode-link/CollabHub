@@ -2,12 +2,12 @@
 import { reactive, ref, watch, onMounted, onUnmounted, nextTick } from "vue";
 import { DateTime } from "luxon";
 import { toast } from "vue3-toastify";
-import { useUserStore } from "../../../../store/user";
+import { useUserStore } from "@/store/user";
 import { useVideoCallStore } from "@/store/videoCallStore";
-import CameraIcon from "../../../shared/icons/CameraIcon.vue";
-import CameraSlashIcon from "../../../shared/icons/CameraSlashIcon.vue";
-import MicrophoneIcon from "../../../shared/icons/MicrophoneIcon.vue";
-import MicrophoneSlashIcon from "../../../shared/icons/MicrophoneSlashIcon.vue";
+import CameraIcon from "@/components/shared/icons/CameraIcon.vue";
+import CameraSlashIcon from "@/components/shared/icons/CameraSlashIcon.vue";
+import MicrophoneIcon from "@/components/shared/icons/MicrophoneIcon.vue";
+import MicrophoneSlashIcon from "@/components/shared/icons/MicrophoneSlashIcon.vue";
 
 const model = reactive({
     name: null,

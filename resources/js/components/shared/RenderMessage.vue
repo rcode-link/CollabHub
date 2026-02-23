@@ -1,7 +1,7 @@
 <script setup>
 import { computed } from 'vue'
 import { generateHTML } from '@tiptap/core'
-import { renderExtensions } from '../../functions/editor/renderExtensions'
+import { renderExtensions } from '@/functions/editor/renderExtensions'
 
 const props = defineProps({
     content: { type: [Object, String], default: null },

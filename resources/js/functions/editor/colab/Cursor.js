@@ -1,7 +1,7 @@
 import { Extension } from '@tiptap/vue-3';
 import { Decoration, DecorationSet } from "prosemirror-view";
 import { Plugin, PluginKey } from '@tiptap/pm/state';
-import { useUserStore } from "../../../store/user.js";
+import { useUserStore } from "@/store/user.js";
 
 /**
  * Enhanced cursor display and management for collaborative editing

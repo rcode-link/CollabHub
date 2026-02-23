@@ -1,12 +1,12 @@
 <script setup lang="js">
-import Auth from "./Auth.vue";
+import Auth from "@/components/layouts/Auth.vue";
 
-import { useRoleStore } from "../../store/roleStore";
+import { useRoleStore } from "@/store/roleStore";
 import { onMounted } from "vue";
-import Base from "./partials/menu/Base.vue";
-import Roles from "./partials/menu/Roles.vue";
-import Invoice from "./partials/menu/Invoice.vue";
-import CompanySettings from "./partials/menu/CompanySettings.vue";
+import Base from "@/components/layouts/partials/menu/Base.vue";
+import Roles from "@/components/layouts/partials/menu/Roles.vue";
+import Invoice from "@/components/layouts/partials/menu/Invoice.vue";
+import CompanySettings from "@/components/layouts/partials/menu/CompanySettings.vue";
 
 const roleStore = useRoleStore();
 

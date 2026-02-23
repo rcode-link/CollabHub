@@ -9,11 +9,11 @@ import {
     FwbTableHeadCell,
     FwbTableRow,
 } from "flowbite-vue";
-import UserIcon from "../../../shared/UserIcon.vue";
+import UserIcon from "@/components/shared/UserIcon.vue";
 import { useRoute, useRouter } from "vue-router";
-import { useBreadcrumbStore } from "../../../../store/breadcrumb";
-import InteractiveToast from "../../../shared/InteractiveToast.vue";
-import Card from "../../../shared/Card.vue";
+import { useBreadcrumbStore } from "@/store/breadcrumb";
+import InteractiveToast from "@/components/shared/InteractiveToast.vue";
+import Card from "@/components/shared/Card.vue";
 
 const route = useRoute();
 const router = useRouter();

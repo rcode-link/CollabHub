@@ -3,7 +3,7 @@
 
 import { Node } from '@tiptap/core'
 import { VueNodeViewRenderer } from '@tiptap/vue-3'
-import CustomNodeView from './CustomNodeView.vue'
+import CustomNodeView from '@/functions/editor/blocks/customNode/CustomNodeView.vue'
 
 export const CustomBlock = Node.create({
   name: 'customBlock',

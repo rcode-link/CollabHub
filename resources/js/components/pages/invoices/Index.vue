@@ -1,10 +1,10 @@
 <script lang="js" setup>
 import { onMounted, ref } from "vue";
-import Form from "./Form.vue";
+import Form from "@/components/pages/invoices/Form.vue";
 import { TailwindPagination } from "laravel-vue-pagination";
 
 import { useBreadcrumbStore } from "@/store/breadcrumb";
-import Auth from "../../layouts/Auth.vue";
+import Auth from "@/components/layouts/Auth.vue";
 import {
     FwbTable,
     FwbTableBody,
@@ -14,7 +14,7 @@ import {
     FwbTableRow,
     FwbSpinner,
 } from "flowbite-vue";
-import Create from "./Create.vue";
+import Create from "@/components/pages/invoices/Create.vue";
 
 const loading = ref(false);
 const companies = ref();

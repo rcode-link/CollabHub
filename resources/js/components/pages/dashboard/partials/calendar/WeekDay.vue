@@ -1,5 +1,5 @@
 <script setup lang="js">
-import CalendarItem from "./CalendarItem.vue";
+import CalendarItem from "@/components/pages/dashboard/partials/calendar/CalendarItem.vue";
 defineProps({
         day: {
             type: String,

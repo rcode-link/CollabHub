@@ -2,8 +2,8 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import type { CustomerResource } from './CustomerResource';
-import type { InvoiceItemResource } from './InvoiceItemResource';
+import type { CustomerResource } from '@/types/models/CustomerResource';
+import type { InvoiceItemResource } from '@/types/models/InvoiceItemResource';
 export type InvoiceResource = {
     id: number;
     number: string;

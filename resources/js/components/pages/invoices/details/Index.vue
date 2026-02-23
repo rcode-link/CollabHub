@@ -1,11 +1,11 @@
 <script lang="js" setup>
-import Auth from "../../../layouts/Auth.vue";
+import Auth from "@/components/layouts/Auth.vue";
 import { FwbHeading, FwbP, FwbTab, FwbTabs } from "flowbite-vue";
 import { ref, watch } from "vue";
-import Invoice from "./partials/invoice/List.vue";
-import Payments from "./partials/payment/Payments.vue";
+import Invoice from "@/components/pages/invoices/details/partials/invoice/List.vue";
+import Payments from "@/components/pages/invoices/details/partials/payment/Payments.vue";
 import { useRoute } from "vue-router";
-import Card from "../../../shared/Card.vue";
+import Card from "@/components/shared/Card.vue";
 import { useInvoiceDetailsStore } from "@/store/invoiceDetailsStore";
 import { Chart as ChartJS, registerables } from "chart.js";
 

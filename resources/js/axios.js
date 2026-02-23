@@ -1,6 +1,6 @@
 import axios from 'axios'
 import { toast } from 'vue3-toastify'
-import { useErrorsStore } from './store/errors'
+import { useErrorsStore } from '@/store/errors'
 
 export const initAxios = () => {
   const errorsStore = useErrorsStore()

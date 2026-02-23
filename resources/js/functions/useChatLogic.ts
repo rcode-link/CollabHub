@@ -1,6 +1,6 @@
-import { chatDetails } from "../store/chatStore.js";
+import { chatDetails } from "@/store/chatStore.js";
 import { toNumber } from "lodash";
-import { useUserStore } from "../store/user.js";
+import { useUserStore } from "@/store/user.js";
 import { ref, nextTick } from "vue";
 import { useRoute } from "vue-router";
 import * as _ from "lodash";

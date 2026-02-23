@@ -1,16 +1,16 @@
 <script setup>
-import Settings from "../../../layouts/Settings.vue";
+import Settings from "@/components/layouts/Settings.vue";
 import { useObjectUrl } from "@vueuse/core";
-import { useBreadcrumbStore } from "../../../../store/breadcrumb";
-import Card from "../../../shared/Card.vue";
-import Label from "../../../shared/Label.vue";
-import Button from "../../../shared/Button.vue";
-import Text from "../../../shared/Text.vue";
-import Errors from "../../../shared/Errors.vue";
+import { useBreadcrumbStore } from "@/store/breadcrumb";
+import Card from "@/components/shared/Card.vue";
+import Label from "@/components/shared/Label.vue";
+import Button from "@/components/shared/Button.vue";
+import Text from "@/components/shared/Text.vue";
+import Errors from "@/components/shared/Errors.vue";
 import { reactive, ref, watch } from "vue";
 import { FwbToast } from "flowbite-vue";
-import { useUserStore } from "../../../../store/user";
-import useInit from "../../../../functions/useInit";
+import { useUserStore } from "@/store/user";
+import useInit from "@/functions/useInit";
 import { useAbility } from "@casl/vue";
 import { toast } from "vue3-toastify";
 const { can, rules } = useAbility();

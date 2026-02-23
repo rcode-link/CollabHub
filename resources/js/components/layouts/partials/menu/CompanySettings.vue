@@ -1,6 +1,6 @@
 <script setup lang="js">
 import { useAbility } from "@casl/vue";
-import { useUserStore } from "../../../../store/user";
+import { useUserStore } from "@/store/user";
 import { FwbListGroup, FwbListGroupItem, FwbHeading } from "flowbite-vue";
 
 const { can } = useAbility();

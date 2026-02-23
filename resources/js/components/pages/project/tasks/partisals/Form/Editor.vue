@@ -1,6 +1,6 @@
 <script setup lang="js">
 import { ref, watch } from "vue";
-import Editor from "../../../../../shared/Editor.vue";
+import Editor from "@/components/shared/Editor.vue";
 import { toast } from "vue3-toastify";
 
 const editorRef = ref(null);

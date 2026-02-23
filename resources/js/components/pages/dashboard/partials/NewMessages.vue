@@ -1,7 +1,7 @@
 <script setup>
 import { ref } from 'vue'
 import Card from '@/components/shared/Card.vue'
-import ChatUsersItem from '../../chat/partials/ChatUsersItem.vue'
+import ChatUsersItem from '@/components/pages/chat/partials/ChatUsersItem.vue'
 
 const messages = ref([])
 const loadNumberOfUnreadMessages = () => {

@@ -1,12 +1,12 @@
 <script setup>
 import { BubbleMenu } from '@tiptap/vue-3'
 import { computed } from 'vue'
-import TextBold from '../icons/TextBold.vue'
-import TextItalic from '../icons/TextItalic.vue'
-import TextStroke from '../icons/TextStroke.vue'
-import CodeIcon from '../icons/CodeIcon.vue'
-import ToolbarBtn from './toolbar/ToolbarBtn.vue'
-import ToolbarSep from './toolbar/ToolbarSep.vue'
+import TextBold from '@/components/shared/icons/TextBold.vue'
+import TextItalic from '@/components/shared/icons/TextItalic.vue'
+import TextStroke from '@/components/shared/icons/TextStroke.vue'
+import CodeIcon from '@/components/shared/icons/CodeIcon.vue'
+import ToolbarBtn from '@/components/shared/advancedEditor/toolbar/ToolbarBtn.vue'
+import ToolbarSep from '@/components/shared/advancedEditor/toolbar/ToolbarSep.vue'
 
 const props = defineProps({ editor: Object })
 

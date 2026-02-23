@@ -1,14 +1,14 @@
 <script setup>
 import { useAbility } from '@casl/vue'
 import { onMounted, ref, watch } from 'vue'
-import { useUserStore } from '../../../../store/user'
-import Card from '../../../shared/Card.vue'
+import { useUserStore } from '@/store/user'
+import Card from '@/components/shared/Card.vue'
 import { useRoute, useRouter } from 'vue-router'
-import { chatDetails } from '../../../../store/chatStore.js'
-import ChatUsersItem from './ChatUsersItem.vue'
-import CreateChat from './CreateChat.vue'
-import UsersListHeader from './UsersListHeader.vue'
-import PlusSquare from '../../../shared/icons/PlusSquare.vue'
+import { chatDetails } from '@/store/chatStore.js'
+import ChatUsersItem from '@/components/pages/chat/partials/ChatUsersItem.vue'
+import CreateChat from '@/components/pages/chat/partials/CreateChat.vue'
+import UsersListHeader from '@/components/pages/chat/partials/UsersListHeader.vue'
+import PlusSquare from '@/components/shared/icons/PlusSquare.vue'
 
 const chatState = chatDetails()
 const { can } = useAbility()

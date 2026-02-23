@@ -1,15 +1,15 @@
-import { useUserStore } from '../store/user'
+import { useUserStore } from '@/store/user'
 import { Ability, AbilityBuilder } from '@casl/ability'
-import ability from './ability.js'
+import ability from '@/functions/ability.js'
 import { ref, watch } from 'vue'
-import { initEcho } from '../bootstrap.js'
-import { useTextToLinkStore } from '../store/textToLinkStore'
-import { chatDetails } from '../store/chatStore.js'
+import { initEcho } from '@/bootstrap.js'
+import { useTextToLinkStore } from '@/store/textToLinkStore'
+import { chatDetails } from '@/store/chatStore.js'
 
-import '../declaration'
+import '@/declaration'
 import { toast } from 'vue3-toastify'
 import { useRouter } from 'vue-router'
-import VideoToast from '../components/shared/video/VideoToast.vue'
+import VideoToast from '@/components/shared/video/VideoToast.vue'
 import { initAxios } from '@/axios.js'
 
 const isWindowFocused = ref(

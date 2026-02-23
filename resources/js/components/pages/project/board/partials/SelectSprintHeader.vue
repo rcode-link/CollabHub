@@ -1,7 +1,7 @@
 <template>
     <div class="relative flex-shrink-0" ref="sprintDropdownEl">
         <button
-            @click="sprintOpen = !sprintOpen"
+            @click="toggleSprintDropdown()"
             class="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
         >
             <div class="flex flex-col items-start leading-tight" :key="boardsState.activeSprint?.id">
@@ -119,23 +119,20 @@
 <script setup>
 import { reactive, ref } from "vue";
 import { useRoute } from "vue-router";
-import { onClickOutside } from "@vueuse/core";
-import { useBoardsState } from "../../../../../store/boards";
+import { useDropdown } from "@/composables/useDropdown";
+import { useBoardsState } from "@/store/boards";
 import { DateTime } from "luxon";
 import { useAbility } from "@casl/vue";
-import Modal from "../../../../shared/Modal.vue";
-import Button from "../../../../shared/Button.vue";
+import Modal from "@/components/shared/Modal.vue";
+import Button from "@/components/shared/Button.vue";
 
 const route = useRoute();
 const boardsState = useBoardsState();
 const { can } = useAbility();
 
-const sprintOpen = ref(false);
-const sprintDropdownEl = ref(null);
+const { open: sprintOpen, el: sprintDropdownEl, toggle: toggleSprintDropdown } = useDropdown();
 const createSprintRef = ref(null);
 const form = reactive({ title: "", duration: null, is_active: false });
-
-onClickOutside(sprintDropdownEl, () => { sprintOpen.value = false; });
 
 const createSprint = () => {
     axios.post("/api/v1/sprints", {

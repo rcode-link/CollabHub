@@ -18,9 +18,9 @@ breadcrumb.setLinks([
     { link: { name: 'settings.base' }, title: 'Settings' },
     { title: 'Currency' },
 ])
-import Form from "./Form.vue";
+import Form from "@/components/pages/settings/invoice/currency/Form.vue";
 import InteractiveToast from "@/components/shared/InteractiveToast.vue";
-import TableItem from "./partials/TableItem.vue";
+import TableItem from "@/components/pages/settings/invoice/currency/partials/TableItem.vue";
 
 const model = ref();
 

@@ -8,8 +8,8 @@
 
 import { useRoute } from 'vue-router'
 import { onMounted, watch, defineAsyncComponent } from "vue";
-import useInit from "../functions/useInit.js";
-import { useUserStore } from '../store/user.js';
+import useInit from "@/functions/useInit.js";
+import { useUserStore } from '@/store/user.js';
 const userStore = useUserStore();
 import { useVideoCallStore } from '@/store/videoCallStore'
 

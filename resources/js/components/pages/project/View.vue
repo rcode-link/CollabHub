@@ -1,10 +1,10 @@
 <script setup>
-import Auth from '../../layouts/Auth.vue'
-import { useBreadcrumbStore } from '../../../store/breadcrumb'
+import Auth from '@/components/layouts/Auth.vue'
+import { useBreadcrumbStore } from '@/store/breadcrumb'
 import { useRoute, useRouter } from 'vue-router'
 import { onBeforeUnmount, watch } from 'vue'
-import TaskDetails from './tasks/Details.vue'
-import { useTasksStore } from '../../../store/tasksStore.js'
+import TaskDetails from '@/components/pages/project/tasks/Details.vue'
+import { useTasksStore } from '@/store/tasksStore.js'
 
 const route = useRoute()
 const router = useRouter()

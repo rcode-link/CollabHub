@@ -1,12 +1,12 @@
 <script setup>
 
 import {FwbButton, FwbDropdown, FwbListGroup, FwbListGroupItem} from "flowbite-vue";
-import Modal from "../shared/Modal.vue";
-import CreateProject from "../pages/project/Create.vue";
+import Modal from "@/components/shared/Modal.vue";
+import CreateProject from "@/components/pages/project/Create.vue";
 import {ref} from "vue";
-import {useTasksStore} from "../../store/tasksStore.js";
+import {useTasksStore} from "@/store/tasksStore.js";
 import {useAbility} from "@casl/vue";
-import PlusSquare from "../shared/icons/PlusSquare.vue";
+import PlusSquare from "@/components/shared/icons/PlusSquare.vue";
 
 
 const {can, rules} = useAbility()

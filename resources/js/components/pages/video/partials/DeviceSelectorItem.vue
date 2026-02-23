@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { useLiveKit, iMediaDeviceInfo } from "../../../../functions/liveKit";
+import { useLiveKit, iMediaDeviceInfo } from "@/functions/liveKit";
 
 const props = defineProps<{
     type: "videoinput" | "audioinput";

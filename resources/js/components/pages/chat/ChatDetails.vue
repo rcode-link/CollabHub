@@ -1,14 +1,14 @@
 <script setup>
 import { onUnmounted, onUpdated, reactive, ref, watch } from 'vue'
 import { chatDetails } from '@/store/chatStore.js'
-import Footer from './partials/messages/Footer.vue'
+import Footer from '@/components/pages/chat/partials/messages/Footer.vue'
 import { useRoute, useRouter } from 'vue-router'
-import ChatMessage from './partials/messages/ChatMessage.vue'
-import Header from './partials/messages/Header.vue'
-import ShowUser from './partials/messages/ShowUser.vue'
-import useChatLogic from '../../../functions/useChatLogic'
-import MessageOptions from './partials/messages/MessageOptions.vue'
-import SearchMessages from './partials/messages/SearchMessages.vue'
+import ChatMessage from '@/components/pages/chat/partials/messages/ChatMessage.vue'
+import Header from '@/components/pages/chat/partials/messages/Header.vue'
+import ShowUser from '@/components/pages/chat/partials/messages/ShowUser.vue'
+import useChatLogic from '@/functions/useChatLogic'
+import MessageOptions from '@/components/pages/chat/partials/messages/MessageOptions.vue'
+import SearchMessages from '@/components/pages/chat/partials/messages/SearchMessages.vue'
 
 const chatStore = chatDetails()
 const showSearch = ref(false)

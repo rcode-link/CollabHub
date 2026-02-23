@@ -1,10 +1,10 @@
 <script setup>
 import { computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import SquaresIcon from '../../../shared/icons/SquaresIcon.vue'
-import ChatIcon from '../../../shared/icons/ChatIcon.vue'
-import UsersIcon from '../../../shared/icons/UsersIcon.vue'
-import ArrowDownTray from '../../../shared/icons/ArrowDownTray.vue'
+import SquaresIcon from '@/components/shared/icons/SquaresIcon.vue'
+import ChatIcon from '@/components/shared/icons/ChatIcon.vue'
+import UsersIcon from '@/components/shared/icons/UsersIcon.vue'
+import ArrowDownTray from '@/components/shared/icons/ArrowDownTray.vue'
 
 const router = useRouter()
 const route = useRoute()

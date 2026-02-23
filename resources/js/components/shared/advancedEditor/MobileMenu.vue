@@ -1,16 +1,16 @@
 <script setup>
-import TextBold from "../icons/TextBold.vue";
+import TextBold from "@/components/shared/icons/TextBold.vue";
 import { FwbButton, FwbDropdown, FwbListGroup, FwbListGroupItem, FwbButtonGroup } from "flowbite-vue";
-import TextItalic from "../icons/TextItalic.vue";
-import TextStroke from "../icons/TextStroke.vue";
+import TextItalic from "@/components/shared/icons/TextItalic.vue";
+import TextStroke from "@/components/shared/icons/TextStroke.vue";
 import { computed } from "vue";
-import TableIcon from "../icons/TableIcon.vue";
-import CodeIcon from "../icons/CodeIcon.vue";
-import BulletListIcon from "../icons/BulletListIcon.vue";
-import DiagramIcon from "../icons/DiagramIcon.vue";
-import QuoteIcon from "../icons/QuoteIcon.vue";
-import OrderedListIcon from "../icons/OrderedListIcon.vue";
-import FloppyDiskIcon from "../icons/FloppyDiskIcon.vue";
+import TableIcon from "@/components/shared/icons/TableIcon.vue";
+import CodeIcon from "@/components/shared/icons/CodeIcon.vue";
+import BulletListIcon from "@/components/shared/icons/BulletListIcon.vue";
+import DiagramIcon from "@/components/shared/icons/DiagramIcon.vue";
+import QuoteIcon from "@/components/shared/icons/QuoteIcon.vue";
+import OrderedListIcon from "@/components/shared/icons/OrderedListIcon.vue";
+import FloppyDiskIcon from "@/components/shared/icons/FloppyDiskIcon.vue";
 
 const props = defineProps({
     editor: null

@@ -97,7 +97,7 @@
 </template>
 
 <script>
-import BaseContianer from "../BaseContainer.vue";
+import BaseContianer from "@/components/shared/advancedEditor/blocks/BaseContainer.vue";
 
 export default {
   name: "DrawIONodeView",

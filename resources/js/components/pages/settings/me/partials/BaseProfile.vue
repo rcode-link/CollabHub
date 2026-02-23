@@ -1,11 +1,11 @@
 <script setup>
 
-import Label from "../../../../shared/Label.vue";
-import Text from "../../../../shared/Text.vue";
-import Errors from "../../../../shared/Errors.vue";
+import Label from "@/components/shared/Label.vue";
+import Text from "@/components/shared/Text.vue";
+import Errors from "@/components/shared/Errors.vue";
 import {reactive, watch} from "vue";
-import {useUserStore} from "../../../../../store/user";
-import Button from "../../../../shared/Button.vue";
+import {useUserStore} from "@/store/user";
+import Button from "@/components/shared/Button.vue";
 import {toast} from "vue3-toastify";
 
 const userStore = useUserStore();

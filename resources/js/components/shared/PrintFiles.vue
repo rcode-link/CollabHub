@@ -1,5 +1,5 @@
 <script setup>
-import FileImage from './icons/FileImage.vue'
+import FileImage from '@/components/shared/icons/FileImage.vue'
 import { ref, onMounted, onUnmounted } from 'vue'
 
 defineProps({ media: Array, full: { type: Boolean, default: false } })

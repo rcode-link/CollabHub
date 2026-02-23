@@ -1,7 +1,7 @@
 import { defineStore } from "pinia";
 import { computed, reactive, ref, watch } from "vue";
 import { DateTime } from "luxon";
-import { useErrorsStore } from "./errors.js";
+import { useErrorsStore } from "@/store/errors.js";
 import { useRoute, useRouter } from "vue-router";
 
 export const useCalendarStore = defineStore("calendarStore", () => {

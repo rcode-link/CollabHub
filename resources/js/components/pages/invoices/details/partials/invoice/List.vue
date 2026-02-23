@@ -1,7 +1,7 @@
 <script lang="js" setup>
 import { onMounted } from "vue";
 import useInvoice from "@/components/pages/invoices/details/functions/useInvoice";
-import InvoiceForm from "./Form.vue";
+import InvoiceForm from "@/components/pages/invoices/details/partials/invoice/Form.vue";
 import { toast } from "vue3-toastify";
 import currencyPrint from "@/functions/currencyPrint";
 import InteractiveToast from "@/components/shared/InteractiveToast.vue";

@@ -1,10 +1,10 @@
 <script setup lang="js">
-import Modal from "../../../../shared/Modal.vue";
+import Modal from "@/components/shared/Modal.vue";
 import { FwbButton } from "flowbite-vue";
-import Label from "../../../../shared/Label.vue";
-import Text from "../../../../shared/Text.vue";
+import Label from "@/components/shared/Label.vue";
+import Text from "@/components/shared/Text.vue";
 import { reactive, ref } from "vue";
-import { useRoleStore } from "../../../../../store/roleStore";
+import { useRoleStore } from "@/store/roleStore";
 import { toast } from "vue3-toastify";
 
 const roleStore = useRoleStore();

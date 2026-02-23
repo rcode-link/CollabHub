@@ -1,10 +1,10 @@
 <script setup>
-import InviteModal from "./InviteModal.vue";
+import InviteModal from "@/components/pages/settings/users/partial/InviteModal.vue";
 import { useAbility } from "@casl/vue";
 
 const { can, rules } = useAbility();
-import { useUserStore } from "../../../../../store/user";
-import { useBreadcrumbStore } from "../../../../../store/breadcrumb";
+import { useUserStore } from "@/store/user";
+import { useBreadcrumbStore } from "@/store/breadcrumb";
 import { onMounted, ref } from "vue";
 import {
     FwbButton,
@@ -16,7 +16,7 @@ import {
     FwbTableRow,
 } from "flowbite-vue";
 import { DateTime } from "luxon";
-import InteractiveToast from "../../../../shared/InteractiveToast.vue";
+import InteractiveToast from "@/components/shared/InteractiveToast.vue";
 
 const userState = useUserStore();
 

@@ -1,13 +1,13 @@
 <script lang="js" setup>
 //@ts-ignore
-import SelectManager from "./partials/SelectManager.vue";
+import SelectManager from "@/components/pages/user/partials/partials/SelectManager.vue";
 //@ts-ignore
-import DeleteUser from "./partials/DeleteUser.vue";
+import DeleteUser from "@/components/pages/user/partials/partials/DeleteUser.vue";
 //@ts-ignore
-import DeactivateUser from "./partials/DeactivateUser.vue";
-import { useSingleUserStore } from "../../../../store/singleUser.js";
+import DeactivateUser from "@/components/pages/user/partials/partials/DeactivateUser.vue";
+import { useSingleUserStore } from "@/store/singleUser.js";
 //@ts-ignore
-import RestoreUser from "./partials/RestoreUser.vue";
+import RestoreUser from "@/components/pages/user/partials/partials/RestoreUser.vue";
 
 const singleUserStore = useSingleUserStore();
 </script>

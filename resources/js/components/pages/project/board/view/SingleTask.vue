@@ -64,7 +64,7 @@
 import { computed, inject } from "vue";
 import { DateTime } from "luxon";
 import UserIcon from "@/components/shared/UserIcon.vue";
-import { useBoardsState } from "../../../../../store/boards";
+import { useBoardsState } from "@/store/boards";
 import { useRoute, useRouter } from "vue-router";
 import { Tippy } from "vue-tippy";
 

@@ -59,7 +59,7 @@ import {
   FwbListGroupItem,
 } from 'flowbite-vue'
 
-import ArchiveBoxIcon from '../shared/icons/ArchiveBoxIcon.vue'
+import ArchiveBoxIcon from '@/components/shared/icons/ArchiveBoxIcon.vue'
 import { ref, onMounted, computed } from 'vue'
 import { useRouter } from 'vue-router'
 

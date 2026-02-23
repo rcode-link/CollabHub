@@ -348,7 +348,7 @@ export const LinkPreviewExtension = Extension.create({
 // Usage example:
 // import { Editor } from '@tiptap/core'
 // import StarterKit from '@tiptap/starter-kit'
-// import { LinkPreviewExtension } from './link-preview-extension'
+// import { LinkPreviewExtension } from '@/functions/editor/link-preview-extension'
 //
 // // Example: Setup for chat with different preview behavior in input vs messages
 // const chatInputEditor = new Editor({

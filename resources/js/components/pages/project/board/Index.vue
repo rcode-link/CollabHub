@@ -1,9 +1,9 @@
 <script setup>
 import { onMounted } from "vue";
-import BoardForm from "./partials/Form.vue";
+import BoardForm from "@/components/pages/project/board/partials/Form.vue";
 import { useRoute } from "vue-router";
-import BoardsHeader from "./partials/BoardsHeader.vue";
-import { useBoardsState } from "../../../../store/boards";
+import BoardsHeader from "@/components/pages/project/board/partials/BoardsHeader.vue";
+import { useBoardsState } from "@/store/boards";
 import { useAbility } from "@casl/vue";
 
 const route = useRoute();

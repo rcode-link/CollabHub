@@ -2,7 +2,7 @@
 import {NodeViewWrapper} from "@tiptap/vue-3";
 import {computed, onMounted, ref} from "vue";
 import {FwbButton, FwbHeading, FwbTable, FwbTableCell, FwbTableHeadCell, FwbTableRow} from "flowbite-vue";
-import UserIcon from "../UserIcon.vue";
+import UserIcon from "@/components/shared/UserIcon.vue";
 import {DateTime} from "luxon";
 
 const props = defineProps({

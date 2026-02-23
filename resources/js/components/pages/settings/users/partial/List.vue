@@ -8,10 +8,10 @@ import {
     FwbTableRow,
 } from "flowbite-vue";
 import { useAbility } from "@casl/vue";
-import { useBreadcrumbStore } from "../../../../../store/breadcrumb";
-import { useUserStore } from "../../../../../store/user";
+import { useBreadcrumbStore } from "@/store/breadcrumb";
+import { useUserStore } from "@/store/user";
 import { ref, watch } from "vue";
-import UserIcon from "../../../../shared/UserIcon.vue";
+import UserIcon from "@/components/shared/UserIcon.vue";
 
 const { can, rules } = useAbility();
 

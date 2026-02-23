@@ -1,15 +1,15 @@
-import './bootstrap'
+import '@/bootstrap'
 import { createApp } from 'vue'
-import router from './router/router.js'
+import router from '@/router/router.js'
 import { createPinia } from 'pinia'
-import App from './components/App.vue'
+import App from '@/components/App.vue'
 import 'tippy.js/dist/tippy.css'
 import VueTippy from 'vue-tippy'
 import { abilitiesPlugin } from '@casl/vue'
-import ability from './functions/ability'
+import ability from '@/functions/ability'
 import 'vue3-toastify/dist/index.css'
 import '../../node_modules/flowbite-vue/dist/index.css'
-import { initAxios } from './axios'
+import { initAxios } from '@/axios'
 const app = createApp(App)
 const pinia = createPinia()
 app.use(abilitiesPlugin, ability)

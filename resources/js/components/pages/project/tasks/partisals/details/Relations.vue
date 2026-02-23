@@ -1,6 +1,6 @@
 <script setup>
 import {useRoute} from "vue-router";
-import ListItem from "../ListItem.vue";
+import ListItem from "@/components/pages/project/tasks/partisals/ListItem.vue";
 import {ref} from "vue";
 
 const route = useRoute();

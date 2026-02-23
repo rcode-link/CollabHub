@@ -1,8 +1,8 @@
 <script setup>
 import { onMounted, reactive, ref } from 'vue'
-import { useErrorsStore } from '../../store/errors'
+import { useErrorsStore } from '@/store/errors'
 import { useRouter } from 'vue-router'
-import useInit from '../../functions/useInit.js'
+import useInit from '@/functions/useInit.js'
 
 const router = useRouter()
 const errorsStore = useErrorsStore()

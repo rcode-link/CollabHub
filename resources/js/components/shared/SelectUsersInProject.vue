@@ -1,9 +1,9 @@
 <script setup>
 import { computed, ref, watch } from "vue";
-import { useErrorsStore } from "../../store/errors";
+import { useErrorsStore } from "@/store/errors";
 import _ from "lodash";
-import UserIcon from "./UserIcon.vue";
-import Text from "./Text.vue";
+import UserIcon from "@/components/shared/UserIcon.vue";
+import Text from "@/components/shared/Text.vue";
 import { useRoute } from "vue-router";
 
 const errors = useErrorsStore();

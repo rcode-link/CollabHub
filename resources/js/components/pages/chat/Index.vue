@@ -1,9 +1,9 @@
 <script setup>
-import Auth from '../../layouts/Auth.vue'
-import { useBreadcrumbStore } from '../../../store/breadcrumb'
-import Card from '../../shared/Card.vue'
+import Auth from '@/components/layouts/Auth.vue'
+import { useBreadcrumbStore } from '@/store/breadcrumb'
+import Card from '@/components/shared/Card.vue'
 import { ref, watch } from 'vue'
-import Users from './partials/LeftChatManu.vue'
+import Users from '@/components/pages/chat/partials/LeftChatManu.vue'
 import { useRoute } from 'vue-router'
 
 const route = useRoute()

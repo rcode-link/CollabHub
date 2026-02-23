@@ -19,8 +19,8 @@
 <script setup>
 import { computed } from 'vue'
 import { NodeViewContent } from '@tiptap/vue-3'
-import BaseContainer from "../BaseContainer.vue";
-import TextToolbar from "../TextToolbar.vue";
+import BaseContainer from "@/components/shared/advancedEditor/blocks/BaseContainer.vue";
+import TextToolbar from "@/components/shared/advancedEditor/blocks/TextToolbar.vue";
 // Props from TipTap
 const props = defineProps({
     editor: {

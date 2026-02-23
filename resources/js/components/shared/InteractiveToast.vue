@@ -33,7 +33,7 @@
 <script setup lang="js">
 import { FwbToast } from "flowbite-vue";
 import { ref, watch } from "vue";
-import { useTimer } from "../../functions/timer.ts";
+import { useTimer } from "@/functions/timer.ts";
 
 defineProps( {
     type: "",

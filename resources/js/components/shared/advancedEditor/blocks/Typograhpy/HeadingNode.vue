@@ -24,8 +24,8 @@
 import { ref, computed } from 'vue'
 import { NodeViewWrapper, NodeViewContent } from '@tiptap/vue-3'
 import { FwbHeading } from 'flowbite-vue'
-import BaseContianer from "../BaseContainer.vue";
-import TextToolbar from "../TextToolbar.vue";
+import BaseContianer from "@/components/shared/advancedEditor/blocks/BaseContainer.vue";
+import TextToolbar from "@/components/shared/advancedEditor/blocks/TextToolbar.vue";
 
 // Props from TipTap
 const props = defineProps({

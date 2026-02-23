@@ -1,8 +1,8 @@
 <script setup>
 import { ref, computed, watch, nextTick } from 'vue'
-import AdvancedEditor from '../../../shared/advancedEditor/Index.vue'
+import AdvancedEditor from '@/components/shared/advancedEditor/Index.vue'
 import { useRoute } from 'vue-router'
-import { useBreadcrumbStore } from '../../../../store/breadcrumb'
+import { useBreadcrumbStore } from '@/store/breadcrumb'
 import { DateTime } from 'luxon'
 
 const document = ref({})

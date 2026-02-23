@@ -3,10 +3,9 @@ import { FwbAvatar, FwbP } from "flowbite-vue";
 import { useUserStore } from "@/store/user";
 import { computed, ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
-import PrintChatMessage from "./PrintChatMessage.vue";
+import PrintChatMessage from "@/components/pages/chat/partials/messages/PrintChatMessage.vue";
 import { chatDetails } from "@/store/chatStore.js";
 import { DateTime } from "luxon";
-import { onClickOutside } from "@vueuse/core";
 import { useTemplateRef } from "vue";
 
 const chatStore = chatDetails();

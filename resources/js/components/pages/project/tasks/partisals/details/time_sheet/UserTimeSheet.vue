@@ -8,9 +8,9 @@ import {
 } from "flowbite-vue";
 import { computed, ref, watch } from "vue";
 import { groupBy as loGroupBy, remove, sumBy } from "lodash";
-import TrashIcon from "../../../../../../shared/icons/TrashIcon.vue";
-import InteractiveToast from "../../../../../../shared/InteractiveToast.vue";
-import Label from "../../../../../../shared/Label.vue";
+import TrashIcon from "@/components/shared/icons/TrashIcon.vue";
+import InteractiveToast from "@/components/shared/InteractiveToast.vue";
+import Label from "@/components/shared/Label.vue";
 
 const groupBy = ref("yyyy LLL");
 const selectedDay = ref();

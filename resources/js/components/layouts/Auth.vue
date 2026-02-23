@@ -1,9 +1,9 @@
 <script lang="js" setup>
 //@ts-ignore
-import Sidebar from "./Sidebar.vue";
+import Sidebar from "@/components/layouts/Sidebar.vue";
 //@ts-ignore
-import Breadcrumb from "../header/Breadcrumb.vue";
-import CreateTaskForm from "../pages/project/tasks/Form.vue";
+import Breadcrumb from "@/components/header/Breadcrumb.vue";
+import CreateTaskForm from "@/components/pages/project/tasks/Form.vue";
 </script>
 
 <template>

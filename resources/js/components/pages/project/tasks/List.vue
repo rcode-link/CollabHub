@@ -2,16 +2,16 @@
 import { useAbility } from '@casl/vue'
 import { useRoute, useRouter } from 'vue-router'
 import { onBeforeUnmount, onMounted, reactive, ref, watch } from 'vue'
-import Editor from '../../../shared/Editor.vue'
-import User from './User.vue'
+import Editor from '@/components/shared/Editor.vue'
+import User from '@/components/pages/project/tasks/User.vue'
 import { TailwindPagination } from 'laravel-vue-pagination'
-import Text from '../../../shared/Text.vue'
-import Label from '../../../shared/Label.vue'
-import UsersSelectInput from '../../../shared/SelectUsersInProject.vue'
+import Text from '@/components/shared/Text.vue'
+import Label from '@/components/shared/Label.vue'
+import UsersSelectInput from '@/components/shared/SelectUsersInProject.vue'
 import _ from 'lodash'
 import { DateTime } from 'luxon'
-import { useBreadcrumbStore } from '../../../../store/breadcrumb'
-import { useTasksStore } from '../../../../store/tasksStore.js'
+import { useBreadcrumbStore } from '@/store/breadcrumb'
+import { useTasksStore } from '@/store/tasksStore.js'
 
 const route = useRoute()
 const router = useRouter()

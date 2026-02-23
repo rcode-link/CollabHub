@@ -8,10 +8,10 @@ import {
     FwbTableHeadCell,
     FwbTableRow,
 } from "flowbite-vue";
-import UserIcon from "../../../../shared/UserIcon.vue";
-import AddUserToRoleModal from "./AddUserToRoleModal.vue";
-import InteractiveToast from "../../../../shared/InteractiveToast.vue";
-import { useRoleStore } from "../../../../../store/roleStore";
+import UserIcon from "@/components/shared/UserIcon.vue";
+import AddUserToRoleModal from "@/components/pages/settings/role/partials/AddUserToRoleModal.vue";
+import InteractiveToast from "@/components/shared/InteractiveToast.vue";
+import { useRoleStore } from "@/store/roleStore";
 import { toast } from "vue3-toastify";
 const roleStore = useRoleStore();
 

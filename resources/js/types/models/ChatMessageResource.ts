@@ -2,10 +2,10 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import type { MediaResource } from './MediaResource';
-import type { MessageReactionResouce } from './MessageReactionResouce';
-import type { UserResource } from './UserResource';
-import type { VideoCalls } from './VideoCalls';
+import type { MediaResource } from '@/types/models/MediaResource';
+import type { MessageReactionResouce } from '@/types/models/MessageReactionResouce';
+import type { UserResource } from '@/types/models/UserResource';
+import type { VideoCalls } from '@/types/models/VideoCalls';
 export type ChatMessageResource = {
     id: number;
     message: string | null;

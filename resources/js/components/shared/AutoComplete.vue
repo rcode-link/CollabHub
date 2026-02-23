@@ -1,6 +1,6 @@
 <script lang="js" setup>
 import { debounce } from "lodash";
-import Text from "./Text.vue";
+import Text from "@/components/shared/Text.vue";
 import { ref, watch } from "vue";
 
 const emit = defineEmits(["search", "selected"]);

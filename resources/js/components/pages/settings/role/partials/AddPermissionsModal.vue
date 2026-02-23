@@ -1,8 +1,8 @@
 <script setup>
-import Modal from "../../../../shared/Modal.vue";
+import Modal from "@/components/shared/Modal.vue";
 import { FwbButton, FwbCheckbox } from "flowbite-vue";
 import { ref, watch } from "vue";
-import { useRoleStore } from "../../../../../store/roleStore";
+import { useRoleStore } from "@/store/roleStore";
 import { toast } from "vue3-toastify";
 const roleStore = useRoleStore();
 

@@ -1,11 +1,11 @@
 <script setup lang="js">
-import Settings from "../../../layouts/Settings.vue";
+import Settings from "@/components/layouts/Settings.vue";
 import { FwbTab, FwbTabs } from "flowbite-vue";
 import { ref } from "vue";
-import List from "./partial/List.vue";
-import { useUserStore } from "../../../../store/user";
+import List from "@/components/pages/settings/users/partial/List.vue";
+import { useUserStore } from "@/store/user";
 
-import Invitetion from "./partial/Invitetion.vue";
+import Invitetion from "@/components/pages/settings/users/partial/Invitetion.vue";
 import { useAbility } from "@casl/vue";
 const { can, rules } = useAbility();
 

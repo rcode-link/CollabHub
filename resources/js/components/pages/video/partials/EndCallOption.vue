@@ -1,6 +1,6 @@
 <script setup lang="js">
-import PhoneIcon from "../../../shared/icons/PhoneEndIcon.vue";
-import { useLiveKit } from "../../../../functions/liveKit";
+import PhoneIcon from "@/components/shared/icons/PhoneEndIcon.vue";
+import { useLiveKit } from "@/functions/liveKit";
 const liveKit = useLiveKit();
 const endTheCall = async () => {
     await liveKit.room?.disconnect();

@@ -1,6 +1,6 @@
 <script setup lang="js">
 import { FwbButton } from "flowbite-vue";
-import Settings from "../../../../layouts/Settings.vue";
+import Settings from "@/components/layouts/Settings.vue";
 import { onMounted, ref } from "vue";
 import { useBreadcrumbStore } from "@/store/breadcrumb";
 
@@ -10,10 +10,10 @@ breadcrumb.setLinks([
     { link: { name: 'settings.base' }, title: 'Settings' },
     { title: 'Invoice Notes' },
 ])
-import Card from "../../../../shared/Card.vue";
+import Card from "@/components/shared/Card.vue";
 import Editor from "@/components/pages/project/tasks/partisals/Form/Editor.vue";
-import Text from "../../../../shared/Text.vue";
-import Note from "./partials/Note.vue";
+import Text from "@/components/shared/Text.vue";
+import Note from "@/components/pages/settings/invoice/notes/partials/Note.vue";
 const model = ref({
     val: "",
     title: "",

@@ -28,14 +28,14 @@
 </template>
 <script setup>
 import { FwbButton } from 'flowbite-vue'
-import InteractiveToast from '../../../../shared/InteractiveToast.vue'
-import { chatDetails } from '../../../../../store/chatStore.js'
+import InteractiveToast from '@/components/shared/InteractiveToast.vue'
+import { chatDetails } from '@/store/chatStore.js'
 import { onMounted, ref, computed, onUnmounted } from 'vue'
 import { Tippy } from 'vue-tippy'
-import Emoji from '../../../../shared/Emoji.vue'
-import ArrowBackIcon from '../../../../shared/icons/ArrowBackIcon.vue'
-import TrashIcon from '../../../../shared/icons/TrashIcon.vue'
-import EclipsisVerticalIcon from '../../../../shared/icons/EclipsisVerticalIcon.vue'
+import Emoji from '@/components/shared/Emoji.vue'
+import ArrowBackIcon from '@/components/shared/icons/ArrowBackIcon.vue'
+import TrashIcon from '@/components/shared/icons/TrashIcon.vue'
+import EclipsisVerticalIcon from '@/components/shared/icons/EclipsisVerticalIcon.vue'
 
 const messagesState = chatDetails()
 const deleteMessageToast = ref(null)

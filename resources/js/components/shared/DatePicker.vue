@@ -2,7 +2,7 @@
 import flatPickr from "vue-flatpickr-component";
 import "flatpickr/dist/flatpickr.css";
 import { ref, watch, computed } from "vue";
-import { useErrorsStore } from "../../store/errors";
+import { useErrorsStore } from "@/store/errors";
 import { DateTime } from "luxon";
 
 const props = defineProps({

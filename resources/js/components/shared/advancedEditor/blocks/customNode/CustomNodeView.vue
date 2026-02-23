@@ -12,7 +12,7 @@
 
 <script setup>
 import { NodeViewContent } from "@tiptap/vue-3";
-import BaseContianer from "../BaseContainer.vue";
+import BaseContianer from "@/components/shared/advancedEditor/blocks/BaseContainer.vue";
 const props = defineProps({
     editor: {
         type: Object,

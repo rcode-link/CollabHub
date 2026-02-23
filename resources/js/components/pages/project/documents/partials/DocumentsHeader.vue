@@ -1,11 +1,11 @@
 <script setup>
 import { reactive, ref } from 'vue'
 import { useRoute } from 'vue-router'
-import { useProjectDocumentsStore } from '../../../../../store/projectDocumentsStore.js'
+import { useProjectDocumentsStore } from '@/store/projectDocumentsStore.js'
 import { FwbButton } from 'flowbite-vue'
-import Modal from '../../../../shared/Modal.vue'
-import Label from '../../../../shared/Label.vue'
-import Text from '../../../../shared/Text.vue'
+import Modal from '@/components/shared/Modal.vue'
+import Label from '@/components/shared/Label.vue'
+import Text from '@/components/shared/Text.vue'
 
 const documentsStore = useProjectDocumentsStore()
 const route = useRoute()

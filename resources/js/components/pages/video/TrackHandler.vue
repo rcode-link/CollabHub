@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import MicrophoneSlashIcon from "../../shared/icons/MicrophoneSlashIcon.vue";
+import MicrophoneSlashIcon from "@/components/shared/icons/MicrophoneSlashIcon.vue";
 import { computed } from "vue";
 import { Track } from "livekit-client";
 

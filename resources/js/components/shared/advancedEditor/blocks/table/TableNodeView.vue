@@ -19,8 +19,8 @@
 
 <script setup>
 import { NodeViewContent } from '@tiptap/vue-3'
-import BaseContainer from '../BaseContainer.vue'
-import TableToolbar from './TableToolbar.vue'
+import BaseContainer from '@/components/shared/advancedEditor/blocks/BaseContainer.vue'
+import TableToolbar from '@/components/shared/advancedEditor/blocks/table/TableToolbar.vue'
 import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
 
 const props = defineProps({

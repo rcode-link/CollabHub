@@ -1,12 +1,12 @@
 <script setup>
-import Settings from '../../../layouts/Settings.vue'
+import Settings from '@/components/layouts/Settings.vue'
 import { FwbButton } from 'flowbite-vue'
-import Card from '../../../shared/Card.vue'
-import ChangePassword from './partials/ChangePassword.vue'
-import BaseProfile from './partials/BaseProfile.vue'
-import { useBreadcrumbStore } from '../../../../store/breadcrumb'
-import ProfilePicture from './partials/ProfilePicture.vue'
-import DeleteAccount from './partials/DeleteAccount.vue'
+import Card from '@/components/shared/Card.vue'
+import ChangePassword from '@/components/pages/settings/me/partials/ChangePassword.vue'
+import BaseProfile from '@/components/pages/settings/me/partials/BaseProfile.vue'
+import { useBreadcrumbStore } from '@/store/breadcrumb'
+import ProfilePicture from '@/components/pages/settings/me/partials/ProfilePicture.vue'
+import DeleteAccount from '@/components/pages/settings/me/partials/DeleteAccount.vue'
 import { ref, onMounted } from 'vue'
 
 const breadcrumb = useBreadcrumbStore()

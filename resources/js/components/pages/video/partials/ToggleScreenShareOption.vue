@@ -1,6 +1,6 @@
 <script setup lang="js">
-import { useLiveKit } from "../../../../functions/liveKit";
-import DispleyIcon from "../../../shared/icons/DispleyIcon.vue";
+import { useLiveKit } from "@/functions/liveKit";
+import DispleyIcon from "@/components/shared/icons/DispleyIcon.vue";
 
 const liveKit = useLiveKit();
 

@@ -1,8 +1,8 @@
 <script setup lang="js">
 import { FwbButton } from "flowbite-vue";
-import Modal from "../../../../shared/Modal.vue";
-import Label from "../../../../shared/Label.vue";
-import Text from "../../../../shared/Text.vue";
+import Modal from "@/components/shared/Modal.vue";
+import Label from "@/components/shared/Label.vue";
+import Text from "@/components/shared/Text.vue";
 import { ref } from "vue";
 
 const modalRef = ref();

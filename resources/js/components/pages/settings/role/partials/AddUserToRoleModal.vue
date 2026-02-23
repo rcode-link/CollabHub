@@ -1,11 +1,11 @@
 <script setup>
 import { FwbButton } from "flowbite-vue";
-import SelectUsersInCompany from "../../../../shared/SelectUsersInCompany.vue";
+import SelectUsersInCompany from "@/components/shared/SelectUsersInCompany.vue";
 import { reactive, ref, watch } from "vue";
-import UserIcon from "../../../../shared/UserIcon.vue";
-import InteractiveToast from "../../../../shared/InteractiveToast.vue";
-import Modal from "../../../../shared/Modal.vue";
-import { useRoleStore } from "../../../../../store/roleStore";
+import UserIcon from "@/components/shared/UserIcon.vue";
+import InteractiveToast from "@/components/shared/InteractiveToast.vue";
+import Modal from "@/components/shared/Modal.vue";
+import { useRoleStore } from "@/store/roleStore";
 import { toast } from "vue3-toastify";
 const roleStore = useRoleStore();
 

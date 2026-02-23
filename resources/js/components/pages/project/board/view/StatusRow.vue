@@ -103,8 +103,8 @@
 <script setup>
 import { computed, onMounted, ref, watch } from "vue";
 import { useRoute } from "vue-router";
-import { useBoardsState } from "../../../../../store/boards";
-import SingleTask from "./SingleTask.vue";
+import { useBoardsState } from "@/store/boards";
+import SingleTask from "@/components/pages/project/board/view/SingleTask.vue";
 import UserIcon from "@/components/shared/UserIcon.vue";
 
 const boardsStore = useBoardsState();

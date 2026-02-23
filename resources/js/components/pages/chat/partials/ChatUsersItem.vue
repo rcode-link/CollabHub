@@ -2,10 +2,10 @@
 import { DateTime } from 'luxon'
 import { computed } from 'vue'
 import { useRoute } from 'vue-router'
-import UserIcon from '../../../shared/UserIcon.vue'
-import Task from '../../../shared/icons/Task.vue'
-import EarthIcon from '../../../shared/icons/EarthIcon.vue'
-import { useUserStore } from '../../../../store/user'
+import UserIcon from '@/components/shared/UserIcon.vue'
+import Task from '@/components/shared/icons/Task.vue'
+import EarthIcon from '@/components/shared/icons/EarthIcon.vue'
+import { useUserStore } from '@/store/user'
 
 const userStore = useUserStore()
 const route = useRoute()

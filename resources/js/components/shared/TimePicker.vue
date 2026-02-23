@@ -1,7 +1,7 @@
 <script setup lang="js">
 import flatPickr from "vue-flatpickr-component";
 import "flatpickr/dist/flatpickr.css";
-import { useErrorsStore } from "../../store/errors";
+import { useErrorsStore } from "@/store/errors";
 import { DateTime } from "luxon";
 import { ref, watch } from "vue";
 

@@ -1,5 +1,5 @@
 <script setup lang="js">
-import { useErrorsStore } from "../../store/errors";
+import { useErrorsStore } from "@/store/errors";
 const errors = useErrorsStore();
 
 defineProps({

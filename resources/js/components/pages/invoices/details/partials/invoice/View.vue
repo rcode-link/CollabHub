@@ -28,10 +28,10 @@ import {
     FwbTableRow,
     FwbTableHeadCell,
 } from "flowbite-vue";
-import SearchInvoiceItems from "./partials/SearchInvoiceItems.vue";
-import InvoiceItem from "./partials/InvoiceItem.vue";
+import SearchInvoiceItems from "@/components/pages/invoices/details/partials/invoice/partials/SearchInvoiceItems.vue";
+import InvoiceItem from "@/components/pages/invoices/details/partials/invoice/partials/InvoiceItem.vue";
 import { debounce } from "lodash";
-import Options from "./partials/Options.vue";
+import Options from "@/components/pages/invoices/details/partials/invoice/partials/Options.vue";
 import { useInvoiceDetailsStore } from "@/store/invoiceDetailsStore";
 const route = useRoute();
 const invoiceStore = useInvoiceDetailsStore();

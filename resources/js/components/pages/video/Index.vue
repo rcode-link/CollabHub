@@ -1,15 +1,15 @@
 <script setup lang="js">
-import { useLiveKit } from "../../../functions/liveKit";
+import { useLiveKit } from "@/functions/liveKit";
 import { useVideoCallStore } from '@/store/videoCallStore'
 //@ts-ignore
 import { reactive } from "vue";
 
 //@ts-ignore
-import VideoOptions from "./partials/VideoOptions.vue";
+import VideoOptions from "@/components/pages/video/partials/VideoOptions.vue";
 //@ts-ignore
-import WelcomeScreen from "./partials/WelcomeScreen.vue";
+import WelcomeScreen from "@/components/pages/video/partials/WelcomeScreen.vue";
 //@ts-ignore
-import PrintTracks from "./partials/PrintTracks.vue";
+import PrintTracks from "@/components/pages/video/partials/PrintTracks.vue";
 
 const liveKit = useLiveKit();
 const videoCall = useVideoCallStore();

@@ -1,6 +1,6 @@
 <script setup lang="js">
-import { useLiveKit } from "../../../../functions/liveKit";
-import TrackHandler from "../TrackHandler.vue";
+import { useLiveKit } from "@/functions/liveKit";
+import TrackHandler from "@/components/pages/video/TrackHandler.vue";
 
 const liveKit = useLiveKit();
 </script>

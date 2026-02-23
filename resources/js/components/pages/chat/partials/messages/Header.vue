@@ -1,10 +1,10 @@
 <script setup>
-import { chatDetails } from '../../../../../store/chatStore.js'
+import { chatDetails } from '@/store/chatStore.js'
 import { useRoute, useRouter } from 'vue-router'
-import PhoneIcon from '../../../../shared/icons/PhoneIcon.vue'
-import UserIcon from '../../../../shared/UserIcon.vue'
-import Task from '../../../../shared/icons/Task.vue'
-import EarthIcon from '../../../../shared/icons/EarthIcon.vue'
+import PhoneIcon from '@/components/shared/icons/PhoneIcon.vue'
+import UserIcon from '@/components/shared/UserIcon.vue'
+import Task from '@/components/shared/icons/Task.vue'
+import EarthIcon from '@/components/shared/icons/EarthIcon.vue'
 
 const emit = defineEmits(['toggleSearch'])
 const chatStore = chatDetails()

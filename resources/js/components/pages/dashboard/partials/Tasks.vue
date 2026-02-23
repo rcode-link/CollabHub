@@ -1,8 +1,8 @@
 <script setup>
 import { ref } from 'vue'
 import Card from '@/components/shared/Card.vue'
-import User from '../../project/tasks/User.vue'
-import Editor from '../../../shared/Editor.vue'
+import User from '@/components/pages/project/tasks/User.vue'
+import Editor from '@/components/shared/Editor.vue'
 import { DateTime } from 'luxon'
 
 const tasks = ref([])

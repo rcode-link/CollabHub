@@ -1,20 +1,22 @@
 <script setup>
-import { useTasksStore } from "../../../../store/tasksStore.js";
+import { useTasksStore } from "@/store/tasksStore.js";
 import { reactive, ref, watch } from "vue";
 import { useRoute } from "vue-router";
-import Errors from "../../../shared/Errors.vue";
-import Editor from "./partisals/Form/Editor.vue";
-import UsersSelectInput from "../../../shared/SelectUsersInProject.vue";
-import Button from "../../../shared/Button.vue";
-import { useErrorsStore } from "../../../../store/errors";
-import SelectTasks from "./partisals/Form/SelectTasks.vue";
-import DatePicker from "../../../shared/DatePicker.vue";
+import Errors from "@/components/shared/Errors.vue";
+import Editor from "@/components/pages/project/tasks/partisals/Form/Editor.vue";
+import UsersSelectInput from "@/components/shared/SelectUsersInProject.vue";
+import Button from "@/components/shared/Button.vue";
+import { useErrorsStore } from "@/store/errors";
+import SelectTasks from "@/components/pages/project/tasks/partisals/Form/SelectTasks.vue";
+import DatePicker from "@/components/shared/DatePicker.vue";
 import { DateTime } from "luxon";
 import _ from "lodash";
 import { toast } from "vue3-toastify";
-import router from "../../../../router/router.js";
-import { setFormData } from "./formLogic";
-import Tags from "./partisals/Form/Tags.vue";
+import router from "@/router/router.js";
+import { setFormData } from "@/components/pages/project/tasks/formLogic";
+import Tags from "@/components/pages/project/tasks/partisals/Form/Tags.vue";
+import UiToggle from "@/components/shared/ui/Toggle.vue";
+import UiSelect from "@/components/shared/ui/Select.vue";
 
 const errorsStore = useErrorsStore();
 const createTasks = useTasksStore();
@@ -163,7 +165,6 @@ const createNewTask = () => {
 
 const isEditMode = () => Boolean(route.query.task);
 
-const selectClass = "w-full rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 px-3 py-2 text-sm text-gray-900 dark:text-white focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 transition-colors cursor-pointer";
 const labelClass = "block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1";
 </script>
 
@@ -239,24 +240,24 @@ const labelClass = "block text-xs font-medium text-gray-500 dark:text-gray-400 m
                                     <!-- Project -->
                                     <div>
                                         <label :class="labelClass">Project</label>
-                                        <select :key="form.project_id" v-model="form.project_id" :class="selectClass">
+                                        <UiSelect :key="form.project_id" v-model="form.project_id">
                                             <option value="">Select project</option>
                                             <option
                                                 v-for="p in projects?.data"
                                                 :key="p.id"
                                                 :value="p.id.toString()"
                                             >{{ p.name }}</option>
-                                        </select>
+                                        </UiSelect>
                                         <Errors name="project_id" />
                                     </div>
 
                                     <!-- Type -->
                                     <div>
                                         <label :class="labelClass">Type</label>
-                                        <select v-model="form.type_id" :class="selectClass">
+                                        <UiSelect v-model="form.type_id">
                                             <option value="">Select type</option>
                                             <option v-for="t in taskTypesList" :key="t.id" :value="t.id.toString()">{{ t.title }}</option>
-                                        </select>
+                                        </UiSelect>
                                         <Errors name="type_id" />
                                     </div>
 
@@ -281,10 +282,10 @@ const labelClass = "block text-xs font-medium text-gray-500 dark:text-gray-400 m
                                 <!-- Status (edit mode only) -->
                                 <div v-if="isEditMode()" class="mt-3">
                                     <label :class="labelClass">Status</label>
-                                    <select v-model="form.status_id" :class="selectClass">
+                                    <UiSelect v-model="form.status_id">
                                         <option value="">Select status</option>
                                         <option v-for="s in statuses" :key="s.id" :value="s.id.toString()">{{ s.title }}</option>
-                                    </select>
+                                    </UiSelect>
                                 </div>
 
                                 <!-- Tags -->
@@ -308,14 +309,9 @@ const labelClass = "block text-xs font-medium text-gray-500 dark:text-gray-400 m
                     <!-- Footer -->
                     <div class="flex items-center gap-3 px-6 py-4 border-t border-gray-100 dark:border-gray-800 flex-shrink-0 bg-white dark:bg-gray-900">
                         <!-- Create more toggle -->
-                        <label v-if="!isEditMode()" class="flex items-center gap-2 cursor-pointer mr-auto">
-                            <div class="relative">
-                                <input type="checkbox" class="sr-only" v-model="createMore" />
-                                <div class="w-8 h-4 rounded-full transition-colors" :class="createMore ? 'bg-blue-500' : 'bg-gray-200 dark:bg-gray-600'"></div>
-                                <div class="absolute top-0.5 left-0.5 w-3 h-3 rounded-full bg-white shadow transition-transform" :class="createMore ? 'translate-x-4' : 'translate-x-0'"></div>
-                            </div>
-                            <span class="text-xs text-gray-600 dark:text-gray-300">Create more</span>
-                        </label>
+                        <UiToggle v-if="!isEditMode()" v-model="createMore" class="mr-auto">
+                            Create more
+                        </UiToggle>
 
                         <Button @click="submit" :disabled="!form.name.trim()">
                             {{ isEditMode() ? 'Save changes' : 'Create task' }}

@@ -2,7 +2,7 @@
     <div class="relative" ref="dropdownEl">
         <button
             type="button"
-            @click="() => { loadStatuses(); open = !open; }"
+            @click="() => { loadStatuses(); toggleDropdown(); }"
             class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium transition-colors"
             :class="obj.open
                 ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400 hover:bg-blue-200 dark:hover:bg-blue-900/50'
@@ -40,16 +40,13 @@
 <script setup>
 import { ref } from "vue";
 import { useRoute } from "vue-router";
-import { onClickOutside } from "@vueuse/core";
+import { useDropdown } from "@/composables/useDropdown";
 
 const route = useRoute();
 const props = defineProps({ obj: {}, taskId: null });
 
 const list = ref([]);
-const open = ref(false);
-const dropdownEl = ref(null);
-
-onClickOutside(dropdownEl, () => { open.value = false; });
+const { open, el: dropdownEl, toggle: toggleDropdown } = useDropdown();
 
 const loadStatuses = () => {
     if (list.value.length) return;

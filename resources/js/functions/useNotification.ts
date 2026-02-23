@@ -1,8 +1,8 @@
 import { toast } from "vue3-toastify/index";
-import useTabCoordination from "./useTabCoordination";
-import { useUserStore } from "../store/user";
+import useTabCoordination from "@/functions/useTabCoordination";
+import { useUserStore } from "@/store/user";
 
-import VideoToast from "../components/shared/video/VideoToast.vue";
+import VideoToast from "@/components/shared/video/VideoToast.vue";
 import { useRouter } from "vue-router";
 
 export default () => {
