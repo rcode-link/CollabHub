@@ -200,27 +200,38 @@ export default [
     meta: {
       middleware: auth,
     },
+    redirect: { name: 'invoices.list' },
     component: () => import('@/components/pages/invoices/Router.vue'),
     children: [
       {
-        path: 'index',
-        default: true,
-        name: 'invoices.index',
-        component: () => import('@/components/pages/invoices/Index.vue'),
+        path: 'list',
+        name: 'invoices.list',
+        component: () =>
+          import('@/components/pages/invoices/list/Index.vue'),
       },
       {
-        path: ':id',
-        name: 'invoices.details',
+        path: 'payments',
+        name: 'invoices.payments',
         component: () =>
-          import('@/components/pages/invoices/details/Index.vue'),
+          import('@/components/pages/invoices/payments/Index.vue'),
       },
       {
-        path: ':id/invoice/:inv_id',
-        name: 'invoices.form',
+        path: 'customers',
+        name: 'invoices.customers',
         component: () =>
-          import(
-            '@/components/pages/invoices/details/partials/invoice/View.vue'
-          ),
+          import('@/components/pages/invoices/customers/Index.vue'),
+      },
+      {
+        path: 'customers/:id',
+        name: 'invoices.customer.detail',
+        component: () =>
+          import('@/components/pages/invoices/customers/Detail.vue'),
+      },
+      {
+        path: ':inv_id/edit',
+        name: 'invoices.edit',
+        component: () =>
+          import('@/components/pages/invoices/edit/Index.vue'),
       },
     ],
   },

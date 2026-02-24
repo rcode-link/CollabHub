@@ -82,7 +82,8 @@ class Company extends Model implements HasMedia
         'billing_zip',
         'billing_country',
         'is_costumer_company',
-        'currency_id'
+        'currency_id',
+        'default_vat_rate'
     ];
 
     /**

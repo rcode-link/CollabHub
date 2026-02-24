@@ -8,6 +8,7 @@ use App\Http\Requests\UpdateInvoiceItemRequest;
 use App\Models\BillingItem;
 use App\Models\Invoice;
 use App\Models\InvoiceItem;
+use Illuminate\Support\Facades\Auth;
 
 class InvoiceItemController extends Controller
 {
@@ -24,16 +25,20 @@ class InvoiceItemController extends Controller
      */
     public function store(StoreInvoiceItemRequest $request)
     {
-        $invoice = Invoice::query()->whereId($request->get('invoice_id'))->firstOrFail();
-        $billingItem = BillingItem::whereId($request->get('item_id'))->firstOrFail();
+        Auth::user()->authorize('can-create-invoice', Auth::user()->company()->first());
+
+        $data = $request->validated();
+        $invoice = Invoice::findOrFail($data['invoice_id']);
+        $billingItem = BillingItem::findOrFail($data['item_id']);
+        $vatRate = $data['vat_rate'] ?? $invoice->company->default_vat_rate ?? 0;
         $invoice->items()->create([
             "price" => $billingItem->price,
             "qty" => 100,
             "total" => $billingItem->price,
+            "vat_rate" => $vatRate,
             "billing_item_id" => $billingItem->id,
         ]);
         $invoice->load('items', 'items.billingItem');
-
     }
 
     /**
@@ -49,16 +54,21 @@ class InvoiceItemController extends Controller
      */
     public function update(UpdateInvoiceItemRequest $request, $invoiceItem)
     {
-        $item = InvoiceItem::whereId($invoiceItem)->firstOrFail();
-        $price = $request->get('price') * 100;
-        $qty = $request->get('qty');
-        $item->update([
+        Auth::user()->authorize('can-create-invoice', Auth::user()->company()->first());
+
+        $data = $request->validated();
+        $item = InvoiceItem::findOrFail($invoiceItem);
+        $price = $data['price'] * 100;
+        $qty = $data['qty'];
+        $updateData = [
             "price" => $price,
             "qty" => $qty * 100,
             "total" => $price * $qty,
-        ]);
-
-        //
+        ];
+        if (isset($data['vat_rate'])) {
+            $updateData['vat_rate'] = $data['vat_rate'];
+        }
+        $item->update($updateData);
     }
 
     /**
@@ -66,8 +76,9 @@ class InvoiceItemController extends Controller
      */
     public function destroy($id)
     {
-        $invoiceItem = InvoiceItem::whereId($id)->firstOrFail();
+        Auth::user()->authorize('can-create-invoice', Auth::user()->company()->first());
+
+        $invoiceItem = InvoiceItem::findOrFail($id);
         $invoiceItem->delete();
-        //
     }
 }

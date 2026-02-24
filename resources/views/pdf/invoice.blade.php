@@ -169,10 +169,18 @@ line-height: 1px;
                     <th>Price</th>
                     <th>Qty</th>
                     <th>Total</th>
+                    <th>VAT %</th>
+                    <th>VAT</th>
+                    <th>Total + VAT</th>
                 </tr>
             </thead>
             <tbody>
                 @foreach ($model->items as $index => $obj)
+                    @php
+                        $vatRate = (float) ($obj->vat_rate ?? 0);
+                        $vatAmount = $obj->total * $vatRate / 100;
+                        $totalWithVat = $obj->total + $vatAmount;
+                    @endphp
                     <tr>
                         <td>{{ $index + 1 }}</td>
                         <td>{{ $obj->billingItem->title }}</td>
@@ -191,18 +199,71 @@ line-height: 1px;
                                 {{ formatMoney($obj->total, 'USD') }}
                             @endif
                         </td>
+                        <td>{{ $vatRate > 0 ? number_format($vatRate, 2) . '%' : '-' }}</td>
+                        <td>
+                            @if ($vatRate > 0)
+                                @if ($model->company?->currency)
+                                    {{ formatMoney((int) round($vatAmount), $model->company->currency?->currency, $model->company->currency?->format) }}
+                                @else
+                                    {{ formatMoney((int) round($vatAmount), 'USD') }}
+                                @endif
+                            @else
+                                -
+                            @endif
+                        </td>
+                        <td>
+                            @if ($model->company?->currency)
+                                {{ formatMoney((int) round($totalWithVat), $model->company->currency?->currency, $model->company->currency?->format) }}
+                            @else
+                                {{ formatMoney((int) round($totalWithVat), 'USD') }}
+                            @endif
+                        </td>
                     </tr>
                 @endforeach
             </tbody>
+            @php
+                $subtotal = $model->total;
+                $vatTotal = $model->items->sum(function ($item) {
+                    return $item->total * (float) ($item->vat_rate ?? 0) / 100;
+                });
+                $grandTotal = $subtotal + $vatTotal;
+            @endphp
             <tfoot>
                 <tr>
-                    <th colspan="3"></th>
-                    <th>Total</th>
+                    <th colspan="4"></th>
+                    <th>Subtotal</th>
+                    <th colspan="2"></th>
                     <th>
                         @if ($model->company?->currency)
-                            {{ formatMoney($model->total, $model->company->currency?->currency, $model->company->currency?->format) }}
+                            {{ formatMoney($subtotal, $model->company->currency?->currency, $model->company->currency?->format) }}
                         @else
-                            {{ formatMoney($model->total, 'USD') }}
+                            {{ formatMoney($subtotal, 'USD') }}
+                        @endif
+                    </th>
+                </tr>
+                @if ($vatTotal > 0)
+                <tr>
+                    <th colspan="4"></th>
+                    <th>VAT Total</th>
+                    <th colspan="2"></th>
+                    <th>
+                        @if ($model->company?->currency)
+                            {{ formatMoney((int) round($vatTotal), $model->company->currency?->currency, $model->company->currency?->format) }}
+                        @else
+                            {{ formatMoney((int) round($vatTotal), 'USD') }}
+                        @endif
+                    </th>
+                </tr>
+                @endif
+                <tr>
+                    <th colspan="4"></th>
+                    <th>Total</th>
+                    <th colspan="2"></th>
+                    <th>
+                        @if ($model->company?->currency)
+                            {{ formatMoney((int) round($grandTotal), $model->company->currency?->currency, $model->company->currency?->format) }}
+                        @else
+                            {{ formatMoney((int) round($grandTotal), 'USD') }}
                         @endif
                     </th>
                 </tr>

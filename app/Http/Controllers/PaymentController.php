@@ -7,6 +7,7 @@ use App\Http\Requests\UpdatePaymentRequest;
 use App\Http\Resources\PaymentResource;
 use App\Models\Payment;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Auth;
 
 class PaymentController extends Controller
 {
@@ -15,7 +16,15 @@ class PaymentController extends Controller
      */
     public function index()
     {
-        return PaymentResource::collection(Payment::with('invoice')->whereHas('invoice', fn($query) => $query->where('company_id', request()->get('company_id')))->get());
+        Auth::user()->authorize('can-view-billing-info', Auth::user()->company()->first());
+
+        $data = Payment::with('invoice.company')
+            ->when(request('company_id'), fn($q, $id) => $q->whereHas('invoice', fn($q2) => $q2->where('company_id', $id)))
+            ->when(request('date_from'), fn($q, $d) => $q->where('date', '>=', $d))
+            ->when(request('date_to'), fn($q, $d) => $q->where('date', '<=', $d))
+            ->orderBy('date', 'desc');
+
+        return PaymentResource::collection($data->paginate());
     }
 
     /**
@@ -23,12 +32,14 @@ class PaymentController extends Controller
      */
     public function store(StorePaymentRequest $request)
     {
+        Auth::user()->authorize('can-create-invoice', Auth::user()->company()->first());
+
         $data = $request->validated();
         $data['date'] = Carbon::parse($data['date']);
         $data['value'] = $data['value'] * 100;
-        Payment::create($data);
-        return $request->validated();
-        //
+        $payment = Payment::create($data);
+
+        return new PaymentResource($payment->load('invoice'));
     }
 
     /**
@@ -36,7 +47,9 @@ class PaymentController extends Controller
      */
     public function show(Payment $payment)
     {
-        //
+        Auth::user()->authorize('can-view-billing-info', Auth::user()->company()->first());
+
+        return new PaymentResource($payment->load('invoice'));
     }
 
     /**
@@ -52,6 +65,10 @@ class PaymentController extends Controller
      */
     public function destroy(Payment $payment)
     {
-        //
+        Auth::user()->authorize('can-create-invoice', Auth::user()->company()->first());
+
+        $payment->delete();
+
+        return response()->noContent();
     }
 }

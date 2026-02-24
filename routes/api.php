@@ -136,6 +136,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
     Route::apiResource('/customers', CustomerCompanyController::class);
     Route::apiResource('/invoices-items', InvoiceItemController::class);
+    Route::get('/invoices/next-number', [InvoiceController::class, 'nextNumber'])->name('api.invoiceNextNumber');
     Route::get('/invoices/{invoice}/download', [InvoiceController::class, 'download'])->name('api.invoiceDownload');
     Route::apiResource('/invoices', InvoiceController::class);
     Route::apiResource('/payments', PaymentController::class);

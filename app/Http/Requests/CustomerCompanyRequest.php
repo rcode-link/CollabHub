@@ -36,7 +36,7 @@ class CustomerCompanyRequest extends FormRequest
             'billing_city' => ['nullable', 'string'],
             'billing_zip' => ['nullable', 'string'],
             'billing_country' => ['nullable', 'string'],
-
+            'default_vat_rate' => ['nullable', 'numeric', 'min:0', 'max:100'],
         ];
     }
 }

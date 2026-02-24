@@ -22,7 +22,9 @@ class StoreInvoiceItemRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'invoice_id' => ['required', 'exists:invoices,id'],
+            'item_id' => ['required', 'exists:billing_items,id'],
+            'vat_rate' => ['nullable', 'numeric', 'min:0', 'max:100'],
         ];
     }
 }

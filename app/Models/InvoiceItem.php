@@ -43,6 +43,7 @@ class InvoiceItem extends Model
         'price',
         'qty',
         'total',
+        'vat_rate',
         'billing_item_id',
     ];
 

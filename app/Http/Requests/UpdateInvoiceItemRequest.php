@@ -22,7 +22,9 @@ class UpdateInvoiceItemRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'price' => ['required', 'numeric', 'min:0'],
+            'qty' => ['required', 'numeric', 'min:0'],
+            'vat_rate' => ['nullable', 'numeric', 'min:0', 'max:100'],
         ];
     }
 }

@@ -37,8 +37,8 @@ use Illuminate\Database\Eloquent\Model;
  * @property-read \App\Models\Company $company
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\InvoiceItem> $items
  * @property-read int|null $items_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Payment> $paymants
- * @property-read int|null $paymants_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Payment> $payments
+ * @property-read int|null $payments_count
  * @mixin \Eloquent
  */
 class Invoice extends Model
@@ -62,7 +62,7 @@ class Invoice extends Model
         return $this->belongsTo(Company::class);
     }
 
-    public function paymants()
+    public function payments()
     {
         return $this->hasMany(Payment::class);
     }

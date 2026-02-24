@@ -50,6 +50,7 @@ class CustomerResource extends JsonResource
                 'billing_city' => $this->when(!request()->routeIs('apicustomers.index'), $this->billing_city),
                 'billing_zip' => $this->when(!request()->routeIs('apicustomers.index'), $this->billing_zip),
                 'billing_country' => $this->when(!request()->routeIs('apicustomers.index'), $this->billing_country),
+                'default_vat_rate' => (float) ($this->default_vat_rate ?? 0),
                 'currency' => $this->whenLoaded('currency', fn() => $this->currency)
             ];
     }

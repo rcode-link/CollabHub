@@ -22,12 +22,22 @@ class InvoiceItemResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
+        $total = $this->total / 100;
+        $vatRate = (float) ($this->vat_rate ?? 0);
+        $vatAmount = $total * $vatRate / 100;
+
         return [
             'id' => $this->id,
             'name' => $this->whenLoaded('billingItem', $this->billingItem->title),
             'qty' => $this->qty / 100,
-            'total' => $this->total / 100,
+            'total' => $total,
             'price' => $this->price / 100,
+            'vat_rate' => $vatRate,
+            'vat_amount' => round($vatAmount, 2),
+            'total_with_vat' => round($total + $vatAmount, 2),
+            'billing_item' => $this->whenLoaded('billingItem', fn() => [
+                'unit' => $this->billingItem->unit ?? null,
+            ]),
         ];
     }
 }
