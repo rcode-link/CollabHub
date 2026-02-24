@@ -32,6 +32,10 @@ class FilterTasks
             $query->whereHas('taskSprintData', fn(Builder $builder) => $builder->where('task_status_id', $request->get('status_id'))->where('sprint_id', $request->get('sprint_id')));
         });
 
+        $task->when($request->filled('status_id') && !$request->has('sprint_id'), function (Builder $query) use ($request) {
+            $query->whereHas('taskSprintData', fn(Builder $builder) => $builder->where('task_status_id', $request->get('status_id')));
+        });
+
         $task->when($request->has('user_id'), function (Builder $query) use ($request) {
             $query->where('user_id', $request->get('user_id'));
         });

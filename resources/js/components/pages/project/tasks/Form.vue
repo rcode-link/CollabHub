@@ -34,12 +34,14 @@ const form = reactive({
     due_date: null,
     related_tasks: [],
     tags: [],
+    sprint_id: "",
 });
 
 const showForm = ref(false);
 const statuses = ref([]);
 const tasksStore = useTasksStore();
 const projects = ref();
+const boards = ref([]);
 
 const loadData = () => {
     window.axios.get("/api/v1/projects?can-create-task=true").then((res) => {
@@ -61,6 +63,7 @@ const loadData = () => {
                 form.project_id = route.params.project;
                 form.type_id = data.type.id;
                 form.tags = data.tags ?? [];
+                form.sprint_id = data.status?.sprint?.id?.toString() ?? "";
                 form.due_date =
                     data.due_date === null
                         ? null
@@ -89,6 +92,7 @@ const resetForm = () => {
     form.due_date = null;
     form.related_tasks = [];
     form.tags = [];
+    form.sprint_id = "";
 };
 
 watch(
@@ -109,8 +113,18 @@ watch(
 watch(
     () => form.project_id,
     (newProjectId, oldProjectId) => {
-        if (newProjectId !== oldProjectId && oldProjectId) form.user_id = null;
-    }
+        if (newProjectId !== oldProjectId && oldProjectId) {
+            form.user_id = null;
+            form.sprint_id = "";
+        }
+        if (newProjectId) {
+            window.axios.get("/api/v1/boards", { params: { project_id: newProjectId } })
+                .then((res) => { boards.value = res.data; });
+        } else {
+            boards.value = [];
+        }
+    },
+    { immediate: true }
 );
 
 const submit = () => {
@@ -121,9 +135,19 @@ const submit = () => {
             task_id: obj.task.id,
             task_relation_id: obj.task_relation_id,
         }));
+        const sprintId = form.sprint_id;
+        const { sprint_id: _, ...updateData } = form;
         window.axios
-            .put(`/api/v1/tasks/${route.query.task}`, form)
-            .then(() => createTasks.toggleCreateTaskModal());
+            .put(`/api/v1/tasks/${route.query.task}`, updateData)
+            .then((res) => {
+                const taskDbId = res.data?.data?.id ?? route.query.task;
+                if (sprintId) {
+                    window.axios.put("/api/v1/sprint/tasks", { task_id: taskDbId, sprint_id: sprintId })
+                        .finally(() => createTasks.toggleCreateTaskModal());
+                } else {
+                    createTasks.toggleCreateTaskModal();
+                }
+            });
     }
     if (!route.query.task) createNewTask();
     if (route.name === "project.tasks") {
@@ -136,24 +160,34 @@ const submit = () => {
 const createNewTask = () => {
     errorsStore.setErrors({}, "");
     const data = setFormData(form);
+    const sprintId = form.sprint_id;
     window.axios
         .post("/api/v1/tasks", data)
         .then((task) => {
-            resetForm();
+            const taskDbId = task.data.data.id;
             const taskId = task.data.data.task_id;
             const taskName = task.data.data.name;
-            if (!createMore.value) {
-                createTasks.toggleCreateTaskModal();
-                router.push(`/open/${taskId}`);
+            const afterCreate = () => {
+                resetForm();
+                if (!createMore.value) {
+                    createTasks.toggleCreateTaskModal();
+                    router.push(`/open/${taskId}`);
+                } else {
+                    toast.success(
+                        `<p>Task ${taskName} created.</p><small>Click to open</small>`,
+                        {
+                            theme: localStorage.getItem("color-theme") ?? "light",
+                            dangerouslyHTMLString: true,
+                            onClick: () => { router.push(`/open/${taskId}`); },
+                        }
+                    );
+                }
+            };
+            if (sprintId) {
+                window.axios.put("/api/v1/sprint/tasks", { task_id: taskDbId, sprint_id: sprintId })
+                    .then(afterCreate).catch(afterCreate);
             } else {
-                toast.success(
-                    `<p>Task ${taskName} created.</p><small>Click to open</small>`,
-                    {
-                        theme: localStorage.getItem("color-theme") ?? "light",
-                        dangerouslyHTMLString: true,
-                        onClick: () => { router.push(`/open/${taskId}`); },
-                    }
-                );
+                afterCreate();
             }
         })
         .catch((error) => {
@@ -276,6 +310,20 @@ const labelClass = "block text-xs font-medium text-gray-500 dark:text-gray-400 m
                                     <div>
                                         <label :class="labelClass">Due date</label>
                                         <DatePicker v-model="form.due_date" />
+                                    </div>
+
+                                    <!-- Board / Sprint -->
+                                    <div v-if="boards.some(b => b.sprint?.length)">
+                                        <label :class="labelClass">Board</label>
+                                        <UiSelect v-model="form.sprint_id">
+                                            <option value="">No board</option>
+                                            <template v-for="b in boards.filter(b => b.sprint?.length)" :key="b.id">
+                                                <option v-if="b.type === 'kanban'" :value="b.sprint[0].id.toString()">{{ b.title }}</option>
+                                                <optgroup v-else :label="b.title">
+                                                    <option v-for="s in b.sprint" :key="s.id" :value="s.id.toString()">{{ s.title }}</option>
+                                                </optgroup>
+                                            </template>
+                                        </UiSelect>
                                     </div>
                                 </div>
 

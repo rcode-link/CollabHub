@@ -23,10 +23,25 @@ class EditorFileController extends Controller
         Storage::disk('s3')->put($path, file_get_contents($file), 'public');
 
         return response()->json([
-            'url'   => Storage::disk('s3')->url($path),
+            'url'   => '/api/v1/editor/files/' . $path,
             'name'  => $file->getClientOriginalName(),
             'type'  => $file->getMimeType(),
             'image' => $isImage,
         ]);
+    }
+
+    public function show(string $path)
+    {
+        if (!Storage::disk('s3')->exists($path)) {
+            abort(404);
+        }
+
+        try {
+            $url = Storage::disk('s3')->temporaryUrl($path, now()->addMinutes(2));
+        } catch (\Exception) {
+            $url = Storage::disk('s3')->url($path);
+        }
+
+        return response()->json(['url' => $url]);
     }
 }

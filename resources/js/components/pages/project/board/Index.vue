@@ -43,8 +43,8 @@ onMounted(() => {
                 </div>
             </div>
 
-            <!-- Board content — always rendered when not loading -->
-            <div class="mt-3">
+            <!-- Board content -->
+            <div v-if="boardsState.getBoards.length > 0" class="mt-3">
                 <router-view></router-view>
             </div>
         </template>

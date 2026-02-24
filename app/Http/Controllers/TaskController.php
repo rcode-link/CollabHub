@@ -34,7 +34,7 @@ class TaskController extends Controller
         Auth::user()->authorize('can-view-project', $request->get('project_id'));
 
         $tasks = Task::query()
-            ->with('type', 'owner')
+            ->with('type', 'owner', 'taskSprintData.status.board', 'taskSprintData.sprint')
             ->withCount(['children', 'parents'])
             ->where('project_id', $request->get('project_id'));
 
@@ -54,6 +54,7 @@ class TaskController extends Controller
         // task is parent to its children, and vise versa
         $task = Task::whereTaskId($taskId)->with('children',
             'children.type', 'children.owner', 'children.project',
+            'children.taskSprintData.status.board', 'children.taskSprintData.sprint',
         )->firstOrFail();
         $relationIds = [];
         foreach ($task->children as $obj) {
@@ -150,7 +151,7 @@ class TaskController extends Controller
         ]);
 
         $tasks = Task::query()
-            ->with('type', 'owner', 'project')
+            ->with('type', 'owner', 'project', 'taskSprintData.status.board', 'taskSprintData.sprint')
             ->withCount(['children', 'parents'])
             ->where('project_id', $request->get('project_id'));
 

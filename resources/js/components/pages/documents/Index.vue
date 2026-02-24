@@ -13,6 +13,8 @@ const router = useRouter()
 breadcrumbStore.addEntry([{ title: 'Documents' }])
 
 provide('fileStore', store)
+provide('canCreateDocument', true)
+provide('canDeleteDocument', true)
 
 provide('navigateToDocument', (id) => {
     router.push({ name: 'documents.editor', params: { id } })
@@ -35,14 +37,27 @@ onMounted(() => store.loadDocuments())
     <Auth>
         <div class="rounded-2xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 shadow-sm overflow-hidden">
 
-            <!-- Column headers -->
-            <div class="flex items-center gap-3 border-b border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-700/40 px-4 py-2 text-xs font-medium uppercase tracking-wide text-gray-400">
-                <div class="w-3.5 flex-shrink-0" />
-                <div class="w-5 flex-shrink-0" />
-                <div class="flex-1">Name</div>
-                <div class="hidden sm:block w-24 text-right">ID</div>
-                <div class="hidden md:block w-28 text-right">Last edited</div>
-                <div class="w-16 flex-shrink-0" />
+            <!-- Header with search -->
+            <div class="flex items-center gap-3 border-b border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-700/40 px-4 py-2">
+                <div class="flex items-center gap-3 flex-1 text-xs font-medium uppercase tracking-wide text-gray-400">
+                    <div class="w-3.5 flex-shrink-0" />
+                    <div class="w-5 flex-shrink-0" />
+                    <div class="flex-1">Name</div>
+                    <div class="hidden sm:block w-24 text-right">ID</div>
+                    <div class="hidden md:block w-28 text-right">Last edited</div>
+                    <div class="w-16 flex-shrink-0" />
+                </div>
+                <div class="relative flex-shrink-0 w-48">
+                    <svg class="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-gray-400 pointer-events-none" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                    </svg>
+                    <input
+                        v-model="store.search"
+                        type="text"
+                        placeholder="Search..."
+                        class="w-full pl-8 pr-3 py-1 rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-xs text-gray-900 dark:text-white placeholder-gray-400 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                    />
+                </div>
             </div>
 
             <DocumentPrintTree :parent_id="null" :root="true" />

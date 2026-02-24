@@ -1,7 +1,7 @@
 <script setup>
-import { FwbBadge } from "flowbite-vue";
-import { useRoute, useRouter } from "vue-router";
+import { useRoute } from "vue-router";
 import { isArray } from "lodash";
+
 const route = useRoute();
 defineProps({
   tasks: [],
@@ -9,45 +9,59 @@ defineProps({
 </script>
 
 <template>
-  <div class="grid grid-cols-7 border-b font-bold p-1 gap-1">
-    <div>Relation</div>
-    <div>Id</div>
-    <div class="col-span-3">Task</div>
-    <div>Status</div>
-    <div>Type</div>
-  </div>
-  <div
-    v-for="obj in tasks"
-    :key="obj"
-    class="grid gap-1 grid-cols-7 items-center border-b p-1"
-  >
-    <div>
-      {{ obj.relation.name }}
+  <div class="rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden">
+    <!-- Header -->
+    <div class="grid grid-cols-[80px_60px_1fr_100px_100px_80px] gap-2 px-3 py-1.5 bg-gray-50/80 dark:bg-gray-800/60 border-b border-gray-100 dark:border-gray-700">
+      <span class="text-[10px] font-semibold uppercase tracking-wider text-gray-400 dark:text-gray-500">Relation</span>
+      <span class="text-[10px] font-semibold uppercase tracking-wider text-gray-400 dark:text-gray-500">ID</span>
+      <span class="text-[10px] font-semibold uppercase tracking-wider text-gray-400 dark:text-gray-500">Task</span>
+      <span class="text-[10px] font-semibold uppercase tracking-wider text-gray-400 dark:text-gray-500">Status</span>
+      <span class="text-[10px] font-semibold uppercase tracking-wider text-gray-400 dark:text-gray-500">Board</span>
+      <span class="text-[10px] font-semibold uppercase tracking-wider text-gray-400 dark:text-gray-500">Type</span>
     </div>
-    <div>
-      <router-link
-        :to="{
-          ...route,
-          query: {
-            ...route.query,
-            task: obj.id,
-          },
-        }"
+
+    <!-- Rows -->
+    <div class="divide-y divide-gray-50 dark:divide-gray-700/40">
+      <div
+        v-for="obj in tasks"
+        :key="obj.id"
+        class="grid grid-cols-[80px_60px_1fr_100px_100px_80px] gap-2 px-3 py-2 items-center hover:bg-blue-50/40 dark:hover:bg-gray-700/30 transition-colors"
       >
-        {{ obj.task_id }}
-      </router-link>
+        <span class="text-xs text-gray-500 dark:text-gray-400 truncate">{{ obj.relation?.name }}</span>
+
+        <router-link
+          :to="{ ...route, query: { ...route.query, task: obj.id } }"
+          class="text-[11px] font-mono font-medium text-blue-600 dark:text-blue-400 hover:underline"
+        >{{ obj.task_id }}</router-link>
+
+        <span class="text-xs font-medium text-gray-900 dark:text-white truncate">{{ obj.name }}</span>
+
+        <div v-if="obj.status && !isArray(obj.status)" class="flex items-center gap-1.5">
+          <div class="w-2 h-2 rounded-full flex-shrink-0" :style="{ backgroundColor: obj.status.color || '#6B7280' }"></div>
+          <span class="text-xs text-gray-600 dark:text-gray-400 truncate">{{ obj.status.title }}</span>
+        </div>
+        <span v-else class="text-xs text-gray-300 dark:text-gray-600">—</span>
+
+        <span v-if="obj.status?.board" class="text-xs text-gray-500 dark:text-gray-400 truncate">{{ obj.status.board.title }}</span>
+        <span v-else class="text-xs text-gray-300 dark:text-gray-600">—</span>
+
+        <span
+          v-if="obj.type?.title"
+          class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-xs font-medium"
+          :style="obj.type.colour ? {
+            backgroundColor: obj.type.colour + '1a',
+            color: obj.type.colour,
+          } : {}"
+          :class="!obj.type.colour && 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300'"
+        >
+          <span
+            v-if="obj.type.colour"
+            class="w-2 h-2 rounded-full flex-shrink-0"
+            :style="{ backgroundColor: obj.type.colour }"
+          ></span>
+          {{ obj.type.title }}
+        </span>
+      </div>
     </div>
-    <div class="col-span-3">{{ obj.name }}</div>
-    <div>
-      <fwb-badge
-        v-if="obj.status && !isArray(obj.status)"
-        :type="obj.status?.open ? 'default' : 'green'"
-        >{{ obj.status.title }}</fwb-badge
-      >
-    </div>
-    <div>{{ obj.type.title }}</div>
   </div>
 </template>
-
-<style scoped>
-</style>

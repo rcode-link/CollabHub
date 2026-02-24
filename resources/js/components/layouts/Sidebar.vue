@@ -1,5 +1,5 @@
 <script setup>
-import { ref, reactive, computed, watch, onMounted } from 'vue'
+import { ref, reactive, computed, watch, onMounted, onUnmounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import {
     FwbAvatar,
@@ -18,17 +18,108 @@ import ChatIcon from '@/components/shared/icons/ChatIcon.vue'
 import BanknotesIcon from '@/components/shared/icons/BanknotesIcon.vue'
 import ChartPieIcon from '@/components/shared/icons/ChartPieIcon.vue'
 import ArchiveBoxIcon from '@/components/shared/icons/ArchiveBoxIcon.vue'
-import CogsIcon from '@/components/shared/icons/CogsIcon.vue'
 import SunIcon from '@/components/shared/icons/SunIcon.vue'
 import MoonIcon from '@/components/shared/icons/MoonIcon.vue'
 import ComputerIcon from '@/components/shared/icons/ComputerIcon.vue'
 import MenuIcon from '@/components/shared/icons/MenuIcon.vue'
+import { debounce } from 'lodash'
 
 const { can } = useAbility()
 const userStore = useUserStore()
 const tasksStore = useTasksStore()
 const router = useRouter()
 const route = useRoute()
+
+// ---- Timer ----
+const timerStart = ref(localStorage.getItem('timer_start') || null)
+const elapsed = ref('')
+let timerInterval = null
+
+const isTimerRunning = computed(() => Boolean(timerStart.value))
+
+const formatElapsed = (ms) => {
+    const totalSec = Math.floor(ms / 1000)
+    const h = Math.floor(totalSec / 3600)
+    const m = Math.floor((totalSec % 3600) / 60)
+    const s = totalSec % 60
+    return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`
+}
+
+const tickTimer = () => {
+    if (!timerStart.value) { elapsed.value = ''; return }
+    elapsed.value = formatElapsed(Date.now() - new Date(timerStart.value).getTime())
+}
+
+const startTimerTick = () => {
+    clearInterval(timerInterval)
+    tickTimer()
+    timerInterval = setInterval(tickTimer, 1000)
+}
+
+const startTimer = () => {
+    const now = new Date().toISOString()
+    localStorage.setItem('timer_start', now)
+    timerStart.value = now
+    startTimerTick()
+}
+
+// Stop timer modal
+const showStopModal = ref(false)
+const stopProjects = ref([])
+const stopProjectId = ref('')
+const stopTasks = ref([])
+const stopTaskId = ref('')
+const stopTaskSearch = ref('')
+const stopSaving = ref(false)
+
+const openStopModal = () => {
+    showStopModal.value = true
+    stopProjectId.value = ''
+    stopTaskId.value = ''
+    stopTasks.value = []
+    stopTaskSearch.value = ''
+    window.axios.get('/api/v1/projects').then(res => {
+        stopProjects.value = res.data.data ?? res.data ?? []
+    })
+}
+
+watch(stopProjectId, (id) => {
+    stopTaskId.value = ''
+    stopTasks.value = []
+    stopTaskSearch.value = ''
+    if (id) searchStopTasks('')
+})
+
+const searchStopTasks = (val) => {
+    if (!stopProjectId.value) return
+    window.axios.get('/api/v1/tasks/search', {
+        params: { project_id: stopProjectId.value, search: val }
+    }).then(res => { stopTasks.value = res.data.data ?? [] })
+}
+
+watch(stopTaskSearch, debounce((val) => searchStopTasks(val), 300))
+
+const submitStopTimer = () => {
+    if (!stopTaskId.value || !stopProjectId.value || !timerStart.value) return
+    stopSaving.value = true
+    window.axios.post('/api/v1/time-sheet', {
+        start: timerStart.value,
+        end: new Date().toISOString(),
+        task_id: stopTaskId.value,
+        project_id: stopProjectId.value,
+    }).then(() => {
+        localStorage.removeItem('timer_start')
+        timerStart.value = null
+        elapsed.value = ''
+        clearInterval(timerInterval)
+        showStopModal.value = false
+    }).finally(() => { stopSaving.value = false })
+}
+
+const cancelStopModal = () => { showStopModal.value = false }
+
+onMounted(() => { if (timerStart.value) startTimerTick() })
+onUnmounted(() => { clearInterval(timerInterval) })
 
 const sidebarOpen = ref(false)
 const step = ref('main')
@@ -215,17 +306,68 @@ const changeTheme = (theme) => {
             </button>
         </div>
 
-        <!-- New task CTA — always visible across all steps -->
-        <div class="px-3 pt-3 pb-1 flex-shrink-0">
-            <button
-                @click="tasksStore.toggleCreateTaskModal(); closeSidebar()"
-                class="flex w-full items-center justify-center gap-2 rounded-lg bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-500 active:bg-blue-700"
+        <!-- Quick actions — always visible across all steps -->
+        <div class="px-3 pt-3 pb-1 flex-shrink-0 space-y-2">
+            <div class="flex gap-1.5">
+                <!-- New task -->
+                <button
+                    @click="tasksStore.toggleCreateTaskModal(); closeSidebar()"
+                    class="flex-1 flex items-center justify-center gap-1.5 rounded-lg bg-blue-600 px-2 py-2 text-xs font-semibold text-white shadow-sm transition hover:bg-blue-500 active:bg-blue-700"
+                    title="New task"
+                >
+                    <svg class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
+                    </svg>
+                    <span class="hidden xl:inline">Task</span>
+                </button>
+
+                <!-- Start / Stop timer -->
+                <button
+                    v-if="!isTimerRunning"
+                    @click="startTimer"
+                    class="flex-1 flex items-center justify-center gap-1.5 rounded-lg bg-emerald-600 px-2 py-2 text-xs font-semibold text-white shadow-sm transition hover:bg-emerald-500 active:bg-emerald-700"
+                    title="Start timer"
+                >
+                    <svg class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6l4 2m6-2a10 10 0 11-20 0 10 10 0 0120 0z" />
+                    </svg>
+                    <span class="hidden xl:inline">Timer</span>
+                </button>
+                <button
+                    v-else
+                    @click="openStopModal"
+                    class="flex-1 flex items-center justify-center gap-1.5 rounded-lg bg-red-600 px-2 py-2 text-xs font-semibold text-white shadow-sm transition hover:bg-red-500 active:bg-red-700 animate-pulse"
+                    title="Stop timer"
+                >
+                    <svg class="h-3.5 w-3.5" fill="currentColor" viewBox="0 0 24 24">
+                        <rect x="6" y="6" width="12" height="12" rx="2" />
+                    </svg>
+                    <span class="hidden xl:inline">Stop</span>
+                </button>
+
+                <!-- Go home -->
+                <button
+                    @click="router.push({ name: 'home' }); closeSidebar()"
+                    class="flex-1 flex items-center justify-center gap-1.5 rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 px-2 py-2 text-xs font-semibold text-gray-700 dark:text-gray-200 shadow-sm transition hover:bg-gray-50 dark:hover:bg-gray-600"
+                    title="Go home"
+                >
+                    <svg class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-4 0a1 1 0 01-1-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 01-1 1" />
+                    </svg>
+                    <span class="hidden xl:inline">Home</span>
+                </button>
+            </div>
+
+            <!-- Timer display when running -->
+            <div
+                v-if="isTimerRunning"
+                class="flex items-center justify-center gap-2 rounded-lg bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 px-3 py-1.5 cursor-pointer"
+                @click="openStopModal"
             >
-                <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-                </svg>
-                New task
-            </button>
+                <div class="w-2 h-2 rounded-full bg-red-500 animate-pulse flex-shrink-0"></div>
+                <span class="text-xs font-mono font-bold text-red-600 dark:text-red-400">{{ elapsed }}</span>
+                <span class="text-xs text-red-500 dark:text-red-400">recording</span>
+            </div>
         </div>
 
         <!-- Navigation (multistep) -->
@@ -338,11 +480,14 @@ const changeTheme = (theme) => {
                     </router-link>
 
                     <router-link
-                        :to="{ name: 'project.documents.settings', params: { project: currentProject.id } }"
+                        :to="{ name: 'project.settings', params: { project: currentProject.id } }"
                         class="sidebar-nav-link"
                         @click="closeSidebar"
                     >
-                        <CogsIcon class="w-5 h-5 flex-shrink-0" />
+                        <svg class="w-5 h-5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.066-2.573c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37 1 .608 2.296.07 2.573-1.066z" />
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                        </svg>
                         <span>Settings</span>
                     </router-link>
                 </nav>
@@ -436,7 +581,10 @@ const changeTheme = (theme) => {
                 class="sidebar-nav-link"
                 @click="closeSidebar"
             >
-                <CogsIcon class="w-5 h-5 flex-shrink-0" />
+                <svg class="w-5 h-5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.066-2.573c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37 1 .608 2.296.07 2.573-1.066z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                </svg>
                 <span>Settings</span>
             </router-link>
 
@@ -469,6 +617,93 @@ const changeTheme = (theme) => {
             </fwb-dropdown>
         </div>
     </aside>
+
+    <!-- Stop timer modal -->
+    <Teleport to="body">
+        <Transition name="taskmodal">
+            <div v-if="showStopModal" class="fixed inset-0 z-[60] flex items-center justify-center p-4">
+                <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" @click="cancelStopModal" />
+                <div class="relative w-full max-w-md bg-white dark:bg-gray-900 rounded-2xl shadow-2xl border border-gray-100 dark:border-gray-800 overflow-hidden">
+                    <!-- Header -->
+                    <div class="flex items-center justify-between px-5 py-4 border-b border-gray-100 dark:border-gray-800">
+                        <div>
+                            <h2 class="text-sm font-semibold text-gray-900 dark:text-white">Stop Timer</h2>
+                            <p class="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
+                                Tracked <span class="font-mono font-bold text-red-500">{{ elapsed }}</span>
+                            </p>
+                        </div>
+                        <button @click="cancelStopModal" class="p-1.5 rounded-lg text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+                            </svg>
+                        </button>
+                    </div>
+
+                    <!-- Body -->
+                    <div class="px-5 py-4 space-y-4">
+                        <!-- Project selector -->
+                        <div>
+                            <label class="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">Project</label>
+                            <select
+                                v-model="stopProjectId"
+                                class="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-3 py-2 text-sm text-gray-900 dark:text-white focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                            >
+                                <option value="">Select project</option>
+                                <option v-for="p in stopProjects" :key="p.id" :value="p.id">{{ p.name }}</option>
+                            </select>
+                        </div>
+
+                        <!-- Task search + selection -->
+                        <div v-if="stopProjectId">
+                            <label class="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">Task</label>
+                            <input
+                                v-model="stopTaskSearch"
+                                type="text"
+                                placeholder="Search tasks..."
+                                class="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-3 py-2 text-sm text-gray-900 dark:text-white placeholder-gray-400 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 mb-2"
+                            />
+                            <div class="max-h-48 overflow-y-auto rounded-lg border border-gray-200 dark:border-gray-700">
+                                <button
+                                    v-for="task in stopTasks"
+                                    :key="task.id"
+                                    @click="stopTaskId = task.id"
+                                    class="flex items-center gap-2 w-full px-3 py-2 text-left text-sm transition-colors"
+                                    :class="stopTaskId === task.id
+                                        ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-400'
+                                        : 'text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700/50'"
+                                >
+                                    <span class="font-mono text-xs text-gray-400 flex-shrink-0">{{ task.task_id }}</span>
+                                    <span class="truncate">{{ task.name }}</span>
+                                    <svg v-if="stopTaskId === task.id" class="w-4 h-4 ml-auto text-blue-500 flex-shrink-0" viewBox="0 0 20 20" fill="currentColor">
+                                        <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                                    </svg>
+                                </button>
+                                <p v-if="!stopTasks.length" class="text-xs text-gray-400 dark:text-gray-500 px-3 py-3 text-center">No tasks found</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Footer -->
+                    <div class="flex items-center justify-end gap-2 px-5 py-4 border-t border-gray-100 dark:border-gray-800 bg-gray-50 dark:bg-gray-800/50">
+                        <button
+                            @click="cancelStopModal"
+                            class="px-3 py-2 text-sm font-medium text-gray-600 dark:text-gray-400 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                        >Cancel</button>
+                        <button
+                            @click="submitStopTimer"
+                            :disabled="!stopTaskId || stopSaving"
+                            class="flex items-center gap-1.5 px-4 py-2 text-sm font-semibold text-white rounded-lg bg-blue-600 hover:bg-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                        >
+                            <svg v-if="stopSaving" class="w-3.5 h-3.5 animate-spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M21 12a9 9 0 11-6.219-8.56"/>
+                            </svg>
+                            Save time entry
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </Transition>
+    </Teleport>
 
     <!-- New project modal -->
     <fwb-modal v-if="newProjectModal" @close="newProjectModal = false">
@@ -514,6 +749,14 @@ const changeTheme = (theme) => {
 </template>
 
 <style scoped>
+/* Stop timer modal */
+.taskmodal-enter-active, .taskmodal-leave-active {
+    transition: opacity 0.15s ease;
+}
+.taskmodal-enter-from, .taskmodal-leave-to {
+    opacity: 0;
+}
+
 /* Forward: main → projects */
 .slide-left-enter-active,
 .slide-left-leave-active,

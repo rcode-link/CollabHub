@@ -23,7 +23,9 @@ class TaskRelationController extends Controller
      */
     public function store(StoreTaskRelationRequest $request)
     {
-        //
+        TaskRelation::create($request->validated());
+
+        return response()->noContent();
     }
 
     /**
@@ -39,7 +41,9 @@ class TaskRelationController extends Controller
      */
     public function update(UpdateTaskRelationRequest $request, TaskRelation $taskRelation)
     {
-        //
+        $taskRelation->update($request->validated());
+
+        return response()->noContent();
     }
 
     /**
@@ -47,6 +51,8 @@ class TaskRelationController extends Controller
      */
     public function destroy(TaskRelation $taskRelation)
     {
-        //
+        $taskRelation->delete();
+
+        return response()->noContent();
     }
 }

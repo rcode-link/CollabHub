@@ -182,6 +182,7 @@ onBeforeUnmount(() => { breadcrumbStore.addEntry([]); });
                 <div class="w-20 flex-shrink-0 text-xs font-medium uppercase tracking-wide text-gray-400">ID</div>
                 <div class="flex-1 text-xs font-medium uppercase tracking-wide text-gray-400">Task</div>
                 <div class="w-28 flex-shrink-0 text-xs font-medium uppercase tracking-wide text-gray-400 hidden sm:block">Status</div>
+                <div class="w-28 flex-shrink-0 text-xs font-medium uppercase tracking-wide text-gray-400 hidden md:block">Board</div>
                 <div class="w-24 flex-shrink-0 text-xs font-medium uppercase tracking-wide text-gray-400 hidden md:block">Type</div>
                 <div class="w-32 flex-shrink-0"></div>
             </div>
@@ -221,9 +222,17 @@ onBeforeUnmount(() => { breadcrumbStore.addEntry([]); });
 
                     <!-- Status badge -->
                     <div class="w-28 flex-shrink-0 hidden sm:block">
-                        <UiBadge :color="obj.status?.open ? 'blue' : 'green'" size="xs">
-                            {{ obj.status?.title }}
-                        </UiBadge>
+                        <div v-if="obj.status" class="flex items-center gap-1.5">
+                            <div class="w-2 h-2 rounded-full flex-shrink-0" :style="{ backgroundColor: obj.status.color || '#6B7280' }"></div>
+                            <span class="text-xs text-gray-600 dark:text-gray-400 truncate">{{ obj.status.title }}</span>
+                        </div>
+                        <span v-else class="text-xs text-gray-300 dark:text-gray-600">—</span>
+                    </div>
+
+                    <!-- Board -->
+                    <div class="w-28 flex-shrink-0 hidden md:block">
+                        <span v-if="obj.status?.board" class="text-xs text-gray-500 dark:text-gray-400 truncate">{{ obj.status.board.title }}</span>
+                        <span v-else class="text-xs text-gray-300 dark:text-gray-600">—</span>
                     </div>
 
                     <!-- Type -->

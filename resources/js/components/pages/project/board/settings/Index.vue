@@ -1,6 +1,6 @@
 <script setup>
 import { useRoute } from "vue-router";
-import { onBeforeUnmount, onMounted, reactive, ref } from "vue";
+import { computed, onBeforeUnmount, onMounted, ref } from "vue";
 import { useBreadcrumbStore } from "@/store/breadcrumb";
 import { useBoardsState } from "@/store/boards";
 import Button from "@/components/shared/Button.vue";
@@ -9,10 +9,47 @@ const boardsState = useBoardsState();
 const breadcrumbStore = useBreadcrumbStore();
 const route = useRoute();
 
+const shareToken = ref(boardsState.activeBoard?.share_token ?? null);
+const shareLoading = ref(false);
+const shareCopied = ref(false);
+
+const shareUrl = computed(() => {
+    if (!shareToken.value) return null;
+    return `${window.location.origin}/b/${shareToken.value}`;
+});
+
+const enableSharing = () => {
+    shareLoading.value = true;
+    window.axios.post(`/api/v1/boards/${route.params.board}/share`)
+        .then(({ data }) => { shareToken.value = data.share_token; })
+        .finally(() => { shareLoading.value = false; });
+};
+
+const revokeSharing = () => {
+    shareLoading.value = true;
+    window.axios.delete(`/api/v1/boards/${route.params.board}/share`)
+        .then(() => { shareToken.value = null; })
+        .finally(() => { shareLoading.value = false; });
+};
+
+const copyShareUrl = () => {
+    if (!shareUrl.value) return;
+    navigator.clipboard.writeText(shareUrl.value).then(() => {
+        shareCopied.value = true;
+        setTimeout(() => { shareCopied.value = false; }, 2000);
+    });
+};
+
 const statuses = ref([]);
 const addTitle = ref("");
+const addColor = ref("#6B7280");
 const savingId = ref(null);
 const adding = ref(false);
+
+const presetColors = [
+    '#6B7280', '#EF4444', '#F97316', '#EAB308',
+    '#22C55E', '#3B82F6', '#8B5CF6', '#EC4899',
+];
 
 const loadStatuses = () => {
     window.axios.get(`/api/v1/tasks-statuses/`, {
@@ -47,11 +84,13 @@ const create = () => {
     adding.value = true;
     window.axios.post(`/api/v1/tasks-statuses`, {
         title: addTitle.value,
+        color: addColor.value,
         project_id: route.params.project,
         board_id: route.params.board,
     }).then(() => {
         loadStatuses();
         addTitle.value = "";
+        addColor.value = "#6B7280";
     }).finally(() => { adding.value = false; });
 };
 
@@ -138,6 +177,20 @@ onBeforeUnmount(() => {
                         </button>
                     </div>
 
+                    <!-- Color dot -->
+                    <label class="relative flex-shrink-0 cursor-pointer group/color">
+                        <div
+                            class="w-4 h-4 rounded-full ring-2 ring-white dark:ring-gray-800 shadow-sm transition-transform group-hover/color:scale-110"
+                            :style="{ backgroundColor: obj.color || '#6B7280' }"
+                        ></div>
+                        <input
+                            type="color"
+                            :value="obj.color || '#6B7280'"
+                            class="absolute inset-0 opacity-0 w-full h-full cursor-pointer"
+                            @input="(e) => { obj.color = e.target.value; update({ color: e.target.value, id: obj.id }); }"
+                        />
+                    </label>
+
                     <!-- Status name -->
                     <input
                         v-model="obj.title"
@@ -178,6 +231,17 @@ onBeforeUnmount(() => {
 
             <!-- Add new status -->
             <div class="flex items-center gap-2 px-5 py-3 border-t border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-700/30">
+                <label class="relative flex-shrink-0 cursor-pointer group/color">
+                    <div
+                        class="w-5 h-5 rounded-full ring-2 ring-white dark:ring-gray-700 shadow-sm transition-transform group-hover/color:scale-110"
+                        :style="{ backgroundColor: addColor }"
+                    ></div>
+                    <input
+                        type="color"
+                        v-model="addColor"
+                        class="absolute inset-0 opacity-0 w-full h-full cursor-pointer"
+                    />
+                </label>
                 <input
                     v-model="addTitle"
                     type="text"
@@ -191,6 +255,52 @@ onBeforeUnmount(() => {
                     </svg>
                     Add
                 </Button>
+            </div>
+        </div>
+
+        <!-- Share card -->
+        <div class="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 shadow-sm overflow-hidden">
+            <div class="flex items-center justify-between px-5 py-4 border-b border-gray-100 dark:border-gray-700">
+                <div>
+                    <h2 class="text-sm font-semibold text-gray-900 dark:text-white">Share</h2>
+                    <p class="text-xs text-gray-500 dark:text-gray-400 mt-0.5">Public read-only link to this board</p>
+                </div>
+            </div>
+
+            <!-- Not shared: show enable button -->
+            <div v-if="!shareToken" class="px-5 py-4">
+                <p class="text-sm text-gray-500 dark:text-gray-400 mb-3">
+                    Anyone with the link will be able to view this board without signing in.
+                </p>
+                <Button size="sm" :disabled="shareLoading" @click="enableSharing">
+                    <svg v-if="shareLoading" class="w-3.5 h-3.5 animate-spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 12a9 9 0 11-6.219-8.56"/>
+                    </svg>
+                    Create share link
+                </Button>
+            </div>
+
+            <!-- Shared: show URL + copy + revoke -->
+            <div v-else class="px-5 py-4 space-y-3">
+                <div class="flex items-center gap-2">
+                    <input
+                        type="text"
+                        :value="shareUrl"
+                        readonly
+                        class="flex-1 rounded-lg border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700/50 px-3 py-1.5 text-sm text-gray-600 dark:text-gray-300 select-all cursor-default focus:outline-none"
+                        @focus="$event.target.select()"
+                    />
+                    <Button size="sm" @click="copyShareUrl">
+                        {{ shareCopied ? 'Copied!' : 'Copy' }}
+                    </Button>
+                </div>
+                <button
+                    class="text-xs text-red-500 dark:text-red-400 hover:underline disabled:opacity-50"
+                    :disabled="shareLoading"
+                    @click="revokeSharing"
+                >
+                    Revoke link
+                </button>
             </div>
         </div>
 

@@ -10,23 +10,19 @@ defineProps({
 
 <template>
     <div
-        :class="{
-            'cursor-pointer flex gap-3 items-center': true,
-            'w-fit': !showName,
-            'bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500': showName,
-             'focus:border-blue-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500': showName
-        }"
-
+        :class="[
+            'flex items-center gap-2',
+            showName
+                ? 'rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 text-sm text-gray-900 dark:text-white px-2.5 py-1.5'
+                : 'w-fit cursor-pointer'
+        ]"
     >
       <template v-if="!user">
-        <UserIcon :avatar-size="showName ?'xs':'md'" :user="{avatar: ''}"/>
+        <UserIcon :avatar-size="showName ? 'xs' : 'md'" :user="{ avatar: '' }" :status="false" />
       </template>
       <template v-if="user">
-
-        <UserIcon :avatar-size="showName ?'xs':'md'" :user="user"/>
-        <span v-if="showName">
-            {{ user.name }}
-        </span>
+        <UserIcon :avatar-size="showName ? 'xs' : 'md'" :user="user" />
+        <span v-if="showName" class="truncate">{{ user.name }}</span>
       </template>
     </div>
 </template>

@@ -6,8 +6,8 @@
                 @click="toggleBoardDropdown()"
                 class="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-sm font-semibold text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
             >
-                <KanbanIcon class="w-4 h-4 text-blue-500 flex-shrink-0" v-if="boardsState.activeBoard?.type === 'kanban'" />
-                <ScrumIcon class="w-4 h-4 text-purple-500 flex-shrink-0" v-if="boardsState.activeBoard?.type === 'scrum'" />
+                <KanbanIcon class="w-3 h-3 text-blue-500 flex-shrink-0" v-if="boardsState.activeBoard?.type === 'kanban'" />
+                <ScrumIcon class="w-3 h-3 text-purple-500 flex-shrink-0" v-if="boardsState.activeBoard?.type === 'scrum'" />
                 <span class="truncate max-w-[180px]">{{ boardsState.activeBoard?.title }}</span>
                 <svg class="w-3.5 h-3.5 text-gray-400 flex-shrink-0 transition-transform" :class="boardOpen && 'rotate-180'" viewBox="0 0 20 20" fill="currentColor">
                     <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
@@ -28,8 +28,8 @@
                             ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-400'
                             : 'text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700/50'"
                     >
-                        <KanbanIcon class="w-4 h-4 flex-shrink-0 opacity-60" v-if="obj.type === 'kanban'" />
-                        <ScrumIcon class="w-4 h-4 flex-shrink-0 opacity-60" v-if="obj.type === 'scrum'" />
+                        <KanbanIcon class="w-3 h-3 flex-shrink-0 opacity-60" v-if="obj.type === 'kanban'" />
+                        <ScrumIcon class="w-3 h-3 flex-shrink-0 opacity-60" v-if="obj.type === 'scrum'" />
                         {{ obj.title }}
                     </button>
 
@@ -39,7 +39,7 @@
                         @click="() => { boardModalRef.toggleModal(); boardOpen = false; }"
                         class="flex items-center gap-2 w-full px-3 py-2 text-sm text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors"
                     >
-                        <svg class="w-4 h-4 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <svg class="w-3 h-3 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <path d="M12 5v14M5 12h14" />
                         </svg>
                         Add new board
@@ -73,13 +73,6 @@
                     v-if="settingsOpen"
                     class="absolute top-full right-0 mt-1 w-48 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 shadow-lg py-1 z-50"
                 >
-                    <router-link
-                        :to="{ name: 'project.board.tasks', params: route.params }"
-                        @click="settingsOpen = false"
-                        class="flex items-center gap-2 px-3 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors"
-                    >
-                        Manage tasks
-                    </router-link>
                     <router-link
                         :to="{ name: 'project.board.settings', params: route.params }"
                         @click="settingsOpen = false"

@@ -4,7 +4,7 @@ import { computed, onMounted, ref, watch } from "vue";
 import Editor from "@/components/shared/Editor.vue";
 import User from "@/components/pages/project/tasks/User.vue";
 import useClipboard from "vue-clipboard3";
-import PrintFiles from "@/components/shared/PrintFiles.vue";
+
 import Comments from "@/components/pages/project/tasks/partisals/details/Comments.vue";
 import UsersSelectInput from "@/components/shared/SelectUsersInProject.vue";
 import { useTasksStore } from "@/store/tasksStore.js";
@@ -15,17 +15,19 @@ import TimeSheet from "@/components/pages/project/tasks/partisals/details/time_s
 import CopyIcon from "@/components/shared/icons/CopyIcon.vue";
 import TaskPrintStatus from "@/components/pages/project/tasks/partisals/details/TaskPrintStatus.vue";
 import PencilIcon from "@/components/shared/icons/PencilIcon.vue";
+import UiSelect from "@/components/shared/ui/Select.vue";
 
 const { toClipboard } = useClipboard();
 const route = useRoute();
 const router = useRouter();
 const data = ref({});
-const activeTab = ref("media");
+const activeTab = ref("comments");
 const activeUser = ref(null);
 const createTasks = useTasksStore();
+const boards = ref([]);
+const sprintId = ref("");
 
 const tabs = computed(() => [
-    { id: "media", label: "Media" },
     { id: "comments", label: "Comments", disabled: !data.value.chat_id },
     { id: "relations", label: "Relations" },
     { id: "timesheet", label: "Time Sheet" },
@@ -42,6 +44,11 @@ const getTask = () => {
         .then((res) => {
             data.value = res.data.data;
             activeUser.value = res.data.data.user ? res.data.data.user.id : null;
+            sprintId.value = res.data.data.status?.sprint?.id?.toString() ?? "";
+            if (res.data.data.project_id) {
+                axios.get("/api/v1/boards", { params: { project_id: res.data.data.project_id } })
+                    .then((r) => { boards.value = r.data; });
+            }
         });
 };
 
@@ -58,6 +65,15 @@ watch(() => route.query.task, () => { getTask(); }, { deep: true });
 watch(activeUser, () => {
     if (data.value.user?.id === activeUser.value) return;
     updateTask({ user_id: activeUser.value });
+});
+
+watch(sprintId, (newVal, oldVal) => {
+    if (newVal === oldVal || !data.value.id) return;
+    const currentSprint = data.value.status?.sprint?.id?.toString() ?? "";
+    if (newVal === currentSprint) return;
+    if (newVal) {
+        axios.put("/api/v1/sprint/tasks", { task_id: data.value.id, sprint_id: newVal });
+    }
 });
 
 const tippyMessage = ref("Click to copy link");
@@ -168,13 +184,7 @@ const isLoaded = computed(() => Boolean(data.value.id));
                             </div>
 
                             <!-- Tab content -->
-                            <div v-if="activeTab === 'media'">
-                                <div v-if="data.media?.length" class="grid grid-cols-2 gap-2">
-                                    <PrintFiles :full="true" :media="data.media" />
-                                </div>
-                                <p v-else class="text-sm text-gray-400 dark:text-gray-500 italic">No attachments.</p>
-                            </div>
-                            <div v-else-if="activeTab === 'comments'">
+                            <div v-if="activeTab === 'comments'">
                                 <Comments v-if="data.chat_id" :chat-id="data.chat_id" />
                             </div>
                             <div v-else-if="activeTab === 'relations'">
@@ -194,10 +204,24 @@ const isLoaded = computed(() => Boolean(data.value.id));
                                 <TaskPrintStatus :status="data.status" :taskId="data.id" />
                             </div>
 
+                            <!-- Board / Sprint -->
+                            <div v-if="boards.some(b => b.sprint?.length)">
+                                <label class="block text-xs font-semibold uppercase tracking-wide text-gray-400 dark:text-gray-500 mb-2">Board</label>
+                                <UiSelect v-model="sprintId" size="sm">
+                                    <option value="">No board</option>
+                                    <template v-for="b in boards.filter(b => b.sprint?.length)" :key="b.id">
+                                        <option v-if="b.type === 'kanban'" :value="b.sprint[0].id.toString()">{{ b.title }}</option>
+                                        <optgroup v-else :label="b.title">
+                                            <option v-for="s in b.sprint" :key="s.id" :value="s.id.toString()">{{ s.title }}</option>
+                                        </optgroup>
+                                    </template>
+                                </UiSelect>
+                            </div>
+
                             <!-- Assignee -->
                             <div>
                                 <label class="block text-xs font-semibold uppercase tracking-wide text-gray-400 dark:text-gray-500 mb-2">Assignee</label>
-                                <UsersSelectInput :show-clean-input="false" v-model="activeUser" />
+                                <UsersSelectInput :show-clean-input="false" v-model="activeUser" size="sm" />
                             </div>
 
                             <!-- Due date -->

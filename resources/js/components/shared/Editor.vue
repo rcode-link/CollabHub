@@ -1,7 +1,7 @@
 <script setup>
 import { EditorContent, useEditor } from '@tiptap/vue-3'
 import Placeholder from '@tiptap/extension-placeholder'
-import Image from '@tiptap/extension-image'
+import AuthImageExtension from '@/functions/editor/AuthImageExtension'
 import StarterKit from '@tiptap/starter-kit'
 import { Link } from '@tiptap/extension-link'
 import { ref, computed } from 'vue'
@@ -89,6 +89,18 @@ const editor = useEditor({
         // Update the model value when focus leaves the editor
         emit('update:modelValue', editor.value?.getJSON())
       },
+      click(view, event) {
+        const link = event.target.closest('a')
+        if (!link) return
+        const href = link.getAttribute('href')
+        if (href && href.includes('/api/v1/')) {
+          event.preventDefault()
+          event.stopPropagation()
+          window.axios.get(href).then(({ data }) => {
+            window.open(data.url, '_blank')
+          })
+        }
+      },
     },
     handlePaste: function (view, event, slice) {
       const items = Array.from(event.clipboardData?.items || []).filter(
@@ -139,7 +151,7 @@ const editor = useEditor({
     SmilieReplacer,
     textToLink.convertTextToLink,
     Markdown,
-    Image.configure({ inline: false, allowBase64: false }),
+    AuthImageExtension.configure({ inline: false, allowBase64: false }),
     ...(props.placeholder ? [Placeholder.configure({ placeholder: props.placeholder })] : []),
   ],
   onUpdate: ({ editor }) => {

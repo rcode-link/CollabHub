@@ -21,7 +21,9 @@ class TaskTypeController extends Controller
      */
     public function store(StoreTaskTypeRequest $request)
     {
-        //
+        TaskType::create($request->validated());
+
+        return response()->noContent();
     }
 
     /**
@@ -37,7 +39,9 @@ class TaskTypeController extends Controller
      */
     public function update(UpdateTaskTypeRequest $request, TaskType $taskType)
     {
-        //
+        $taskType->update($request->validated());
+
+        return response()->noContent();
     }
 
     /**
@@ -45,6 +49,8 @@ class TaskTypeController extends Controller
      */
     public function destroy(TaskType $taskType)
     {
-        //
+        $taskType->delete();
+
+        return response()->noContent();
     }
 }

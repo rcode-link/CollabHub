@@ -45,6 +45,7 @@ class TaskStatuses extends Model
         'order',
         'id',
         'title',
+        'color',
         'open',
         'project_id',
         'board_id',

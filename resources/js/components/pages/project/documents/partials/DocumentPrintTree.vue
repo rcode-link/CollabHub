@@ -4,6 +4,7 @@ import { computed, inject, nextTick, ref } from 'vue'
 
 const fileStore = inject('fileStore')
 const createItem = inject('createItem')
+const canCreateDocument = inject('canCreateDocument', true)
 
 const props = defineProps({
   parent_id: { default: null },
@@ -90,40 +91,42 @@ const onKeydown = e => {
         }}
       </span>
     </span>
-    <button
-      @click.stop="startAdding('folder')"
-      class="flex items-center gap-1 rounded-md border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 px-2 py-1 text-xs font-medium text-gray-600 dark:text-gray-300 transition hover:bg-gray-50 dark:hover:bg-gray-600"
-    >
-      <svg
-        class="h-3.5 w-3.5 text-yellow-500"
-        fill="currentColor"
-        viewBox="0 0 20 20"
+    <template v-if="canCreateDocument">
+      <button
+        @click.stop="startAdding('folder')"
+        class="flex items-center gap-1 rounded-md border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 px-2 py-1 text-xs font-medium text-gray-600 dark:text-gray-300 transition hover:bg-gray-50 dark:hover:bg-gray-600"
       >
-        <path
-          d="M2 6a2 2 0 012-2h5l2 2h5a2 2 0 012 2v6a2 2 0 01-2 2H4a2 2 0 01-2-2V6z"
-        />
-      </svg>
-      New folder
-    </button>
-    <button
-      @click.stop="startAdding('file')"
-      class="flex items-center gap-1 rounded-md bg-blue-600 px-2 py-1 text-xs font-medium text-white transition hover:bg-blue-500"
-    >
-      <svg
-        class="h-3.5 w-3.5"
-        fill="none"
-        viewBox="0 0 24 24"
-        stroke="currentColor"
+        <svg
+          class="h-3.5 w-3.5 text-yellow-500"
+          fill="currentColor"
+          viewBox="0 0 20 20"
+        >
+          <path
+            d="M2 6a2 2 0 012-2h5l2 2h5a2 2 0 012 2v6a2 2 0 01-2 2H4a2 2 0 01-2-2V6z"
+          />
+        </svg>
+        New folder
+      </button>
+      <button
+        @click.stop="startAdding('file')"
+        class="flex items-center gap-1 rounded-md bg-blue-600 px-2 py-1 text-xs font-medium text-white transition hover:bg-blue-500"
       >
-        <path
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          stroke-width="2"
-          d="M12 4v16m8-8H4"
-        />
-      </svg>
-      New document
-    </button>
+        <svg
+          class="h-3.5 w-3.5"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M12 4v16m8-8H4"
+          />
+        </svg>
+        New document
+      </button>
+    </template>
   </div>
 
   <!-- Empty state (root level only, no items and not adding) -->
@@ -212,7 +215,7 @@ const onKeydown = e => {
 
   <!-- Subfolder add row (non-root only) -->
   <div
-    v-if="!root && !adding"
+    v-if="!root && !adding && canCreateDocument"
     :style="{ paddingLeft: `${depth * 1.25 + 1}rem` }"
     class="flex items-center gap-2 pr-4 py-1.5 border-b border-gray-100 dark:border-gray-700 last:border-0"
   >

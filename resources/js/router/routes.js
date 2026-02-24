@@ -154,24 +154,10 @@ export default [
           import('@/components/pages/project/documents/Editor.vue'),
       },
       {
-        name: 'project.documents.settings',
+        name: 'project.settings',
         path: 'settings',
         component: () =>
           import('@/components/pages/project/settings/Index.vue'),
-        children: [
-          {
-            name: 'project.settings.users',
-            path: 'users',
-            component: () =>
-              import('@/components/pages/project/settings/Users.vue'),
-          },
-          {
-            name: 'project.settings.security',
-            path: 'users',
-            component: () =>
-              import('@/components/pages/project/settings/Security.vue'),
-          },
-        ],
       },
     ],
   },
@@ -179,6 +165,12 @@ export default [
     name: 'shared.document',
     path: '/d/:token',
     component: () => import('@/components/pages/shared/SharedDocument.vue'),
+    // No auth middleware — publicly accessible
+  },
+  {
+    name: 'shared.board',
+    path: '/b/:token',
+    component: () => import('@/components/pages/shared/SharedBoard.vue'),
     // No auth middleware — publicly accessible
   },
   {

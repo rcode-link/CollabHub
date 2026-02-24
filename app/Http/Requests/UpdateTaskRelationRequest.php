@@ -11,7 +11,7 @@ class UpdateTaskRelationRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +22,8 @@ class UpdateTaskRelationRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'name' => 'string|max:255',
+            'can_parent_be_closed' => 'nullable|boolean',
         ];
     }
 }

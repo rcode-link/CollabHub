@@ -40,6 +40,7 @@ use App\Http\Controllers\TaskTypeController;
 use App\Http\Controllers\TimeSheetController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\VacationRequestController;
+use App\Http\Controllers\MediaProxyController;
 use App\Http\Controllers\VideoCallController;
 use Illuminate\Support\Facades\Route;
 
@@ -56,6 +57,9 @@ use Illuminate\Support\Facades\Route;
 
 // Public: read-only access to a shared document via share token
 Route::get('/shared/d/{token}', [FileController::class, 'showShared'])->name('api.shared.document');
+
+// Public: read-only access to a shared board via share token
+Route::get('/shared/b/{token}', [BoardController::class, 'showShared'])->name('api.shared.board');
 
 Route::middleware(['auth:sanctum'])->group(function () {
 
@@ -98,6 +102,8 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::apiResource('/tasks', TaskController::class);
     Route::apiResource('/tasks-statuses', TaskStatusesController::class);
     Route::get('/users/project', [ProjectController::class, 'getProjectUsers'])->name('api.getProjectUsers');
+    Route::post('/boards/{board}/share', [BoardController::class, 'share'])->name('api.boards.share');
+    Route::delete('/boards/{board}/share', [BoardController::class, 'unshare'])->name('api.boards.unshare');
     Route::apiResource('/boards', BoardController::class);
     Route::put('/sprints/{sprint}/activate', [SprintController::class, 'activate'])->name('api.activate');
     Route::apiResource('/sprints', SprintController::class);
@@ -105,7 +111,9 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('/files/{file}/share', [FileController::class, 'share'])->name('api.files.share');
     Route::delete('/files/{file}/share', [FileController::class, 'unshare'])->name('api.files.unshare');
     Route::apiResource('/files', FileController::class);
+    Route::get('/media/{media}', [MediaProxyController::class, 'show'])->name('api.media.show');
     Route::post('/editor/files', [\App\Http\Controllers\EditorFileController::class, 'store'])->name('api.editor.files.store');
+    Route::get('/editor/files/{path}', [\App\Http\Controllers\EditorFileController::class, 'show'])->where('path', '.*')->name('api.editor.files.show');
     // Legacy alias — kept for backwards compatibility
     Route::post('/editor/images', [\App\Http\Controllers\EditorFileController::class, 'store'])->name('api.editor.images.store');
     Route::post('/editor/drawio', [\App\Http\Controllers\DrawioImageController::class, 'store'])->name('api.editor.drawio.store');

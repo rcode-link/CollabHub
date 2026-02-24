@@ -133,6 +133,7 @@ watch(
     () => boardState.activeBoard?.id,
     (newVal) => {
         boardState.setStatuses([]);
+        clearFilters();
         if (!newVal) return;
         loadStatuses();
         manageBreadcrumb();
@@ -325,7 +326,7 @@ onBeforeUnmount(() => {
             <StatusRow
                 v-for="status in boardState.taskStatuses"
                 :key="status.id"
-                :status="{ id: status.id, title: status.title }"
+                :status="{ id: status.id, title: status.title, color: status.color }"
                 :filters="filters"
                 :group-by="groupBy"
             />

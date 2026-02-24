@@ -4,7 +4,9 @@ import DocumentPrintTree from '@/components/pages/project/documents/partials/Doc
 import { useBreadcrumbStore } from '@/store/breadcrumb'
 import { onMounted, provide } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import { useAbility } from '@casl/vue'
 
+const { can } = useAbility()
 const documentsStore = useProjectDocumentsStore()
 const breadcrumbStore = useBreadcrumbStore()
 const route = useRoute()
@@ -13,6 +15,8 @@ const router = useRouter()
 breadcrumbStore.addEntry([{ title: 'Documents' }])
 
 provide('fileStore', documentsStore)
+provide('canCreateDocument', can(`can-create-document.${route.params.project}`, ''))
+provide('canDeleteDocument', can(`can-delete-document.${route.params.project}`, ''))
 
 provide('navigateToDocument', (id) => {
     router.push({ name: 'project.documents.editor', params: { project: route.params.project, id } })

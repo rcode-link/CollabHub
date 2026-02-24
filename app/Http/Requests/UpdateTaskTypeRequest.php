@@ -11,7 +11,7 @@ class UpdateTaskTypeRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +22,8 @@ class UpdateTaskTypeRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'title' => 'required|string|max:255',
+            'colour' => 'nullable|string|max:7',
         ];
     }
 }

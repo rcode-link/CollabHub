@@ -1,5 +1,4 @@
 <template>
-  <!-- Kanban: three columns with task cards -->
   <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
     <rect x="2" y="2" width="5.5" height="2.5" rx="1"/>
     <rect x="2" y="6.5" width="5.5" height="2.5" rx="0.75" opacity="0.65"/>

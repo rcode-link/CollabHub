@@ -24,8 +24,10 @@ class TaskRelationResource extends JsonResource
         return [
             'id' => $this->id,
             'name' => $this->name,
+            'project_id' => $this->project_id,
+            'can_parent_be_closed' => $this->can_parent_be_closed,
             'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at
+            'updated_at' => $this->updated_at,
         ];
     }
 }

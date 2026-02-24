@@ -32,7 +32,7 @@ class DashboardController extends Controller
 
         $tasks = Task::query()
             ->where('user_id', Auth::id())
-            ->with('type', 'owner', 'project')
+            ->with('type', 'owner', 'project', 'taskSprintData.status.board', 'taskSprintData.sprint')
             ->whereHas('taskSprintData', function (Builder $builder){
                 $builder->whereHas('status', fn (Builder $query) => $query->where('open', true));
             })

@@ -3,8 +3,10 @@ import { ref, computed, watch, nextTick } from 'vue'
 import AdvancedEditor from '@/components/shared/advancedEditor/Index.vue'
 import { useRoute } from 'vue-router'
 import { useBreadcrumbStore } from '@/store/breadcrumb'
+import { useAbility } from '@casl/vue'
 import { DateTime } from 'luxon'
 
+const { can } = useAbility()
 const document = ref({})
 const saving = ref(false)
 const saved = ref(false)
@@ -14,6 +16,8 @@ const shareLoading = ref(false)
 const copied = ref(false)
 const route = useRoute()
 const breadcrumbStore = useBreadcrumbStore()
+
+const canUpdate = computed(() => can(`can-update-document.${route.params.project}`, ''))
 
 const relativeTime = computed(() =>
   document.value.updated_at
@@ -57,7 +61,7 @@ const save = () => {
 
 let saveTimer = null
 const scheduleAutosave = () => {
-  if (!loaded.value) return
+  if (!loaded.value || !canUpdate.value) return
   saved.value = false
   clearTimeout(saveTimer)
   saveTimer = setTimeout(() => save(), 500)
@@ -128,7 +132,7 @@ load()
       </div>
 
       <!-- Share button -->
-      <div class="relative shrink-0">
+      <div v-if="canUpdate" class="relative shrink-0">
         <button
           class="flex items-center gap-1.5 text-xs px-2.5 py-1 rounded-md border transition-colors"
           :class="document.share_token
@@ -232,7 +236,7 @@ load()
       <AdvancedEditor
         :key="document.id"
         v-model="document.content"
-        :editable="true"
+        :editable="canUpdate"
         :notion="true"
         @submitted="save"
       >
@@ -240,6 +244,7 @@ load()
           <div class="px-10 pt-8 pb-2 border-b border-gray-100 dark:border-gray-800">
             <input
               v-model="document.title"
+              :readonly="!canUpdate"
               class="block w-full text-3xl font-bold bg-transparent border-none outline-none text-gray-900 dark:text-white placeholder-gray-300 dark:placeholder-gray-600 caret-gray-900 dark:caret-white"
               placeholder="Untitled"
             />

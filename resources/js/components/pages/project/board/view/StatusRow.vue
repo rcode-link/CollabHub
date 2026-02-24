@@ -3,7 +3,11 @@
         <!-- Column header -->
         <div class="flex items-center justify-between px-1 py-2 mb-1.5 flex-shrink-0">
             <div class="flex items-center gap-2">
-                <div class="w-2 h-2 rounded-full bg-gray-300 dark:bg-gray-600 flex-shrink-0"></div>
+                <div
+                    class="w-2 h-2 rounded-full flex-shrink-0"
+                    :style="status.color ? { backgroundColor: status.color } : {}"
+                    :class="!status.color && 'bg-gray-300 dark:bg-gray-600'"
+                ></div>
                 <h3 class="text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400">
                     {{ status.title }}
                 </h3>

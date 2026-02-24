@@ -73,7 +73,7 @@
       class="mt-1"
     />
     <div :class="`resizable-image-wrapper shadow rounded image-${node.attrs.size} position-${node.attrs.position}`">
-      <img
+      <AuthImage
         :src="node.attrs.src"
         :alt="node.attrs.alt"
         :title="node.attrs.title"
@@ -103,12 +103,14 @@
 //        ></div>
 //      </div>
 import BaseContianer from "@/components/shared/advancedEditor/blocks/BaseContainer.vue";
+import AuthImage from "@/components/shared/AuthImage.vue";
 import { FwbP, FwbInput } from "flowbite-vue";
 export default {
   name: "ResizableImage",
 
   components: {
     BaseContianer,
+    AuthImage,
     FwbInput,
     FwbP,
   },

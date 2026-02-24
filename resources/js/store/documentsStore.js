@@ -2,8 +2,9 @@ import { defineStore } from 'pinia'
 import { computed, ref } from 'vue'
 
 export const useDocumentsStore = defineStore('documents', () => {
-    const documents = ref([])
+    const allDocuments = ref([])
     const projects = ref([])
+    const search = ref('')
 
     const loadDocuments = () => {
         Promise.all([
@@ -16,20 +17,24 @@ export const useDocumentsStore = defineStore('documents', () => {
     }
 
     const buildTree = (files) => {
-        // Synthetic project folder for each project
-        const projectFolders = projects.value.map(proj => ({
-            id: `proj_${proj.id}`,
-            title: proj.name,
-            type: 'project-folder',
-            parent_id: null,
-            entity_id: proj.id,
-            entity_type: 'project',
-            file_id: null,
-            updated_at: null,
-        }))
+        // Only create project folders for projects that actually have files
+        const projectIdsWithFiles = new Set(
+            files.filter(f => f.entity_id !== null).map(f => f.entity_id)
+        )
 
-        // Remap root-level project files to sit under their project folder.
-        // Files with parent_id === null and entity_id !== null are root within their project.
+        const projectFolders = projects.value
+            .filter(proj => projectIdsWithFiles.has(proj.id))
+            .map(proj => ({
+                id: `proj_${proj.id}`,
+                title: proj.name,
+                type: 'project-folder',
+                parent_id: null,
+                entity_id: proj.id,
+                entity_type: 'project',
+                file_id: null,
+                updated_at: null,
+            }))
+
         const remapped = files.map(file => {
             const normalized = {
                 ...file,
@@ -41,10 +46,31 @@ export const useDocumentsStore = defineStore('documents', () => {
             return normalized
         })
 
-        documents.value = [...projectFolders, ...remapped]
+        allDocuments.value = [...projectFolders, ...remapped]
     }
 
-    const getDocuments = computed(() => documents.value)
+    const getDocuments = computed(() => {
+        let items = allDocuments.value
 
-    return { loadDocuments, getDocuments }
+        if (search.value.trim()) {
+            const q = search.value.toLowerCase().trim()
+            const matchIds = new Set(
+                items.filter(i => i.title?.toLowerCase().includes(q)).map(i => i.id)
+            )
+            // Include ancestors so tree structure stays intact
+            const keep = new Set(matchIds)
+            for (const id of matchIds) {
+                let current = items.find(i => i.id === id)
+                while (current?.parent_id) {
+                    keep.add(current.parent_id)
+                    current = items.find(i => i.id === current.parent_id)
+                }
+            }
+            items = items.filter(i => keep.has(i.id))
+        }
+
+        return items
+    })
+
+    return { loadDocuments, getDocuments, search }
 })

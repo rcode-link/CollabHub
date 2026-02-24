@@ -1,41 +1,75 @@
 <script setup>
-import { useAbility } from '@casl/vue'
 import { useRoute, useRouter } from 'vue-router'
-import { onBeforeUnmount, onMounted, reactive, ref, watch } from 'vue'
-import Editor from '@/components/shared/Editor.vue'
-import User from '@/components/pages/project/tasks/User.vue'
+import { computed, onBeforeUnmount, onMounted, reactive, ref, watch } from 'vue'
+import UserIcon from '@/components/shared/UserIcon.vue'
+import Badge from '@/components/shared/ui/Badge.vue'
+import UiSelect from '@/components/shared/ui/Select.vue'
 import { TailwindPagination } from 'laravel-vue-pagination'
-import Text from '@/components/shared/Text.vue'
-import Label from '@/components/shared/Label.vue'
-import UsersSelectInput from '@/components/shared/SelectUsersInProject.vue'
-import _ from 'lodash'
+import { omitBy, isNull, findIndex, toNumber, debounce } from 'lodash'
 import { DateTime } from 'luxon'
 import { useBreadcrumbStore } from '@/store/breadcrumb'
 import { useTasksStore } from '@/store/tasksStore.js'
+import { useDropdown } from '@/composables/useDropdown'
 
 const route = useRoute()
 const router = useRouter()
-const { can } = useAbility()
 
 const taskTypesList = ref([])
 const statuses = ref([])
 const tasksStore = useTasksStore()
 const breadcrumbStore = useBreadcrumbStore()
+const loading = ref(true)
+
+// User filter dropdown
+const filterUsers = ref([])
+const userSearch = ref('')
+const { open: userOpen, el: userEl, toggle: toggleUser } = useDropdown()
+
+const loadFilterUsers = debounce(() => {
+  window.axios
+    .get('/api/v1/users/project', { params: { user: userSearch.value, project_id: route.params.project } })
+    .then((r) => { filterUsers.value = r.data.data ?? r.data })
+}, 300)
+
+watch(userSearch, loadFilterUsers, { immediate: true })
+
+const selectedFilterUser = computed(() => filterUsers.value.find((u) => u.id === form.user_id))
+
+const selectFilterUser = (user) => {
+  form.user_id = user.id
+  userOpen.value = false
+  userSearch.value = ''
+}
 
 const form = reactive({
-  type_id: null,
-  search: null,
-  status_id: null,
+  type_id: '',
+  search: '',
+  status_id: '',
   user_id: null,
-  tag: null,
+  tag: '',
   page: 1,
 })
 
-const load = () => {
-  const withoutNulls = _.omitBy(route.query, _.isNull)
-  withoutNulls.project_id = route.params.project
-  tasksStore.loadTasks(withoutNulls)
+const hasActiveFilters = computed(() =>
+  Boolean(form.search) || form.type_id !== '' || form.status_id !== '' || form.user_id !== null || Boolean(form.tag)
+)
+
+const clearFilters = () => {
+  form.search = ''
+  form.type_id = ''
+  form.status_id = ''
+  form.user_id = null
+  form.tag = ''
 }
+
+const load = () => {
+  loading.value = true
+  const params = omitBy(route.query, (v) => v === null || v === '' || v === undefined)
+  params.project_id = route.params.project
+  tasksStore.loadTasks(params)
+}
+
+watch(() => tasksStore.tasks, () => { loading.value = false })
 
 const initData = () => {
   axios
@@ -45,7 +79,7 @@ const initData = () => {
   axios.get('/api/v1/task-types').then((res) => { taskTypesList.value = res.data })
 
   Echo.private(`task-updated.${route.params.project}`).listen('TaskUpdatedEvent', ({ task }) => {
-    const index = _.findIndex(tasksStore.tasks.data, { id: _.toNumber(task.id) })
+    const index = findIndex(tasksStore.tasks.data, { id: toNumber(task.id) })
     if (index > -1) { tasksStore.tasks.data.splice(index, 1, task) }
   })
 }
@@ -67,15 +101,15 @@ watch(
 )
 
 onMounted(() => {
-  form.search = route.query.search
-  form.page = route.query.page
-  form.user_id = route.query.user_id
-  form.type_id = route.query.type_id
-  form.status_id = route.query.status_id
-  form.tag = route.query.tag ?? null
+  form.search = route.query.search || ''
+  form.page = route.query.page || 1
+  form.user_id = route.query.user_id || null
+  form.type_id = route.query.type_id || ''
+  form.status_id = route.query.status_id || ''
+  form.tag = route.query.tag || ''
 
   initData()
-  breadcrumbStore.addEntry([{ link: '', title: 'Tasks' }])
+  breadcrumbStore.addEntry([{ link: '', title: 'Backlog' }])
 })
 
 onBeforeUnmount(() => { breadcrumbStore.addEntry([]) })
@@ -83,128 +117,274 @@ onBeforeUnmount(() => { breadcrumbStore.addEntry([]) })
 const openTask = (obj) => {
   router.push({ ...route, query: { ...route.query, task: obj.task_id } })
 }
-
-const selectClass = 'w-full text-sm bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-1 focus:ring-blue-500'
 </script>
 
 <template>
-  <div class="flex flex-col gap-4 pb-2">
-    <!-- Filters -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
-      <!-- Search -->
-      <div class="relative">
-        <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-gray-400 pointer-events-none" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
-        </svg>
-        <input
-          v-model="form.search"
-          type="text"
-          placeholder="Search tasks…"
-          :class="[selectClass, 'pl-9']"
-        />
-      </div>
-      <!-- Type -->
-      <select v-model="form.type_id" :class="selectClass">
-        <option :value="null">All types</option>
-        <option v-for="obj in taskTypesList" :key="obj.id" :value="obj.id">{{ obj.title }}</option>
-      </select>
-      <!-- Status -->
-      <select v-model="form.status_id" :class="selectClass">
-        <option :value="null">All statuses</option>
-        <option v-for="obj in statuses" :key="obj.id" :value="obj.id">{{ obj.title }}</option>
-      </select>
-      <!-- Assignee -->
-      <UsersSelectInput :key="form.user_id" v-model="form.user_id" :show-clean-input="true" />
-      <!-- Tag -->
-      <div class="relative">
-        <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-gray-400 pointer-events-none" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/>
-        </svg>
-        <input
-          v-model="form.tag"
-          type="text"
-          placeholder="Filter by tag…"
-          :class="[selectClass, 'pl-9 pr-8']"
-          :style="form.tag ? 'border-color: #3b82f6; background: rgba(59,130,246,.06);' : ''"
-        />
+  <div class="flex flex-col gap-2">
+
+    <!-- Filter bar -->
+    <div class="rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 px-3 py-2">
+      <div class="flex items-center gap-1.5 flex-wrap">
+        <!-- Search -->
+        <div class="relative flex-1 min-w-[140px] max-w-[200px]">
+          <svg class="absolute left-2 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-gray-400 pointer-events-none" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+          </svg>
+          <input
+            v-model="form.search"
+            type="text"
+            placeholder="Search…"
+            class="w-full pl-7 pr-2 py-1 text-xs rounded-md border border-gray-200 dark:border-gray-600 bg-transparent text-gray-900 dark:text-white placeholder-gray-400 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 transition-colors"
+          />
+        </div>
+
+        <!-- Type -->
+        <UiSelect v-model="form.type_id" class="!w-auto" size="sm">
+          <option value="">All types</option>
+          <option v-for="obj in taskTypesList" :key="obj.id" :value="obj.id">{{ obj.title }}</option>
+        </UiSelect>
+
+        <!-- Status -->
+        <UiSelect v-model="form.status_id" class="!w-auto" size="sm">
+          <option value="">All statuses</option>
+          <option v-for="obj in statuses" :key="obj.id" :value="obj.id">{{ obj.title }}</option>
+        </UiSelect>
+
+        <!-- Assignee -->
+        <div class="relative" ref="userEl">
+          <button
+            @click="toggleUser()"
+            class="flex items-center gap-1 py-1 pl-2 pr-1.5 text-xs rounded-md border transition-colors"
+            :class="form.user_id
+              ? 'border-blue-300 dark:border-blue-700 text-blue-700 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20'
+              : 'border-gray-200 dark:border-gray-600 text-gray-500 dark:text-gray-400 hover:border-gray-300 dark:hover:border-gray-500'"
+          >
+            <img v-if="selectedFilterUser?.avatar" :src="selectedFilterUser.avatar" class="w-4 h-4 rounded-full object-cover flex-shrink-0" />
+            <span v-else-if="selectedFilterUser" class="w-4 h-4 rounded-full bg-blue-200 dark:bg-blue-800 flex items-center justify-center flex-shrink-0 text-[8px] font-bold text-blue-700 dark:text-blue-300">{{ selectedFilterUser.name?.charAt(0).toUpperCase() }}</span>
+            <svg v-else class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
+            </svg>
+            <span>{{ selectedFilterUser ? selectedFilterUser.name : 'Assignee' }}</span>
+            <svg
+              v-if="form.user_id"
+              @click.stop="form.user_id = null"
+              class="w-3 h-3 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200"
+              viewBox="0 0 20 20" fill="currentColor"
+            >
+              <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
+            </svg>
+            <svg v-else class="w-3 h-3 text-gray-400" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+            </svg>
+          </button>
+          <Transition name="dropdown">
+            <div
+              v-if="userOpen"
+              class="absolute top-full left-0 mt-1 w-48 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 shadow-lg py-1 z-50"
+            >
+              <div class="px-1.5 pt-1 pb-0.5">
+                <input
+                  v-model="userSearch"
+                  type="text"
+                  placeholder="Search…"
+                  class="w-full px-2 py-1 text-xs rounded-md border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                />
+              </div>
+              <div class="max-h-40 overflow-y-auto">
+                <button
+                  v-for="u in filterUsers"
+                  :key="u.id"
+                  @click="selectFilterUser(u)"
+                  class="flex items-center gap-1.5 w-full px-2.5 py-1.5 text-xs text-left transition-colors"
+                  :class="form.user_id === u.id
+                    ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-400'
+                    : 'text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700/50'"
+                >
+                  <UserIcon avatar-size="xs" :user="u" :status="false" />
+                  <span class="truncate">{{ u.name }}</span>
+                </button>
+                <p v-if="!filterUsers.length" class="text-[10px] text-gray-400 px-2.5 py-1.5 text-center">No members</p>
+              </div>
+            </div>
+          </Transition>
+        </div>
+
+        <!-- Tag -->
+        <div class="relative flex items-center">
+          <svg class="absolute left-2 w-3 h-3 text-gray-400 pointer-events-none" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/>
+          </svg>
+          <input
+            v-model="form.tag"
+            type="text"
+            placeholder="Tag…"
+            class="pl-7 pr-6 py-1 text-xs rounded-md border transition-colors w-24 focus:w-36"
+            :class="form.tag
+              ? 'border-blue-300 dark:border-blue-700 bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-400'
+              : 'border-gray-200 dark:border-gray-600 bg-transparent text-gray-900 dark:text-white placeholder-gray-400'"
+            style="transition: width 0.2s ease, border-color 0.15s, background-color 0.15s;"
+          />
+          <button
+            v-if="form.tag"
+            @click="form.tag = null"
+            class="absolute right-1.5 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200"
+          >
+            <svg class="w-3 h-3" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
+            </svg>
+          </button>
+        </div>
+
+        <!-- Clear -->
         <button
-          v-if="form.tag"
-          @click="form.tag = null"
-          class="absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200"
+          v-if="hasActiveFilters"
+          @click="clearFilters"
+          class="flex items-center gap-0.5 py-1 px-1.5 text-xs font-medium rounded-md text-red-500 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
         >
-          <svg class="w-3.5 h-3.5" viewBox="0 0 20 20" fill="currentColor">
+          <svg class="w-3 h-3" viewBox="0 0 20 20" fill="currentColor">
             <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
           </svg>
+          Clear
         </button>
+
+        <!-- Count -->
+        <span v-if="tasksStore.tasks.total" class="ml-auto text-[10px] text-gray-400 dark:text-gray-500 tabular-nums">
+          {{ tasksStore.tasks.total }} tasks
+        </span>
       </div>
     </div>
 
-    <!-- Task table -->
-    <div class="bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 rounded-xl overflow-hidden">
-      <table class="w-full text-sm">
+    <!-- Loading -->
+    <div v-if="loading && !tasksStore.tasks.data?.length" class="flex items-center justify-center py-12">
+      <svg class="w-5 h-5 animate-spin text-blue-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M21 12a9 9 0 11-6.219-8.56"/>
+      </svg>
+    </div>
+
+    <!-- Table -->
+    <div v-else-if="tasksStore.tasks.data?.length" class="rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 overflow-hidden">
+      <table class="w-full">
         <thead>
-          <tr class="border-b border-gray-100 dark:border-gray-800 text-left">
-            <th class="px-4 py-2.5 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">Id</th>
-            <th class="px-4 py-2.5 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">Task</th>
-            <th class="px-4 py-2.5 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide hidden lg:table-cell">Description</th>
-            <th class="px-4 py-2.5 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">Relations</th>
-            <th class="px-4 py-2.5 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">Tags</th>
-            <th class="px-4 py-2.5 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">Type</th>
-            <th class="px-4 py-2.5 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">User</th>
+          <tr class="border-b border-gray-100 dark:border-gray-700 bg-gray-50/80 dark:bg-gray-800/60">
+            <th class="px-3 py-1.5 text-[10px] font-semibold uppercase tracking-wider text-gray-400 dark:text-gray-500 text-left w-20">Type</th>
+            <th class="px-3 py-1.5 text-[10px] font-semibold uppercase tracking-wider text-gray-400 dark:text-gray-500 text-left w-20">ID</th>
+            <th class="px-3 py-1.5 text-[10px] font-semibold uppercase tracking-wider text-gray-400 dark:text-gray-500 text-left w-10"></th>
+            <th class="px-3 py-1.5 text-[10px] font-semibold uppercase tracking-wider text-gray-400 dark:text-gray-500 text-left">Title</th>
+            <th class="px-3 py-1.5 text-[10px] font-semibold uppercase tracking-wider text-gray-400 dark:text-gray-500 text-left hidden md:table-cell w-32">Status</th>
+            <th class="px-3 py-1.5 text-[10px] font-semibold uppercase tracking-wider text-gray-400 dark:text-gray-500 text-left hidden md:table-cell w-28">Board</th>
+            <th class="px-3 py-1.5 text-[10px] font-semibold uppercase tracking-wider text-gray-400 dark:text-gray-500 text-left hidden lg:table-cell">Tags</th>
           </tr>
         </thead>
-        <tbody class="divide-y divide-gray-50 dark:divide-gray-800/50">
+        <tbody class="divide-y divide-gray-50 dark:divide-gray-700/40">
           <tr
             v-for="obj in tasksStore.tasks.data"
-            :key="JSON.stringify(obj)"
-            class="cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors"
+            :key="obj.id"
+            class="cursor-pointer hover:bg-blue-50/40 dark:hover:bg-gray-700/30 transition-colors"
             @click="openTask(obj)"
           >
-            <td class="px-4 py-2.5">
-              <router-link
-                :to="{ ...route, query: { ...route.query, task: obj.task_id } }"
-                class="text-xs text-blue-600 dark:text-blue-400 font-medium no-underline"
-                @click.stop
-              >{{ obj.task_id }}</router-link>
-            </td>
-            <td class="px-4 py-2.5">
-              <div class="font-medium text-gray-900 dark:text-white">{{ obj.name }}</div>
-              <div v-if="obj.due_date" class="text-xs text-gray-400 mt-0.5">
-                {{ DateTime.fromISO(obj.due_date).toLocaleString(DateTime.DATE_SHORT) }}
-              </div>
-            </td>
-            <td class="px-4 py-2.5 hidden lg:table-cell max-w-xs">
-              <Editor :model="obj.description" class="h-4 overflow-hidden text-xs text-gray-500" :editable="false" />
-            </td>
-            <td class="px-4 py-2.5 text-gray-500 dark:text-gray-400">{{ obj.children_count }}</td>
-            <td class="px-4 py-2.5" @click.stop>
-              <div class="flex gap-1 flex-wrap">
-                <button
-                  v-for="(str, index) in obj.tags"
-                  :key="index"
-                  type="button"
-                  @click="form.tag = form.tag === str ? null : str"
-                  class="inline-flex items-center px-2 py-0.5 rounded-md text-xs font-medium transition-colors"
-                  :class="form.tag === str
-                    ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-400 ring-1 ring-blue-300 dark:ring-blue-700'
-                    : 'bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300 hover:bg-blue-50 hover:text-blue-700 dark:hover:bg-blue-900/30 dark:hover:text-blue-400'"
-                  :title="form.tag === str ? 'Clear tag filter' : 'Filter by this tag'"
-                >{{ str }}</button>
-              </div>
-            </td>
-            <td class="px-4 py-2.5">
-              <span class="inline-flex items-center px-2 py-0.5 rounded-md text-xs font-medium bg-blue-50 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400">
+            <!-- Type -->
+            <td class="px-3 py-2">
+              <span
+                v-if="obj.type?.title"
+                class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-xs font-medium"
+                :style="obj.type.colour ? {
+                  backgroundColor: obj.type.colour + '1a',
+                  color: obj.type.colour,
+                } : {}"
+                :class="!obj.type.colour && 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300'"
+              >
+                <span
+                  v-if="obj.type.colour"
+                  class="w-2 h-2 rounded-full flex-shrink-0"
+                  :style="{ backgroundColor: obj.type.colour }"
+                ></span>
                 {{ obj.type.title }}
               </span>
             </td>
-            <td class="px-4 py-2.5" @click.stop>
-              <User :show-name="false" :user="obj.user" />
+
+            <!-- ID -->
+            <td class="px-3 py-2">
+              <router-link
+                :to="{ ...route, query: { ...route.query, task: obj.task_id } }"
+                class="text-[11px] font-mono font-medium text-blue-600 dark:text-blue-400 hover:underline"
+                @click.stop
+              >{{ obj.task_id }}</router-link>
+            </td>
+
+            <!-- User -->
+            <td class="px-3 py-2" @click.stop>
+              <UserIcon v-if="obj.user" :user="obj.user" :status="false" avatar-size="xs" />
+              <span v-else class="text-[10px] text-gray-300 dark:text-gray-600">—</span>
+            </td>
+
+            <!-- Title -->
+            <td class="px-3 py-2">
+              <div class="flex items-center gap-2 min-w-0">
+                <span class="text-xs font-medium text-gray-900 dark:text-white truncate">{{ obj.name }}</span>
+                <span v-if="obj.due_date" class="flex-shrink-0 text-[10px] text-gray-400 tabular-nums">
+                  {{ DateTime.fromISO(obj.due_date).toLocaleString(DateTime.DATE_MED) }}
+                </span>
+              </div>
+            </td>
+
+            <!-- Status -->
+            <td class="px-3 py-2 hidden md:table-cell">
+              <div v-if="obj.status" class="flex items-center gap-1.5">
+                <div class="w-2 h-2 rounded-full flex-shrink-0" :style="{ backgroundColor: obj.status.color || '#6B7280' }"></div>
+                <span class="text-xs text-gray-600 dark:text-gray-400 truncate">{{ obj.status.title }}</span>
+              </div>
+              <span v-else class="text-xs text-gray-300 dark:text-gray-600">—</span>
+            </td>
+
+            <!-- Board -->
+            <td class="px-3 py-2 hidden md:table-cell">
+              <span v-if="obj.status?.board" class="text-xs text-gray-500 dark:text-gray-400 truncate">{{ obj.status.board.title }}</span>
+              <span v-else class="text-xs text-gray-300 dark:text-gray-600">—</span>
+            </td>
+
+            <!-- Tags -->
+            <td class="px-3 py-2 hidden lg:table-cell" @click.stop>
+              <div class="flex gap-1 flex-wrap">
+                <button
+                  v-for="(str, i) in obj.tags"
+                  :key="i"
+                  type="button"
+                  @click="form.tag = form.tag === str ? '' : str"
+                >
+                  <Badge :color="form.tag === str ? 'blue' : 'gray'" size="xs" class="cursor-pointer hover:opacity-75">{{ str }}</Badge>
+                </button>
+              </div>
             </td>
           </tr>
         </tbody>
       </table>
     </div>
 
-    <TailwindPagination :limit="3" :data="tasksStore.tasks" @pagination-change-page="(page) => (form.page = page)" />
+    <!-- Empty -->
+    <div v-else class="rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
+      <div class="flex flex-col items-center justify-center py-12 px-4">
+        <svg class="w-10 h-10 text-gray-200 dark:text-gray-700 mb-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"/>
+          <rect x="9" y="3" width="6" height="4" rx="1"/>
+        </svg>
+        <p class="text-xs font-medium text-gray-400 dark:text-gray-500">No tasks found</p>
+        <p v-if="hasActiveFilters" class="text-[10px] text-gray-300 dark:text-gray-600 mt-0.5">Try adjusting your filters</p>
+      </div>
+    </div>
+
+    <!-- Pagination -->
+    <TailwindPagination v-if="tasksStore.tasks.data?.length" :limit="3" :data="tasksStore.tasks" @pagination-change-page="(page) => (form.page = page)" />
   </div>
 </template>
+
+<style scoped>
+.dropdown-enter-active,
+.dropdown-leave-active {
+  transition: opacity 0.1s ease, transform 0.1s ease;
+}
+.dropdown-enter-from,
+.dropdown-leave-to {
+  opacity: 0;
+  transform: translateY(-4px);
+}
+</style>

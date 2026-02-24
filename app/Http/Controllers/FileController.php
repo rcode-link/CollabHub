@@ -10,6 +10,7 @@ use App\Service\CreateFileService;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 
 class FileController extends Controller
@@ -19,15 +20,32 @@ class FileController extends Controller
      */
     public function index(Request $request)
     {
+        if ($request->boolean('global', false)) {
+            $allowedProjectIds = $this->accessibleProjectIds();
+
+            return File::query()
+                ->select('id', 'title', 'type', 'extension', 'parent_id', 'entity_type', 'entity_id', 'created_by', 'created_at', 'updated_at', 'file_id')
+                ->where(function ($q) use ($allowedProjectIds) {
+                    $q->where(function ($q2) {
+                            $q2->whereNull('entity_id')
+                                ->where('created_by', Auth::id());
+                        })
+                        ->orWhere(function ($q2) use ($allowedProjectIds) {
+                            $q2->where('entity_type', Project::class)
+                                ->whereIn('entity_id', $allowedProjectIds);
+                        });
+                })
+                ->get()->toFlatTree();
+        }
+
+        Auth::user()->authorize('can-view-project', $request->get('entity_id'));
 
         return File::query()
             ->select('id', 'title', 'type', 'extension', 'parent_id', 'entity_type', 'entity_id', 'created_at', 'updated_at', 'file_id')
-            ->when($request->boolean('global', false) === false,
-                fn ($q) => $q
-                    ->where([
-                        'entity_type' => Project::class,
-                        'entity_id' => $request->get('entity_id', null),
-                    ]))
+            ->where([
+                'entity_type' => Project::class,
+                'entity_id' => $request->get('entity_id', null),
+            ])
             ->get()->toFlatTree();
     }
 
@@ -35,7 +53,7 @@ class FileController extends Controller
     {
         $pdf = Pdf::loadView('pdf.document', ['content' => $request->get('content')]);
 
-        return $pdf->stream();    // $invoice = Invoice::whereId(9)->with(['items', 'items.billingItem', 'company'])->firstOrFail();
+        return $pdf->stream();
     }
 
     /**
@@ -43,7 +61,12 @@ class FileController extends Controller
      */
     public function store(StoreFilesRequest $request, CreateFileService $createFileService)
     {
+        if ($request->get('entity_id')) {
+            Auth::user()->authorize('can-create-document', $request->get('entity_id'));
+        }
+
         $data = $createFileService->prepareData($request->validated());
+        $data['created_by'] = Auth::id();
 
         $model = File::query()->create($data);
 
@@ -56,7 +79,6 @@ class FileController extends Controller
         }
 
         return response()->noContent();
-        //
     }
 
     /**
@@ -64,7 +86,11 @@ class FileController extends Controller
      */
     public function show($files)
     {
-        return response()->json(File::whereId($files)->orWhere('file_id', $files)->firstOrFail());
+        $file = File::whereId($files)->orWhere('file_id', $files)->firstOrFail();
+
+        $this->authorizeFile($file, 'can-view-project');
+
+        return response()->json($file);
     }
 
     /**
@@ -72,6 +98,8 @@ class FileController extends Controller
      */
     public function share(File $file): JsonResponse
     {
+        $this->authorizeFile($file, 'can-update-document');
+
         $token = $file->share_token ?? Str::uuid()->toString();
         $file->update(['share_token' => $token]);
 
@@ -83,6 +111,8 @@ class FileController extends Controller
      */
     public function unshare(File $file): JsonResponse
     {
+        $this->authorizeFile($file, 'can-update-document');
+
         $file->update(['share_token' => null]);
 
         return response()->json(['share_token' => null]);
@@ -106,8 +136,11 @@ class FileController extends Controller
      */
     public function update(UpdateFilesRequest $request, $file)
     {
-        $data = $request->validated();
-        File::whereId($file)->update($data);
+        $fileModel = File::findOrFail($file);
+
+        $this->authorizeFile($fileModel, 'can-update-document');
+
+        $fileModel->update($request->validated());
 
         return response()->noContent();
     }
@@ -117,6 +150,41 @@ class FileController extends Controller
      */
     public function destroy(File $file)
     {
-        //
+        $this->authorizeFile($file, 'can-delete-document');
+
+        $file->delete();
+
+        return response()->noContent();
+    }
+
+    /**
+     * Authorize access to a file.
+     * Project files: check project-scoped permission.
+     * Global files: only the creator can access.
+     */
+    private function authorizeFile(File $file, string $permission): void
+    {
+        if ($file->entity_id) {
+            Auth::user()->authorize($permission, $file->entity_id);
+
+            return;
+        }
+
+        abort_if($file->created_by && $file->created_by !== Auth::id(), 403);
+    }
+
+    /**
+     * Get project IDs the current user has view access to.
+     */
+    private function accessibleProjectIds(): array
+    {
+        $permissions = Auth::user()->permissions()->pluck('permissions')->flatten();
+
+        return $permissions
+            ->filter(fn ($p) => str_starts_with($p, 'can-view-project.'))
+            ->map(fn ($p) => (int) Str::afterLast($p, '.'))
+            ->unique()
+            ->values()
+            ->all();
     }
 }

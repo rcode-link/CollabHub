@@ -23,6 +23,7 @@ class StoreTaskStatusesRequest extends FormRequest
     {
         return [
             'title' => ['string'],
+            'color' => ['nullable', 'string', 'max:7'],
             'project_id' => ['exists:projects,id'],
             'board_id' => ['exists:boards,id'],
         ];

@@ -14,8 +14,13 @@
             <span class="text-xs font-mono text-gray-400 dark:text-gray-500">{{ obj.task_id }}</span>
             <span
                 v-if="obj.type?.title"
-                class="inline-flex items-center px-1.5 py-0.5 rounded-md text-xs font-medium bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400"
+                class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md text-xs font-medium bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400"
             >
+                <span
+                    v-if="obj.type.colour"
+                    class="w-2 h-2 rounded-full flex-shrink-0"
+                    :style="{ backgroundColor: obj.type.colour }"
+                ></span>
                 {{ obj.type.title }}
             </span>
             <div class="ml-auto">
