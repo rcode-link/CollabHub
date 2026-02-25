@@ -127,18 +127,23 @@ export const useLiveKit = defineStore("liveKitStore", () => {
         ].filter((obj) => {
             return obj.sid !== track.sid;
         });
-
-        if (!tracks.value[participant.name ?? participant.identity].length) {
-            delete tracks.value[participant.name ?? participant.identity];
-        }
     }
 
     function handleActiveSpeakerChange() {}
 
-    function handleParticipantConnected(_participant: RemoteParticipant) {
+    function handleParticipantConnected(participant: RemoteParticipant) {
+        const name = participant.name ?? participant.identity;
+        if (!tracks.value.hasOwnProperty(name)) {
+            tracks.value[name] = [];
+        }
         const audio = new Audio("/sounds/join.mp3");
         audio.volume = 0.4;
         audio.play().catch(() => {});
+    }
+
+    function handleParticipantDisconnected(participant: RemoteParticipant) {
+        const name = participant.name ?? participant.identity;
+        delete tracks.value[name];
     }
 
     function handleLocalTrackPublish(
@@ -189,7 +194,8 @@ export const useLiveKit = defineStore("liveKitStore", () => {
             .on(RoomEvent.TrackUnmuted, handleMuteAndUnMute)
             .on(RoomEvent.LocalTrackPublished, handleLocalTrackPublish)
             .on(RoomEvent.LocalTrackUnpublished, handleLocalTrackUnPublished)
-            .on(RoomEvent.ParticipantConnected, handleParticipantConnected);
+            .on(RoomEvent.ParticipantConnected, handleParticipantConnected)
+            .on(RoomEvent.ParticipantDisconnected, handleParticipantDisconnected);
 
         await createLocalTracks({
             audio: true,

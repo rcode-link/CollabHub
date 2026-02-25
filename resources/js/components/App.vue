@@ -20,11 +20,20 @@ const route = useRoute()
 
 const videoStore = useVideoCallStore();
 
-watch(() => route.query.callId, (oldValue, newValue) => {
+watch(() => route.query.callId, () => {
     if (!route.query.callId) {
         return;
     }
     videoStore.setToken(route.query.callId);
+}, {
+    immediate: true
+});
+
+// Also handle /call/:slug route (used by VideoToast and calendar links opening in new tabs)
+watch(() => route.params.slug, () => {
+    if (route.name === 'video-call' && route.params.slug) {
+        videoStore.setToken(route.params.slug);
+    }
 }, {
     immediate: true
 });

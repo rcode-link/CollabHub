@@ -32,6 +32,25 @@
                 <span class="control-label">Settings</span>
             </div>
 
+            <!-- Copy link -->
+            <div v-if="videoCall.size === 'fullScreen'" class="control-item">
+                <button
+                    type="button"
+                    @click="copyLink"
+                    class="flex h-10 w-10 items-center justify-center rounded-full text-white transition hover:bg-white/10"
+                    title="Copy call link"
+                >
+                    <svg v-if="!copied" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101" />
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M10.172 13.828a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.102 1.101" />
+                    </svg>
+                    <svg v-else class="h-5 w-5 text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                    </svg>
+                </button>
+                <span class="control-label">{{ copied ? 'Copied!' : 'Link' }}</span>
+            </div>
+
             <!-- Divider -->
             <div class="mx-1 h-8 w-px self-center bg-white/10"></div>
 
@@ -46,6 +65,7 @@
 </template>
 
 <script setup lang="js">
+import { ref } from "vue";
 import { useVideoCallStore } from "@/store/videoCallStore";
 const videoCall = useVideoCallStore();
 import DeviceSelector from "@/components/pages/video/partials/DeviceSelector.vue";
@@ -54,6 +74,14 @@ import EndCallOption from "@/components/pages/video/partials/EndCallOption.vue";
 import ToggleCameraOption from "@/components/pages/video/partials/ToggleCameraOption.vue";
 import ToggleMicrophoneOption from "@/components/pages/video/partials/ToggleMicrophoneOption.vue";
 import ToggleScreenShareOption from "@/components/pages/video/partials/ToggleScreenShareOption.vue";
+
+const copied = ref(false);
+const copyLink = async () => {
+    const url = `${window.location.origin}/call/${videoCall.videoId}`;
+    await navigator.clipboard.writeText(url);
+    copied.value = true;
+    setTimeout(() => { copied.value = false; }, 2000);
+};
 </script>
 
 <style scoped>
