@@ -27,9 +27,16 @@ import InteractiveToast from "@/components/shared/InteractiveToast.vue";
 import { useRoute } from "vue-router";
 import { find, toNumber } from "lodash";
 import { DateTime } from "luxon";
+import { useVacationGroupStore } from "@/store/vacationGroupStore";
+import { onMounted } from "vue";
 
 const route = useRoute();
 const calendar = useCalendarStore();
+const vacationGroupStore = useVacationGroupStore();
+
+onMounted(() => {
+    vacationGroupStore.loadGroups();
+});
 const errorsStore = useErrorsStore();
 
 onUpdated(() => {
@@ -121,6 +128,24 @@ watch(
                     <Label>End date</Label>
                     <DatePicker v-model="calendar.form.freq_until" />
                     <Errors name="freq_until" />
+                </div>
+
+                <div v-if="calendar.form.type === 'vacation' && vacationGroupStore.groups.length">
+                    <Label>Vacation group</Label>
+                    <select
+                        v-model="calendar.form.vacation_group_id"
+                        class="w-full text-sm rounded-lg block p-2.5 border bg-gray-50 border-gray-300 text-gray-900 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    >
+                        <option :value="null">— None —</option>
+                        <option
+                            v-for="g in vacationGroupStore.groups"
+                            :key="g.id"
+                            :value="g.id"
+                        >
+                            {{ g.name }} ({{ g.days_per_year }} days)
+                        </option>
+                    </select>
+                    <Errors name="vacation_group_id" />
                 </div>
 
                 <fwb-checkbox

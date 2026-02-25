@@ -43,6 +43,8 @@ class EventResource extends JsonResource
             'freq_until' => $this->freq_until,
             'type' => $this->type,
             'approved' => $this->approved,
+            'vacation_group_id' => $this->vacation_group_id,
+            'vacation_group' => $this->whenLoaded('vacationGroup', fn () => new VacationGroupResource($this->vacationGroup)),
             'videocall' => $this->whenLoaded('videocalls', function () {
                 return [
                     'slug' => $this->videocalls->slug,

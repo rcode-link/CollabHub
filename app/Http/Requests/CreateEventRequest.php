@@ -35,6 +35,7 @@ class CreateEventRequest extends FormRequest
             'users.*' => ['exists:users,id'],
             'has_video' => ['bool'],
             'type' => [new Enum(EventTypes::class)],
+            'vacation_group_id' => ['nullable', 'exists:vacation_groups,id'],
         ];
     }
 

@@ -40,7 +40,10 @@ use App\Http\Controllers\TaskStatusesController;
 use App\Http\Controllers\TaskTypeController;
 use App\Http\Controllers\TimeSheetController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\VacationGroupController;
+use App\Http\Controllers\VacationGroupUserController;
 use App\Http\Controllers\VacationRequestController;
+use App\Http\Controllers\VacationStatsController;
 use App\Http\Controllers\VideoCallController;
 use Illuminate\Support\Facades\Route;
 
@@ -142,6 +145,13 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::apiResource('/users', UserController::class);
     Route::put('/user/change-password', [UserController::class, 'updatePassword'])->name('api.updatePassword');
     Route::put('/vacation/{event}', VacationRequestController::class)->name('api.vacation.event');
+
+    Route::apiResource('/vacation-groups', VacationGroupController::class);
+    Route::get('/vacation-groups/{vacation_group}/users', [VacationGroupUserController::class, 'index'])->name('api.vacationGroupUsers.index');
+    Route::post('/vacation-groups/{vacation_group}/users', [VacationGroupUserController::class, 'store'])->name('api.vacationGroupUsers.store');
+    Route::delete('/vacation-groups/{vacation_group}/users/{user}', [VacationGroupUserController::class, 'destroy'])->name('api.vacationGroupUsers.destroy');
+    Route::get('/vacation/my-stats', [VacationStatsController::class, 'myStats'])->name('api.vacation.myStats');
+    Route::get('/vacation/user-stats/{user}', [VacationStatsController::class, 'userStats'])->name('api.vacation.userStats');
 
     Route::apiResource('/customers', CustomerCompanyController::class);
     Route::apiResource('/invoices-items', InvoiceItemController::class);

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Events\ManagePermissionsEvent;
 use Eloquent;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -158,6 +159,12 @@ class File extends Model
     use NodeTrait;
 
     protected $guarded = [];
+
+    protected static function booted()
+    {
+        static::created(fn () => ManagePermissionsEvent::dispatch());
+        static::deleted(fn () => ManagePermissionsEvent::dispatch());
+    }
 
     public function entity()
     {

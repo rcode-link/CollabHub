@@ -5,7 +5,9 @@ import { useBreadcrumbStore } from '@/store/breadcrumb'
 import Auth from '@/components/layouts/Auth.vue'
 import { onMounted, provide } from 'vue'
 import { useRouter } from 'vue-router'
+import { useAbility } from '@casl/vue'
 
+const { can } = useAbility()
 const store = useDocumentsStore()
 const breadcrumbStore = useBreadcrumbStore()
 const router = useRouter()
@@ -13,21 +15,29 @@ const router = useRouter()
 breadcrumbStore.addEntry([{ title: 'Documents' }])
 
 provide('fileStore', store)
-provide('canCreateDocument', true)
-provide('canDeleteDocument', true)
+provide('canCreateDocument', (entityId) => {
+    if (!entityId) return true // personal documents — no project restriction
+    return can(`can-create-document.${entityId}`, '')
+})
+provide('canDeleteDocument', (entityId) => {
+    if (!entityId) return true
+    return can(`can-delete-document.${entityId}`, '')
+})
 
 provide('navigateToDocument', (id) => {
     router.push({ name: 'documents.editor', params: { id } })
 })
 
-provide('createItem', ({ type, title, parent_id, entityId, entityType }) => {
-    return axios.post('/api/v1/files', {
+provide('createItem', ({ type, title, parent_id, entityId, entityType, url }) => {
+    const data = {
         title,
         type,
         parent_id,
         entity_id: entityId ?? null,
         entity_type: entityType ?? null,
-    }).then(() => store.loadDocuments())
+    }
+    if (url) data.url = url
+    return axios.post('/api/v1/files', data).then(() => store.loadDocuments())
 })
 
 onMounted(() => store.loadDocuments())

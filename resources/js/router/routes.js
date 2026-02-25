@@ -78,6 +78,12 @@ export default [
         component: () =>
           import('@/components/pages/settings/invoice/notes/Index.vue'),
       },
+      {
+        name: 'settings.vacation-groups',
+        path: 'vacation-groups',
+        component: () =>
+          import('@/components/pages/settings/vacation/Index.vue'),
+      },
     ],
   },
   {

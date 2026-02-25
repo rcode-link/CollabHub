@@ -38,7 +38,7 @@ class CalendarController extends Controller
 
     public function view(Event $event)
     {
-        $event->load('creator');
+        $event->load('creator', 'vacationGroup');
 
         return new EventResource($event);
     }

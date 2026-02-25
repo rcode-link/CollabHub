@@ -7,6 +7,7 @@ import BaseProfile from '@/components/pages/settings/me/partials/BaseProfile.vue
 import { useBreadcrumbStore } from '@/store/breadcrumb'
 import ProfilePicture from '@/components/pages/settings/me/partials/ProfilePicture.vue'
 import DeleteAccount from '@/components/pages/settings/me/partials/DeleteAccount.vue'
+import VacationStats from '@/components/pages/settings/me/partials/VacationStats.vue'
 import { ref } from 'vue'
 
 const breadcrumb = useBreadcrumbStore()
@@ -71,7 +72,6 @@ function urlBase64ToUint8Array(base64String) {
 const subscribeNotificaion = () => {
   navigator.serviceWorker.ready
     .then(function (registration) {
-      console.log(registration)
       return registration.pushManager.subscribe({
         userVisibleOnly: true,
         applicationServerKey: urlBase64ToUint8Array(
@@ -80,7 +80,6 @@ const subscribeNotificaion = () => {
       })
     })
     .then(function (subscription) {
-      console.log(subscription)
       const token = localStorage.getItem('token')
       fetch('/api/v1/push-notification', {
         method: 'POST',
@@ -115,55 +114,68 @@ const askForPermissions = () => {
 
 <template>
   <Settings>
-    <div class="w-full flex flex-col gap-4 mb-4">
+    <div class="w-full flex flex-col gap-6 mb-4">
+      <!-- Profile: avatar + basic info combined -->
       <Card>
-        <div class="p-5 space-y-4">
-          <h2 class="text-base font-semibold text-gray-900 dark:text-white">Basic profile info</h2>
-          <BaseProfile />
+        <div class="p-6">
+          <h2 class="text-base font-semibold text-gray-900 dark:text-white mb-5">Profile</h2>
+          <div class="flex flex-col sm:flex-row gap-6">
+            <ProfilePicture />
+            <div class="flex-1 min-w-0">
+              <BaseProfile />
+            </div>
+          </div>
         </div>
       </Card>
+
+      <!-- Change password -->
       <Card>
-        <div class="p-5 space-y-4">
-          <h2 class="text-base font-semibold text-gray-900 dark:text-white">Profile Image</h2>
-          <ProfilePicture />
-        </div>
-      </Card>
-      <Card>
-        <div class="p-5 space-y-4">
-          <h2 class="text-base font-semibold text-gray-900 dark:text-white">Change Password</h2>
+        <div class="p-6">
+          <h2 class="text-base font-semibold text-gray-900 dark:text-white mb-5">Change Password</h2>
           <ChangePassword />
         </div>
       </Card>
+
+      <!-- Vacation balance -->
       <Card>
-        <div class="p-5 space-y-4">
-          <h2 class="text-base font-semibold text-gray-900 dark:text-white">Push Notifications</h2>
-          <div class="flex gap-2">
-            <Button
-              v-if="permissionStatus === 'granted'"
-              variant="soft"
-              @click="revokePermissions"
-            >
-              Disable notifications
-            </Button>
+        <div class="p-6">
+          <VacationStats />
+        </div>
+      </Card>
+
+      <!-- Push notifications -->
+      <Card>
+        <div class="p-6">
+          <h2 class="text-base font-semibold text-gray-900 dark:text-white mb-1">Push Notifications</h2>
+          <p class="text-sm text-gray-500 dark:text-gray-400 mb-4">Receive browser notifications for messages and updates.</p>
+          <div class="flex flex-wrap gap-2">
             <Button
               v-if="permissionStatus !== 'granted'"
               @click="askForPermissions"
             >
               Allow push notifications
             </Button>
-            <Button
-              v-if="permissionStatus === 'granted'"
-              @click="subscribeNotificaion"
-            >
-              Subscribe
-            </Button>
+            <template v-if="permissionStatus === 'granted'">
+              <Button
+                @click="subscribeNotificaion"
+              >
+                Subscribe
+              </Button>
+              <Button
+                variant="soft"
+                @click="revokePermissions"
+              >
+                Disable notifications
+              </Button>
+            </template>
           </div>
         </div>
       </Card>
 
+      <!-- Danger zone -->
       <div class="border border-red-200 dark:border-red-800 rounded-xl overflow-hidden bg-white dark:bg-gray-900">
-        <div class="p-5 space-y-4">
-          <h2 class="text-base font-semibold text-red-600 dark:text-red-400">Danger zone</h2>
+        <div class="p-6">
+          <h2 class="text-base font-semibold text-red-600 dark:text-red-400 mb-5">Danger Zone</h2>
           <DeleteAccount />
         </div>
       </div>

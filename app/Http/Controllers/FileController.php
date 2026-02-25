@@ -25,7 +25,7 @@ class FileController extends Controller
             $allowedProjectIds = $this->accessibleProjectIds();
 
             return File::query()
-                ->select('id', 'title', 'type', 'extension', 'parent_id', 'entity_type', 'entity_id', 'created_by', 'created_at', 'updated_at', 'file_id')
+                ->select('id', 'title', 'url', 'type', 'extension', 'parent_id', 'entity_type', 'entity_id', 'created_by', 'created_at', 'updated_at', 'file_id')
                 ->where(function ($q) use ($allowedProjectIds) {
                     $q->where(function ($q2) {
                         $q2->whereNull('entity_id')
@@ -42,7 +42,7 @@ class FileController extends Controller
         Auth::user()->authorize('can-view-project', $request->get('entity_id'));
 
         return File::query()
-            ->select('id', 'title', 'type', 'extension', 'parent_id', 'entity_type', 'entity_id', 'created_at', 'updated_at', 'file_id')
+            ->select('id', 'title', 'url', 'type', 'extension', 'parent_id', 'entity_type', 'entity_id', 'created_at', 'updated_at', 'file_id')
             ->where([
                 'entity_type' => Project::class,
                 'entity_id' => $request->get('entity_id', null),
@@ -59,7 +59,7 @@ class FileController extends Controller
 
     public function exportAsPdf(File $file)
     {
-        $this->authorizeFile($file, 'can-view-project');
+        $this->authorizeFile($file, 'can-read-document');
 
         $hadToken = (bool) $file->share_token;
 
@@ -127,7 +127,7 @@ class FileController extends Controller
     {
         $file = File::whereId($files)->orWhere('file_id', $files)->firstOrFail();
 
-        $this->authorizeFile($file, 'can-view-project');
+        $this->authorizeFile($file, 'can-read-document');
 
         return response()->json($file);
     }
@@ -203,13 +203,7 @@ class FileController extends Controller
      */
     private function authorizeFile(File $file, string $permission): void
     {
-        if ($file->entity_id) {
-            Auth::user()->authorize($permission, $file->entity_id);
-
-            return;
-        }
-
-        abort_if($file->created_by && $file->created_by !== Auth::id(), 403);
+        Auth::user()->authorize($permission, $file->id);
     }
 
     /**

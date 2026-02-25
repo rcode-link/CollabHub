@@ -20,12 +20,7 @@ const exporting = ref(false)
 const route = useRoute()
 const breadcrumbStore = useBreadcrumbStore()
 
-const canUpdate = computed(() => {
-  if (route.params.project) {
-    return can(`can-update-document.${route.params.project}`, '')
-  }
-  return document.value.created_by === userStore.user.id
-})
+const canUpdate = computed(() => can(`can-update-document.${document.value.id}`, ''))
 
 const relativeTime = computed(() =>
   document.value.updated_at

@@ -25,6 +25,7 @@ class UpdateFilesRequest extends FormRequest
             'title' => ['required', 'string'],
             'content' => ['nullable', 'array'],
             'parent_id' => ['nullable', 'exists:files,id'],
+            'url' => ['nullable', 'url', 'max:2048'],
         ];
     }
 }

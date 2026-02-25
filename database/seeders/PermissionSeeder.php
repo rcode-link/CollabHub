@@ -78,6 +78,11 @@ class PermissionSeeder extends Seeder
             ],
             [
                 'scope' => PermissionsScopes::Project->value,
+                'name' => 'Can read document',
+                'slug' => Str::slug('Can read document'),
+            ],
+            [
+                'scope' => PermissionsScopes::Project->value,
                 'name' => 'Can create document',
                 'slug' => Str::slug('Can create document'),
             ],

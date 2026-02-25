@@ -77,6 +77,7 @@ export const useCalendarStore = defineStore("calendarStore", () => {
     approved: false,
     has_video: false,
     type: "event",
+    vacation_group_id: null,
     freq: "",
     user_id: null,
     freq_settings: freqSttingsBase,
@@ -129,6 +130,11 @@ export const useCalendarStore = defineStore("calendarStore", () => {
 
     if (form.type === "vacation") {
       form.freq = "DAILY";
+      data.vacation_group_id = form.vacation_group_id;
+    }
+
+    if (form.type !== "vacation") {
+      delete data.vacation_group_id;
     }
 
     if (form.freq === "DAILY" && form.freq_settings) {
@@ -177,6 +183,7 @@ export const useCalendarStore = defineStore("calendarStore", () => {
     form.end_time = "";
     form.id = null;
     form.has_video = false;
+    form.vacation_group_id = null;
     videoCall.value = {
       slug: null,
     };
@@ -201,6 +208,7 @@ export const useCalendarStore = defineStore("calendarStore", () => {
     form.end_time = obj.end_time;
     form.start_time = obj.start_time;
     form.type = obj.type;
+    form.vacation_group_id = obj.vacation_group_id ?? null;
     form.freq_settings = tmpFreq;
     form.freq_until = obj.freq_until;
     form.freq = obj.freq;

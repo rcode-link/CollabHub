@@ -25,7 +25,8 @@ class StoreFilesRequest extends FormRequest
             'title' => ['required', 'string'],
             'content' => ['nullable', 'array'],
             'parent_id' => ['nullable', 'exists:files,id'],
-            'type' => ['required', 'in:folder,file'],
+            'type' => ['required', 'in:folder,file,link'],
+            'url' => ['nullable', 'required_if:type,link', 'url', 'max:2048'],
             'entity_id' => ['nullable', 'numeric'],
             'entity_type' => ['nullable', 'string'],
         ];

@@ -4,7 +4,7 @@ import { computed, inject, nextTick, ref } from 'vue'
 
 const fileStore = inject('fileStore')
 const createItem = inject('createItem')
-const canCreateDocument = inject('canCreateDocument', true)
+const canCreateDocumentFn = inject('canCreateDocument', () => true)
 
 const props = defineProps({
   parent_id: { default: null },
@@ -14,18 +14,23 @@ const props = defineProps({
   entityType: { default: null },
 })
 
+const canCreateDocument = computed(() => canCreateDocumentFn(props.entityId))
+
 const items = computed(() =>
   fileStore.getDocuments.filter(item => item.parent_id === props.parent_id),
 )
 
 // --- Inline add ---
-const adding = ref(null) // null | 'file' | 'folder'
+const adding = ref(null) // null | 'file' | 'folder' | 'link'
 const newTitle = ref('')
+const newUrl = ref('')
 const inputRef = ref()
+const urlInputRef = ref()
 
 const startAdding = async type => {
   adding.value = type
   newTitle.value = ''
+  newUrl.value = ''
   await nextTick()
   inputRef.value?.focus()
 }
@@ -33,6 +38,7 @@ const startAdding = async type => {
 const cancelAdding = () => {
   adding.value = null
   newTitle.value = ''
+  newUrl.value = ''
 }
 
 const confirmAdd = () => {
@@ -42,17 +48,25 @@ const confirmAdd = () => {
   const dbParentId = typeof props.parent_id === 'string' && props.parent_id.startsWith('proj_')
     ? null
     : props.parent_id
-  createItem({
+  const data = {
     type: adding.value,
     title: newTitle.value.trim(),
     parent_id: dbParentId,
     entityId: props.entityId,
     entityType: props.entityType,
-  }).then(() => cancelAdding())
+  }
+  if (adding.value === 'link') data.url = newUrl.value.trim()
+  createItem(data).then(() => cancelAdding())
 }
 
 const onKeydown = e => {
-  if (e.key === 'Enter') confirmAdd()
+  if (e.key === 'Enter') {
+    if (adding.value === 'link' && e.target === inputRef.value) {
+      urlInputRef.value?.focus()
+      return
+    }
+    confirmAdd()
+  }
   if (e.key === 'Escape') cancelAdding()
 }
 </script>
@@ -126,6 +140,25 @@ const onKeydown = e => {
         </svg>
         New document
       </button>
+      <button
+        @click.stop="startAdding('link')"
+        class="flex items-center gap-1 rounded-md border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 px-2 py-1 text-xs font-medium text-gray-600 dark:text-gray-300 transition hover:bg-gray-50 dark:hover:bg-gray-600"
+      >
+        <svg
+          class="h-3.5 w-3.5 text-purple-500"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
+          />
+        </svg>
+        New link
+      </button>
     </template>
   </div>
 
@@ -177,6 +210,20 @@ const onKeydown = e => {
         />
       </svg>
       <svg
+        v-else-if="adding === 'link'"
+        class="h-5 w-5 text-purple-400"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="1.5"
+          d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
+        />
+      </svg>
+      <svg
         v-else
         class="h-5 w-5 text-blue-400"
         fill="none"
@@ -191,14 +238,25 @@ const onKeydown = e => {
         />
       </svg>
     </div>
-    <input
-      ref="inputRef"
-      v-model="newTitle"
-      @keydown="onKeydown"
-      @blur="cancelAdding"
-      :placeholder="adding === 'folder' ? 'Folder name…' : 'Document name…'"
-      class="flex-1 bg-transparent text-sm font-medium text-gray-800 dark:text-gray-100 outline-none placeholder-gray-400"
-    />
+    <div class="flex-1 flex flex-col gap-1">
+      <input
+        ref="inputRef"
+        v-model="newTitle"
+        @keydown="onKeydown"
+        @blur="adding !== 'link' && cancelAdding()"
+        :placeholder="adding === 'folder' ? 'Folder name…' : adding === 'link' ? 'Link title…' : 'Document name…'"
+        class="w-full bg-transparent text-sm font-medium text-gray-800 dark:text-gray-100 outline-none placeholder-gray-400"
+      />
+      <input
+        v-if="adding === 'link'"
+        ref="urlInputRef"
+        v-model="newUrl"
+        @keydown="onKeydown"
+        @blur="cancelAdding"
+        placeholder="https://…"
+        class="w-full bg-transparent text-xs text-gray-600 dark:text-gray-300 outline-none placeholder-gray-400"
+      />
+    </div>
     <button
       @mousedown.prevent="confirmAdd"
       class="flex-shrink-0 rounded-md bg-blue-600 px-2 py-1 text-xs font-medium text-white transition hover:bg-blue-500"
@@ -251,6 +309,26 @@ const onKeydown = e => {
         />
       </svg>
       + document
+    </button>
+    <span class="text-gray-200 dark:text-gray-700">&middot;</span>
+    <button
+      @click.stop="startAdding('link')"
+      class="flex items-center gap-1 text-xs text-gray-400 hover:text-purple-500 transition"
+    >
+      <svg
+        class="h-3.5 w-3.5"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
+        />
+      </svg>
+      + link
     </button>
   </div>
 </template>

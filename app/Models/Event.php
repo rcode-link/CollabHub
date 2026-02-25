@@ -73,6 +73,7 @@ class Event extends Model
         'freq_until',
         'approved',
         'type',
+        'vacation_group_id',
     ];
 
     protected $casts = [
@@ -171,6 +172,11 @@ class Event extends Model
         $icalendar .= "END:VCALENDAR\r\n";
 
         return $icalendar;
+    }
+
+    public function vacationGroup(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->belongsTo(VacationGroup::class);
     }
 
     public function user(): \Illuminate\Database\Eloquent\Relations\BelongsToMany

@@ -36,6 +36,13 @@ const userStore = useUserStore();
                         : ""
                 }}
             </router-link>
+            <router-link
+                v-if="can(`can-update-company.${userStore.company.id}`, '')"
+                :to="{ name: 'settings.vacation-groups' }"
+                class="sidebar-nav-link"
+            >
+                Vacation Groups
+            </router-link>
         </nav>
     </div>
 </template>

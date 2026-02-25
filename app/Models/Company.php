@@ -131,4 +131,9 @@ class Company extends Model implements HasMedia
     {
         return $this->belongsTo(Currency::class);
     }
+
+    public function vacationGroups(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(VacationGroup::class);
+    }
 }

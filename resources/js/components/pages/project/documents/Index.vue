@@ -15,21 +15,23 @@ const router = useRouter()
 breadcrumbStore.addEntry([{ title: 'Documents' }])
 
 provide('fileStore', documentsStore)
-provide('canCreateDocument', can(`can-create-document.${route.params.project}`, ''))
-provide('canDeleteDocument', can(`can-delete-document.${route.params.project}`, ''))
+provide('canCreateDocument', () => can(`can-create-document.${route.params.project}`, ''))
+provide('canDeleteDocument', () => can(`can-delete-document.${route.params.project}`, ''))
 
 provide('navigateToDocument', (id) => {
     router.push({ name: 'project.documents.editor', params: { project: route.params.project, id } })
 })
 
-provide('createItem', ({ type, title, parent_id }) => {
-    return axios.post('/api/v1/files', {
+provide('createItem', ({ type, title, parent_id, url }) => {
+    const data = {
         title,
         type,
         parent_id,
         entity_id: route.params.project,
         entity_type: 'project',
-    }).then(() => documentsStore.loadDocuments())
+    }
+    if (url) data.url = url
+    return axios.post('/api/v1/files', data).then(() => documentsStore.loadDocuments())
 })
 
 onMounted(() => {

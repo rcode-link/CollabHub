@@ -276,6 +276,11 @@ class User extends Authenticatable implements HasMedia
         return $this->hasMany(Event::class);
     }
 
+    public function vacationGroups(): BelongsToMany
+    {
+        return $this->belongsToMany(VacationGroup::class, 'vacation_group_user')->withPivot('days_allocated')->withTimestamps();
+    }
+
     public function todayMeetings()
     {
         $events = $this->events()->whereBetween('start_time', [now()->startOfDay(), now()->endOfDay()])
