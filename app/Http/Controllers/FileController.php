@@ -76,6 +76,7 @@ class FileController extends Controller
             ->setEnvironmentOptions(['PUPPETEER_CACHE_DIR' => storage_path('app/puppeteer')])
             ->addChromiumArguments(['ignore-certificate-errors', 'no-sandbox'])
             ->emulateMedia('print')
+            ->timeout(120)
             ->waitUntilNetworkIdle();
 
         if ($wsEndpoint = config('services.browsershot.ws_endpoint')) {
