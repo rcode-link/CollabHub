@@ -8,7 +8,5 @@
 
 	encode zstd gzip
 
-	php_server {
-		worker /app/public/index.php
-	}
+	php_server
 }

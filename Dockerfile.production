@@ -31,7 +31,6 @@ RUN npm run build
 RUN mkdir -p /app/storage/app/puppeteer
 
 ENV SERVER_NAME=:8000
-ENV FRANKENPHP_CONFIG="worker ./public/index.php"
 
 EXPOSE 8000
 
