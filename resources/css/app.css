@@ -525,6 +525,48 @@ pre .hljs-strong {
   @apply relative overflow-x-auto shadow-md sm:rounded-lg;
 }
 
+/* Image size and position classes (used by editor, chat messages, PDFs) */
+.resizable-image-wrapper {
+  display: block;
+  position: relative;
+  margin-top: 1rem;
+}
+
+.resizable-image-wrapper img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.image-25 {
+  width: 25%;
+}
+
+.image-50 {
+  width: 50%;
+}
+
+.image-75 {
+  width: 75%;
+}
+
+.image-100 {
+  width: 100%;
+}
+
+.position-left {
+  margin-right: auto;
+}
+
+.position-right {
+  margin-left: auto;
+}
+
+.position-center {
+  margin-left: auto;
+  margin-right: auto;
+}
+
 /* Print styles for image component with position classes */
 
 @media print {

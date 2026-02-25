@@ -17,7 +17,11 @@ function mediaUrl(?Media $media, string $fallback = ''): string
         return $fallback ?: config('app.url').'/storage/images/avatar.png';
     }
 
-    return '/api/v1/media/'.$media->id;
+    try {
+        return $media->getTemporaryUrl(now()->addMinutes(60));
+    } catch (\Exception) {
+        return $media->getUrl();
+    }
 }
 
 function formatMoney($val, $currency = null, $format = null)

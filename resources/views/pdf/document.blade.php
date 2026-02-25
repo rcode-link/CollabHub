@@ -16,6 +16,27 @@ img {
 max-width: 150mm;
 }
 
+.resizable-image-wrapper {
+display: block;
+position: relative;
+margin-top: 1rem;
+}
+
+.resizable-image-wrapper img {
+display: block;
+width: 100%;
+height: auto;
+}
+
+.image-25 { width: 25%; }
+.image-50 { width: 50%; }
+.image-75 { width: 75%; }
+.image-100 { width: 100%; }
+
+.position-left { margin-right: auto; }
+.position-right { margin-left: auto; }
+.position-center { margin-left: auto; margin-right: auto; }
+
 h1 {
     font-size: 2.25rem; /* equivalent to text-4xl in Tailwind */
     line-height: 2.5rem; /* line-height is 1.1 times font-size by default in Tailwind */

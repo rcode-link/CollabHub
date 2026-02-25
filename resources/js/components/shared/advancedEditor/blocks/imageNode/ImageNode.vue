@@ -310,79 +310,9 @@ export default {
   background: #374151;
 }
 
-.resizable-image-wrapper {
-  display: block;
-  position: relative;
-  margin-top: 1rem;
-}
-
 .is-selected img {
   outline: 2px solid #1976d2;
 }
-
-.resize-handlers {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-}
-
-.resize-handle {
-  position: absolute;
-  width: 10px;
-  height: 10px;
-  background-color: #1976d2;
-  border-radius: 50%;
-  pointer-events: all;
-}
-
-.bottom-right {
-  bottom: -5px;
-  right: -5px;
-  cursor: nwse-resize;
-}
-
-.lh-34 {
-  line-height: 34px;
-}
-
-img {
-  display: block;
-  width: 100%;
-  height: auto;
-}
-
-.image-25 {
-  width: 25%;
-}
-
-.image-50 {
-  width: 50%;
-}
-
-.image-75 {
-  width: 75%;
-}
-
-.image-100 {
-  width: 100%;
-}
-
-.position-left {
-  margin-right: auto;
-}
-
-.position-right {
-  margin-left: auto;
-}
-
-.position-center {
-  margin-left: auto;
-  margin-right: auto;
-}
-/* Print styles for image component with position classes */
 
 
 </style>
