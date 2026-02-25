@@ -55,8 +55,11 @@ RUN mv composer.phar /usr/local/bin/composer
 COPY . .
 RUN rm storage/logs/laravel.log
 RUN composer install
+ENV PUPPETEER_SKIP_DOWNLOAD=true
+RUN npm ci --omit=dev
 # RUN rm -rf public/build
 # RUN npm ci && npm run build
+RUN mkdir -p /app/storage/app/puppeteer
 ADD deploy/prod/supervisord.conf /etc/
 RUN mkdir -p /var/log/supervisor
 EXPOSE 80

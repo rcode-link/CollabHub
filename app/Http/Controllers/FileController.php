@@ -73,6 +73,7 @@ class FileController extends Controller
         $browsershot = Browsershot::url($url)
             ->setNodeBinary(config('services.browsershot.node_binary', 'node'))
             ->setNpmBinary(config('services.browsershot.npm_binary', 'npm'))
+            ->setEnvironmentOptions(['PUPPETEER_CACHE_DIR' => storage_path('app/puppeteer')])
             ->addChromiumArguments(['ignore-certificate-errors', 'no-sandbox'])
             ->emulateMedia('print')
             ->waitUntilNetworkIdle();
