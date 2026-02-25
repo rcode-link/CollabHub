@@ -77,8 +77,8 @@ class FileController extends Controller
             ->emulateMedia('print')
             ->waitUntilNetworkIdle();
 
-        if ($remoteHost = config('services.browsershot.remote_host')) {
-            $browsershot->setRemoteInstance($remoteHost, config('services.browsershot.remote_port', 9222));
+        if ($wsEndpoint = config('services.browsershot.ws_endpoint')) {
+            $browsershot->setWSEndpoint($wsEndpoint);
         }
 
         $pdfContent = $browsershot->pdf();

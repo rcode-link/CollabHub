@@ -32,8 +32,7 @@ return [
     ],
 
     'browsershot' => [
-        'remote_host' => env('BROWSERSHOT_REMOTE_HOST'),
-        'remote_port' => (int) env('BROWSERSHOT_REMOTE_PORT', 9222),
+        'ws_endpoint' => env('BROWSERSHOT_WS_ENDPOINT'),
         'node_binary' => env('BROWSERSHOT_NODE_BINARY', 'node'),
         'npm_binary' => env('BROWSERSHOT_NPM_BINARY', 'npm'),
         'app_url' => env('BROWSERSHOT_APP_URL'),
