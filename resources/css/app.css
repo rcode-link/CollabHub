@@ -541,22 +541,22 @@ pre .hljs-strong {
   }
 
   /* Size classes with !important for print override */
-  size[25] {
+  .image-25 {
     width: 25% !important;
     max-width: 25% !important;
   }
 
-  size[50] {
+  .image-50 {
     width: 50% !important;
     max-width: 50% !important;
   }
 
-  size[75] {
+  .image-75 {
     width: 75% !important;
     max-width: 75% !important;
   }
 
-  size[100] {
+  .image-100 {
     width: 100% !important;
     max-width: 100% !important;
   }
