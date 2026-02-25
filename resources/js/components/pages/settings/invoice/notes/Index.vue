@@ -1,8 +1,12 @@
 <script setup lang="js">
-import { FwbButton } from "flowbite-vue";
 import Settings from "@/components/layouts/Settings.vue";
+import Button from "@/components/shared/Button.vue";
 import { onMounted, ref } from "vue";
 import { useBreadcrumbStore } from "@/store/breadcrumb";
+import Card from "@/components/shared/Card.vue";
+import Editor from "@/components/pages/project/tasks/partisals/Form/Editor.vue";
+import Text from "@/components/shared/Text.vue";
+import Note from "@/components/pages/settings/invoice/notes/partials/Note.vue";
 
 const breadcrumb = useBreadcrumbStore()
 breadcrumb.setLinks([
@@ -10,10 +14,7 @@ breadcrumb.setLinks([
     { link: { name: 'settings.base' }, title: 'Settings' },
     { title: 'Invoice Notes' },
 ])
-import Card from "@/components/shared/Card.vue";
-import Editor from "@/components/pages/project/tasks/partisals/Form/Editor.vue";
-import Text from "@/components/shared/Text.vue";
-import Note from "@/components/pages/settings/invoice/notes/partials/Note.vue";
+
 const model = ref({
     val: "",
     title: "",
@@ -50,24 +51,28 @@ const save = () => {
 </script>
 <template>
     <Settings>
-        <div class="grid grid-cols-2 gap-4">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
             <Note
                 v-for="obj in list"
+                :key="obj.id"
                 :id="obj.id ?? 0"
                 :title="obj.data.title ?? ''"
                 :val="obj.data.val"
                 @update="load"
             />
 
-            <Card class="flex-col gap-4">
-                <Text v-model="model.title" placeholder="Note title" />
-                <div class="w-full mb-2">
-                    <Editor
-                        :modelValue="model.val"
-                        @update:markdown="(val) => (model.val = val)"
-                    />
+            <Card>
+                <div class="p-4 space-y-4">
+                    <h3 class="text-sm font-medium text-gray-900 dark:text-white">New Note</h3>
+                    <Text v-model="model.title" placeholder="Note title" />
+                    <div class="w-full">
+                        <Editor
+                            :modelValue="model.val"
+                            @update:markdown="(val) => (model.val = val)"
+                        />
+                    </div>
+                    <Button @click="save">Save</Button>
                 </div>
-                <FwbButton @click="save">Save</FwbButton>
             </Card>
         </div>
     </Settings>

@@ -5,7 +5,6 @@
     :deleteNode="deleteNode"
     :getPos="getPos"
     :selected="selected"
-    :width="node.attrs.width"
   >
 
     <template #options>

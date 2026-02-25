@@ -1,6 +1,7 @@
 <script setup>
 import Modal from "@/components/shared/Modal.vue";
-import { FwbButton, FwbCheckbox } from "flowbite-vue";
+import Button from "@/components/shared/Button.vue";
+import CheckBox from "@/components/shared/CheckBox.vue";
 import { ref, watch } from "vue";
 import { useRoleStore } from "@/store/roleStore";
 import { toast } from "vue3-toastify";
@@ -48,29 +49,33 @@ watch(
 
 <template>
     <Modal ref="modalRef">
-        <template #header> Select permissions for role </template>
+        <template #header>Select permissions for role</template>
         <template #button>
-            <fwb-button size="xs" @click="load">Manage permissions</fwb-button>
+            <Button size="sm" @click="load">Manage permissions</Button>
         </template>
         <template #body>
-            <div class="mb-1" v-for="(obj, key) in permissions">
-                <div class="uppercase border-b mb-2">
+            <div v-for="(obj, key) in permissions" :key="key" class="mb-4 last:mb-0">
+                <h4 class="text-xs font-semibold uppercase tracking-wider text-gray-400 dark:text-gray-500 mb-2">
                     {{ key }}
-                </div>
-                <ul>
-                    <li v-for="def in obj" class="hover:underline">
-                        <fwb-checkbox
-                            :label="def.name"
+                </h4>
+                <div class="space-y-1">
+                    <label
+                        v-for="def in obj"
+                        :key="def.id"
+                        class="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800/50 cursor-pointer"
+                    >
+                        <input
+                            type="checkbox"
                             v-model="selected[def.id]"
+                            class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:bg-gray-700 dark:border-gray-600"
                         />
-                    </li>
-                </ul>
+                        <span class="text-sm text-gray-700 dark:text-gray-300">{{ def.name }}</span>
+                    </label>
+                </div>
             </div>
         </template>
         <template #footer>
-            <fwb-button @click="save">Save</fwb-button>
+            <Button @click="save">Save</Button>
         </template>
     </Modal>
 </template>
-
-<style scoped></style>

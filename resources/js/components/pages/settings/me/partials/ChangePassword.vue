@@ -26,18 +26,18 @@ const submit = () => {
 <template>
     <form @submit.prevent="submit" class="w-full grid gap-6">
         <div>
-            <Label :forInput="'email'">Current Password</Label>
-            <Text type="password" v-model="form.current_password" :name="'current_password'" form="'login'" placeholder="Current Password"/>
+            <Label forInput="current_password">Current Password</Label>
+            <Text type="password" v-model="form.current_password" name="current_password" placeholder="Current Password"/>
             <Errors name="current_password"/>
         </div>
         <div>
-            <Label :forInput="'password'">New Password</Label>
-            <Text type="password" v-model="form.password" :name="'password'" form="'login'" placeholder="New Password"/>
+            <Label forInput="password">New Password</Label>
+            <Text type="password" v-model="form.password" name="password" placeholder="New Password"/>
             <Errors name="password"/>
         </div>
         <div>
-            <Label :forInput="'password_confirmation'">Confirm new Password</Label>
-            <Text type="password" v-model="form.password_confirmation" :name="'password_confirmation'" form="'login'"
+            <Label forInput="password_confirmation">Confirm new Password</Label>
+            <Text type="password" v-model="form.password_confirmation" name="password_confirmation"
                   placeholder="Confirm Password"/>
             <Errors name="password_confirmation"/>
         </div>

@@ -1,10 +1,10 @@
 <script setup>
-import { FwbButton } from "flowbite-vue";
 import SelectUsersInCompany from "@/components/shared/SelectUsersInCompany.vue";
-import { reactive, ref, watch } from "vue";
+import { ref, watch } from "vue";
 import UserIcon from "@/components/shared/UserIcon.vue";
 import InteractiveToast from "@/components/shared/InteractiveToast.vue";
 import Modal from "@/components/shared/Modal.vue";
+import Button from "@/components/shared/Button.vue";
 import { useRoleStore } from "@/store/roleStore";
 import { toast } from "vue3-toastify";
 const roleStore = useRoleStore();
@@ -44,47 +44,35 @@ function userSelected(obj) {
 <template>
     <Modal ref="modalRef">
         <template #button>
-            <fwb-button size="xs">Add user(s)</fwb-button>
+            <Button size="sm">Add user(s)</Button>
         </template>
         <template #body>
             <SelectUsersInCompany
                 v-model="userForm"
                 @selected-user="userSelected"
             />
-            <hr class="mt-1 mb-1" />
-            <div
-                v-for="(obj, index) in usersToBeAdded"
-                class="flex justify-between items-center"
-            >
-                <div class="flex gap-1 items-center">
-                    <UserIcon :user="obj" />
-                    {{ obj.name }}
-                </div>
-                <div>
-                    <InteractiveToast>
-                        <template #trigger>
-                            <fwb-button color="red">Remove</fwb-button>
-                        </template>
-                        <template #content>
-                            You are about to remove added user, are you sure?
-                        </template>
-                        <template #actions>
-                            <fwb-button
-                                @click="() => usersToBeAdded.splice(index, 1)"
-                                size="xs"
-                                >Yes, remove it!
-                            </fwb-button>
-                        </template>
-                    </InteractiveToast>
+            <div v-if="usersToBeAdded.length" class="mt-3 border-t border-gray-100 dark:border-gray-800 pt-3 space-y-2">
+                <div
+                    v-for="(obj, index) in usersToBeAdded"
+                    :key="obj.id"
+                    class="flex justify-between items-center px-3 py-2 rounded-lg bg-gray-50 dark:bg-gray-800"
+                >
+                    <div class="flex gap-2 items-center">
+                        <UserIcon :user="obj" />
+                        <span class="text-sm text-gray-700 dark:text-gray-300">{{ obj.name }}</span>
+                    </div>
+                    <Button
+                        variant="danger"
+                        size="sm"
+                        @click="() => usersToBeAdded.splice(index, 1)"
+                    >
+                        Remove
+                    </Button>
                 </div>
             </div>
         </template>
         <template #footer>
-            <div class="flex">
-                <fwb-button @click="save">Save</fwb-button>
-            </div>
+            <Button @click="save">Save</Button>
         </template>
     </Modal>
 </template>
-
-<style scoped></style>

@@ -1,8 +1,8 @@
 <script lang="js" setup>
 import Text from "@/components/shared/Text.vue";
 import Label from "@/components/shared/Label.vue";
+import UiSelect from "@/components/shared/ui/Select.vue";
 import { onMounted, ref, watch } from "vue";
-import { FwbSelect } from "flowbite-vue";
 
 const currency = ref();
 const load = () => {
@@ -27,63 +27,60 @@ watch(
 );
 </script>
 <template>
-    <div class="mb-4">
-        <Label forInput="currency_id"> Currency</Label>
-        <FwbSelect
-            name="currency_id"
-            v-model="modelValue.currency_id"
-            :options="
-                currency?.map((obj) => {
-                    return {
-                        value: obj.id,
-                        name: obj.currency,
-                    };
-                })
-            "
-        ></FwbSelect>
-    </div>
+    <div class="space-y-4">
+        <div>
+            <Label forInput="currency_id">Currency</Label>
+            <UiSelect
+                name="currency_id"
+                v-model="modelValue.currency_id"
+            >
+                <option value="">Select currency...</option>
+                <option
+                    v-for="obj in currency"
+                    :key="obj.id"
+                    :value="obj.id"
+                >
+                    {{ obj.currency }}
+                </option>
+            </UiSelect>
+        </div>
 
-    <FwbHeading tag="h4">Address</FwbHeading>
+        <h3 class="text-base font-semibold text-gray-900 dark:text-white pt-2">Address</h3>
 
-    <div class="mb-4">
-        <Label forInput="address">Address</Label>
-        <Text name="address" v-model="modelValue.address"></Text>
-    </div>
-    <div class="mb-4">
-        <Label forInput="city">City</Label>
-        <Text name="city" v-model="modelValue.city"></Text>
-    </div>
-    <div class="mb-4">
-        <Label forInput="zip">Zip</Label>
-        <Text name="zip" v-model="modelValue.zip"></Text>
-    </div>
+        <div>
+            <Label forInput="address">Address</Label>
+            <Text name="address" v-model="modelValue.address" />
+        </div>
+        <div>
+            <Label forInput="city">City</Label>
+            <Text name="city" v-model="modelValue.city" />
+        </div>
+        <div>
+            <Label forInput="zip">Zip</Label>
+            <Text name="zip" v-model="modelValue.zip" />
+        </div>
+        <div>
+            <Label forInput="country">Country</Label>
+            <Text name="country" v-model="modelValue.country" />
+        </div>
 
-    <div class="mb-4">
-        <Label forInput="country">Country</Label>
-        <Text name="country" v-model="modelValue.country"></Text>
-    </div>
-    <FwbHeading tag="h4">Billing address</FwbHeading>
-    <div class="mb-4">
-        <Label forInput="billing_address">Address</Label>
-        <Text
-            name="billing_address"
-            v-model="modelValue.billing_address"
-        ></Text>
-    </div>
-    <div class="mb-4">
-        <Label forInput="billing_city">City</Label>
-        <Text name="billing_city" v-model="modelValue.billing_city"></Text>
-    </div>
-    <div class="mb-4">
-        <Label forInput="billing_zip">Zip</Label>
-        <Text name="billing_zip" v-model="modelValue.billing_zip"></Text>
-    </div>
+        <h3 class="text-base font-semibold text-gray-900 dark:text-white pt-2">Billing address</h3>
 
-    <div class="mb-4">
-        <Label forInput="billing_country">Country</Label>
-        <Text
-            name="billing_country"
-            v-model="modelValue.billing_country"
-        ></Text>
+        <div>
+            <Label forInput="billing_address">Address</Label>
+            <Text name="billing_address" v-model="modelValue.billing_address" />
+        </div>
+        <div>
+            <Label forInput="billing_city">City</Label>
+            <Text name="billing_city" v-model="modelValue.billing_city" />
+        </div>
+        <div>
+            <Label forInput="billing_zip">Zip</Label>
+            <Text name="billing_zip" v-model="modelValue.billing_zip" />
+        </div>
+        <div>
+            <Label forInput="billing_country">Country</Label>
+            <Text name="billing_country" v-model="modelValue.billing_country" />
+        </div>
     </div>
 </template>

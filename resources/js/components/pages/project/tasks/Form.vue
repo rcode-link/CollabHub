@@ -1,6 +1,6 @@
 <script setup>
 import { useTasksStore } from "@/store/tasksStore.js";
-import { reactive, ref, watch } from "vue";
+import { computed, reactive, ref, watch } from "vue";
 import { useRoute } from "vue-router";
 import Errors from "@/components/shared/Errors.vue";
 import Editor from "@/components/pages/project/tasks/partisals/Form/Editor.vue";
@@ -17,6 +17,7 @@ import { setFormData } from "@/components/pages/project/tasks/formLogic";
 import Tags from "@/components/pages/project/tasks/partisals/Form/Tags.vue";
 import UiToggle from "@/components/shared/ui/Toggle.vue";
 import UiSelect from "@/components/shared/ui/Select.vue";
+import SearchSelect from "@/components/shared/ui/SearchSelect.vue";
 
 const errorsStore = useErrorsStore();
 const createTasks = useTasksStore();
@@ -42,6 +43,10 @@ const statuses = ref([]);
 const tasksStore = useTasksStore();
 const projects = ref();
 const boards = ref([]);
+
+const projectOptions = computed(() =>
+    (projects.value?.data ?? []).map(p => ({ value: p.id.toString(), label: p.name }))
+);
 
 const loadData = () => {
     window.axios.get("/api/v1/projects?can-create-task=true").then((res) => {
@@ -274,14 +279,12 @@ const labelClass = "block text-xs font-medium text-gray-500 dark:text-gray-400 m
                                     <!-- Project -->
                                     <div>
                                         <label :class="labelClass">Project</label>
-                                        <UiSelect :key="form.project_id" v-model="form.project_id">
-                                            <option value="">Select project</option>
-                                            <option
-                                                v-for="p in projects?.data"
-                                                :key="p.id"
-                                                :value="p.id.toString()"
-                                            >{{ p.name }}</option>
-                                        </UiSelect>
+                                        <SearchSelect
+                                            v-model="form.project_id"
+                                            :options="projectOptions"
+                                            placeholder="Select project"
+                                            search-placeholder="Search projects..."
+                                        />
                                         <Errors name="project_id" />
                                     </div>
 

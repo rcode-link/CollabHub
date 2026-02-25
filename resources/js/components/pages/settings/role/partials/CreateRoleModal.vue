@@ -1,6 +1,6 @@
 <script setup lang="js">
 import Modal from "@/components/shared/Modal.vue";
-import { FwbButton } from "flowbite-vue";
+import Button from "@/components/shared/Button.vue";
 import Label from "@/components/shared/Label.vue";
 import Text from "@/components/shared/Text.vue";
 import { reactive, ref } from "vue";
@@ -35,15 +35,13 @@ defineExpose({
 
 <template>
     <Modal ref="modalRef" class="z-99">
-        <template #header> Create new role </template>
+        <template #header>Create new role</template>
         <template #body>
             <Label>Role name</Label>
             <Text v-model="form.title" />
         </template>
         <template #footer>
-            <fwb-button @click="submit">Save</fwb-button>
+            <Button @click="submit">Save</Button>
         </template>
     </Modal>
 </template>
-
-<style scoped></style>

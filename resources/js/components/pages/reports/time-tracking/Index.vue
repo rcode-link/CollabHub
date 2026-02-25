@@ -2,13 +2,14 @@
 import Auth from '@/components/layouts/Auth.vue'
 import Card from '@/components/shared/Card.vue'
 import UiSelect from '@/components/shared/ui/Select.vue'
+import SearchSelect from '@/components/shared/ui/SearchSelect.vue'
 import Text from '@/components/shared/Text.vue'
 import Label from '@/components/shared/Label.vue'
 import DatePicker from '@/components/shared/DatePicker.vue'
 import TabNav from '../partials/TabNav.vue'
 import { TailwindPagination } from 'laravel-vue-pagination'
 import { useBreadcrumbStore } from '@/store/breadcrumb'
-import { ref, reactive, watch, onMounted } from 'vue'
+import { ref, reactive, watch, onMounted, computed } from 'vue'
 import { debounce } from '@/functions/debounce'
 
 const breadcrumb = useBreadcrumbStore()
@@ -50,6 +51,10 @@ const loadProjects = () => {
         projects.value = res.data.data ?? res.data
     })
 }
+
+const projectOptions = computed(() =>
+    (projects.value ?? []).map(p => ({ value: p.id, label: p.name }))
+)
 
 const loadUsers = () => {
     window.axios.get('/api/v1/users').then((res) => {
@@ -111,16 +116,12 @@ onMounted(() => {
 
                 <div class="min-w-[160px]">
                     <Label forInput="project">Project</Label>
-                    <UiSelect v-model="filters.project_id">
-                        <option value="">All Projects</option>
-                        <option
-                            v-for="project in projects"
-                            :key="project.id"
-                            :value="project.id"
-                        >
-                            {{ project.name }}
-                        </option>
-                    </UiSelect>
+                    <SearchSelect
+                        v-model="filters.project_id"
+                        :options="projectOptions"
+                        placeholder="All Projects"
+                        search-placeholder="Search projects..."
+                    />
                 </div>
 
                 <div class="min-w-[160px]">

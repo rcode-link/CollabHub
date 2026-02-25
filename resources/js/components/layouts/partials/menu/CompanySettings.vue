@@ -1,35 +1,41 @@
 <script setup lang="js">
 import { useAbility } from "@casl/vue";
 import { useUserStore } from "@/store/user";
-import { FwbListGroup, FwbListGroupItem, FwbHeading } from "flowbite-vue";
 
 const { can } = useAbility();
 const userStore = useUserStore();
 </script>
 <template>
-    <FwbHeading tag="h4">Company</FwbHeading>
-    <fwb-list-group class="w-full mb-4">
-        <FwbListGroupItem>
-            <router-link :to="{ name: 'settings.company' }"
-                >Name & Logo
-            </router-link>
-        </FwbListGroupItem>
-        <fwb-list-group-item
-            v-if="can(`can-view-users.${userStore.company.id}`, '')"
+    <div>
+        <h4
+            class="text-xs font-semibold uppercase tracking-wider text-gray-400 dark:text-gray-500 px-3 mb-2"
         >
-            <router-link :to="{ name: 'settings.company-info' }">
+            Company
+        </h4>
+        <nav class="space-y-0.5">
+            <router-link
+                :to="{ name: 'settings.company' }"
+                class="sidebar-nav-link"
+            >
+                Name & Logo
+            </router-link>
+            <router-link
+                v-if="can(`can-view-users.${userStore.company.id}`, '')"
+                :to="{ name: 'settings.company-info' }"
+                class="sidebar-nav-link"
+            >
                 Billing information
             </router-link>
-        </fwb-list-group-item>
-        <FwbListGroupItem>
-            <router-link :to="{ name: 'settings.users' }"
-                >Users
-                {{
+            <router-link
+                :to="{ name: 'settings.users' }"
+                class="sidebar-nav-link"
+            >
+                Users{{
                     can(`can-update-company.${userStore.company.id}`, "")
-                        ? "settings"
+                        ? " settings"
                         : ""
                 }}
             </router-link>
-        </FwbListGroupItem>
-    </fwb-list-group>
+        </nav>
+    </div>
 </template>

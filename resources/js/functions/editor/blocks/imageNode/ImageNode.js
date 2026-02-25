@@ -33,9 +33,11 @@ export const ResizableImage =  Node.create({
       },
       width: {
         default: '100%',
+        rendered: false,
       },
       height: {
         default: 'auto',
+        rendered: false,
       },
     }
   },

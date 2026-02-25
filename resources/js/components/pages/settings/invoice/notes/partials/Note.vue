@@ -2,7 +2,7 @@
 import Card from "@/components/shared/Card.vue";
 import Editor from "@/components/pages/project/tasks/partisals/Form/Editor.vue";
 import Text from "@/components/shared/Text.vue";
-import { FwbButton } from "flowbite-vue";
+import Button from "@/components/shared/Button.vue";
 import { ref } from "vue";
 import InteractiveToast from "@/components/shared/InteractiveToast.vue";
 
@@ -39,34 +39,34 @@ const deleteItem = () => {
 };
 </script>
 <template>
-    <Card class="flex-col gap-4">
-        <Text v-model="model.title" placeholder="Note title" />
+    <Card>
+        <div class="p-4 space-y-4">
+            <Text v-model="model.title" placeholder="Note title" />
 
-        <div class="w-full mb-2">
-            <Editor
-                :modelValue="val"
-                @update:markdown="(val) => (model.val = val)"
-            />
-        </div>
-        <div class="flex gap-4">
-            <FwbButton @click="save">Update</FwbButton>
-            <InteractiveToast>
-                <template #trigger>
-                    <FwbButton color="red">Delete</FwbButton>
-                </template>
-                <template #title> You are sure? </template>
-                <template #content>
-                    You are about to delete
-                    <b>
-                        {{ model.title }}
-                    </b>
-                </template>
-                <template #actions>
-                    <FwbButton @click="deleteItem" size="xs"
-                        >Yes, Delete it!</FwbButton
-                    >
-                </template>
-            </InteractiveToast>
+            <div class="w-full">
+                <Editor
+                    :modelValue="val"
+                    @update:markdown="(val) => (model.val = val)"
+                />
+            </div>
+            <div class="flex gap-2">
+                <Button @click="save" size="sm">Update</Button>
+                <InteractiveToast type="red">
+                    <template #trigger>
+                        <Button variant="danger" size="sm">Delete</Button>
+                    </template>
+                    <template #title>Are you sure?</template>
+                    <template #content>
+                        You are about to delete
+                        <b>{{ model.title }}</b>
+                    </template>
+                    <template #actions>
+                        <Button variant="danger" size="sm" @click="deleteItem">
+                            Yes, delete it
+                        </Button>
+                    </template>
+                </InteractiveToast>
+            </div>
         </div>
     </Card>
 </template>

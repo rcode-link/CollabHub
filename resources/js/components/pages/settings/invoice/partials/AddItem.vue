@@ -1,6 +1,6 @@
 <script setup lang="js">
-import { FwbButton } from "flowbite-vue";
 import Modal from "@/components/shared/Modal.vue";
+import Button from "@/components/shared/Button.vue";
 import Label from "@/components/shared/Label.vue";
 import Text from "@/components/shared/Text.vue";
 import { ref } from "vue";
@@ -21,22 +21,22 @@ const save = () => {
 <template>
     <Modal ref="modalRef">
         <template #button>
-            <FwbButton size="xs" class="ml-auto">Add item</FwbButton>
+            <Button size="sm">Add item</Button>
         </template>
         <template #body>
-            <form @submit.prevent="save">
-                <div class="mb-4">
+            <form @submit.prevent="save" class="space-y-4">
+                <div>
                     <Label for-input="title">Name</Label>
                     <Text name="title" v-model="model.title" />
                 </div>
-                <div class="mb-4">
+                <div>
                     <Label for-input="price">Price</Label>
                     <Text name="price" v-model="model.price" />
                 </div>
             </form>
         </template>
         <template #footer>
-            <FwbButton @click="save">Save</FwbButton>
+            <Button @click="save">Save</Button>
         </template>
     </Modal>
 </template>

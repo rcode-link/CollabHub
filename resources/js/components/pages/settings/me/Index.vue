@@ -1,13 +1,13 @@
 <script setup>
 import Settings from '@/components/layouts/Settings.vue'
-import { FwbButton } from 'flowbite-vue'
+import Button from '@/components/shared/Button.vue'
 import Card from '@/components/shared/Card.vue'
 import ChangePassword from '@/components/pages/settings/me/partials/ChangePassword.vue'
 import BaseProfile from '@/components/pages/settings/me/partials/BaseProfile.vue'
 import { useBreadcrumbStore } from '@/store/breadcrumb'
 import ProfilePicture from '@/components/pages/settings/me/partials/ProfilePicture.vue'
 import DeleteAccount from '@/components/pages/settings/me/partials/DeleteAccount.vue'
-import { ref, onMounted } from 'vue'
+import { ref } from 'vue'
 
 const breadcrumb = useBreadcrumbStore()
 
@@ -116,45 +116,57 @@ const askForPermissions = () => {
 <template>
   <Settings>
     <div class="w-full flex flex-col gap-4 mb-4">
-      <Card class="flex-col gap-6">
-        <h1 class="font-bold text-xl">Basic profile info</h1>
-        <BaseProfile />
+      <Card>
+        <div class="p-5 space-y-4">
+          <h2 class="text-base font-semibold text-gray-900 dark:text-white">Basic profile info</h2>
+          <BaseProfile />
+        </div>
       </Card>
-      <Card class="flex-col gap-6">
-        <h1 class="font-bold text-xl">Profile Image</h1>
-        <ProfilePicture />
+      <Card>
+        <div class="p-5 space-y-4">
+          <h2 class="text-base font-semibold text-gray-900 dark:text-white">Profile Image</h2>
+          <ProfilePicture />
+        </div>
       </Card>
-      <Card class="flex-col gap-6">
-        <h1 class="font-bold text-xl">Change Password</h1>
-        <ChangePassword />
+      <Card>
+        <div class="p-5 space-y-4">
+          <h2 class="text-base font-semibold text-gray-900 dark:text-white">Change Password</h2>
+          <ChangePassword />
+        </div>
       </Card>
-      <Card class="flex-col gap-6">
-        <h1 class="font-bold text-xl">Push notificaionts</h1>
-        <div class="flex gap-2">
-          <FwbButton
-            v-if="permissionStatus === 'granted'"
-            @click="revokePermissions"
-            >Disable notificaions
-          </FwbButton>
-          <FwbButton
-            v-if="permissionStatus !== 'granted'"
-            @click="askForPermissions"
-            >Allow push notificaions
-          </FwbButton>
-          <FwbButton
-            v-if="permissionStatus === 'granted'"
-            @click="subscribeNotificaion"
-            >Subscribe
-          </FwbButton>
+      <Card>
+        <div class="p-5 space-y-4">
+          <h2 class="text-base font-semibold text-gray-900 dark:text-white">Push Notifications</h2>
+          <div class="flex gap-2">
+            <Button
+              v-if="permissionStatus === 'granted'"
+              variant="soft"
+              @click="revokePermissions"
+            >
+              Disable notifications
+            </Button>
+            <Button
+              v-if="permissionStatus !== 'granted'"
+              @click="askForPermissions"
+            >
+              Allow push notifications
+            </Button>
+            <Button
+              v-if="permissionStatus === 'granted'"
+              @click="subscribeNotificaion"
+            >
+              Subscribe
+            </Button>
+          </div>
         </div>
       </Card>
 
-      <Card class="flex-col gap-6" color="bg-gray-100 dark:bg-gray-700">
-        <h1 class="font-bold text-xl">Danger zone</h1>
-        <DeleteAccount />
-      </Card>
+      <div class="border border-red-200 dark:border-red-800 rounded-xl overflow-hidden bg-white dark:bg-gray-900">
+        <div class="p-5 space-y-4">
+          <h2 class="text-base font-semibold text-red-600 dark:text-red-400">Danger zone</h2>
+          <DeleteAccount />
+        </div>
+      </div>
     </div>
   </Settings>
 </template>
-
-<style scoped></style>

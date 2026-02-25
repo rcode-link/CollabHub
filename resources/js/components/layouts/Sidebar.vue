@@ -23,6 +23,7 @@ import MoonIcon from '@/components/shared/icons/MoonIcon.vue'
 import ComputerIcon from '@/components/shared/icons/ComputerIcon.vue'
 import MenuIcon from '@/components/shared/icons/MenuIcon.vue'
 import { debounce } from '@/functions/debounce'
+import SearchSelect from '@/components/shared/ui/SearchSelect.vue'
 
 const { can } = useAbility()
 const userStore = useUserStore()
@@ -82,6 +83,10 @@ const openStopModal = () => {
         stopProjects.value = res.data.data ?? res.data ?? []
     })
 }
+
+const stopProjectOptions = computed(() =>
+    stopProjects.value.map(p => ({ value: p.id, label: p.name }))
+)
 
 watch(stopProjectId, (id) => {
     stopTaskId.value = ''
@@ -644,13 +649,12 @@ const changeTheme = (theme) => {
                         <!-- Project selector -->
                         <div>
                             <label class="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">Project</label>
-                            <select
+                            <SearchSelect
                                 v-model="stopProjectId"
-                                class="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-3 py-2 text-sm text-gray-900 dark:text-white focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
-                            >
-                                <option value="">Select project</option>
-                                <option v-for="p in stopProjects" :key="p.id" :value="p.id">{{ p.name }}</option>
-                            </select>
+                                :options="stopProjectOptions"
+                                placeholder="Select project"
+                                search-placeholder="Search projects..."
+                            />
                         </div>
 
                         <!-- Task search + selection -->

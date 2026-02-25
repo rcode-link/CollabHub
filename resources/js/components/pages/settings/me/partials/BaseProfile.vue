@@ -29,14 +29,14 @@ const save = () => {
 <template>
     <form @submit.prevent="save" class="w-full grid gap-6">
         <div>
-            <Label :forInput="'email'">Email</Label>
-            <Text type="text" v-model="form.user.email" :name="'email'" form="'login'" placeholder="Email"/>
+            <Label forInput="email">Email</Label>
+            <Text type="text" v-model="form.user.email" name="email" placeholder="Email"/>
             <Errors name="email"/>
         </div>
         <div>
-            <Label :forInput="'email'">Name</Label>
-            <Text type="text" v-model="form.user.name" :name="'email'" form="'login'" placeholder="Email"/>
-            <Errors name="email"/>
+            <Label forInput="name">Name</Label>
+            <Text type="text" v-model="form.user.name" name="name" placeholder="Name"/>
+            <Errors name="name"/>
         </div>
         <Button type="submit">Save</Button>
     </form>

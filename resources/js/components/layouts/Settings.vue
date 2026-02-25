@@ -17,14 +17,25 @@ onMounted(() => {
 
 <template>
     <Auth>
-        <div class="flex flex-col md:flex-row gap-4">
-            <div class="md:sticky sticky-top min-w-full md:min-w-[300px] mb-4">
-                <Base />
-                <CompanySettings />
-                <Invoice />
-                <Roles />
-            </div>
-            <div class="w-full" id="settingsContent">
+        <div class="mb-6">
+            <h1
+                class="text-2xl font-bold text-gray-900 dark:text-white"
+            >
+                Settings
+            </h1>
+        </div>
+        <div class="flex flex-col lg:flex-row gap-6">
+            <aside
+                class="w-full lg:w-64 lg:min-w-[256px] shrink-0 lg:sticky lg:top-4 lg:self-start"
+            >
+                <nav class="space-y-5">
+                    <Base />
+                    <CompanySettings />
+                    <Invoice />
+                    <Roles />
+                </nav>
+            </aside>
+            <div class="flex-1 min-w-0 max-w-2xl">
                 <slot></slot>
             </div>
         </div>

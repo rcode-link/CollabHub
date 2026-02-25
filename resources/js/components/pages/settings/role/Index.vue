@@ -1,15 +1,17 @@
 <script setup lang="js">
-import { computed, onMounted, ref, watch } from "vue";
+import { computed, ref, watch } from "vue";
 import Settings from "@/components/layouts/Settings.vue";
 import { useRoleStore } from "@/store/roleStore";
 import Permissions from "@/components/pages/settings/role/partials/Permissions.vue";
-import { FwbButton, FwbInput, FwbTab, FwbTabs } from "flowbite-vue";
 import Users from "@/components/pages/settings/role/partials/Users.vue";
 import { useBreadcrumbStore } from "@/store/breadcrumb";
 import InteractiveToast from "@/components/shared/InteractiveToast.vue";
 import Resource from "@/components/pages/settings/role/partials/Resource.vue";
 import { toast } from "vue3-toastify";
 import { useRoute } from "vue-router";
+import Button from "@/components/shared/Button.vue";
+import Text from "@/components/shared/Text.vue";
+import Label from "@/components/shared/Label.vue";
 
 const roleStore = useRoleStore();
 const breadcrumb = useBreadcrumbStore();
@@ -17,6 +19,12 @@ const route = useRoute();
 const activeTab = ref("users");
 const roleName = ref("");
 const deleteRoleToastRef = ref();
+
+const tabs = [
+    { key: "users", label: "Users" },
+    { key: "permissions", label: "Permissions" },
+    { key: "resources", label: "Resources" },
+];
 
 watch(
     () => route.query.role_id,
@@ -73,57 +81,59 @@ const deleteRole = () => {
 <template>
     <Settings>
         <div class="w-full" :key="roleStore.role.title">
-            <div class="flex justify-between items-center">
-                <h1 class="base-item text-lg">{{ roleStore.role.title }}</h1>
-                <interactive-toast
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-lg font-semibold text-gray-900 dark:text-white">{{ roleStore.role.title }}</h2>
+                <InteractiveToast
                     ref="deleteRoleToastRef"
+                    type="red"
                     v-if="roleStore.role.can_be_changed"
                 >
                     <template #trigger>
-                        <fwb-button color="red">Delete role</fwb-button>
+                        <Button variant="danger" size="sm">Delete role</Button>
                     </template>
-                    <template #title>
-                        <h1>Are sure?</h1>
-                    </template>
+                    <template #title>Are you sure?</template>
                     <template #content>
                         You are about to delete role
-                        <b>{{ roleStore.role.title }}</b
-                        >! All permissions that users have in this role will be
-                        lost!!!
-                        <br />
-
-                        <fwb-input
-                            v-model="roleName"
-                            label="To delete role type in its name:"
-                            :placeholder="roleStore.role.title"
-                            size="sm"
-                        />
+                        <b>{{ roleStore.role.title }}</b>!
+                        All permissions that users have in this role will be lost.
+                        <div class="mt-3">
+                            <Label>To delete role type in its name:</Label>
+                            <Text
+                                v-model="roleName"
+                                :placeholder="roleStore.role.title"
+                            />
+                        </div>
                     </template>
                     <template #actions>
-                        <fwb-button
+                        <Button
                             :disabled="shouldDeleteButtonBeDisabled"
-                            size="xs"
-                            color="red"
+                            variant="danger"
+                            size="sm"
                             @click="deleteRole"
                         >
-                            Yes delete it!
-                        </fwb-button>
+                            Yes, delete it
+                        </Button>
                     </template>
-                </interactive-toast>
+                </InteractiveToast>
             </div>
-            <fwb-tabs v-model="activeTab" variant="underline" class="pt-5">
-                <fwb-tab name="users" title="Users">
-                    <users />
-                </fwb-tab>
-                <fwb-tab name="permissions" title="Permissisons">
-                    <Permissions />
-                </fwb-tab>
-                <fwb-tab name="resources" title="Resources">
-                    <Resource />
-                </fwb-tab>
-            </fwb-tabs>
+            <div class="flex gap-1 border-b border-gray-200 dark:border-gray-700 mb-5">
+                <button
+                    v-for="tab in tabs"
+                    :key="tab.key"
+                    @click="activeTab = tab.key"
+                    class="px-4 py-2 text-sm font-medium rounded-t-lg transition-colors -mb-px border-b-2"
+                    :class="
+                        activeTab === tab.key
+                            ? 'border-blue-600 text-blue-700 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20'
+                            : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800'
+                    "
+                >
+                    {{ tab.label }}
+                </button>
+            </div>
+            <Users v-if="activeTab === 'users'" />
+            <Permissions v-if="activeTab === 'permissions'" />
+            <Resource v-if="activeTab === 'resources'" />
         </div>
     </Settings>
 </template>
-
-<style scoped></style>

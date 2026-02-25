@@ -1,8 +1,12 @@
 <script lang="js" setup>
 import Settings from "@/components/layouts/Settings.vue";
 import Card from "@/components/shared/Card.vue";
+import Button from "@/components/shared/Button.vue";
 import { onMounted, ref, watch } from "vue";
 import { useBreadcrumbStore } from "@/store/breadcrumb";
+import { useUserStore } from "@/store/user";
+import { toast } from "vue3-toastify";
+import CompnayBillingInformation from "@/components/shared/forms/company/CompnayBillingInformation.vue";
 
 const breadcrumb = useBreadcrumbStore()
 breadcrumb.setLinks([
@@ -10,10 +14,7 @@ breadcrumb.setLinks([
     { link: { name: 'settings.base' }, title: 'Settings' },
     { title: 'Company Information' },
 ])
-import { FwbButton } from "flowbite-vue";
-import { useUserStore } from "@/store/user";
-import { toast } from "vue3-toastify";
-import CompnayBillingInformation from "@/components/shared/forms/company/CompnayBillingInformation.vue";
+
 const userStore = useUserStore();
 const currency = ref();
 const load = () => {
@@ -63,11 +64,13 @@ onMounted(() => {
 </script>
 <template>
     <Settings>
-        <Card class="flex-col">
-            <form @submit.prevent="save">
-                <CompnayBillingInformation v-model="model" />
-                <FwbButton>Save</FwbButton>
-            </form>
+        <Card>
+            <div class="p-5">
+                <form @submit.prevent="save" class="space-y-4">
+                    <CompnayBillingInformation v-model="model" />
+                    <Button type="submit">Save</Button>
+                </form>
+            </div>
         </Card>
     </Settings>
 </template>

@@ -2,12 +2,12 @@
 import Auth from '@/components/layouts/Auth.vue'
 import Card from '@/components/shared/Card.vue'
 import Badge from '@/components/shared/ui/Badge.vue'
-import UiSelect from '@/components/shared/ui/Select.vue'
+import SearchSelect from '@/components/shared/ui/SearchSelect.vue'
 import Label from '@/components/shared/Label.vue'
 import DatePicker from '@/components/shared/DatePicker.vue'
 import TabNav from '../partials/TabNav.vue'
 import { useBreadcrumbStore } from '@/store/breadcrumb'
-import { ref, reactive, watch, onMounted } from 'vue'
+import { ref, reactive, watch, onMounted, computed } from 'vue'
 
 const breadcrumb = useBreadcrumbStore()
 
@@ -46,6 +46,10 @@ const loadProjects = () => {
     })
 }
 
+const projectOptions = computed(() =>
+    (projects.value ?? []).map(p => ({ value: p.id, label: p.name }))
+)
+
 watch(() => filters.project_id, () => load())
 watch(() => filters.date_from, () => load())
 watch(() => filters.date_to, () => load())
@@ -79,16 +83,12 @@ onMounted(() => {
             <div class="flex flex-wrap items-end gap-3 p-4">
                 <div class="min-w-[160px]">
                     <Label forInput="project">Project</Label>
-                    <UiSelect v-model="filters.project_id">
-                        <option value="">All Projects</option>
-                        <option
-                            v-for="project in projects"
-                            :key="project.id"
-                            :value="project.id"
-                        >
-                            {{ project.name }}
-                        </option>
-                    </UiSelect>
+                    <SearchSelect
+                        v-model="filters.project_id"
+                        :options="projectOptions"
+                        placeholder="All Projects"
+                        search-placeholder="Search projects..."
+                    />
                 </div>
 
                 <div class="min-w-[150px]">

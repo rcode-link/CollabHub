@@ -2,39 +2,45 @@
 import { useAbility } from "@casl/vue";
 import { useUserStore } from "@/store/user";
 
-import { FwbListGroup, FwbListGroupItem, FwbHeading } from "flowbite-vue";
-
 const { can } = useAbility();
 const userStore = useUserStore();
 </script>
 <template>
-    <FwbHeading tag="h4">Invoice</FwbHeading>
-    <fwb-list-group class="w-full mb-4">
-        <fwb-list-group-item
-            v-if="can(`can-view-users.${userStore.company.id}`, '')"
+    <div>
+        <h4
+            class="text-xs font-semibold uppercase tracking-wider text-gray-400 dark:text-gray-500 px-3 mb-2"
         >
-            <router-link :to="{ name: 'settings.invoice-items' }">
+            Invoice
+        </h4>
+        <nav class="space-y-0.5">
+            <router-link
+                v-if="can(`can-view-users.${userStore.company.id}`, '')"
+                :to="{ name: 'settings.invoice-items' }"
+                class="sidebar-nav-link"
+            >
                 Billable items
             </router-link>
-        </fwb-list-group-item>
-        <fwb-list-group-item
-            v-if="can(`can-view-users.${userStore.company.id}`, '')"
-        >
-            <router-link :to="{ name: 'settings.notes' }"> Notes </router-link>
-        </fwb-list-group-item>
-        <fwb-list-group-item
-            v-if="can(`can-view-users.${userStore.company.id}`, '')"
-        >
-            <router-link :to="{ name: 'settings.mesurment-units' }">
-                Masurment units
+            <router-link
+                v-if="can(`can-view-users.${userStore.company.id}`, '')"
+                :to="{ name: 'settings.notes' }"
+                class="sidebar-nav-link"
+            >
+                Notes
             </router-link>
-        </fwb-list-group-item>
-        <fwb-list-group-item
-            v-if="can(`can-view-users.${userStore.company.id}`, '')"
-        >
-            <router-link :to="{ name: 'settings.currency' }">
+            <router-link
+                v-if="can(`can-view-users.${userStore.company.id}`, '')"
+                :to="{ name: 'settings.mesurment-units' }"
+                class="sidebar-nav-link"
+            >
+                Measurement units
+            </router-link>
+            <router-link
+                v-if="can(`can-view-users.${userStore.company.id}`, '')"
+                :to="{ name: 'settings.currency' }"
+                class="sidebar-nav-link"
+            >
                 Currency
             </router-link>
-        </fwb-list-group-item>
-    </fwb-list-group>
+        </nav>
+    </div>
 </template>

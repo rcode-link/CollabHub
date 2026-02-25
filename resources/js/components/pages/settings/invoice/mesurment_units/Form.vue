@@ -2,7 +2,8 @@
 import Text from "@/components/shared/Text.vue";
 import { ref } from "vue";
 import InteractiveToast from "@/components/shared/InteractiveToast.vue";
-import { FwbButton, FwbTableCell, FwbTableRow } from "flowbite-vue";
+import Button from "@/components/shared/Button.vue";
+
 const emit = defineEmits(['update']);
 const props = defineProps({
     val: {
@@ -32,29 +33,29 @@ const deleteItem = () => {
 };
 </script>
 <template>
-    <FwbTableRow>
-        <FwbTableCell>
+    <tr class="border-b border-gray-100 dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-gray-800/50">
+        <td class="px-4 py-3">
             <Text v-model="model.val" />
-        </FwbTableCell>
-        <FwbTableCell class="flex gap-4 justify-end">
-            <InteractiveToast>
-                <template #trigger>
-                    <FwbButton color="red">Delete</FwbButton>
-                </template>
-                <template #title> You are sure? </template>
-                <template #content>
-                    You are about to delete
-                    <b>
-                        {{ model.title }}
-                    </b>
-                </template>
-                <template #actions>
-                    <FwbButton @click="deleteItem" size="xs"
-                        >Yes, Delete it!</FwbButton
-                    >
-                </template>
-            </InteractiveToast>
-            <FwbButton @click="save">Update</FwbButton>
-        </FwbTableCell>
-    </FwbTableRow>
+        </td>
+        <td class="px-4 py-3">
+            <div class="flex gap-2 justify-end">
+                <InteractiveToast type="red">
+                    <template #trigger>
+                        <Button variant="danger" size="sm">Delete</Button>
+                    </template>
+                    <template #title>Are you sure?</template>
+                    <template #content>
+                        You are about to delete
+                        <b>{{ model.val }}</b>
+                    </template>
+                    <template #actions>
+                        <Button variant="danger" size="sm" @click="deleteItem">
+                            Yes, delete it
+                        </Button>
+                    </template>
+                </InteractiveToast>
+                <Button @click="save" size="sm">Update</Button>
+            </div>
+        </td>
+    </tr>
 </template>
