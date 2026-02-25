@@ -18,7 +18,7 @@ class InvitationResource extends JsonResource
             'id' => $this->id,
             'created_at' => $this->created_at,
             'number_of_invitations' => $this->number_of_invitations,
-            'registered_count' => $this->registered ? count($this->registered) : 0
+            'registered_count' => $this->registered ? count($this->registered) : 0,
         ];
     }
 }

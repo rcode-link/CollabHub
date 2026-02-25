@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Http\Requests\CustomerCompanyRequest;
 use App\Http\Resources\CustomerResource;
 use App\Models\Company;
-use Illuminate\Http\Request;
 
 class CustomerCompanyController extends Controller
 {
@@ -15,6 +14,7 @@ class CustomerCompanyController extends Controller
     public function index()
     {
         \Auth::user()->authorize('can-view-billing-info', \Auth::user()->company()->first());
+
         return CustomerResource::collection(Company::whereIsCostumerCompany(true)->paginate());
     }
 
@@ -42,6 +42,7 @@ class CustomerCompanyController extends Controller
     public function update(CustomerCompanyRequest $request, string $id)
     {
         Company::whereId($id)->update($request->validated());
+
         return response()->noContent();
         //
     }

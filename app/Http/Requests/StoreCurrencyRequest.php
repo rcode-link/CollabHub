@@ -24,7 +24,7 @@ class StoreCurrencyRequest extends FormRequest
         return [
             'currency' => ['required', 'unique:currencies,currency'],
             'format' => ['required', 'string'],
-            'iso' => ['required', 'string']
+            'iso' => ['required', 'string'],
         ];
     }
 }

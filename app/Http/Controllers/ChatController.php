@@ -50,7 +50,6 @@ class ChatController extends Controller
         return ChatResource::collection($chat->paginate());
     }
 
-
     public function getNumberOfUnreadMessages(Request $request): JsonResponse
     {
         $numberOfUnreadMessage = Chat::query()
@@ -61,9 +60,10 @@ class ChatController extends Controller
             ->withCount('numberOfUnreadMessages')
             ->having('number_of_unread_messages_count', '!=', 0)
             ->get();
+
         return \response()->json([
             'messages' => $numberOfUnreadMessage,
-            'total' => $numberOfUnreadMessage->sum('number_of_unread_messages_count')
+            'total' => $numberOfUnreadMessage->sum('number_of_unread_messages_count'),
         ]);
     }
 
@@ -82,7 +82,7 @@ class ChatController extends Controller
 
         $chat->users()->sync($users->map(function ($str) {
             return [
-                'user_id' => $str
+                'user_id' => $str,
             ];
         }));
 
@@ -101,9 +101,10 @@ class ChatController extends Controller
             'users' => function ($builder) {
                 $builder->whereNot('user_id', Auth::id())->limit(2);
             },
-            'chatable'
+            'chatable',
         ])
-             ->loadCount('users');
+            ->loadCount('users');
+
         return new ChatResource($chat);
 
     }
@@ -123,7 +124,6 @@ class ChatController extends Controller
         return response()->noContent();
     }
 
-
     public function left($id): Response
     {
         $chanelName = "chat.$id";
@@ -139,8 +139,6 @@ class ChatController extends Controller
 
         return response()->noContent();
     }
-
-
 
     /**
      * Update the specified resource in storage.

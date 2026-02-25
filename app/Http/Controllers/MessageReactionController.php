@@ -26,11 +26,11 @@ class MessageReactionController extends Controller
 
         MessageReaction::query()->updateOrCreate([
             'user_id' => $request->validated('user_id'),
-            'chat_message_id' => $request->validated('chat_message_id')
+            'chat_message_id' => $request->validated('chat_message_id'),
         ],
-        [
-            'reaction' => $request->validated('reaction')
-        ]);
+            [
+                'reaction' => $request->validated('reaction'),
+            ]);
 
         $message = ChatMessage::relations()
             ->where('id', $request->validated('chat_message_id'))

@@ -3,9 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Events\ManagePermissionsEvent;
-use App\Helpers\GenerateImage;
 use App\Http\Requests\RegisterRequest;
-use App\Models\Company;
 use App\Models\Invitations;
 use App\Models\Role;
 use App\Models\User;
@@ -27,21 +25,21 @@ class RegisterController extends Controller
         try {
             $user = User::create($data);
 
-
             Role::whereId($invitation->role_id)->first()?->users()->attach($user);
             $user->company()->attach([
-                'company_id' => $invitation->company_id
+                'company_id' => $invitation->company_id,
             ]);
 
             $invitation->update([
-                'registered' => array_merge($invitation->registered ?? [], [$data['email']])
+                'registered' => array_merge($invitation->registered ?? [], [$data['email']]),
             ]);
 
             ManagePermissionsEvent::dispatch();
 
             DB::commit();
+
             return response()->json([
-                'status' => 'ok'
+                'status' => 'ok',
             ]);
         } catch (\Exception $exception) {
             DB::rollBack();

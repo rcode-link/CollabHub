@@ -16,15 +16,15 @@ class CalendarController extends Controller
 {
     public function getMyEvents(Request $request)
     {
-        $year = (int)$request->get('year', now()->year);
-        $month = (int)$request->get('month', now()->month);
+        $year = (int) $request->get('year', now()->year);
+        $month = (int) $request->get('month', now()->month);
         $startDate = now()->set(['year' => $year, 'month' => $month])->startOf('month');
         $endDate = now()->set(['year' => $year, 'month' => $month])->endOf('month');
         $events = Event::query()
             ->with('user', 'videocalls')
             ->where(function (Builder $query) {
                 $query->where('user_id', \Auth::id())
-                    ->orWhereHas('user', fn(Builder $builder) => $builder->where('user_id', \Auth::id()));
+                    ->orWhereHas('user', fn (Builder $builder) => $builder->where('user_id', \Auth::id()));
             })
             ->where(function (Builder $query) use ($startDate, $endDate) {
                 $query->whereBetween('start_time', [$startDate, $endDate])
@@ -39,6 +39,7 @@ class CalendarController extends Controller
     public function view(Event $event)
     {
         $event->load('creator');
+
         return new EventResource($event);
     }
 
@@ -50,27 +51,26 @@ class CalendarController extends Controller
         $data = $request->validated();
         $data['approved'] = ($event->type != $data['type'] && $data['type'] == EventTypes::Vacation->value) ? false : true;
 
-        if (!$request->has('freq')) {
+        if (! $request->has('freq')) {
             $data['freq'] = null;
             $data['freq_settings'] = null;
             $data['freq_until'] = null;
         }
 
         $event->update($data);
-        if ($request->get('has_video') && !$event->videocalls) {
+        if ($request->get('has_video') && ! $event->videocalls) {
             $event->videocalls()->create([
                 'title' => $request->get('summary'),
                 'users' => [],
-                'slug' => Str::uuid()
+                'slug' => Str::uuid(),
             ]);
         }
 
-        if (!$request->get('has_video') && $event->videocalls) {
+        if (! $request->get('has_video') && $event->videocalls) {
             $event->videocalls()->delete();
         }
         $event->user()->sync($request->validated('users'));
     }
-
 
     public function destroy(Event $event)
     {
@@ -96,23 +96,24 @@ class CalendarController extends Controller
         $data['approved'] = $data['type'] === EventTypes::Event->value;
         $event = Event::create($data);
 
-
         if ($request->get('has_video')) {
             $event->videocalls()->create([
                 'title' => $data['summary'],
                 'users' => [],
-                'slug' => Str::uuid()
+                'slug' => Str::uuid(),
             ]);
         }
 
         $event->user()->sync($users);
         HandleVacationRequestEvent::dispatch($event);
+
         return response()->json('');
     }
 
     public function calDav(Request $request, $path = null)
     {
         $icalendarData = Event::convertToICalendarFormat();
+
         return response($icalendarData)
             ->header('Content-Type', 'text/calendar');
     }

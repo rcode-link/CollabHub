@@ -25,7 +25,7 @@ class RoleAddResourceRequest extends FormRequest
     {
         return [
             'resource_type' => [Rule::enum(PermissionsScopes::class)],
-            'resource' => ['exists:'.\Str::plural(request()->get('resource_type', null)).',id']
+            'resource' => ['exists:'.\Str::plural(request()->get('resource_type', null)).',id'],
         ];
     }
 }

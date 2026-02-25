@@ -32,7 +32,7 @@ class AddTaskToSprintEvent
         TaskSprint::query()->create([
             'task_id' => $task->id,
             'task_status_id' => $firstStatus->id,
-            'sprint_id' => $request->get('sprint_id')
+            'sprint_id' => $request->get('sprint_id'),
         ]);
 
         // Post system comment about board assignment
@@ -45,13 +45,12 @@ class AddTaskToSprintEvent
                     'type' => 'paragraph',
                     'content' => [[
                         'type' => 'text',
-                        'text' => "Task moved to board \"{$boardTitle}\", sprint \"{$sprintTitle}\""
-                    ]]
-                ]]
+                        'text' => "Task moved to board \"{$boardTitle}\", sprint \"{$sprintTitle}\"",
+                    ]],
+                ]],
             ]);
         }
 
         TaskUpdatedEvent::dispatch($task, 0);
     }
-
 }

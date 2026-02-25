@@ -25,7 +25,7 @@ if (! is_dir($seaweedDir)) {
 file_put_contents($s3ConfigPath, json_encode([
     'identities' => [
         [
-            'name'        => 'admin',
+            'name' => 'admin',
             'credentials' => [
                 [
                     'accessKey' => env('AWS_ACCESS_KEY_ID'),
@@ -69,11 +69,11 @@ return [
     |
     */
     'commands' => [
-        'About'     => 'php artisan solo:about',
-        'Logs'      => EnhancedTailCommand::file(storage_path('logs/laravel.log')),
-        'Vite'      => 'npm run dev',
-        'Soketi'    => "soketi start --config='./soketi.config.example.js'",
-        'CroneJob'  => 'php artisan queue:work',
+        'About' => 'php artisan solo:about',
+        'Logs' => EnhancedTailCommand::file(storage_path('logs/laravel.log')),
+        'Vite' => 'npm run dev',
+        'Soketi' => "soketi start --config='./soketi.config.example.js'",
+        'CroneJob' => 'php artisan queue:work',
         'SeaweedFS' => sprintf(
             'weed mini -dir=%s -master.port=%s -volume.port=%s -filer.port=%s -s3.port=%s -s3.config=%s',
             $seaweedDir,

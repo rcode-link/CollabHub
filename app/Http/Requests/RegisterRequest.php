@@ -24,5 +24,4 @@ class RegisterRequest extends FormRequest
             'password' => UserPasswordRules::WITH_CONFIRMED(),
         ];
     }
-
 }

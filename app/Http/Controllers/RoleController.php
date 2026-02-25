@@ -8,11 +8,9 @@ use App\Http\Requests\RoleAddResourceRequest;
 use App\Http\Requests\StoreRoleRequest;
 use App\Http\Requests\UpdateRoleRequest;
 use App\Models\Company;
-use App\Models\Permission;
 use App\Models\Project;
 use App\Models\Role;
 use App\Models\RoleResource;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpFoundation\Response;
@@ -77,10 +75,11 @@ class RoleController extends Controller
     public function removeUserFromRole(Request $request, Role $role)
     {
         $request->validate([
-            'user' => ['exists:users,id']
+            'user' => ['exists:users,id'],
         ]);
         $role->users()->detach([$request->get('user')]);
         ManagePermissionsEvent::dispatch();
+
         return $request->all();
     }
 
@@ -90,7 +89,7 @@ class RoleController extends Controller
         RoleResource::updateOrCreate([
             'role_id' => $role->id,
             'resourcable_id' => $request->get('resource'),
-            'resourcable_type' => $request->get('resource_type') === PermissionsScopes::Project->value ? Project::class : Company::class
+            'resourcable_type' => $request->get('resource_type') === PermissionsScopes::Project->value ? Project::class : Company::class,
         ], []);
 
         ManagePermissionsEvent::dispatch();
@@ -110,19 +109,19 @@ class RoleController extends Controller
         $permission = [];
         switch ($request->get('resource_type')) {
             case PermissionsScopes::Project->value:
-                $projectIds = Auth::user()->permissions()->filter(fn($obj) => $obj['model']['type'] === Project::class)->pluck('model.id');
+                $projectIds = Auth::user()->permissions()->filter(fn ($obj) => $obj['model']['type'] === Project::class)->pluck('model.id');
                 $permission = Project::whereIn('id', $projectIds)->get()->map(function (Project $project) {
                     return [
                         'value' => $project->id,
-                        'name' => $project->name
+                        'name' => $project->name,
                     ];
                 });
                 break;
             case PermissionsScopes::Company->value:
-                $permission = Auth::user()->permissions()->filter(fn($obj) => $obj['model']['type'] === Company::class)->map(function ($permission) {
+                $permission = Auth::user()->permissions()->filter(fn ($obj) => $obj['model']['type'] === Company::class)->map(function ($permission) {
                     return [
                         'value' => $permission['model']['id'],
-                        'name' => $permission['model']['name']
+                        'name' => $permission['model']['name'],
                     ];
                 });
                 break;
@@ -136,12 +135,13 @@ class RoleController extends Controller
      */
     public function destroy(Role $role)
     {
-        abort_if(!$role->can_be_changed, Response::HTTP_FORBIDDEN);
+        abort_if(! $role->can_be_changed, Response::HTTP_FORBIDDEN);
         $role->users()->sync([]);
         $role->definitions()->sync([]);
         $role->delete();
 
         ManagePermissionsEvent::dispatch();
+
         return response()->noContent();
     }
 }

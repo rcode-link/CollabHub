@@ -18,13 +18,13 @@ class TaskCreatedEvent
     {
 
         $chat = $model->chat()->create([
-            'title' => $model->name
+            'title' => $model->name,
         ]);
 
         /*
          * Get all users that are able to open project where task is added and add them to chat
          */
-        
+
         $users = [[
             'user_id' => $model->created_by,
         ]];
@@ -38,5 +38,4 @@ class TaskCreatedEvent
 
         //
     }
-
 }

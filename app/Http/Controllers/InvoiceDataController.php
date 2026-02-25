@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\Enums\InvoiceData as InvoiceDataEnum;
 use App\Http\Requests\StoreInvoiceDataRequest;
 use App\Http\Requests\UpdateInvoiceDataRequest;
 use App\Models\InvoiceData;
 use Illuminate\Validation\Rules\Enum;
-use \App\Helpers\Enums\InvoiceData as InvoiceDataEnum;
 
 class InvoiceDataController extends Controller
 {
@@ -17,7 +17,7 @@ class InvoiceDataController extends Controller
     {
 
         $this->validate(request(), [
-            'type' => [new Enum(InvoiceDataEnum::class)]
+            'type' => [new Enum(InvoiceDataEnum::class)],
         ]);
 
         return InvoiceData::where('type', request()->get('type'))->get();

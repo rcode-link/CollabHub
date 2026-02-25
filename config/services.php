@@ -31,4 +31,12 @@ return [
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
 
+    'browsershot' => [
+        'remote_host' => env('BROWSERSHOT_REMOTE_HOST'),
+        'remote_port' => (int) env('BROWSERSHOT_REMOTE_PORT', 9222),
+        'node_binary' => env('BROWSERSHOT_NODE_BINARY', 'node'),
+        'npm_binary' => env('BROWSERSHOT_NPM_BINARY', 'npm'),
+        'app_url' => env('BROWSERSHOT_APP_URL'),
+    ],
+
 ];

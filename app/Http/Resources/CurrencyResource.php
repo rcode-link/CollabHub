@@ -24,7 +24,7 @@ class CurrencyResource extends JsonResource
             'id' => $this->id,
             'currency' => $this->currency,
             'iso' => $this->iso,
-            'format' => $this->format
+            'format' => $this->format,
         ];
     }
 }

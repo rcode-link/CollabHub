@@ -16,7 +16,7 @@ use App\Models\User;
 */
 
 BroadcastCustom::getInstance()->channel('user.*', function (User $user, $companyId) {
-    $isUserInCompany = $user->permissions()->pluck('permissions')->flatten()->contains('can-view-company.' . $companyId);
+    $isUserInCompany = $user->permissions()->pluck('permissions')->flatten()->contains('can-view-company.'.$companyId);
 
     if ($isUserInCompany) {
         return ['id' => $user->id];
@@ -35,8 +35,11 @@ BroadcastCustom::getInstance()->channel('chat.*', function ($user, $chatId) {
     }
 });
 
-
 BroadcastCustom::getInstance()->channel('start-call.*', function (User $user, $chatId) {
+    return true;
+});
+
+BroadcastCustom::getInstance()->channel('video-call.*', function (User $user, $slug) {
     return true;
 });
 

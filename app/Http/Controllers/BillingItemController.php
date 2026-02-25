@@ -4,8 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreBillingItemRequest;
 use App\Http\Requests\UpdateBillingItemRequest;
-use App\Models\BillingItem;
 use App\Http\Resources\BillingItemResource;
+use App\Models\BillingItem;
 
 class BillingItemController extends Controller
 {

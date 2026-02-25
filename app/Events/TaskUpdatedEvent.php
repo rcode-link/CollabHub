@@ -17,25 +17,25 @@ use Illuminate\Queue\SerializesModels;
 
 class TaskUpdatedEvent implements ShouldBroadcast
 {
-    use InteractsWithBroadcasting;
     use Dispatchable, InteractsWithSockets, SerializesModels;
+    use InteractsWithBroadcasting;
 
     public TaskResource $task;
 
     /**
      * Create a new event instance.
      */
-    public function __construct(private readonly Task $data, public int|null $oldStatus = 0)
+    public function __construct(private readonly Task $data, public ?int $oldStatus = 0)
     {
         $this->task = new TaskResource($this->data->load([
             'taskSprintData' => function (HasMany $builder) {
                 $builder
                     ->with([
-                        'status' => fn(HasOne $query) => $query->select('id', 'title', 'board_id'),
-                        'status.board' => fn(BelongsTo $query) => $query->select('id', 'title'),
-                        'sprint' => fn(HasOne $query) => $query->select('id', 'title')
+                        'status' => fn (HasOne $query) => $query->select('id', 'title', 'board_id'),
+                        'status.board' => fn (BelongsTo $query) => $query->select('id', 'title'),
+                        'sprint' => fn (HasOne $query) => $query->select('id', 'title'),
                     ])
-                    ->when(request()->has('sprint_id') && !request()->has('fullList'), function (Builder $builder) {
+                    ->when(request()->has('sprint_id') && ! request()->has('fullList'), function (Builder $builder) {
                         $builder->where('sprint_id', request()->get('sprint_id'));
                     });
             }]));
@@ -50,8 +50,8 @@ class TaskUpdatedEvent implements ShouldBroadcast
     public function broadcastOn(): array
     {
         return [
-            new PrivateChannel("task-updated." . $this->data->project_id),
-            new PrivateChannel("task-updated.task." . $this->data->task_id),
+            new PrivateChannel('task-updated.'.$this->data->project_id),
+            new PrivateChannel('task-updated.task.'.$this->data->task_id),
         ];
     }
 }

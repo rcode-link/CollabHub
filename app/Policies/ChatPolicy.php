@@ -4,7 +4,6 @@ namespace App\Policies;
 
 use App\Models\Chat;
 use App\Models\User;
-use Illuminate\Auth\Access\Response;
 
 class ChatPolicy
 {

@@ -10,6 +10,8 @@ import VideoOptions from "@/components/pages/video/partials/VideoOptions.vue";
 import WelcomeScreen from "@/components/pages/video/partials/WelcomeScreen.vue";
 //@ts-ignore
 import PrintTracks from "@/components/pages/video/partials/PrintTracks.vue";
+//@ts-ignore
+import JoinRequests from "@/components/pages/video/partials/JoinRequests.vue";
 
 const liveKit = useLiveKit();
 const videoCall = useVideoCallStore();
@@ -46,6 +48,7 @@ const start = async (obj) => {
             <PrintTracks :class="{
                 'opacity-0 pointer-events-none': videoCall.size !== 'fullScreen',
             }" />
+            <JoinRequests />
             <VideoOptions />
         </div>
     </div>

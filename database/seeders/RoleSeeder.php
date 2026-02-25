@@ -3,12 +3,10 @@
 namespace Database\Seeders;
 
 use App\Events\ManagePermissionsEvent;
-use App\Models\Chat;
 use App\Models\Company;
 use App\Models\PermissionDefinition;
 use App\Models\Role;
 use App\Models\RoleResource;
-use App\Models\User;
 use Illuminate\Database\Seeder;
 
 class RoleSeeder extends Seeder
@@ -20,11 +18,11 @@ class RoleSeeder extends Seeder
     {
         $admin = Role::updateOrCreate([
             'title' => 'Admin',
-            'can_be_changed' => false
+            'can_be_changed' => false,
         ]);
 
         $company = Company::firstOrCreate([
-            'is_costumer_company' => false
+            'is_costumer_company' => false,
         ], [
             'name' => 'Company',
         ]);
@@ -34,7 +32,7 @@ class RoleSeeder extends Seeder
         RoleResource::updateOrCreate([
             'role_id' => $admin->id,
             'resourcable_id' => $company->id,
-            'resourcable_type' => $company::class
+            'resourcable_type' => $company::class,
         ], []);
 
         ManagePermissionsEvent::dispatch();

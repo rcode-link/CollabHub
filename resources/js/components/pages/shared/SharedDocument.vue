@@ -37,8 +37,8 @@ onMounted(() => {
     </div>
 
     <!-- Document content -->
-    <div v-else class="max-w-3xl mx-auto px-4 py-12">
-      <h1 class="text-3xl font-bold mb-8 text-gray-900 dark:text-white">
+    <div v-else class="shared-document max-w-3xl mx-auto px-4 py-12">
+      <h1 class="shared-document-title text-3xl font-bold mb-8 text-gray-900 dark:text-white">
         {{ document.title || 'Untitled' }}
       </h1>
       <AdvancedEditor
@@ -50,3 +50,28 @@ onMounted(() => {
 
   </div>
 </template>
+
+<style scoped>
+@media print {
+  .shared-document {
+    padding: 0 !important;
+  }
+
+  .shared-document-title {
+    display: none !important;
+  }
+
+  .shared-document :deep(.border) {
+    border: none !important;
+  }
+
+  .shared-document :deep(.rounded-xl) {
+    border-radius: 0 !important;
+  }
+
+  .shared-document :deep(.shadow-sm),
+  .shared-document :deep(.shadow) {
+    box-shadow: none !important;
+  }
+}
+</style>

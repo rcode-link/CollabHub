@@ -26,7 +26,7 @@ class UpdateInvoiceRequest extends FormRequest
             'date' => ['nullable', 'date'],
             'due_date' => ['nullable', 'date'],
             'note' => ['nullable', 'string'],
-            'sent' => ['nullable', 'bool']
+            'sent' => ['nullable', 'bool'],
         ];
     }
 }

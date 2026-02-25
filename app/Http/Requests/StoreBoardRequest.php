@@ -24,7 +24,7 @@ class StoreBoardRequest extends FormRequest
         return [
             'title' => ['required', 'string'],
             'type' => ['required', 'in:scrum,kanban'],
-            'project_id' => ['required', 'exists:projects,id']
+            'project_id' => ['required', 'exists:projects,id'],
         ];
     }
 }

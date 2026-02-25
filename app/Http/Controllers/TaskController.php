@@ -40,9 +40,7 @@ class TaskController extends Controller
 
         $tasks = FilterTasks::search($tasks, $request);
 
-
         $tasks->orderByDesc('updated_at');
-
 
         return TaskResource::collection($tasks->paginate(10));
     }
@@ -62,12 +60,11 @@ class TaskController extends Controller
         }
         $relations = TaskRelation::whereIn('id', $relationIds)->get();
 
-
         $children = $task->children->map(function (Task $obj) use ($relations) {
             $obj->relation = $relations->where('id', $obj->pivot->task_relation_id)->first();
+
             return $obj;
         });
-
 
         return TaskResource::collection($children);
     }
@@ -80,38 +77,41 @@ class TaskController extends Controller
             ->where('project_id', $request->get('project_id'))
             ->when(\Str::length($request->get('search')), function (Builder $query) use ($request) {
                 $query->where('task_id', $request->get('search'))
-                    ->orWhere('name', 'like', '%' . $request->get('search') . '%')
-                    ->orWhere('description', 'like', '%' . $request->get('search') . '%');
+                    ->orWhere('name', 'like', '%'.$request->get('search').'%')
+                    ->orWhere('description', 'like', '%'.$request->get('search').'%');
             });
+
         return TaskResource::collection($tasks->paginate(10));
     }
 
     /**
      * Store a newly created resource in storage.
+     *
      * @throws \Exception
      */
     public function store(StoreTaskRequest $request)
     {
         Auth::user()->authorize('can-create-task', Project::whereId($request->get('project_id'))->firstOrFail());
 
-            $data = $request->validated();
-            unset($data['related_tasks']);
-            if (isset($data['due_date'])) {
-                $data['due_date'] = Carbon::parse($data['due_date']);
-            }
-            $project = Project::query()->where('id', $data['project_id'])->firstOrFail();
-            $data['description'] = json_decode($data['description']);
-            $data['task_id'] = $project->key . '-' . Task::query()->where('project_id', $project->id)->count() + 1;
-            $model = Task::create($data);
-            $model->children()->attach($request->validated('related_tasks'));
+        $data = $request->validated();
+        unset($data['related_tasks']);
+        if (isset($data['due_date'])) {
+            $data['due_date'] = Carbon::parse($data['due_date']);
+        }
+        $project = Project::query()->where('id', $data['project_id'])->firstOrFail();
+        $data['description'] = json_decode($data['description']);
+        $data['task_id'] = $project->key.'-'.Task::query()->where('project_id', $project->id)->count() + 1;
+        $model = Task::create($data);
+        $model->children()->attach($request->validated('related_tasks'));
 
-            if ($request->hasFile('file')) {
-                foreach ($request->file('file') as $file) {
-                    $model->addMedia($file)->toMediaCollection('default');
-                }
+        if ($request->hasFile('file')) {
+            foreach ($request->file('file') as $file) {
+                $model->addMedia($file)->toMediaCollection('default');
             }
-            TaskCreatedEvent::dispatch($model);
-            return new TaskResource($model);
+        }
+        TaskCreatedEvent::dispatch($model);
+
+        return new TaskResource($model);
 
     }
 
@@ -120,7 +120,7 @@ class TaskController extends Controller
 
         $request->validate([
             'task_id' => ['required', 'exists:tasks,id'],
-            'sprint_id' => ['required', 'exists:sprints,id']
+            'sprint_id' => ['required', 'exists:sprints,id'],
         ]);
 
         AddTaskToSprintEvent::dispatch($request);
@@ -128,17 +128,19 @@ class TaskController extends Controller
         return response()->noContent();
     }
 
-    public function removeFromSPrint(Request $request){
+    public function removeFromSPrint(Request $request)
+    {
 
         $request->validate([
             'task_id' => ['required', 'exists:tasks,id'],
-            'sprint_id' => ['required', 'exists:sprints,id']
+            'sprint_id' => ['required', 'exists:sprints,id'],
         ]);
 
         $sprint = Sprint::query()->where('id', $request->get('sprint_id'))->firstOrFail();
         $sprint->tasks()->detach([
             'task_id' => $request->get('task_id'),
         ]);
+
         return response()->noContent();
     }
 
@@ -156,7 +158,7 @@ class TaskController extends Controller
             ->where('project_id', $request->get('project_id'));
 
         $inSprint = $request->get('in_sprint', false) === 'true';
-        $tasks->when(!$inSprint, function (Builder $query) use ($request) {
+        $tasks->when(! $inSprint, function (Builder $query) use ($request) {
             $query->whereDoesntHave('taskSprintData', function (Builder $builder) use ($request) {
                 $builder->where('sprint_id', $request->get('sprint_id'));
             });
@@ -169,6 +171,7 @@ class TaskController extends Controller
         });
 
         $tasks = FilterTasks::search($tasks, $request);
+
         return TaskResource::collection($tasks->paginate(10));
     }
 
@@ -184,9 +187,9 @@ class TaskController extends Controller
                 'taskSprintData' => function (HasMany $builder) use ($request) {
                     $builder
                         ->with([
-                            'status' => fn(HasOne $query) => $query->select('id', 'title', 'board_id'),
-                            'status.board' => fn(BelongsTo $query) => $query->select('id', 'title'),
-                            'sprint' => fn(HasOne $query) => $query->select('id', 'title')
+                            'status' => fn (HasOne $query) => $query->select('id', 'title', 'board_id'),
+                            'status.board' => fn (BelongsTo $query) => $query->select('id', 'title'),
+                            'sprint' => fn (HasOne $query) => $query->select('id', 'title'),
                         ])
                         ->when($request->get('status_id'), function (Builder $query) use ($request) {
                             $query->where('task_status_id', $request->get('status_id'));
@@ -239,12 +242,12 @@ class TaskController extends Controller
         $request->validate([
             'task_id' => ['required', 'exists:tasks,id'],
             'sprint_id' => ['exists:sprints,id'],
-            'status_id' => ['required']
+            'status_id' => ['required'],
         ]);
 
         $taskSprint = TaskSprint::whereTaskId($request->get('task_id'))
             ->whereSprintId($request->get('sprint_id'))
-            ->with(['status' => fn($q) => $q->select('id', 'title')])
+            ->with(['status' => fn ($q) => $q->select('id', 'title')])
             ->first();
 
         $oldStatusTitle = $taskSprint?->status?->title ?? 'Unknown';
@@ -252,7 +255,7 @@ class TaskController extends Controller
         TaskSprint::whereTaskId($request->get('task_id'))
             ->whereSprintId($request->get('sprint_id'))
             ->update([
-                'task_status_id' => $request->get('status_id')
+                'task_status_id' => $request->get('status_id'),
             ]);
 
         $newStatus = TaskStatuses::whereId($request->get('status_id'))->first();
@@ -267,13 +270,14 @@ class TaskController extends Controller
                     'type' => 'paragraph',
                     'content' => [[
                         'type' => 'text',
-                        'text' => "Status changed from \"{$oldStatusTitle}\" to \"{$newStatusTitle}\""
-                    ]]
-                ]]
+                        'text' => "Status changed from \"{$oldStatusTitle}\" to \"{$newStatusTitle}\"",
+                    ]],
+                ]],
             ]);
         }
 
         TaskUpdatedEvent::dispatch($task, null);
+
         return response()->noContent();
     }
 

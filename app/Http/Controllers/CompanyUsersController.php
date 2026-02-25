@@ -10,22 +10,21 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Str;
 
 class CompanyUsersController extends Controller
 {
     public function index(Request $request, Company $company)
     {
-        Auth::user()->authorize("can-view-users", $company);
+        Auth::user()->authorize('can-view-users', $company);
 
         $users = $company
             ->users()
             ->when(Str::length($request->get('user')) > 0, function (Builder $builder) use ($request) {
-                $builder->where('name', 'like', '%' . $request->get('user') . '%')
-                    ->orWhere('email', 'like', '%' . $request->get('user') . '%');
+                $builder->where('name', 'like', '%'.$request->get('user').'%')
+                    ->orWhere('email', 'like', '%'.$request->get('user').'%');
             });
+
         return UserResource::collection($users->paginate());
     }
 
@@ -38,12 +37,13 @@ class CompanyUsersController extends Controller
             'company_id' => Auth::user()->company->first()->id,
             'number_of_invitations' => $request->get('number_of_invitations', 1),
             'role_id' => $request->get('role', null),
-            'registered' => []
+            'registered' => [],
         ]);
 
         $validUntil = $request->get('until', null);
 
         $url = SigneRoute::make('invite.user', ['id' => $invite->key], $validUntil ? Carbon::parse($validUntil)->timestamp : null);
+
         return response()->json($url);
     }
 }

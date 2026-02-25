@@ -2,15 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Helpers\ChatPresentUsers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
 class PusherController extends Controller
 {
-
     public function webhook(Request $request)
     {
 
@@ -38,9 +35,9 @@ class PusherController extends Controller
 
             }
         }
+
         return response()->json([
-            'data' => 'ok'
+            'data' => 'ok',
         ]);
     }
-
 }

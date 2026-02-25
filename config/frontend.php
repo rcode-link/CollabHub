@@ -1,4 +1,5 @@
 <?php
+
 return [
     'VITE_APP_NAME' => env('VITE_APP_NAME', null),
     'VITE_PUSHER_APP_KEY' => env('VITE_PUSHER_APP_KEY', null),

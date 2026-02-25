@@ -18,7 +18,7 @@ class TaskInProject implements ValidationRule
         $task = Task::whereId($value)
             ->where('project_id', request()->get('project_id', null))
             ->exists();
-        if (!$task) {
+        if (! $task) {
             $fail("The {$attribute} is invalid.");
         }
     }

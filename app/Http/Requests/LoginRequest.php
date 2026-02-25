@@ -19,8 +19,7 @@ class LoginRequest extends FormRequest
     {
         return [
             'email' => ['required', 'email'],
-            'password' => UserPasswordRules::$BASE_RULES
+            'password' => UserPasswordRules::$BASE_RULES,
         ];
     }
-
 }

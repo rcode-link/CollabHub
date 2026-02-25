@@ -34,8 +34,6 @@ use Illuminate\Http\Resources\Json\JsonResource;
  * @property-read \App\Models\Chat|null $chat
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Sprint> $sprints
  * @property-read Collection<int, \App\Models\TaskSprint> $taskSprintData
- *
- *
  */
 class TaskResource extends JsonResource
 {
@@ -59,7 +57,8 @@ class TaskResource extends JsonResource
             }),
             'description' => $this->description,
             'status' => $this->whenLoaded('taskSprintData', function () {
-                $mapped = $this->taskSprintData->map(fn($obj) => array_merge($obj->status->toArray(), ['sprint' => $obj?->sprint]));
+                $mapped = $this->taskSprintData->map(fn ($obj) => array_merge($obj->status->toArray(), ['sprint' => $obj?->sprint]));
+
                 return $mapped->first();
             }),
             'type' => $this->whenLoaded('type', function () {
@@ -80,6 +79,7 @@ class TaskResource extends JsonResource
             'parent_task' => $this->when(\request()->get('group_by') === 'parent', function () {
                 return $this->whenLoaded('parents', function () {
                     $parent = $this->parents->first();
+
                     return $parent ? ['id' => $parent->id, 'name' => $parent->name, 'task_id' => $parent->task_id] : null;
                 });
             }),
@@ -87,7 +87,7 @@ class TaskResource extends JsonResource
                 return $this->whenLoaded('media', function () {
                     return MediaResource::collection($this->media);
                 });
-            })
+            }),
         ];
     }
 }

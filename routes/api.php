@@ -20,6 +20,7 @@ use App\Http\Controllers\InvoiceDataController;
 use App\Http\Controllers\InvoiceItemController;
 use App\Http\Controllers\LinkPreviewController;
 use App\Http\Controllers\LoginController;
+use App\Http\Controllers\MediaProxyController;
 use App\Http\Controllers\MessageReactionController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\PermissionController;
@@ -40,7 +41,6 @@ use App\Http\Controllers\TaskTypeController;
 use App\Http\Controllers\TimeSheetController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\VacationRequestController;
-use App\Http\Controllers\MediaProxyController;
 use App\Http\Controllers\VideoCallController;
 use Illuminate\Support\Facades\Route;
 
@@ -67,7 +67,12 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('/link-preview', [LinkPreviewController::class, 'fetch']);
 
     Route::apiResource('/share/board/', ShareBoardController::class);
-    Route::get('/report', [ReportController::class, 'index'])->name('api.reports');
+    Route::prefix('reports')->group(function () {
+        Route::get('/time-tracking', [ReportController::class, 'timeTracking'])->name('api.reports.timeTracking');
+        Route::get('/project-overview', [ReportController::class, 'projectOverview'])->name('api.reports.projectOverview');
+        Route::get('/team-workload', [ReportController::class, 'teamWorkload'])->name('api.reports.teamWorkload');
+        Route::get('/invoice-summary', [ReportController::class, 'invoiceSummary'])->name('api.reports.invoiceSummary');
+    });
 
     Route::get('/user', [ProfileController::class, 'view'])->name('api.view');
     Route::put('/user', [ProfileController::class, 'update'])->name('api.update');
@@ -88,6 +93,9 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('/chats/{chat}/message', [ChatMessageController::class, 'store'])->name('api.messages.store');
     Route::delete('/messages/{id}', [ChatMessageController::class, 'destroy'])->name('api.messages.destroy');
     Route::post('/video-call/{chat}/start', [VideoCallController::class, 'startVideoCall'])->name('api.startVideoCall');
+    Route::get('/video-call/{slug}/requests', [VideoCallController::class, 'listPendingRequests'])->name('api.videoCall.listRequests');
+    Route::put('/video-call/{slug}/request/{id}/approve', [VideoCallController::class, 'approveRequest'])->name('api.videoCall.approveRequest');
+    Route::put('/video-call/{slug}/request/{id}/deny', [VideoCallController::class, 'denyRequest'])->name('api.videoCall.denyRequest');
     Route::apiResource('/messages/reactions', MessageReactionController::class);
     Route::apiResource('/chats', ChatController::class);
     Route::apiResource('/projects', ProjectController::class);
@@ -108,6 +116,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::put('/sprints/{sprint}/activate', [SprintController::class, 'activate'])->name('api.activate');
     Route::apiResource('/sprints', SprintController::class);
     Route::post('/file-to-pdf', [FileController::class, 'exportPDF'])->name('api.toPdf');
+    Route::post('/files/{file}/export-pdf', [FileController::class, 'exportAsPdf'])->name('api.files.exportPdf');
     Route::post('/files/{file}/share', [FileController::class, 'share'])->name('api.files.share');
     Route::delete('/files/{file}/share', [FileController::class, 'unshare'])->name('api.files.unshare');
     Route::apiResource('/files', FileController::class);
@@ -165,6 +174,9 @@ Route::post('/register', RegisterController::class)->name('api.register');
 Route::post('/login', LoginController::class)->name('api.login');
 Route::post('/forgot-password', ForgotPasswordController::class)->name('api.forgot-password');
 Route::post('/reset-password', ResetPasswordController::class)->name('api.reset-password');
+// Video call public routes (guests + authenticated)
 Route::get('/video-call/{video}/join', [VideoCallController::class, 'getVideoCallToken'])->name('api.get.getVideoCallToken');
 Route::put('/video-call/{video}/join', [VideoCallController::class, 'getVideoCallToken'])->name('api.put.getVideoCallToken');
+Route::post('/video-call/{slug}/request', [VideoCallController::class, 'createJoinRequest'])->name('api.videoCall.createRequest');
+Route::get('/video-call/{slug}/request/{id}', [VideoCallController::class, 'getRequestStatus'])->name('api.videoCall.requestStatus');
 Route::post('/webhook', [PusherController::class, 'webhook'])->name('api.webhook');

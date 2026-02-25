@@ -8,8 +8,8 @@ use App\Http\Requests\UpdateInvoiceRequest;
 use App\Http\Resources\InvoiceResource;
 use App\Models\Company;
 use App\Models\Invoice;
-use Carbon\Carbon;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 
 class InvoiceController extends Controller
@@ -24,16 +24,16 @@ class InvoiceController extends Controller
         $data = Invoice::query()
             ->with('company')
             ->withSum('payments', 'value')
-            ->when(request('company_id'), fn($q, $id) => $q->where('company_id', $id))
-            ->when(request('search'), fn($q, $s) => $q->where('number', 'like', "%{$s}%"))
-            ->when(request('date_from'), fn($q, $d) => $q->where('date', '>=', $d))
-            ->when(request('date_to'), fn($q, $d) => $q->where('date', '<=', $d))
+            ->when(request('company_id'), fn ($q, $id) => $q->where('company_id', $id))
+            ->when(request('search'), fn ($q, $s) => $q->where('number', 'like', "%{$s}%"))
+            ->when(request('date_from'), fn ($q, $d) => $q->where('date', '>=', $d))
+            ->when(request('date_to'), fn ($q, $d) => $q->where('date', '<=', $d))
             ->when(request('status'), function ($q, $status) {
                 return match ($status) {
                     'draft' => $q->where('sent', false),
                     'sent' => $q->where('sent', true)
                         ->whereColumn('total', '>', \DB::raw('COALESCE((SELECT SUM(value) FROM payments WHERE payments.invoice_id = invoices.id), 0)'))
-                        ->where(fn($q2) => $q2->whereNull('due_date')->orWhere('due_date', '>=', now()->toDateString())),
+                        ->where(fn ($q2) => $q2->whereNull('due_date')->orWhere('due_date', '>=', now()->toDateString())),
                     'paid' => $q->where('sent', true)->where('total', '>', 0)
                         ->whereColumn('total', '<=', \DB::raw('COALESCE((SELECT SUM(value) FROM payments WHERE payments.invoice_id = invoices.id), 0)')),
                     'partial' => $q->where('sent', true)
@@ -76,7 +76,9 @@ class InvoiceController extends Controller
     {
         Auth::user()->authorize('can-view-billing-info', Auth::user()->company()->first());
 
-        $invoice->load('company', 'company.currency', 'items', 'items.billingItem', 'payments');
+        $invoice->load('company', 'company.currency', 'items', 'items.billingItem', 'payments')
+            ->loadSum('payments', 'value');
+
         return new InvoiceResource($invoice);
     }
 
@@ -137,7 +139,8 @@ class InvoiceController extends Controller
         $invoice->load('items', 'items.billingItem', 'company', 'company.currency');
         $company = Company::whereIsCostumerCompany(false)->firstOrFail();
         $pdf = Pdf::loadView('pdf.invoice', ['model' => $invoice, 'company' => $company]);
-        return $pdf->stream($invoice->number . '.pdf');
+
+        return $pdf->stream($invoice->number.'.pdf');
     }
 
     /**

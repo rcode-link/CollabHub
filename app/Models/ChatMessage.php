@@ -8,7 +8,6 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Spatie\MediaLibrary\HasMedia;
@@ -35,6 +34,7 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media;
  * @property-read ChatMessage|null $parent
  * @property-read User|null $user
  * @property-read VideoCalls|null $videocalls
+ *
  * @method static Builder|ChatMessage newModelQuery()
  * @method static Builder|ChatMessage newQuery()
  * @method static Builder|ChatMessage query()
@@ -46,6 +46,7 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media;
  * @method static Builder|ChatMessage whereParentId($value)
  * @method static Builder|ChatMessage whereUpdatedAt($value)
  * @method static Builder|ChatMessage whereUserId($value)
+ *
  * @mixin Eloquent
  */
 class ChatMessage extends Model implements HasMedia
@@ -55,7 +56,7 @@ class ChatMessage extends Model implements HasMedia
     protected $guarded = [];
 
     protected $casts = [
-        'message' => 'json'
+        'message' => 'json',
     ];
 
     public function user(): BelongsTo
@@ -78,7 +79,6 @@ class ChatMessage extends Model implements HasMedia
         return $this->morphOne(VideoCalls::class, 'callable');
     }
 
-
     public function messageReactions(): HasMany
     {
         return $this->hasMany(MessageReaction::class)->orWhere(function (Builder $data) {
@@ -92,11 +92,8 @@ class ChatMessage extends Model implements HasMedia
         return $this->hasMany(MessageReaction::class)->whereNull('reaction')->where('user_id', Auth::id());
     }
 
-
     public function messageViews(): Builder
     {
         return $this->hasMany(MessageReaction::class)->seen()->where('user_id', Auth::id());
     }
-
-
 }

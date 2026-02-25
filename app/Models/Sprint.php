@@ -10,7 +10,6 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Support\Carbon;
 
 /**
@@ -24,6 +23,7 @@ use Illuminate\Support\Carbon;
  * @property int $board_id
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
+ *
  * @method static SprintFactory factory($count = null, $state = [])
  * @method static Builder|Sprint newModelQuery()
  * @method static Builder|Sprint newQuery()
@@ -36,11 +36,15 @@ use Illuminate\Support\Carbon;
  * @method static Builder|Sprint whereStartTime($value)
  * @method static Builder|Sprint whereTitle($value)
  * @method static Builder|Sprint whereUpdatedAt($value)
+ *
  * @property int $duration
+ *
  * @method static Builder|Sprint whereDuration($value)
+ *
  * @property-read Collection<int, Task> $tasks
  * @property-read int|null $tasks_count
  * @property-read \App\Models\Board $board
+ *
  * @mixin Eloquent
  */
 class Sprint extends Model
@@ -50,7 +54,7 @@ class Sprint extends Model
     protected $guarded = [];
 
     protected $casts = [
-        'is_active' => 'boolean'
+        'is_active' => 'boolean',
     ];
 
     public function activate(): void
@@ -63,11 +67,12 @@ class Sprint extends Model
         $this->update([
             'start_time' => now(),
             'end_time' => now()->addDays($this->duration),
-            'is_active' => true
+            'is_active' => true,
         ]);
     }
 
-    public function board(): BelongsTo {
+    public function board(): BelongsTo
+    {
         return $this->belongsTo(Board::class);
     }
 

@@ -12,8 +12,8 @@ use Illuminate\Queue\SerializesModels;
 
 class UserNotification implements ShouldBroadcast
 {
-    use InteractsWithBroadcasting;
     use Dispatchable, InteractsWithSockets, SerializesModels;
+    use InteractsWithBroadcasting;
 
     /**
      * Create a new event instance.
@@ -31,7 +31,7 @@ class UserNotification implements ShouldBroadcast
     public function broadcastOn(): array
     {
         return [
-            new PrivateChannel('user.' . $this->notifications->user_id),
+            new PrivateChannel('user.'.$this->notifications->user_id),
         ];
     }
 }

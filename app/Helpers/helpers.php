@@ -1,4 +1,5 @@
 <?php
+
 use Money\Currencies\ISOCurrencies;
 use Money\Currency;
 use Money\Formatter\IntlMoneyFormatter;
@@ -12,18 +13,18 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media;
  */
 function mediaUrl(?Media $media, string $fallback = ''): string
 {
-    if (!$media) {
-        return $fallback ?: config('app.url') . '/storage/images/avatar.png';
+    if (! $media) {
+        return $fallback ?: config('app.url').'/storage/images/avatar.png';
     }
 
-    return '/api/v1/media/' . $media->id;
+    return '/api/v1/media/'.$media->id;
 }
 
 function formatMoney($val, $currency = null, $format = null)
 {
 
     $money = new Money($val, new Currency($currency ?? 'USD'));
-    $currencies = new ISOCurrencies();
+    $currencies = new ISOCurrencies;
 
     $numberFormatter = new NumberFormatter($format ?? 'en_US', NumberFormatter::CURRENCY);
     $moneyFormatter = new IntlMoneyFormatter($numberFormatter, $currencies);

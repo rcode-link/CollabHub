@@ -2,11 +2,10 @@
 
 namespace App\Console\Commands;
 
+use App\Helpers\SetEnviroment;
 use App\Jobs\GenerateProfileImageJob;
 use App\Models\User;
 use Illuminate\Console\Command;
-
-use App\Helpers\SetEnviroment;
 
 class UpdateUsersProfile extends Command
 {
@@ -18,6 +17,7 @@ class UpdateUsersProfile extends Command
     protected $signature = 'app:update-users-profile {env?}';
 
     private $model;
+
     /**
      * The console command description.
      *
@@ -32,13 +32,13 @@ class UpdateUsersProfile extends Command
     {
         $connection = $this->argument('env');
         if ($connection) {
-            $this->info("Loading enviroment");
+            $this->info('Loading enviroment');
             $this->model = SetEnviroment::loadEnv($connection);
-            $this->info("Loaded enviroment");
+            $this->info('Loaded enviroment');
             SetEnviroment::connection($this->model);
         }
 
-        User::doesnthave('media')->get()->map(fn(User $user) => GenerateProfileImageJob::dispatch($user));
+        User::doesnthave('media')->get()->map(fn (User $user) => GenerateProfileImageJob::dispatch($user));
         //
     }
 }

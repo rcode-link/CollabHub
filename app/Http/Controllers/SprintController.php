@@ -35,12 +35,12 @@ class SprintController extends Controller
         return response()->json($sprint);
     }
 
-
     public function activate(Request $request, Sprint $sprint)
     {
         $sprint->load('board');
         \Auth::user()->authorize('can-create-board', $sprint->board->project_id);
         $sprint->activate();
+
         return $sprint;
     }
 

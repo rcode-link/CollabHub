@@ -2,7 +2,6 @@
 import { computed, ref } from 'vue'
 import { chatDetails } from '@/store/chatStore.js'
 import { useRoute } from 'vue-router'
-import _ from 'lodash'
 import FilesComponent from '@/components/pages/chat/partials/messages/FilesComponent.vue'
 import Editor from '@/components/shared/Editor.vue'
 import TrashIcon from '@/components/shared/icons/TrashIcon.vue'
@@ -16,7 +15,7 @@ const route = useRoute()
 const editorRef = ref()
 
 const activeMessage = computed(() =>
-  _.find(chatMessageStore.messages, { id: chatMessageStore.reply_to_message_id })
+  chatMessageStore.messages.find(m => m.id === chatMessageStore.reply_to_message_id)
 )
 
 const submit = () => {

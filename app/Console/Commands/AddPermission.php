@@ -7,11 +7,6 @@ use App\Models\PermissionDefinition;
 use Illuminate\Console\Command;
 use Illuminate\Support\Str;
 
-use Agence104\LiveKit\AccessToken;
-use Agence104\LiveKit\AccessTokenOptions;
-use Agence104\LiveKit\VideoGrant;
-use Pusher\Pusher;
-
 class AddPermission extends Command
 {
     /**
@@ -34,33 +29,28 @@ class AddPermission extends Command
     public function handle()
     {
 
-
-
-
-
         //
-//        $scopeArray = [];
-//        foreach (PermissionsScopes::cases() as $item) {
-//            $scopeArray[] = $item->value;
-//        }
-//
-//        $name = $this->ask('Enter permission name');
-//        $groupID = $this->choice('What is the group of permission',
-//            $groups->pluck('name', 'id')->toArray());
-//
-//        $scope = $this->choice('What is the scope of permission',
-//            $scopeArray);
-//
-//
-//        $this->info('Inserting permission definition!');
-//        $permission = PermissionDefinition::insert([
-//            'scope' => $scope,
-//            'name' => $name,
-//            'slug' => Str::slug($name),
-//            'group_id' => $groups->where('name', $groupID)->first()->id
-//        ]);
-//        $this->info('Done inserting permission definition!');
+        //        $scopeArray = [];
+        //        foreach (PermissionsScopes::cases() as $item) {
+        //            $scopeArray[] = $item->value;
+        //        }
+        //
+        //        $name = $this->ask('Enter permission name');
+        //        $groupID = $this->choice('What is the group of permission',
+        //            $groups->pluck('name', 'id')->toArray());
+        //
+        //        $scope = $this->choice('What is the scope of permission',
+        //            $scopeArray);
+        //
+        //
+        //        $this->info('Inserting permission definition!');
+        //        $permission = PermissionDefinition::insert([
+        //            'scope' => $scope,
+        //            'name' => $name,
+        //            'slug' => Str::slug($name),
+        //            'group_id' => $groups->where('name', $groupID)->first()->id
+        //        ]);
+        //        $this->info('Done inserting permission definition!');
 
     }
-
 }

@@ -25,7 +25,7 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
-              //
+        //
     }
 
     /**
@@ -34,6 +34,7 @@ class UserController extends Controller
     public function show(int $id)
     {
         $user = User::with('manager')->whereId($id)->withTrashed()->firstOrFail();
+
         return new UserResource($user);
     }
 
@@ -46,17 +47,19 @@ class UserController extends Controller
         $user->update($request->validated());
 
         $user->load('manager');
+
         return new UserResource($user);
     }
-
 
     public function updatePassword(UpdatePasswordRequest $request)
     {
         \Auth::user()->update([
-            'password' => Hash::make($request->get('password'))
+            'password' => Hash::make($request->get('password')),
         ]);
+
         return response()->noContent();
     }
+
     /**
      * Remove the specified resource from storage.
      */
@@ -68,8 +71,8 @@ class UserController extends Controller
             $user->media()->delete();
             $user->update([
                 'name' => 'deleted_user',
-                'email' => 'deleted' . \Str::random(5) . '@mail.com',
-                'password' => 'Deleted'
+                'email' => 'deleted'.\Str::random(5).'@mail.com',
+                'password' => 'Deleted',
             ]);
             $user->delete();
         }

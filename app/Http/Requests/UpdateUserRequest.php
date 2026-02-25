@@ -22,7 +22,7 @@ class UpdateUserRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'manager_id' => ['exists:users,id']
+            'manager_id' => ['exists:users,id'],
         ];
     }
 }

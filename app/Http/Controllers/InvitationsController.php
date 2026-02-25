@@ -16,6 +16,7 @@ class InvitationsController extends Controller
     public function index()
     {
         Auth::user()->authorize('can-invite-users', Auth::user()->company->first());
+
         return InvitationResource::collection(Invitations::where('company_id', Auth::user()->company->first()->id)->paginate());
     }
 

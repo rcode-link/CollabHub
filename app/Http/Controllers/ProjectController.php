@@ -4,15 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Events\ManagePermissionsEvent;
 use App\Events\ProjectCreated;
-use App\Http\Requests\ProjectAddUserRequest;
 use App\Http\Requests\StoreProjectRequest;
 use App\Http\Requests\UpdateProjectRequest;
 use App\Http\Resources\ProjectResource;
 use App\Http\Resources\UserResource;
 use App\Models\Chat;
 use App\Models\File;
-use App\Models\Permission;
-use App\Models\PermissionDefinition;
 use App\Models\Project;
 use App\Models\RoleResource;
 use App\Models\Task;
@@ -20,11 +17,12 @@ use App\Models\User;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Symfony\Component\HttpFoundation\Response;
+
 use function PHPUnit\Framework\throwException;
-use Illuminate\Support\Facades\Cache;
 
 class ProjectController extends Controller
 {
@@ -33,9 +31,10 @@ class ProjectController extends Controller
      */
     public function index(Request $request)
     {
-        $projectIds = Auth::user()->permissions()->filter(fn($obj) => $obj['model']['type'] === Project::class)
-            ->map(fn($obj) => $obj['model']['id'])->flatten()->toArray();
+        $projectIds = Auth::user()->permissions()->filter(fn ($obj) => $obj['model']['type'] === Project::class)
+            ->map(fn ($obj) => $obj['model']['id'])->flatten()->toArray();
         $project = Project::whereIn('id', $projectIds)->paginate(50);
+
         return ProjectResource::collection($project);
 
     }
@@ -45,23 +44,19 @@ class ProjectController extends Controller
         $this->validate($request, [
             'project_id' => [
                 'required',
-                'exists:projects,id'
-            ]
+                'exists:projects,id',
+            ],
         ]);
-
 
         $permissions = Cache::get('permissions');
 
-        $users = $permissions->filter(fn($obj) => $obj['model']['type'] === Project::class && $obj['model']['id'] == $request->get('project_id'))->map(fn($obj) => $obj['users'])->flatten();
-
-
-
+        $users = $permissions->filter(fn ($obj) => $obj['model']['type'] === Project::class && $obj['model']['id'] == $request->get('project_id'))->map(fn ($obj) => $obj['users'])->flatten();
 
         $list = User::query()
             ->whereIn('id', $users->toArray())
             ->when(Str::length($request->get('user', '')) > 0, function (Builder $builder) use ($request) {
-                $builder->where('name', 'like', '%' . $request->get('user') . '%')
-                    ->orWhere('email', 'like', '%' . $request->get('user') . '%');
+                $builder->where('name', 'like', '%'.$request->get('user').'%')
+                    ->orWhere('email', 'like', '%'.$request->get('user').'%');
             });
 
         return UserResource::collection($list->paginate());
@@ -83,10 +78,12 @@ class ProjectController extends Controller
             ManagePermissionsEvent::dispatch();
 
             DB::commit();
+
             return response()->json($project);
         } catch (\Exception $exception) {
             DB::rollBack();
             throwException($exception);
+
             return response()->json([]);
         }
     }
@@ -136,13 +133,15 @@ class ProjectController extends Controller
                 ->delete();
             ManagePermissionsEvent::dispatch();
             DB::commit();
+
             return response()->noContent();
         } catch (\Throwable $e) {
             DB::rollBack();
             \Log::error('delete project', [$e]);
+
             return response()
                 ->json([
-                    'data' => 'Something went wrong'
+                    'data' => 'Something went wrong',
                 ], Response::HTTP_INTERNAL_SERVER_ERROR);
 
         }

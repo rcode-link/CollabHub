@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Events\InvoiceItemsUpdate;
 use App\Http\Requests\StoreInvoiceItemRequest;
 use App\Http\Requests\UpdateInvoiceItemRequest;
 use App\Models\BillingItem;
@@ -32,11 +31,11 @@ class InvoiceItemController extends Controller
         $billingItem = BillingItem::findOrFail($data['item_id']);
         $vatRate = $data['vat_rate'] ?? $invoice->company->default_vat_rate ?? 0;
         $invoice->items()->create([
-            "price" => $billingItem->price,
-            "qty" => 100,
-            "total" => $billingItem->price,
-            "vat_rate" => $vatRate,
-            "billing_item_id" => $billingItem->id,
+            'price' => $billingItem->price,
+            'qty' => 100,
+            'total' => $billingItem->price,
+            'vat_rate' => $vatRate,
+            'billing_item_id' => $billingItem->id,
         ]);
         $invoice->load('items', 'items.billingItem');
     }
@@ -61,9 +60,9 @@ class InvoiceItemController extends Controller
         $price = $data['price'] * 100;
         $qty = $data['qty'];
         $updateData = [
-            "price" => $price,
-            "qty" => $qty * 100,
-            "total" => $price * $qty,
+            'price' => $price,
+            'qty' => $qty * 100,
+            'total' => $price * $qty,
         ];
         if (isset($data['vat_rate'])) {
             $updateData['vat_rate'] = $data['vat_rate'];

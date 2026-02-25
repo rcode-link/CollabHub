@@ -187,12 +187,38 @@ export default [
   },
   {
     path: '/reports',
-
     name: 'reports',
     meta: {
       middleware: auth,
     },
-    component: () => import('@/components/pages/reports/Index.vue'),
+    redirect: { name: 'reports.time-tracking' },
+    component: () => import('@/components/pages/reports/Router.vue'),
+    children: [
+      {
+        path: 'time-tracking',
+        name: 'reports.time-tracking',
+        component: () =>
+          import('@/components/pages/reports/time-tracking/Index.vue'),
+      },
+      {
+        path: 'project-overview',
+        name: 'reports.project-overview',
+        component: () =>
+          import('@/components/pages/reports/project-overview/Index.vue'),
+      },
+      {
+        path: 'team-workload',
+        name: 'reports.team-workload',
+        component: () =>
+          import('@/components/pages/reports/team-workload/Index.vue'),
+      },
+      {
+        path: 'invoice-summary',
+        name: 'reports.invoice-summary',
+        component: () =>
+          import('@/components/pages/reports/invoice-summary/Index.vue'),
+      },
+    ],
   },
   {
     path: '/invoices',

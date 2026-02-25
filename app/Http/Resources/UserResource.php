@@ -38,8 +38,8 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media;
  * @property string|null $end_work_time
  * @property int|null $manager_id
  * @property Carbon|null $deleted_at
- * @method Collection permissions()
  *
+ * @method Collection permissions()
  */
 class UserResource extends JsonResource
 {
@@ -63,7 +63,7 @@ class UserResource extends JsonResource
                 return $this->permissions()->filter(fn ($obj) => $obj['users']->contains($this->id))->pluck('model');
             }),
             'availability' => $this->todayMeetings(),
-            'attending' => $this->when(request()->routeIs('api.calendar.*'), fn () => $this->pivot->attending)
+            'attending' => $this->when(request()->routeIs('api.calendar.*'), fn () => $this->pivot->attending),
         ];
     }
 }

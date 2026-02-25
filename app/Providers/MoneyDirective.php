@@ -4,8 +4,6 @@ namespace App\Providers;
 
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\ServiceProvider;
-use Money\Money;
-use Money\Currency;
 
 class MoneyDirective extends ServiceProvider
 {
@@ -27,7 +25,7 @@ class MoneyDirective extends ServiceProvider
             // dd($param1);
             // Process the parameters here
             return "echo 'your value was' . $arguments";
-            ;
+
         });
         //
     }

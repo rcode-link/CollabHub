@@ -21,7 +21,7 @@ class BoardCreatedEvent
                 'title' => $board->name,
                 'is_active' => true,
                 'board_id' => $board->id,
-                'duration' => 6000
+                'duration' => 6000,
             ]);
         }
 
@@ -33,10 +33,10 @@ class BoardCreatedEvent
                 $obj->project_id = $board->project_id;
                 $obj->board_id = $board->id;
                 $obj->id = null;
+
                 return $obj;
             });
         TaskStatuses::insert($statuses->toArray());
         //
     }
-
 }

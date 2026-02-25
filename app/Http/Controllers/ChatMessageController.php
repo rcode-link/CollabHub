@@ -20,20 +20,19 @@ use Notification;
 class ChatMessageController extends Controller
 {
     /**
-     * @param Request $request
-     * @param Chat $chat
      * @return AnonymousResourceCollection<LengthAwarePaginator<ChatMessageResource>>
      */
     public function index(Request $request, Chat $chat)
     {
         $chat->numberOfUnreadMessages()->update([
-            'reaction' => 'seen'
+            'reaction' => 'seen',
         ]);
         $messages = $chat->messages()
             ->with('user', 'media', 'videocalls', 'parent', 'messageReactions')
             ->where('chat_id', $chat->id)
             ->orderByDesc('created_at')
             ->paginate(30);
+
         return ChatMessageResource::collection($messages);
     }
 
@@ -47,7 +46,7 @@ class ChatMessageController extends Controller
         $message = ChatMessage::create($data);
 
         $chat->numberOfUnreadMessages()->update([
-            'reaction' => 'seen'
+            'reaction' => 'seen',
         ]);
 
         if ($request->files->count()) {
@@ -63,14 +62,15 @@ class ChatMessageController extends Controller
             return [
                 'user_id' => $user_id,
                 'chat_message_id' => $message->id,
-                'reaction' => auth()->id() === $user_id ? 'seen' : null
+                'reaction' => auth()->id() === $user_id ? 'seen' : null,
             ];
         })->toArray());
 
         $message->load('user', 'media', 'videocalls', 'parent', 'messageReactions');
         ChatUpdate::dispatch($chat->users->toArray(), $message);
-        Notification::send($chat->users->filter(fn($user) => $user->id != auth()->id()), new PushNotification($message));
+        Notification::send($chat->users->filter(fn ($user) => $user->id != auth()->id()), new PushNotification($message));
         ChatMessageCreated::dispatch($message);
+
         return response()->noContent();
     }
 
@@ -84,7 +84,7 @@ class ChatMessageController extends Controller
 
         $messages = $chat->messages()
             ->with('user', 'media', 'videocalls', 'parent', 'messageReactions')
-            ->whereRaw('LOWER(CAST(message AS CHAR)) LIKE ?', ['%' . strtolower($q) . '%'])
+            ->whereRaw('LOWER(CAST(message AS CHAR)) LIKE ?', ['%'.strtolower($q).'%'])
             ->orderByDesc('created_at')
             ->limit(50)
             ->get();
@@ -100,10 +100,11 @@ class ChatMessageController extends Controller
         $chatMessage->videocalls()->delete();
         $chatMessage->messageReactions()->delete();
         $chatMessage->delete();
-        $newMessage = new ChatMessage();
+        $newMessage = new ChatMessage;
         $newMessage->chat_id = $chatId;
         ChatUpdate::dispatch(Chat::query()->where('id', $chatId)->first()->users()->get()->toArray(), $newMessage);
         ChatMessageDeleted::dispatch($id, $chatId);
+
         return response()->noContent();
     }
 }

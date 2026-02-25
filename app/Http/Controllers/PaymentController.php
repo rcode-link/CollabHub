@@ -19,9 +19,9 @@ class PaymentController extends Controller
         Auth::user()->authorize('can-view-billing-info', Auth::user()->company()->first());
 
         $data = Payment::with('invoice.company')
-            ->when(request('company_id'), fn($q, $id) => $q->whereHas('invoice', fn($q2) => $q2->where('company_id', $id)))
-            ->when(request('date_from'), fn($q, $d) => $q->where('date', '>=', $d))
-            ->when(request('date_to'), fn($q, $d) => $q->where('date', '<=', $d))
+            ->when(request('company_id'), fn ($q, $id) => $q->whereHas('invoice', fn ($q2) => $q2->where('company_id', $id)))
+            ->when(request('date_from'), fn ($q, $d) => $q->where('date', '>=', $d))
+            ->when(request('date_to'), fn ($q, $d) => $q->where('date', '<=', $d))
             ->orderBy('date', 'desc');
 
         return PaymentResource::collection($data->paginate());

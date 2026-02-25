@@ -13,12 +13,13 @@ use Tiptap\Editor;
 
 class ChatUpdate implements ShouldBroadcast
 {
-    use InteractsWithBroadcasting;
     use Dispatchable;
+    use InteractsWithBroadcasting;
     use InteractsWithSockets;
     use SerializesModels;
 
     public $message;
+
     public $chatId;
 
     /**
@@ -29,13 +30,13 @@ class ChatUpdate implements ShouldBroadcast
         $this->chatId = $message->chat_id;
         $messageData = 'media';
         if ($message->message) {
-            $messageData = (new Editor())->setContent($message->message)->getText();
+            $messageData = (new Editor)->setContent($message->message)->getText();
         }
         $this->message = [
             'text' => $messageData,
             'created_at' => $message?->created_at,
             'user' => $message?->user?->name,
-            'userId' => $message?->user?->id
+            'userId' => $message?->user?->id,
         ];
     }
 
@@ -48,8 +49,9 @@ class ChatUpdate implements ShouldBroadcast
     {
         $listOfChannels = [];
         foreach ($this->users as $obj) {
-            $listOfChannels[] = new PrivateChannel('UpdateChatForUser.' . $obj['id']);
+            $listOfChannels[] = new PrivateChannel('UpdateChatForUser.'.$obj['id']);
         }
+
         return $listOfChannels;
     }
 }

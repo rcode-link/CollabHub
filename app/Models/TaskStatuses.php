@@ -20,6 +20,7 @@ use Illuminate\Support\Carbon;
  * @property int $order
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
+ *
  * @method static TaskStatusesFactory factory($count = null, $state = [])
  * @method static Builder|TaskStatuses newModelQuery()
  * @method static Builder|TaskStatuses newQuery()
@@ -31,16 +32,23 @@ use Illuminate\Support\Carbon;
  * @method static Builder|TaskStatuses whereProjectId($value)
  * @method static Builder|TaskStatuses whereTitle($value)
  * @method static Builder|TaskStatuses whereUpdatedAt($value)
+ *
  * @property int|null $sprint_id
+ *
  * @method static Builder|TaskStatuses whereSprintId($value)
+ *
  * @property int|null $board_id
+ *
  * @method static Builder|TaskStatuses whereBoardId($value)
+ *
  * @property-read \App\Models\Board|null $board
+ *
  * @mixin Eloquent
  */
 class TaskStatuses extends Model
 {
     use HasFactory;
+
     protected $fillable = [
         'order',
         'id',
@@ -64,11 +72,12 @@ class TaskStatuses extends Model
             ->where('board_id', $this->board_id)
             ->where('order', $order)
             ->update([
-                'order' => $this->order
+                'order' => $this->order,
             ]);
         $this->update([
-            'order' => $order
+            'order' => $order,
         ]);
+
         return true;
     }
 }

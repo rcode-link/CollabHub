@@ -2,25 +2,22 @@
 
 namespace App\Events;
 
-use App\Http\Resources\InvoiceItemResource;
 use App\Http\Resources\InvoiceResource;
 use App\Models\Invoice;
-use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithBroadcasting;
 use Illuminate\Broadcasting\InteractsWithSockets;
-use Illuminate\Broadcasting\PresenceChannel;
 use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
-use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Queue\SerializesModels;
 
 class InvoiceItemsUpdate implements ShouldBroadcast
 {
-    use InteractsWithBroadcasting;
     use Dispatchable, InteractsWithSockets, SerializesModels;
+    use InteractsWithBroadcasting;
 
     public InvoiceResource $items;
+
     /**
      * Create a new event instance.
      */
@@ -38,7 +35,7 @@ class InvoiceItemsUpdate implements ShouldBroadcast
     public function broadcastOn(): array
     {
         return [
-            new PrivateChannel('update-invoice.' . $this->invoice_id),
+            new PrivateChannel('update-invoice.'.$this->invoice_id),
         ];
     }
 }

@@ -23,6 +23,7 @@ class CurrencyController extends Controller
     public function store(StoreCurrencyRequest $request)
     {
         Currency::create($request->validated());
+
         return response()->noContent();
     }
 

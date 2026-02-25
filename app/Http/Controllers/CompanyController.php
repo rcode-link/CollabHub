@@ -16,9 +16,10 @@ class CompanyController extends Controller
      */
     public function index()
     {
-        $permission = Auth::user()->permissions()->filter(fn($obj) => $obj['model']['type'] == Company::class)->pluck('model.id')->flatten();
+        $permission = Auth::user()->permissions()->filter(fn ($obj) => $obj['model']['type'] == Company::class)->pluck('model.id')->flatten();
 
         $comapny = Company::whereIn('id', $permission)->firstOrFail();
+
         return array_merge(
             $comapny->toArray(),
             ['avatar' => mediaUrl($comapny->getFirstMedia('avatar'))]
@@ -32,7 +33,7 @@ class CompanyController extends Controller
      */
     public function getKeys(Request $request)
     {
-        return Auth::user()->permissions()->filter(fn($obj) => $obj['model']['type'] === Project::class)->map(fn($obj) => $obj['model']['key'])->flatten()->toArray();
+        return Auth::user()->permissions()->filter(fn ($obj) => $obj['model']['type'] === Project::class)->map(fn ($obj) => $obj['model']['key'])->flatten()->toArray();
     }
 
     /**
@@ -51,6 +52,7 @@ class CompanyController extends Controller
     public function show(Company $company)
     {
         $this->authorize('view', $company);
+
         return array_merge(
             $company->toArray(),
             ['avatar' => mediaUrl($company->getFirstMedia('avatar'))]
@@ -65,7 +67,7 @@ class CompanyController extends Controller
         $request->user()->authorize('can-update-company', $company);
 
         $company->update([
-            'name' => $request->get('name')
+            'name' => $request->get('name'),
         ]);
 
         if ($request->file('avatar')) {

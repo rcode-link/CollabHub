@@ -5,7 +5,7 @@ import UserIcon from '@/components/shared/UserIcon.vue'
 import Badge from '@/components/shared/ui/Badge.vue'
 import UiSelect from '@/components/shared/ui/Select.vue'
 import { TailwindPagination } from 'laravel-vue-pagination'
-import { omitBy, isNull, findIndex, toNumber, debounce } from 'lodash'
+import { debounce } from '@/functions/debounce'
 import { DateTime } from 'luxon'
 import { useBreadcrumbStore } from '@/store/breadcrumb'
 import { useTasksStore } from '@/store/tasksStore.js'
@@ -64,7 +64,7 @@ const clearFilters = () => {
 
 const load = () => {
   loading.value = true
-  const params = omitBy(route.query, (v) => v === null || v === '' || v === undefined)
+  const params = Object.fromEntries(Object.entries(route.query).filter(([, v]) => v != null && v !== ''))
   params.project_id = route.params.project
   tasksStore.loadTasks(params)
 }
@@ -79,7 +79,7 @@ const initData = () => {
   axios.get('/api/v1/task-types').then((res) => { taskTypesList.value = res.data })
 
   Echo.private(`task-updated.${route.params.project}`).listen('TaskUpdatedEvent', ({ task }) => {
-    const index = findIndex(tasksStore.tasks.data, { id: toNumber(task.id) })
+    const index = tasksStore.tasks.data.findIndex(t => t.id === Number(task.id))
     if (index > -1) { tasksStore.tasks.data.splice(index, 1, task) }
   })
 }

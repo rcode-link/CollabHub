@@ -35,6 +35,7 @@ use Illuminate\Support\Facades\Auth;
  * @property-read int|null $number_of_unread_messages_count
  * @property-read Collection<int, User> $users
  * @property-read int|null $users_count
+ *
  * @method static ChatFactory factory($count = null, $state = [])
  * @method static Builder|Chat newModelQuery()
  * @method static Builder|Chat newQuery()
@@ -45,7 +46,9 @@ use Illuminate\Support\Facades\Auth;
  * @method static Builder|Chat whereId($value)
  * @method static Builder|Chat whereTitle($value)
  * @method static Builder|Chat whereUpdatedAt($value)
+ *
  * @property-read Model|\Eloquent $chatable
+ *
  * @mixin Eloquent
  */
 class Chat extends Model
@@ -85,6 +88,7 @@ class Chat extends Model
     {
         return $this->hasManyThrough(MessageReaction::class, ChatMessage::class);
     }
+
     public function numberOfUnreadMessages(): HasManyThrough
     {
         return $this->hasManyThrough(MessageReaction::class, ChatMessage::class)->whereNull('reaction')->where('message_reactions.user_id', Auth::id());

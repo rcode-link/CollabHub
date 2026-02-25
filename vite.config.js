@@ -16,16 +16,31 @@ export default defineConfig({
         rollupOptions: {
             output: {
                 manualChunks: {
-                    'prosemirror': ['prosemirror-state', 'prosemirror-view'],
-                    'tiptap-core': ['@tiptap/core'],
-                    'editor-extensions': [
+                    'prosemirror': ['prosemirror-state', 'prosemirror-view', 'prosemirror-transform', 'prosemirror-collab'],
+                    'tiptap-core': [
+                        '@tiptap/core',
+                        '@tiptap/starter-kit',
+                        '@tiptap/vue-3',
                         '@tiptap/extension-link',
                         '@tiptap/extension-code-block-lowlight',
                         '@tiptap/extension-table',
                         '@tiptap/extension-table-row',
                         '@tiptap/extension-table-header',
-                        '@tiptap/extension-table-cell'
+                        '@tiptap/extension-table-cell',
+                        '@tiptap/extension-mention',
+                        '@tiptap/extension-image',
+                        '@tiptap/extension-placeholder',
+                        '@tiptap/extension-task-item',
+                        '@tiptap/extension-task-list',
+                        '@tiptap/extension-bold',
+                        '@tiptap/extension-heading',
+                        '@tiptap/extension-list-item',
+                        '@tiptap/extension-strike',
+                        '@tiptap/suggestion',
                     ],
+                    'tiptap-markdown': ['tiptap-markdown'],
+                    'highlight-langs': ['highlight.js', 'lowlight'],
+                    'livekit': ['livekit-client'],
                 }
             }
         }

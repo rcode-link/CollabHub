@@ -2,10 +2,8 @@
 
 namespace App\Console\Commands;
 
-use Illuminate\Console\Command;
-
 use App\Helpers\SetEnviroment;
-use Illuminate\Support\Facades\Artisan;
+use Illuminate\Console\Command;
 
 class SetupNewEnviroment extends Command
 {
@@ -17,6 +15,7 @@ class SetupNewEnviroment extends Command
     protected $signature = 'app:setup-new-enviroment {connection}';
 
     private $model;
+
     /**
      * The console command description.
      *
@@ -30,11 +29,10 @@ class SetupNewEnviroment extends Command
     public function handle()
     {
         $connection = $this->argument('connection');
-        $this->info("Loading enviroment");
+        $this->info('Loading enviroment');
         $this->model = SetEnviroment::loadEnv($connection);
-        $this->info("Loaded enviroment");
+        $this->info('Loaded enviroment');
         SetEnviroment::connection($this->model);
         $this->call('migrate', ['--seed' => true, '--force' => true]);
     }
-
 }

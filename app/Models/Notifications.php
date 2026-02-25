@@ -15,6 +15,7 @@ use Illuminate\Support\Carbon;
  * @property int $id
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
+ *
  * @method static NotificationsFactory factory($count = null, $state = [])
  * @method static Builder|Notifications newModelQuery()
  * @method static Builder|Notifications newQuery()
@@ -22,6 +23,7 @@ use Illuminate\Support\Carbon;
  * @method static Builder|Notifications whereCreatedAt($value)
  * @method static Builder|Notifications whereId($value)
  * @method static Builder|Notifications whereUpdatedAt($value)
+ *
  * @mixin Eloquent
  */
 class Notifications extends Model

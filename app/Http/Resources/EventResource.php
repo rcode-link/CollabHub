@@ -45,13 +45,13 @@ class EventResource extends JsonResource
             'approved' => $this->approved,
             'videocall' => $this->whenLoaded('videocalls', function () {
                 return [
-                    'slug' => $this->videocalls->slug
+                    'slug' => $this->videocalls->slug,
                 ];
             }),
-            'creator' => $this->whenLoaded('creator', fn() => new UserResource($this->creator)),
+            'creator' => $this->whenLoaded('creator', fn () => new UserResource($this->creator)),
             'attendance' => $this->whenLoaded('user', function () {
                 return EventUserResource::collection($this->user);
-            })
+            }),
         ];
     }
 }

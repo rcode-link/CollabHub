@@ -16,6 +16,7 @@ class BroadcastCustom
     private static array $channels = [];
 
     private static string $lastChannelName = '';
+
     private static $_instance = null;
 
     public static function getInstance()
@@ -31,18 +32,19 @@ class BroadcastCustom
     {
 
         self::$lastChannelName = $chanelName;
-        $chanelInfo = new ChanelInfo();
+        $chanelInfo = new ChanelInfo;
         $chanelInfo->chanelName = $chanelName;
         $chanelInfo->chanelNameRegex = preg_replace("(\*|{\w+})", "(\w+)", $chanelName);
         $chanelInfo->callbackFunction = $callback;
         $chanelInfo->middleware = [];
         self::$channels[$chanelName] = $chanelInfo;
+
         return $this;
     }
 
     /**
      * Its now working currently
-     * @param array $middleware
+     *
      * @return $this
      */
     public function middleware(array $middleware): static
@@ -52,7 +54,6 @@ class BroadcastCustom
         return $this;
     }
 
-
     public function check(Request $request)
     {
         $socket_id = $request->get('socket_id');
@@ -61,15 +62,14 @@ class BroadcastCustom
         $chanelData = $this->parseChanel($request->get('channel_name'));
 
         $chanel = array_filter(self::$channels, function ($obj) use ($chanelData) {
-            return preg_match('/' . $obj->chanelNameRegex . '/', $chanelData->chanelName);
+            return preg_match('/'.$obj->chanelNameRegex.'/', $chanelData->chanelName);
         });
 
-        abort_if(!count($chanel), Response::HTTP_FORBIDDEN, 'A');
+        abort_if(! count($chanel), Response::HTTP_FORBIDDEN, 'A');
 
         $chanel = $chanel[array_key_first($chanel)];
 
-        preg_match_all('/' . $chanel->chanelNameRegex . '/', $chanelData->chanelName, $matches);
-
+        preg_match_all('/'.$chanel->chanelNameRegex.'/', $chanelData->chanelName, $matches);
 
         $funDataWithChanelName = array_filter(Arr::flatten($matches), function ($str) use ($chanelData) {
             return $str !== $chanelData->chanelName;
@@ -86,8 +86,8 @@ class BroadcastCustom
         }
 
         //       Middleware check is not working
-//        abort_if(count($chanel->middleware) > 0 && !Auth::check($chanel->middleware), Response::HTTP_FORBIDDEN);
-//
+        //        abort_if(count($chanel->middleware) > 0 && !Auth::check($chanel->middleware), Response::HTTP_FORBIDDEN);
+        //
 
         $isUserAuthorized = call_user_func_array($chanel->callbackFunction, array_merge([$user], $funDataWithChanelName));
 
@@ -105,10 +105,11 @@ class BroadcastCustom
     private function parseChanel($channel_name): ChanelInfo
     {
 
-        $channelInfo = new ChanelInfo();
+        $channelInfo = new ChanelInfo;
 
         $channelInfo->chanelType = Str::contains($channel_name, 'private') ? 'private' : 'presence';
-        $channelInfo->chanelName = Str::replace($channelInfo->chanelType . '-', '', $channel_name);
+        $channelInfo->chanelName = Str::replace($channelInfo->chanelType.'-', '', $channel_name);
+
         return $channelInfo;
     }
 
@@ -117,14 +118,10 @@ class BroadcastCustom
         return self::$channels;
     }
 
-
-    static function route(): void
+    public static function route(): void
     {
         Route::post('/pusher/auth', function (Request $request) {
             return BroadcastCustom::getInstance()->check($request);
         })->name('api.pusher.auth');
     }
-
 }
-
-

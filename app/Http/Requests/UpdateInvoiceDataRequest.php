@@ -25,7 +25,7 @@ class UpdateInvoiceDataRequest extends FormRequest
     {
         return [
             'type' => ['required', new Enum(InvoiceData::class)],
-            'data' => ['array']
+            'data' => ['array'],
         ];
     }
 }

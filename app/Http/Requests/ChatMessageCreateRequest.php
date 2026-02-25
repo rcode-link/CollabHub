@@ -2,7 +2,6 @@
 
 namespace App\Http\Requests;
 
-use App\Models\ChatMessage;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -28,7 +27,7 @@ class ChatMessageCreateRequest extends FormRequest
             'parent_id' => ['nullable', 'exists:chat_messages,id'],
             'files.*' => [
                 'file',
-            ]
+            ],
         ];
     }
 }

@@ -7,7 +7,6 @@ use App\Http\Requests\UpdateTaskRelationRequest;
 use App\Http\Resources\TaskRelationResource;
 use App\Models\TaskRelation;
 
-
 class TaskRelationController extends Controller
 {
     /**

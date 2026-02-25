@@ -23,7 +23,7 @@ import { Markdown } from 'tiptap-markdown'
 import { useTextToLinkStore } from '@/store/textToLinkStore'
 import { LinkPreviewExtension } from '@/functions/editor/LinkPreviewExtension.js'
 import { useRouter } from 'vue-router'
-import _ from 'lodash'
+import { debounce } from '@/functions/debounce'
 const chatStore = chatDetails()
 const router = useRouter()
 const props = defineProps({
@@ -155,7 +155,7 @@ const editor = useEditor({
     ...(props.placeholder ? [Placeholder.configure({ placeholder: props.placeholder })] : []),
   ],
   onUpdate: ({ editor }) => {
-    _.debounce(() => emit('update:modelValue', editor.value?.getJSON()), 300)
+    debounce(() => emit('update:modelValue', editor.value?.getJSON()), 300)
     // Only emit on blur or when the form is submitted, not on every change
   },
 })

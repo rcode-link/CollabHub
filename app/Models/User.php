@@ -51,6 +51,7 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media;
  * @property-read int|null $permissions_count
  * @property-read Collection<int, PersonalAccessToken> $tokens
  * @property-read int|null $tokens_count
+ *
  * @method static UserFactory factory($count = null, $state = [])
  * @method static Builder|User newModelQuery()
  * @method static Builder|User newQuery()
@@ -64,32 +65,38 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media;
  * @method static Builder|User whereRememberToken($value)
  * @method static Builder|User whereRole($value)
  * @method static Builder|User whereUpdatedAt($value)
+ *
  * @property-read Collection<int, \App\Models\Role> $roles
  * @property-read int|null $roles_count
  * @property string|null $start_work_time
  * @property string|null $end_work_time
  * @property int|null $manager_id
+ *
  * @method static Builder|User whereEndWorkTime($value)
  * @method static Builder|User whereManagerId($value)
  * @method static Builder|User whereStartWorkTime($value)
+ *
  * @property-read User|null $manager
  * @property Carbon|null $deleted_at
+ *
  * @method static Builder|User onlyTrashed()
  * @method static Builder|User whereDeletedAt($value)
  * @method static Builder|User withTrashed()
  * @method static Builder|User withoutTrashed()
+ *
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Event> $events
  * @property-read int|null $events_count
+ *
  * @mixin Eloquent
  */
 class User extends Authenticatable implements HasMedia
 {
     use HasApiTokens;
     use HasFactory;
-    use Notifiable;
-    use InteractsWithMedia;
-    use SoftDeletes;
     use HasPushSubscriptions;
+    use InteractsWithMedia;
+    use Notifiable;
+    use SoftDeletes;
 
     /**
      * The attributes that are mass assignable.
@@ -144,7 +151,7 @@ class User extends Authenticatable implements HasMedia
             $role = Role::create([
                 'title' => $user->name,
                 'is_visible' => false,
-                'can_be_changed' => false
+                'can_be_changed' => false,
             ]);
 
             $role->users()->attach($user->id);
@@ -154,40 +161,39 @@ class User extends Authenticatable implements HasMedia
                 $chat = Chat::create([
                     'title' => 'Sandbox',
                     'chatable_type' => $company::class,
-                    'chatable_id' => $company->id
+                    'chatable_id' => $company->id,
                 ]);
 
                 $chat->users()->attach($user);
             }
 
-
             // get sendbox chats of other users
             $chats = Chat::query()
                 ->whereHasMorph('chatable', Company::class)
                 ->with('users')
-                ->whereHas('users', fn(Builder $builder) => $builder->whereNot('user_id', $user->id))
+                ->whereHas('users', fn (Builder $builder) => $builder->whereNot('user_id', $user->id))
                 ->get();
 
             $messageContent = [
-                "type" => "doc",
-                "content" => [
+                'type' => 'doc',
+                'content' => [
                     [
-                        "type" => "paragraph",
-                        "content" => [
+                        'type' => 'paragraph',
+                        'content' => [
                             [
-                                "type" => "mention",
-                                "attrs" => [
-                                    "id" => $user->id,
-                                    "label" => $user->name
-                                ]
+                                'type' => 'mention',
+                                'attrs' => [
+                                    'id' => $user->id,
+                                    'label' => $user->name,
+                                ],
                             ],
                             [
-                                "type" => "text",
-                                "text" => " just joined your company"
-                            ]
-                        ]
-                    ]
-                ]
+                                'type' => 'text',
+                                'text' => ' just joined your company',
+                            ],
+                        ],
+                    ],
+                ],
             ];
 
             // send messages to other users
@@ -195,14 +201,14 @@ class User extends Authenticatable implements HasMedia
                 $message = ChatMessage::create([
                     'message' => $messageContent,
                     'user_id' => $chat->users->first()->id,
-                    'chat_id' => $chat->id
+                    'chat_id' => $chat->id,
                 ]);
                 $message->load('user', 'media', 'videocalls', 'parent', 'messageReactions');
                 $message->messageViews()->insert($chat->users->pluck('id')->map(function ($user_id) use ($message) {
                     return [
                         'user_id' => $user_id,
                         'chat_message_id' => $message->id,
-                        'reaction' => null
+                        'reaction' => null,
                     ];
                 })->toArray());
                 ChatUpdate::dispatch($chat->users->toArray(), $message);
@@ -211,22 +217,20 @@ class User extends Authenticatable implements HasMedia
         });
     }
 
-
     public function permissions(): Collection
     {
         $data = Cache::get('permissions', collect([]));
-        if (!$data || !$data->count()) {
+        if (! $data || ! $data->count()) {
             ManagePermissionsEvent::dispatch();
         }
 
-        return $data->filter(fn($obj) => $obj['users']->contains($this->id));
+        return $data->filter(fn ($obj) => $obj['users']->contains($this->id));
     }
 
     public function manager(): BelongsTo
     {
         return $this->belongsTo(User::class, 'manager_id');
     }
-
 
     public function authorize(string $action, Model|int $model): void
     {
@@ -238,7 +242,6 @@ class User extends Authenticatable implements HasMedia
         return $this->belongsToMany(Company::class, 'user_company')->where('is_costumer_company', false);
     }
 
-
     public function isAdmin(): bool
     {
         return $this->role === 'admin';
@@ -246,7 +249,7 @@ class User extends Authenticatable implements HasMedia
 
     public function hasPermission($model, $action): int
     {
-        return $this->permissions()->contains($action . '.' . $model->id);
+        return $this->permissions()->contains($action.'.'.$model->id);
     }
 
     public function registerMediaCollections(): void
@@ -254,13 +257,18 @@ class User extends Authenticatable implements HasMedia
         $this
             ->addMediaCollection('avatar')
             ->singleFile()
-            ->useFallbackUrl(config('app.url') . '/storage/images/avatar.png')
+            ->useFallbackUrl(config('app.url').'/storage/images/avatar.png')
             ->useFallbackPath(public_path('storage/images/asailvatar.png'));
     }
 
     public function roles(): BelongsToMany
     {
         return $this->belongsToMany(Role::class, 'user_role');
+    }
+
+    public function tasks(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(Task::class);
     }
 
     public function events()
@@ -273,10 +281,11 @@ class User extends Authenticatable implements HasMedia
         $events = $this->events()->whereBetween('start_time', [now()->startOfDay(), now()->endOfDay()])
             ->orWhere('freq_until', '>=', now()->startOfDay())
             ->get();
+
         return $events->map(function ($obj) {
             return [
                 'from' => $obj->start_time,
-                'to' => $obj->end_time
+                'to' => $obj->end_time,
             ];
         });
     }

@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StorePermissionRequest;
 use App\Http\Requests\UpdatePermissionRequest;
-use App\Models\Permission;
 use App\Models\PermissionDefinition;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;

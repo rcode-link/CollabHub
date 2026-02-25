@@ -15,6 +15,7 @@ use Illuminate\Database\Eloquent\Relations\Pivot;
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \App\Models\TaskStatuses|null $status
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|TaskSprint newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|TaskSprint newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|TaskSprint query()
@@ -24,13 +25,14 @@ use Illuminate\Database\Eloquent\Relations\Pivot;
  * @method static \Illuminate\Database\Eloquent\Builder|TaskSprint whereTaskId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|TaskSprint whereTaskStatusId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|TaskSprint whereUpdatedAt($value)
+ *
  * @property-read \App\Models\Sprint|null $sprint
  * @property-read \App\Models\Task|null $task
+ *
  * @mixin \Eloquent
  */
 class TaskSprint extends Pivot
 {
-
     public function status(): HasOne
     {
         return $this->hasOne(TaskStatuses::class, 'id', 'task_status_id');

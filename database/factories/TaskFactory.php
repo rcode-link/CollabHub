@@ -20,7 +20,7 @@ class TaskFactory extends Factory
             'name' => $this->faker->sentence,
             'task_id' => $this->faker->slug(6),
             'created_by' => 1,
-            'description' =>  $this->faker->sentences(5)
+            'description' => $this->faker->sentences(5),
         ];
     }
 }

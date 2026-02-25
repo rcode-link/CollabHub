@@ -4,9 +4,11 @@ import AdvancedEditor from '@/components/shared/advancedEditor/Index.vue'
 import { useRoute } from 'vue-router'
 import { useBreadcrumbStore } from '@/store/breadcrumb'
 import { useAbility } from '@casl/vue'
+import { useUserStore } from '@/store/user'
 import { DateTime } from 'luxon'
 
 const { can } = useAbility()
+const userStore = useUserStore()
 const document = ref({})
 const saving = ref(false)
 const saved = ref(false)
@@ -14,10 +16,16 @@ const loaded = ref(false)
 const shareOpen = ref(false)
 const shareLoading = ref(false)
 const copied = ref(false)
+const exporting = ref(false)
 const route = useRoute()
 const breadcrumbStore = useBreadcrumbStore()
 
-const canUpdate = computed(() => can(`can-update-document.${route.params.project}`, ''))
+const canUpdate = computed(() => {
+  if (route.params.project) {
+    return can(`can-update-document.${route.params.project}`, '')
+  }
+  return document.value.created_by === userStore.user.id
+})
 
 const relativeTime = computed(() =>
   document.value.updated_at
@@ -92,6 +100,20 @@ const copyLink = () => {
   })
 }
 
+const exportPdf = () => {
+  exporting.value = true
+  axios.post(`/api/v1/files/${document.value.id}/export-pdf`, null, { responseType: 'blob' })
+    .then(({ data }) => {
+      const url = URL.createObjectURL(data)
+      const a = window.document.createElement('a')
+      a.href = url
+      a.download = (document.value.title || 'document') + '.pdf'
+      a.click()
+      URL.revokeObjectURL(url)
+    })
+    .finally(() => { exporting.value = false })
+}
+
 load()
 </script>
 
@@ -131,16 +153,33 @@ load()
         </template>
       </div>
 
+      <!-- Export PDF button -->
+      <button
+        class="inline-flex items-center justify-center gap-1.5 text-xs px-2.5 py-1 rounded-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors shrink-0 disabled:opacity-50"
+        :disabled="exporting"
+        @click="exportPdf"
+      >
+        <svg v-if="exporting" class="w-3.5 h-3.5 shrink-0 animate-spin" viewBox="0 0 24 24" fill="none">
+          <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="3" stroke-dasharray="15 45" stroke-linecap="round"/>
+        </svg>
+        <svg v-else class="w-3.5 h-3.5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+          <polyline points="7 10 12 15 17 10"/>
+          <line x1="12" y1="15" x2="12" y2="3"/>
+        </svg>
+        {{ exporting ? 'Exporting…' : 'PDF' }}
+      </button>
+
       <!-- Share button -->
       <div v-if="canUpdate" class="relative shrink-0">
         <button
-          class="flex items-center gap-1.5 text-xs px-2.5 py-1 rounded-md border transition-colors"
+          class="inline-flex items-center justify-center gap-1.5 text-xs px-2.5 py-1 rounded-md border transition-colors"
           :class="document.share_token
             ? 'border-blue-200 dark:border-blue-800 bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400'
             : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700'"
           @click="shareOpen = !shareOpen"
         >
-          <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <svg class="w-3.5 h-3.5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/>
             <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
           </svg>
@@ -170,11 +209,11 @@ load()
                 Generate a public link so anyone can view this document without signing in.
               </p>
               <button
-                class="w-full flex items-center justify-center gap-2 px-3 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition-colors disabled:opacity-50"
+                class="w-full inline-flex items-center justify-center gap-2 px-3 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition-colors disabled:opacity-50"
                 :disabled="shareLoading"
                 @click="enableShare"
               >
-                <svg v-if="shareLoading" class="w-3.5 h-3.5 animate-spin" viewBox="0 0 24 24" fill="none">
+                <svg v-if="shareLoading" class="w-3.5 h-3.5 shrink-0 animate-spin" viewBox="0 0 24 24" fill="none">
                   <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="3" stroke-dasharray="15 45" stroke-linecap="round"/>
                 </svg>
                 Create share link
@@ -207,11 +246,11 @@ load()
 
               <!-- Revoke -->
               <button
-                class="w-full flex items-center justify-center gap-2 px-3 py-1.5 border border-red-200 dark:border-red-900 text-red-600 dark:text-red-400 text-xs rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors disabled:opacity-50"
+                class="w-full inline-flex items-center justify-center gap-2 px-3 py-1.5 border border-red-200 dark:border-red-900 text-red-600 dark:text-red-400 text-xs rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors disabled:opacity-50"
                 :disabled="shareLoading"
                 @click="revokeShare"
               >
-                <svg v-if="shareLoading" class="w-3 h-3 animate-spin" viewBox="0 0 24 24" fill="none">
+                <svg v-if="shareLoading" class="w-3 h-3 shrink-0 animate-spin" viewBox="0 0 24 24" fill="none">
                   <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="3" stroke-dasharray="15 45" stroke-linecap="round"/>
                 </svg>
                 Revoke link

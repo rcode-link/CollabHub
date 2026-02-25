@@ -23,7 +23,7 @@ class UpdateCompanyRequest extends FormRequest
     {
         return [
             'name' => ['string'],
-            'avatar' => ['nullable', 'sometimes', 'file']
+            'avatar' => ['nullable', 'sometimes', 'file'],
         ];
     }
 }

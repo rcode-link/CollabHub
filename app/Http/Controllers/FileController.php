@@ -12,6 +12,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
+use Spatie\Browsershot\Browsershot;
 
 class FileController extends Controller
 {
@@ -27,9 +28,9 @@ class FileController extends Controller
                 ->select('id', 'title', 'type', 'extension', 'parent_id', 'entity_type', 'entity_id', 'created_by', 'created_at', 'updated_at', 'file_id')
                 ->where(function ($q) use ($allowedProjectIds) {
                     $q->where(function ($q2) {
-                            $q2->whereNull('entity_id')
-                                ->where('created_by', Auth::id());
-                        })
+                        $q2->whereNull('entity_id')
+                            ->where('created_by', Auth::id());
+                    })
                         ->orWhere(function ($q2) use ($allowedProjectIds) {
                             $q2->where('entity_type', Project::class)
                                 ->whereIn('entity_id', $allowedProjectIds);
@@ -54,6 +55,42 @@ class FileController extends Controller
         $pdf = Pdf::loadView('pdf.document', ['content' => $request->get('content')]);
 
         return $pdf->stream();
+    }
+
+    public function exportAsPdf(File $file)
+    {
+        $this->authorizeFile($file, 'can-view-project');
+
+        $hadToken = (bool) $file->share_token;
+
+        if (! $file->share_token) {
+            $file->update(['share_token' => Str::uuid()->toString()]);
+        }
+
+        $baseUrl = config('services.browsershot.app_url') ?: config('app.url');
+        $url = $baseUrl.'/d/'.$file->share_token;
+
+        $browsershot = Browsershot::url($url)
+            ->setNodeBinary(config('services.browsershot.node_binary', 'node'))
+            ->setNpmBinary(config('services.browsershot.npm_binary', 'npm'))
+            ->addChromiumArguments(['ignore-certificate-errors', 'no-sandbox'])
+            ->emulateMedia('print')
+            ->waitUntilNetworkIdle();
+
+        if ($remoteHost = config('services.browsershot.remote_host')) {
+            $browsershot->setRemoteInstance($remoteHost, config('services.browsershot.remote_port', 9222));
+        }
+
+        $pdfContent = $browsershot->pdf();
+
+        if (! $hadToken) {
+            $file->update(['share_token' => null]);
+        }
+
+        return response($pdfContent, 200, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'attachment; filename="'.Str::slug($file->title ?: 'document').'.pdf"',
+        ]);
     }
 
     /**
@@ -126,7 +163,7 @@ class FileController extends Controller
         $file = File::where('share_token', $token)->firstOrFail();
 
         return response()->json([
-            'title'   => $file->title,
+            'title' => $file->title,
             'content' => $file->content,
         ]);
     }

@@ -32,7 +32,6 @@ use Tiptap\Editor;
  * @property-read Collection<int, User> $users
  * @property-read int|null $users_count
  * @property-read Model|\Eloquent $chatable
- *
  */
 class ChatResource extends JsonResource
 {
@@ -47,7 +46,6 @@ class ChatResource extends JsonResource
     {
         $response = $this->getChatTypeAndTitle();
 
-
         return [
             'id' => $this->id,
             'title' => $response['title'],
@@ -60,7 +58,7 @@ class ChatResource extends JsonResource
 
                 $message = '';
                 if ($this->last_message->message) {
-                    $message = (new Editor())->setContent($this->last_message->message)->getText([
+                    $message = (new Editor)->setContent($this->last_message->message)->getText([
                         'blockSeparator' => "\n",
                     ]);
                 }
@@ -73,13 +71,12 @@ class ChatResource extends JsonResource
                     $message = 'Media';
                 }
 
-
                 return [
                     'text' => $message,
                     'created_at' => $this->last_message->created_at,
-                    'user' => $this->last_message->user->name
+                    'user' => $this->last_message->user->name,
                 ];
-            })
+            }),
         ];
     }
 
@@ -90,6 +87,7 @@ class ChatResource extends JsonResource
             $this->users_count <= $this->NUMBER_OF_USERS_IN_PRIVATE_CHAT
         ) {
             $user = $this->users->first();
+
             return [
                 'title' => $user?->name,
                 'type' => ChatTypes::USER->value,
@@ -102,7 +100,7 @@ class ChatResource extends JsonResource
             'title' => $this->title,
             'type' => $this->chatable_type === User::class ? ChatTypes::GROUP->value : Str::lower(\Str::replace('\\App\\Models\\', '', $this->chatable_type)),
             'avatar' => '',
-            'chatable_id' => null
+            'chatable_id' => null,
         ];
     }
 

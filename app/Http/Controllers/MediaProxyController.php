@@ -30,7 +30,7 @@ class MediaProxyController extends Controller
                 ->whereHas('users', fn ($q) => $q->where('user_id', auth()->id()))
                 ->exists();
 
-            if (!$isMember) {
+            if (! $isMember) {
                 abort(403, 'You do not have access to this file.');
             }
         }

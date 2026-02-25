@@ -16,6 +16,7 @@ class FrontendEnv
     public function handle(Request $request, Closure $next): Response
     {
         view()->share('env', config('frontend'));
+
         return $next($request);
     }
 }

@@ -13,6 +13,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property string $type
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
+ *
  * @method static \Database\Factories\InvoiceDataFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder|InvoiceData newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|InvoiceData newQuery()
@@ -22,6 +23,7 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder|InvoiceData whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|InvoiceData whereType($value)
  * @method static \Illuminate\Database\Eloquent\Builder|InvoiceData whereUpdatedAt($value)
+ *
  * @mixin \Eloquent
  */
 class InvoiceData extends Model
@@ -30,10 +32,10 @@ class InvoiceData extends Model
 
     protected $fillable = [
         'type',
-        'data'
+        'data',
     ];
 
     protected $casts = [
-        'data' => 'json'
+        'data' => 'json',
     ];
 }

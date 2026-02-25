@@ -29,7 +29,7 @@ class StoreTaskRequest extends FormRequest
             'user_id' => ['nullable', 'exists:users,id'],
             'type_id' => ['required', 'exists:task_types,id'],
             'project_id' => ['required', 'exists:projects,id'],
-            'related_tasks' => ['nullable','array'],
+            'related_tasks' => ['nullable', 'array'],
             'related_tasks.*.task_relation_id' => ['nullable', 'exists:task_relations,id'],
             'related_tasks.*.task_id' => ['nullable', 'exists:tasks,id'],
             'tags' => ['nullable', 'array'],

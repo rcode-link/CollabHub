@@ -21,7 +21,7 @@ class TaskTypeSeeder extends Seeder
             ],
             [
                 'title' => 'Task',
-            ]
+            ],
         ]);
     }
 }

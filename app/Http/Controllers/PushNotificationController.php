@@ -23,6 +23,7 @@ class PushNotificationController extends Controller
         $key = $request->get('keys')['p256dh'];
         $token = $request->get('keys')['auth'];
         auth()->user()->updatePushSubscription($endpoint, $key, $token);
+
         return response()->noContent();
         //
     }

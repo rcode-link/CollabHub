@@ -13,6 +13,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property int $value
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
+ *
  * @method static \Database\Factories\PaymentFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder|Payment newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Payment newQuery()
@@ -22,11 +23,16 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder|Payment whereInvoiceId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Payment whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Payment whereValue($value)
+ *
  * @property int $company_id
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|Payment whereCompanyId($value)
+ *
  * @property string $date
  * @property-read \App\Models\Invoice $invoice
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|Payment whereDate($value)
+ *
  * @mixin \Eloquent
  */
 class Payment extends Model
@@ -36,7 +42,7 @@ class Payment extends Model
     protected $fillable = [
         'invoice_id',
         'value',
-        'date'
+        'date',
     ];
 
     public function invoice()

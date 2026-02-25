@@ -13,8 +13,8 @@ use Illuminate\Queue\SerializesModels;
 
 class ChatMessageUpdated implements ShouldBroadcast
 {
-    use InteractsWithBroadcasting;
     use Dispatchable, InteractsWithSockets, SerializesModels;
+    use InteractsWithBroadcasting;
 
     public $data;
 
@@ -34,7 +34,7 @@ class ChatMessageUpdated implements ShouldBroadcast
     public function broadcastOn(): array
     {
         return [
-            new PresenceChannel('chat.' . $this->message->chat_id),
+            new PresenceChannel('chat.'.$this->message->chat_id),
         ];
     }
 }

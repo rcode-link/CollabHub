@@ -4,7 +4,7 @@ namespace App\Helpers;
 
 class Authenticate
 {
-    static function user()
+    public static function user()
     {
         $token = \Str::replace('Bearer ', '', request()->header('authorization'));
         $tokenData = \Laravel\Sanctum\PersonalAccessToken::findToken($token);
@@ -12,18 +12,19 @@ class Authenticate
         return $tokenData->tokenable;
     }
 
-    static function id()
+    public static function id()
     {
         $token = \Str::replace('Bearer ', '', request()->header('authorization'));
         $tokenData = \Laravel\Sanctum\PersonalAccessToken::findToken($token);
+
         return $tokenData->tokenable->id;
     }
 
-    static function check()
+    public static function check()
     {
         $token = \Str::replace('Bearer ', '', request()->header('authorization'));
         $tokenData = \Laravel\Sanctum\PersonalAccessToken::findToken($token);
 
-        abort_if(!$tokenData, 401, 'Unauthenticated.');
+        abort_if(! $tokenData, 401, 'Unauthenticated.');
     }
 }

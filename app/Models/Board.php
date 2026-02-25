@@ -9,8 +9,8 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Support\Carbon;
+use Laravel\Sanctum\HasApiTokens;
 
 /**
  * App\Models\Board
@@ -22,6 +22,7 @@ use Illuminate\Support\Carbon;
  * @property Carbon|null $updated_at
  * @property-read Collection<int, Sprint> $sprint
  * @property-read int|null $sprint_count
+ *
  * @method static BoardFactory factory($count = null, $state = [])
  * @method static Builder|Board newModelQuery()
  * @method static Builder|Board newQuery()
@@ -31,14 +32,17 @@ use Illuminate\Support\Carbon;
  * @method static Builder|Board whereTitle($value)
  * @method static Builder|Board whereType($value)
  * @method static Builder|Board whereUpdatedAt($value)
+ *
  * @property int $project_id
+ *
  * @method static Builder|Board whereProjectId($value)
+ *
  * @mixin Eloquent
  */
 class Board extends Model
 {
-    use HasFactory;
     use HasApiTokens;
+    use HasFactory;
 
     protected $guarded = [];
 

@@ -33,6 +33,7 @@ class BoardController extends Controller
         $board = Board::create($request->validated());
 
         BoardCreatedEvent::dispatch($board);
+
         return response()->noContent();
         //
     }

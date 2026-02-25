@@ -26,7 +26,7 @@ class TaskStatusesController extends Controller
      */
     public function store(StoreTaskStatusesRequest $request)
     {
-        \Auth::user()->authorize('can-update-board',  $request->get('project_id'));
+        \Auth::user()->authorize('can-update-board', $request->get('project_id'));
 
         TaskStatuses::create($request->validated());
 
@@ -48,19 +48,18 @@ class TaskStatusesController extends Controller
     public function update(UpdateTaskStatusesRequest $request, TaskStatuses $tasks_status)
     {
 
-        \Auth::user()->authorize('can-update-board',  $tasks_status->project_id);
+        \Auth::user()->authorize('can-update-board', $tasks_status->project_id);
         $data = $request->validated();
 
-        if(isset($data['order'])){
-           $success =  $tasks_status->updateOrder($data['order']);
+        if (isset($data['order'])) {
+            $success = $tasks_status->updateOrder($data['order']);
         }
 
-
-        if(!isset($data['order'])){
-            $success =  $tasks_status->update($data);
+        if (! isset($data['order'])) {
+            $success = $tasks_status->update($data);
         }
 
-       return response()->noContent();
+        return response()->noContent();
     }
 
     /**

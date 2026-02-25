@@ -2,7 +2,7 @@
 import { ref, watch, onMounted, nextTick } from 'vue'
 import { useRoute } from 'vue-router'
 import { DateTime } from 'luxon'
-import _ from 'lodash'
+import { debounce } from '@/functions/debounce'
 
 const emit = defineEmits(['close'])
 const route = useRoute()
@@ -31,7 +31,7 @@ function parseMessage(message) {
   }
 }
 
-const doSearch = _.debounce(async (q) => {
+const doSearch = debounce(async (q) => {
   if (!q || q.trim().length < 2) { results.value = []; loading.value = false; return }
   loading.value = true
   try {

@@ -19,6 +19,7 @@ use Illuminate\Support\Carbon;
  * @property string|null $content
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
+ *
  * @method static ChatMessageReactionFactory factory($count = null, $state = [])
  * @method static Builder|ChatMessageReaction newModelQuery()
  * @method static Builder|ChatMessageReaction newQuery()
@@ -30,6 +31,7 @@ use Illuminate\Support\Carbon;
  * @method static Builder|ChatMessageReaction whereType($value)
  * @method static Builder|ChatMessageReaction whereUpdatedAt($value)
  * @method static Builder|ChatMessageReaction whereUserId($value)
+ *
  * @mixin Eloquent
  */
 class ChatMessageReaction extends Model

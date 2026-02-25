@@ -27,6 +27,11 @@ const localStream = ref(null);
 const permissionState = ref('pending'); // 'pending' | 'granted' | 'denied'
 const joining = ref(false);
 
+// Waiting room state
+const waitingRoom = ref(null); // null | 'waiting' | 'denied'
+const requestId = ref(null);
+let pollInterval = null;
+
 const initials = () => {
     return (model.name ?? '?')
         .split(' ')
@@ -59,7 +64,17 @@ const stopPreview = () => {
     localStream.value = null;
 };
 
-onUnmounted(stopPreview);
+const stopPolling = () => {
+    if (pollInterval) {
+        clearInterval(pollInterval);
+        pollInterval = null;
+    }
+};
+
+onUnmounted(() => {
+    stopPreview();
+    stopPolling();
+});
 
 // Camera toggle → enable/disable video tracks on the preview stream
 watch(() => model.enableCamera, (val) => {
@@ -77,6 +92,53 @@ watch(
     { immediate: true, deep: true }
 );
 
+const pollRequestStatus = () => {
+    pollInterval = setInterval(async () => {
+        try {
+            const res = await window.axios.get(
+                `/api/v1/video-call/${videoCallStore.videoId}/request/${requestId.value}`
+            );
+            if (res.data.status === 'approved') {
+                stopPolling();
+                model.token = res.data.token;
+                emits("update", model);
+            } else if (res.data.status === 'denied') {
+                stopPolling();
+                waitingRoom.value = 'denied';
+                joining.value = false;
+            }
+        } catch {
+            // Keep polling on network errors
+        }
+    }, 3000);
+};
+
+// Also try to listen via Echo for instant feedback
+const listenForApproval = () => {
+    if (!window.Echo) return;
+
+    window.Echo.channel(`video-call-request.${requestId.value}`)
+        .listen('.App\\Events\\VideoCallJoinApproved', async () => {
+            stopPolling();
+            try {
+                const res = await window.axios.get(
+                    `/api/v1/video-call/${videoCallStore.videoId}/request/${requestId.value}`
+                );
+                if (res.data.token) {
+                    model.token = res.data.token;
+                    emits("update", model);
+                }
+            } catch {
+                // Fallback — polling will handle it
+            }
+        })
+        .listen('.App\\Events\\VideoCallJoinDenied', () => {
+            stopPolling();
+            waitingRoom.value = 'denied';
+            joining.value = false;
+        });
+};
+
 const load = () => {
     joining.value = true;
     // Stop preview so LiveKit can take over the devices
@@ -86,16 +148,35 @@ const load = () => {
             name: model.name,
             currentTime: DateTime.now().toISO(),
         })
-        .then((token) => {
-            model.token = token.data.token;
-            emits("update", model);
+        .then((res) => {
+            if (res.data.token) {
+                // Invited user — join immediately
+                model.token = res.data.token;
+                emits("update", model);
+            } else if (res.data.status === 'pending') {
+                // Waiting room
+                waitingRoom.value = 'waiting';
+                requestId.value = res.data.request_id;
+                pollRequestStatus();
+                listenForApproval();
+            }
         })
         .catch((error) => {
             joining.value = false;
-            toast.error(error.response.data.message, {
+            toast.error(error.response?.data?.message ?? 'Failed to join call', {
                 onClick: () => { window.location.href = "/"; },
             });
         });
+};
+
+const goBack = () => {
+    window.location.href = "/";
+};
+
+const retryJoin = () => {
+    waitingRoom.value = null;
+    requestId.value = null;
+    joining.value = false;
 };
 </script>
 
@@ -105,7 +186,65 @@ const load = () => {
         <div class="pointer-events-none absolute -top-40 -left-40 h-96 w-96 rounded-full bg-blue-600/20 blur-3xl"></div>
         <div class="pointer-events-none absolute -bottom-40 -right-40 h-96 w-96 rounded-full bg-orange-500/20 blur-3xl"></div>
 
-        <div class="relative z-10 flex w-full max-w-4xl flex-col gap-6 px-4 lg:flex-row lg:items-center lg:gap-10">
+        <!-- Waiting for approval overlay -->
+        <div v-if="waitingRoom === 'waiting'"
+            class="relative z-10 flex flex-col items-center gap-6 text-center px-4">
+            <div class="flex h-20 w-20 items-center justify-center rounded-full bg-gradient-to-br from-orange-500/20 to-blue-600/20 backdrop-blur-sm">
+                <svg class="h-10 w-10 animate-spin text-orange-400" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                </svg>
+            </div>
+            <div>
+                <h2 class="text-xl font-semibold text-white">Waiting for approval</h2>
+                <p class="mt-2 text-sm text-gray-400">
+                    The host has been notified. You'll join automatically once approved.
+                </p>
+            </div>
+            <button
+                type="button"
+                @click="goBack"
+                class="rounded-xl border border-gray-600 bg-gray-800 px-6 py-2.5 text-sm font-medium text-gray-300 transition hover:bg-gray-700"
+            >
+                Leave
+            </button>
+        </div>
+
+        <!-- Request denied overlay -->
+        <div v-else-if="waitingRoom === 'denied'"
+            class="relative z-10 flex flex-col items-center gap-6 text-center px-4">
+            <div class="flex h-20 w-20 items-center justify-center rounded-full bg-red-900/30">
+                <svg class="h-10 w-10 text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                        d="M18.364 5.636l-12.728 12.728M5.636 5.636l12.728 12.728" />
+                </svg>
+            </div>
+            <div>
+                <h2 class="text-xl font-semibold text-white">Request denied</h2>
+                <p class="mt-2 text-sm text-gray-400">
+                    Your request to join this call was not approved.
+                </p>
+            </div>
+            <div class="flex gap-3">
+                <button
+                    type="button"
+                    @click="goBack"
+                    class="rounded-xl border border-gray-600 bg-gray-800 px-6 py-2.5 text-sm font-medium text-gray-300 transition hover:bg-gray-700"
+                >
+                    Go back
+                </button>
+                <button
+                    type="button"
+                    @click="retryJoin"
+                    class="rounded-xl bg-gradient-to-r from-orange-500 to-blue-600 px-6 py-2.5 text-sm font-semibold text-white transition hover:opacity-90"
+                >
+                    Try again
+                </button>
+            </div>
+        </div>
+
+        <!-- Normal join form -->
+        <div v-else class="relative z-10 flex w-full max-w-4xl flex-col gap-6 px-4 lg:flex-row lg:items-center lg:gap-10">
 
             <!-- Left: camera preview -->
             <div class="flex-1">

@@ -25,11 +25,11 @@ class GenerateProfileImageJob implements ShouldQueue
     public function handle(): void
     {
         $tmp_dir = storage_path('app/tmp');
-        if (!is_dir($tmp_dir)) {
+        if (! is_dir($tmp_dir)) {
             mkdir($tmp_dir, 0755, true);
         }
 
-        $path_to_image = $tmp_dir . '/avatar_' . $this->user->id . '.png';
+        $path_to_image = $tmp_dir.'/avatar_'.$this->user->id.'.png';
 
         GenerateImage::profileImage($this->user->name)->toPng()->save($path_to_image);
 

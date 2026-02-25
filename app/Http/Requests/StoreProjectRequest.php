@@ -23,7 +23,7 @@ class StoreProjectRequest extends FormRequest
     {
         return [
             'name' => ['required', 'string'],
-            'key' => ['required','regex:/\w+/',  'unique:projects,key'],
+            'key' => ['required', 'regex:/\w+/',  'unique:projects,key'],
             'description' => ['nullable', 'array'],
         ];
     }

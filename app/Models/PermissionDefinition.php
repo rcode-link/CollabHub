@@ -18,6 +18,7 @@ use Illuminate\Support\Carbon;
  * @property int $group_id
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
+ *
  * @method static Builder|PermissionDefinition newModelQuery()
  * @method static Builder|PermissionDefinition newQuery()
  * @method static Builder|PermissionDefinition query()
@@ -28,6 +29,7 @@ use Illuminate\Support\Carbon;
  * @method static Builder|PermissionDefinition whereScope($value)
  * @method static Builder|PermissionDefinition whereSlug($value)
  * @method static Builder|PermissionDefinition whereUpdatedAt($value)
+ *
  * @mixin Eloquent
  */
 class PermissionDefinition extends Model

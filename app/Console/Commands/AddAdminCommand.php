@@ -3,12 +3,12 @@
 namespace App\Console\Commands;
 
 use App\Helpers\SigneRoute;
+use App\Mail\WelcomeAdminEmail;
 use App\Models\Company;
 use App\Models\Invitations;
+use App\Models\Role;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
-use App\Mail\WelcomeAdminEmail;
-use App\Models\Role;
 use Mail;
 
 class AddAdminCommand extends Command
@@ -39,11 +39,11 @@ class AddAdminCommand extends Command
             'registered' => [],
             'role_id' => Role::where([
                 'title' => 'Admin',
-                'can_be_changed' => false
-            ])->firstOrFail()->id
+                'can_be_changed' => false,
+            ])->firstOrFail()->id,
         ]);
 
-        $url = SigneRoute::make('invite.user', ['id' => $link->key,], Carbon::now()->addMinutes(30));
+        $url = SigneRoute::make('invite.user', ['id' => $link->key], Carbon::now()->addMinutes(30));
 
         Mail::to($this->argument('email'))->send(new WelcomeAdminEmail($url));
     }

@@ -18,6 +18,7 @@ use Illuminate\Support\Carbon;
  * @property array|null $description
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
+ *
  * @method static ProjectFactory factory($count = null, $state = [])
  * @method static Builder|Project newModelQuery()
  * @method static Builder|Project newQuery()
@@ -28,8 +29,10 @@ use Illuminate\Support\Carbon;
  * @method static Builder|Project whereKey($value)
  * @method static Builder|Project whereName($value)
  * @method static Builder|Project whereUpdatedAt($value)
+ *
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Board> $boards
  * @property-read int|null $boards_count
+ *
  * @mixin Eloquent
  */
 class Project extends Model
@@ -39,7 +42,7 @@ class Project extends Model
     protected $guarded = [];
 
     protected $casts = [
-        'description' => 'array'
+        'description' => 'array',
     ];
 
     public function boards(): \Illuminate\Database\Eloquent\Relations\HasMany

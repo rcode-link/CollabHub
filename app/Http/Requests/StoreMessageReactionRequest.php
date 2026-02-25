@@ -25,14 +25,14 @@ class StoreMessageReactionRequest extends FormRequest
         return [
             'reaction' => ['required', 'string'],
             'chat_message_id' => ['required', 'exists:chat_messages,id'],
-            'user_id' => ['required']
+            'user_id' => ['required'],
         ];
     }
 
     protected function prepareForValidation()
     {
         $this->merge([
-            'user_id' => Auth::id()
+            'user_id' => Auth::id(),
         ]);
     }
 }

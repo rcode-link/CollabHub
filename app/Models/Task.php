@@ -46,6 +46,7 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media;
  * @property-read Collection<int, \App\Models\TaskSprint> $sprints
  * @property-read int|null $sprints_count
  * @property-read \App\Models\TaskType|null $type
+ *
  * @method static \Database\Factories\TaskFactory factory($count = null, $state = [])
  * @method static Builder|Task newModelQuery()
  * @method static Builder|Task newQuery()
@@ -62,21 +63,23 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media;
  * @method static Builder|Task whereTypeId($value)
  * @method static Builder|Task whereUpdatedAt($value)
  * @method static Builder|Task whereUserId($value)
+ *
  * @property-read Collection<int, \App\Models\TaskSprint> $taskSprintData
  * @property-read int|null $task_sprint_data_count
+ *
  * @mixin Eloquent
  */
 class Task extends Model implements HasMedia
 {
-    use InteractsWithMedia;
-    use HasFactory;
     use HasChat;
+    use HasFactory;
+    use InteractsWithMedia;
 
     protected $guarded = [];
 
     protected $casts = [
         'description' => 'array',
-        'tags' => 'array'
+        'tags' => 'array',
     ];
 
     public function createdBy(): BelongsTo
@@ -96,10 +99,10 @@ class Task extends Model implements HasMedia
             'parents.owner',
             'parents.project',
         );
+
         // Merge collections and return single collection.
         return $this->children->merge($this->parents);
     }
-
 
     public function owner(): BelongsTo
     {

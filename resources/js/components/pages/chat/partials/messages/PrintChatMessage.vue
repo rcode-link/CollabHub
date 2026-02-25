@@ -2,12 +2,16 @@
 import RenderMessage from '@/components/shared/RenderMessage.vue'
 import PrintFiles from '@/components/shared/PrintFiles.vue'
 import { computed } from 'vue'
-import _ from 'lodash'
 import ArrowUpCurvedIcon from '@/components/shared/icons/ArrowUpCurvedIcon.vue'
 import PhoneIcon from '@/components/shared/icons/PhoneIcon.vue'
 
 const props = defineProps({ message: {} })
-const reactions = computed(() => _.groupBy(props.message.reactions, 'reaction'))
+const reactions = computed(() =>
+  (props.message.reactions || []).reduce((acc, item) => {
+    ;(acc[item.reaction] ??= []).push(item)
+    return acc
+  }, {})
+)
 </script>
 
 <template>

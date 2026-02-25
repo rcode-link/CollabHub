@@ -13,6 +13,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property int $price
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
+ *
  * @method static \Database\Factories\BillingItemFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder|BillingItem newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|BillingItem newQuery()
@@ -22,8 +23,11 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder|BillingItem wherePrice($value)
  * @method static \Illuminate\Database\Eloquent\Builder|BillingItem whereTitle($value)
  * @method static \Illuminate\Database\Eloquent\Builder|BillingItem whereUpdatedAt($value)
+ *
  * @property int $user_id
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|BillingItem whereUserId($value)
+ *
  * @mixin \Eloquent
  */
 class BillingItem extends Model
@@ -32,9 +36,8 @@ class BillingItem extends Model
 
     protected $fillable = [
         'title',
-        'price'
+        'price',
     ];
-
 
     protected static function booted()
     {
@@ -48,6 +51,4 @@ class BillingItem extends Model
             $billingItem->price = $billingItem->price * 100;
         });
     }
-
-
 }

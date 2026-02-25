@@ -2,22 +2,22 @@
 
 namespace App\Helpers;
 
-use Intervention\Image\ImageManager;
 use Intervention\Image\Drivers\Gd\Driver;
 use Intervention\Image\Image;
+use Intervention\Image\ImageManager;
 use Intervention\Image\Typography\FontFactory;
 
 class GenerateImage
 {
-    static string $startColor = '12151D';
-    static string $endColor = 'AB4E2D';
+    public static string $startColor = '12151D';
 
-    static function profileImage(string $fullName): Image
+    public static string $endColor = 'AB4E2D';
+
+    public static function profileImage(string $fullName): Image
     {
         $manager = new ImageManager(Driver::class);
         $width = 128;
         $height = 128;
-
 
         $image = $manager->create($width, $height);
 
@@ -47,17 +47,17 @@ class GenerateImage
                 $g = rand(-10, 10);
                 $b = rand(-10, 10);
                 $color = $image->pickColor($i, $j);
-                $newColor = join(',', [
+                $newColor = implode(',', [
                     max(0, min(255, $color->red()->value() + $r)),
                     max(0, min(255, $color->green()->value() + $g)),
-                    max(0, min(255, $color->blue()->value() + $b))
+                    max(0, min(255, $color->blue()->value() + $b)),
                 ]);
 
                 $image->drawPixel($i, $j, "rgb($newColor)");
             }
         }
 
-        $image->text(collect(\Str::ucsplit($fullName))->map(fn($str) => \Str::charAt($str, 0))->join(''), 64, 64, function (FontFactory $font) {
+        $image->text(collect(\Str::ucsplit($fullName))->map(fn ($str) => \Str::charAt($str, 0))->join(''), 64, 64, function (FontFactory $font) {
             $font->filename(storage_path('fonts/OpenSans-VariableFont_wdth.ttf'));
             $font->size(64);
             $font->color('fff');

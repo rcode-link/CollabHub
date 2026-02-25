@@ -27,7 +27,7 @@ class UpdateTaskRequest extends FormRequest
             'status_id' => ['nullable', 'exists:task_statuses,id'],
             'type_id' => ['nullable', 'exists:task_types,id'],
             'description' => ['nullable'],
-            'related_tasks' => ['nullable','array'],
+            'related_tasks' => ['nullable', 'array'],
             'related_tasks.*.task_relation_id' => ['nullable', 'exists:task_relations,id'],
             'related_tasks.*.task_id' => ['nullable', 'exists:tasks,id'],
             'tags' => ['nullable', 'array'],

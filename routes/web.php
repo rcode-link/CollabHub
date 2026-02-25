@@ -7,7 +7,6 @@ use App\Http\Controllers\VideoCallController;
 use App\Http\Middleware\SignedRouteMiddleware;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-
 use Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException;
 
 /*
@@ -65,7 +64,7 @@ Route::any('/cal/principals/{path?}', function (Request $request, $path = null) 
             return response('', 200, [
                 'DAV' => '1, 2, 3, calendar-access, addressbook, extended-mkcol',
                 'Allow' => 'OPTIONS, GET, HEAD, POST, DELETE, PROPFIND, PROPPATCH, COPY, MOVE, REPORT, MKCOL',
-                'Content-Length' => '0'
+                'Content-Length' => '0',
             ]);
         }
 
@@ -87,10 +86,10 @@ Route::any('/cal/principals/{path?}', function (Request $request, $path = null) 
 // Calendar resources
 Route::any('/cal/calendar/{path?}', function (Request $request, $path = null) {
     try {
-        \Log::info('Request URL: ' . $request->fullUrl());
-        \Log::info('Request Method: ' . $request->method());
+        \Log::info('Request URL: '.$request->fullUrl());
+        \Log::info('Request Method: '.$request->method());
         \Log::info('Request Headers: ', $request->header());
-        \Log::info('Request Body: ' . $request->getContent());
+        \Log::info('Request Body: '.$request->getContent());
 
         $method = $request->server('REQUEST_METHOD');
 
@@ -121,7 +120,7 @@ Route::any('/cal/calendar/{path?}', function (Request $request, $path = null) {
         }
 
         // Log the detected method
-        \Log::info('Detected Method: ' . $method);
+        \Log::info('Detected Method: '.$method);
 
         // Handle HEAD requests
         if ($method === 'HEAD') {
@@ -181,13 +180,13 @@ Route::get('/video-call/{video}/join', [VideoCallController::class, 'getVideoCal
 Route::post('/login', function () {});
 Route::get('/test', function () {
 
-    GenerateImage::profileImage("Radan Stupar")->toPng()->save(public_path('foo.png'));
-    return  'ok';
+    GenerateImage::profileImage('Radan Stupar')->toPng()->save(public_path('foo.png'));
+
+    return 'ok';
 
     // $company = Company::whereIsCostumerCompany(false)->firstOrFail();
     // return view('pdf.invoice', ['model' => $invoice, 'company' => $company]);
 });
-
 
 Route::middleware([\App\Http\Middleware\FrontendEnv::class])->group(function () {
 

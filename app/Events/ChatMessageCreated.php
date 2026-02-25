@@ -7,17 +7,17 @@ use App\Models\ChatMessage;
 use Illuminate\Broadcasting\InteractsWithBroadcasting;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PresenceChannel;
-use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
 class ChatMessageCreated implements ShouldBroadcast
 {
-    use InteractsWithBroadcasting;
     use Dispatchable, InteractsWithSockets, SerializesModels;
+    use InteractsWithBroadcasting;
 
     public ChatMessageResource $message;
+
     /**
      * Create a new event instance.
      */
@@ -36,7 +36,7 @@ class ChatMessageCreated implements ShouldBroadcast
     public function broadcastOn(): array
     {
         return [
-            new PresenceChannel("chat." . $this->data->chat_id),
+            new PresenceChannel('chat.'.$this->data->chat_id),
         ];
     }
 }

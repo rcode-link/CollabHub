@@ -3,7 +3,6 @@
 namespace Database\Seeders;
 
 use App\Models\TaskRelation;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
 class TaskRelationsSeeder extends Seeder
@@ -15,10 +14,10 @@ class TaskRelationsSeeder extends Seeder
     {
         TaskRelation::insert([
             [
-                'name' => 'Blocked by'
+                'name' => 'Blocked by',
             ],
             [
-                'name' => 'Related to'
+                'name' => 'Related to',
             ],
         ]);
     }

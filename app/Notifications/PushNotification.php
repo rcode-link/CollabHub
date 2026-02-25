@@ -4,8 +4,6 @@ namespace App\Notifications;
 
 use App\Models\ChatMessage;
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 use NotificationChannels\WebPush\WebPushChannel;
 use NotificationChannels\WebPush\WebPushMessage;
@@ -35,12 +33,13 @@ class PushNotification extends Notification
 
     public function toWebPush($notifiable, $notification)
     {
-        $messageData = "New message";
+        $messageData = 'New message';
         if ($this->message->message) {
-            $messageData = (new Editor())->setContent($this->message->message)->getText();
+            $messageData = (new Editor)->setContent($this->message->message)->getText();
         }
+
         return (new WebPushMessage)
-            ->title('[new message]' . $this->message->user->name . ' sent you the message')
+            ->title('[new message]'.$this->message->user->name.' sent you the message')
             ->body($messageData)
             ->data(['chat_id' => $this->message->chat_id])
             ->icon(mediaUrl($this->message->user->getFirstMedia('avatar')))

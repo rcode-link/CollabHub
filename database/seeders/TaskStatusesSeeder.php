@@ -19,18 +19,18 @@ class TaskStatusesSeeder extends Seeder
             [
                 'title' => 'Open',
                 'order' => 0,
-                'open' => true
+                'open' => true,
             ],
             [
                 'title' => 'In Progress',
                 'order' => 1,
-                'open' => true
+                'open' => true,
             ],
             [
                 'title' => 'Done',
                 'order' => 2,
-                'open' => false
-            ]
+                'open' => false,
+            ],
         ]);
         //
     }

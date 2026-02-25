@@ -3,8 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 
 class CalDAVController extends Controller
 {
@@ -14,7 +14,6 @@ class CalDAVController extends Controller
     /**
      * Handle PROPFIND requests.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
     public function propfind(Request $request)
@@ -22,7 +21,7 @@ class CalDAVController extends Controller
         $body = $request->getContent();
         $depth = $request->header('Depth', '0');
 
-        Log::info("PROPFIND request body: " . $body);
+        Log::info('PROPFIND request body: '.$body);
 
         $response = '<?xml version="1.0" encoding="utf-8" ?>
             <D:multistatus xmlns:D="DAV:" xmlns:C="urn:ietf:params:xml:ns:caldav" xmlns:CS="http://calendarserver.org/ns/">
@@ -74,19 +73,19 @@ END:VCALENDAR]]></C:calendar-timezone>
                 $path = str_replace('calendar/', '', $file);
                 $lastModified = Storage::lastModified($file);
                 $size = Storage::size($file);
-                $etag = md5($lastModified . $size);
+                $etag = md5($lastModified.$size);
 
                 $response .= '
                     <D:response>
-                        <D:href>/cal/calendar/' . htmlspecialchars($path) . '</D:href>
+                        <D:href>/cal/calendar/'.htmlspecialchars($path).'</D:href>
                         <D:propstat>
                             <D:prop>
                                 <D:getcontenttype>text/calendar</D:getcontenttype>
                                 <D:resourcetype/>
-                                <D:getlastmodified>' . date('r', $lastModified) . '</D:getlastmodified>
-                                <D:getetag>"' . $etag . '"</D:getetag>
-                                <D:getcontentlength>' . $size . '</D:getcontentlength>
-                                <C:calendar-data>' . htmlspecialchars(Storage::get($file)) . '</C:calendar-data>
+                                <D:getlastmodified>'.date('r', $lastModified).'</D:getlastmodified>
+                                <D:getetag>"'.$etag.'"</D:getetag>
+                                <D:getcontentlength>'.$size.'</D:getcontentlength>
+                                <C:calendar-data>'.htmlspecialchars(Storage::get($file)).'</C:calendar-data>
                             </D:prop>
                             <D:status>HTTP/1.1 200 OK</D:status>
                         </D:propstat>
@@ -145,8 +144,9 @@ END:VCALENDAR]]></C:calendar-timezone>
             return response($response, 200, ['Content-Type' => 'application/xml; charset=utf-8']);
         }
 
-        if (Storage::exists($this->storagePath . '/' . $path)) {
-            $content = Storage::get($this->storagePath . '/' . $path);
+        if (Storage::exists($this->storagePath.'/'.$path)) {
+            $content = Storage::get($this->storagePath.'/'.$path);
+
             return response($content, 200, ['Content-Type' => 'text/calendar']);
         }
 
@@ -156,7 +156,6 @@ END:VCALENDAR]]></C:calendar-timezone>
     /**
      * Handle PUT requests (create/update calendar objects).
      *
-     * @param  \Illuminate\Http\Request  $request
      * @param  string  $path
      * @return \Illuminate\Http\Response
      */
@@ -167,7 +166,7 @@ END:VCALENDAR]]></C:calendar-timezone>
         // Validate that the content is a valid iCalendar object
         // In a real implementation, you'd want to validate the iCalendar data here
 
-        Storage::put($this->storagePath . '/' . $path, $content);
+        Storage::put($this->storagePath.'/'.$path, $content);
 
         return response('', 201); // 201 Created
     }
@@ -180,8 +179,9 @@ END:VCALENDAR]]></C:calendar-timezone>
      */
     public function delete($path)
     {
-        if (Storage::exists($this->storagePath . '/' . $path)) {
-            Storage::delete($this->storagePath . '/' . $path);
+        if (Storage::exists($this->storagePath.'/'.$path)) {
+            Storage::delete($this->storagePath.'/'.$path);
+
             return response('', 204); // 204 No Content
         }
 
@@ -191,14 +191,13 @@ END:VCALENDAR]]></C:calendar-timezone>
     /**
      * Handle REPORT requests (calendar-specific queries).
      *
-     * @param  \Illuminate\Http\Request  $request
      * @param  string|null  $path
      * @return \Illuminate\Http\Response
      */
     public function report(Request $request, $path = null)
     {
         $body = $request->getContent();
-        Log::info("REPORT request body: " . $body);
+        Log::info('REPORT request body: '.$body);
 
         // Simplified response - in a real implementation, parse the XML request
         // and return calendar data based on the query
@@ -231,13 +230,13 @@ END:VCALENDAR</C:calendar-data>
     /**
      * Handle MKCOL requests (create calendar collections).
      *
-     * @param  \Illuminate\Http\Request  $request
      * @param  string  $path
      * @return \Illuminate\Http\Response
      */
     public function mkcol(Request $request, $path)
     {
-        Storage::makeDirectory($this->storagePath . '/' . $path);
+        Storage::makeDirectory($this->storagePath.'/'.$path);
+
         return response('', 201); // 201 Created
     }
 
@@ -245,7 +244,6 @@ END:VCALENDAR</C:calendar-data>
      * Handle HEAD requests.
      *
      * @param  string|null  $path
-     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
     public function head($path, Request $request)
@@ -254,21 +252,21 @@ END:VCALENDAR</C:calendar-data>
             'DAV' => '1, 2, 3, calendar-access, addressbook, extended-mkcol',
             'Allow' => 'OPTIONS, GET, HEAD, POST, DELETE, PROPFIND, PROPPATCH, COPY, MOVE, REPORT, MKCOL',
             'Accept-Post' => 'text/calendar, application/calendar+json',
-            'Content-Length' => '0'
+            'Content-Length' => '0',
         ];
 
         if (empty($path)) {
             $headers['Content-Type'] = 'application/xml; charset=utf-8';
         } else {
-            $filePath = $this->storagePath . '/' . $path;
+            $filePath = $this->storagePath.'/'.$path;
             if (Storage::exists($filePath)) {
                 $headers['Content-Type'] = 'text/calendar';
                 $headers['Last-Modified'] = date('r', Storage::lastModified($filePath));
-                $headers['ETag'] = '"' . md5(Storage::lastModified($filePath) . Storage::size($filePath)) . '"';
+                $headers['ETag'] = '"'.md5(Storage::lastModified($filePath).Storage::size($filePath)).'"';
             }
         }
 
-        if (empty($path) || Storage::exists($this->storagePath . '/' . $path)) {
+        if (empty($path) || Storage::exists($this->storagePath.'/'.$path)) {
             return response('', 200, $headers);
         }
 
@@ -278,7 +276,6 @@ END:VCALENDAR</C:calendar-data>
     /**
      * Handle OPTIONS requests.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
     public function options(Request $request)
@@ -286,14 +283,13 @@ END:VCALENDAR</C:calendar-data>
         return response('', 200, [
             'DAV' => '1, 2, 3, calendar-access, addressbook, extended-mkcol',
             'Allow' => 'OPTIONS, GET, HEAD, POST, DELETE, PROPFIND, PROPPATCH, COPY, MOVE, REPORT, MKCOL',
-            'Content-Length' => '0'
+            'Content-Length' => '0',
         ]);
     }
 
     /**
      * Handle PROPFIND requests for principal resources.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
     public function principalPropfind(Request $request)
@@ -337,7 +333,7 @@ END:VCALENDAR</C:calendar-data>
         $response = '<?xml version="1.0" encoding="utf-8" ?>
             <D:multistatus xmlns:D="DAV:" xmlns:C="urn:ietf:params:xml:ns:caldav">
                 <D:response>
-                    <D:href>/cal/principals/' . ($path ?: 'user1') . '/</D:href>
+                    <D:href>/cal/principals/'.($path ?: 'user1').'/</D:href>
                     <D:propstat>
                         <D:prop>
                             <D:resourcetype>

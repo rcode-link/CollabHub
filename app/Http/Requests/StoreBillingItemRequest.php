@@ -23,7 +23,7 @@ class StoreBillingItemRequest extends FormRequest
     {
         return [
             'title' => ['required', 'string'],
-            'price' => ['int']
+            'price' => ['int'],
         ];
     }
 }

@@ -4,14 +4,11 @@ namespace App\Providers;
 
 use App\Helpers\SetEnviroment;
 use Dedoc\Scramble\Scramble;
-use Illuminate\Auth\Notifications\ResetPassword;
 use Dedoc\Scramble\Support\Generator\OpenApi;
 use Dedoc\Scramble\Support\Generator\SecurityScheme;
+use Illuminate\Auth\Notifications\ResetPassword;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\ServiceProvider;
-
-use App\Service\ServiceInterface;
-use App\Service\TimeSheetService;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -58,10 +55,6 @@ class AppServiceProvider extends ServiceProvider
                 SecurityScheme::http('bearer', 'JWT')
             );
         });
-        $this->app->bind(ServiceInterface::class, function () {
-            return new TimeSheetService();
-        });
-
         Model::preventLazyLoading();
         //
     }

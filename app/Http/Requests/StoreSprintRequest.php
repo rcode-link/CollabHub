@@ -23,11 +23,11 @@ class StoreSprintRequest extends FormRequest
     {
         return [
             'title' => [
-                'required', 'string'
+                'required', 'string',
             ],
             'is_active' => ['boolean'],
             'duration' => ['required', 'integer'],
-            'board_id' => ['required', 'exists:boards,id']
+            'board_id' => ['required', 'exists:boards,id'],
         ];
     }
 }

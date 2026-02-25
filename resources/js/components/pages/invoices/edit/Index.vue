@@ -14,11 +14,24 @@ import currencyPrint from '@/functions/currencyPrint'
 import { useBreadcrumbStore } from '@/store/breadcrumb'
 import { ref, computed, watch, onMounted, onUnmounted } from 'vue'
 import { useRoute } from 'vue-router'
-import { debounce } from 'lodash'
+import { debounce } from '@/functions/debounce'
 import { DateTime } from 'luxon'
 
 const route = useRoute()
 const breadcrumb = useBreadcrumbStore()
+
+const statusColorMap = {
+  draft: 'gray',
+  sent: 'blue',
+  partial: 'yellow',
+  paid: 'green',
+  overdue: 'red',
+}
+
+const capitalize = (str) => {
+  if (!str) return ''
+  return str.charAt(0).toUpperCase() + str.slice(1)
+}
 
 // ── Invoice data ──────────────────────────────────────────────
 const invoiceData = ref(null)
@@ -276,8 +289,8 @@ const mappedBillingItems = () =>
           }}
         </p>
 
-        <Badge v-if="invoiceData.sent" color="blue" class="mt-2">
-          Sent
+        <Badge v-if="invoiceData.status" :color="statusColorMap[invoiceData.status] ?? 'gray'" class="mt-2">
+          {{ capitalize(invoiceData.status) }}
         </Badge>
 
         <!-- Action buttons -->

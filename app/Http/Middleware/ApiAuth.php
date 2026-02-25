@@ -18,6 +18,7 @@ class ApiAuth
     {
 
         Authenticate::check();
+
         return $next($request);
     }
 }

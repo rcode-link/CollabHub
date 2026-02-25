@@ -13,7 +13,6 @@ import {
 } from "livekit-client";
 import { defineStore } from "pinia";
 import { computed, reactive, ref } from "vue";
-import * as _ from "lodash";
 export interface iTrack {
     track: Track;
     speaking: boolean;
@@ -58,8 +57,7 @@ export const useLiveKit = defineStore("liveKitStore", () => {
     ) => {
         const track = publication.track;
         if (
-            _.find(
-                localTracks.value,
+            localTracks.value.find(
                 (obj: Track) => obj.sid === publication.trackSid
             )
         ) {
@@ -137,6 +135,12 @@ export const useLiveKit = defineStore("liveKitStore", () => {
 
     function handleActiveSpeakerChange() {}
 
+    function handleParticipantConnected(_participant: RemoteParticipant) {
+        const audio = new Audio("/sounds/join.mp3");
+        audio.volume = 0.4;
+        audio.play().catch(() => {});
+    }
+
     function handleLocalTrackPublish(
         track: LocalTrackPublication,
         participant: LocalParticipant
@@ -184,7 +188,8 @@ export const useLiveKit = defineStore("liveKitStore", () => {
             .on(RoomEvent.TrackMuted, handleMuteAndUnMute)
             .on(RoomEvent.TrackUnmuted, handleMuteAndUnMute)
             .on(RoomEvent.LocalTrackPublished, handleLocalTrackPublish)
-            .on(RoomEvent.LocalTrackUnpublished, handleLocalTrackUnPublished);
+            .on(RoomEvent.LocalTrackUnpublished, handleLocalTrackUnPublished)
+            .on(RoomEvent.ParticipantConnected, handleParticipantConnected);
 
         await createLocalTracks({
             audio: true,

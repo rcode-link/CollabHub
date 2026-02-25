@@ -15,7 +15,7 @@ import { TailwindPagination } from 'laravel-vue-pagination'
 import { useBreadcrumbStore } from '@/store/breadcrumb'
 import { ref, reactive, watch, onMounted, computed } from 'vue'
 import { useRouter } from 'vue-router'
-import { debounce } from 'lodash'
+import { debounce } from '@/functions/debounce'
 import { DateTime } from 'luxon'
 
 const breadcrumb = useBreadcrumbStore()

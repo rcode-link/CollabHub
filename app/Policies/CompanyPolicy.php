@@ -29,7 +29,7 @@ class CompanyPolicy
      */
     public function create(User $user): bool
     {
-        return $user->isAdmin() ||  $user->hasPermission(Company::class, PermissionsStates::Create->value);
+        return $user->isAdmin() || $user->hasPermission(Company::class, PermissionsStates::Create->value);
     }
 
     /**
@@ -37,7 +37,7 @@ class CompanyPolicy
      */
     public function update(User $user, Company $company): bool
     {
-        return $user->isAdmin() ||  $user->hasPermission($company, PermissionsStates::Update->value);
+        return $user->isAdmin() || $user->hasPermission($company, PermissionsStates::Update->value);
     }
 
     /**
@@ -45,7 +45,7 @@ class CompanyPolicy
      */
     public function delete(User $user, Company $company): bool
     {
-        return $user->isAdmin() ||  $user->hasPermission($company, PermissionsStates::Delete->value);
+        return $user->isAdmin() || $user->hasPermission($company, PermissionsStates::Delete->value);
     }
 
     /**
@@ -53,7 +53,7 @@ class CompanyPolicy
      */
     public function restore(User $user, Company $company): bool
     {
-        return $user->isAdmin() ||  $user->hasPermission($company, PermissionsStates::Delete->value);
+        return $user->isAdmin() || $user->hasPermission($company, PermissionsStates::Delete->value);
         //
     }
 
@@ -62,6 +62,6 @@ class CompanyPolicy
      */
     public function forceDelete(User $user, Company $company): bool
     {
-        return $user->isAdmin() ||  $user->hasPermission($company, PermissionsStates::Delete->value);
+        return $user->isAdmin() || $user->hasPermission($company, PermissionsStates::Delete->value);
     }
 }

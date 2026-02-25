@@ -35,7 +35,7 @@ class InvoiceItemResource extends JsonResource
             'vat_rate' => $vatRate,
             'vat_amount' => round($vatAmount, 2),
             'total_with_vat' => round($total + $vatAmount, 2),
-            'billing_item' => $this->whenLoaded('billingItem', fn() => [
+            'billing_item' => $this->whenLoaded('billingItem', fn () => [
                 'unit' => $this->billingItem->unit ?? null,
             ]),
         ];

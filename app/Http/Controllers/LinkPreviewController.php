@@ -2,20 +2,19 @@
 
 namespace App\Http\Controllers;
 
+use DOMDocument;
+use DOMXPath;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
-use Exception;
-use DOMDocument;
-use DOMXPath;
 
 class LinkPreviewController extends Controller
 {
     /**
      * Get preview metadata for a URL
      *
-     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\JsonResponse
      */
     public function fetch(Request $request)
@@ -29,7 +28,7 @@ class LinkPreviewController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'Invalid URL',
-                'errors' => $validator->errors()
+                'errors' => $validator->errors(),
             ], 422);
         }
 
@@ -47,9 +46,9 @@ class LinkPreviewController extends Controller
                 'image' => $metadata['image'] ?? null,
             ]);
         } catch (Exception $e) {
-            Log::error('Link preview error: ' . $e->getMessage(), [
+            Log::error('Link preview error: '.$e->getMessage(), [
                 'url' => $url,
-                'exception' => $e
+                'exception' => $e,
             ]);
 
             return response()->json([
@@ -58,7 +57,7 @@ class LinkPreviewController extends Controller
                 'message' => 'Failed to fetch link preview',
                 'title' => $url,
                 'description' => '',
-                'image' => null
+                'image' => null,
             ], 200); // Still return 200 for the frontend to handle gracefully
         }
     }
@@ -74,12 +73,12 @@ class LinkPreviewController extends Controller
         // Set a reasonable timeout to prevent long-running requests
         $response = Http::timeout(5)
             ->withHeaders([
-                'User-Agent' => 'Mozilla/5.0 (compatible; LinkPreviewBot/1.0; +http://yourdomain.com)'
+                'User-Agent' => 'Mozilla/5.0 (compatible; LinkPreviewBot/1.0; +http://yourdomain.com)',
             ])
             ->get($url);
 
-        if (!$response->successful()) {
-            throw new Exception('Failed to retrieve content from URL: ' . $response->status());
+        if (! $response->successful()) {
+            throw new Exception('Failed to retrieve content from URL: '.$response->status());
         }
 
         $html = $response->body();
@@ -98,7 +97,7 @@ class LinkPreviewController extends Controller
         $metadata['description'] = $this->cleanText($metadata['description'] ?? '');
 
         // Ensure image URL is absolute
-        if (!empty($metadata['image']) && !filter_var($metadata['image'], FILTER_VALIDATE_URL)) {
+        if (! empty($metadata['image']) && ! filter_var($metadata['image'], FILTER_VALIDATE_URL)) {
             $metadata['image'] = $this->makeAbsoluteUrl($metadata['image'], $url);
         }
 
@@ -116,48 +115,48 @@ class LinkPreviewController extends Controller
         $metadata = [
             'title' => '',
             'description' => '',
-            'image' => null
+            'image' => null,
         ];
 
         // Extract using regex for better performance than loading full DOM
         // Open Graph title
         preg_match('/<meta[^>]*property=["\']og:title["\'][^>]*content=["\'](.*?)["\'][^>]*>/i', $html, $matches);
-        if (!empty($matches[1])) {
+        if (! empty($matches[1])) {
             $metadata['title'] = $matches[1];
         }
 
         // Twitter title (fallback)
         if (empty($metadata['title'])) {
             preg_match('/<meta[^>]*name=["\']twitter:title["\'][^>]*content=["\'](.*?)["\'][^>]*>/i', $html, $matches);
-            if (!empty($matches[1])) {
+            if (! empty($matches[1])) {
                 $metadata['title'] = $matches[1];
             }
         }
 
         // Open Graph description
         preg_match('/<meta[^>]*property=["\']og:description["\'][^>]*content=["\'](.*?)["\'][^>]*>/i', $html, $matches);
-        if (!empty($matches[1])) {
+        if (! empty($matches[1])) {
             $metadata['description'] = $matches[1];
         }
 
         // Twitter description (fallback)
         if (empty($metadata['description'])) {
             preg_match('/<meta[^>]*name=["\']twitter:description["\'][^>]*content=["\'](.*?)["\'][^>]*>/i', $html, $matches);
-            if (!empty($matches[1])) {
+            if (! empty($matches[1])) {
                 $metadata['description'] = $matches[1];
             }
         }
 
         // Open Graph image
         preg_match('/<meta[^>]*property=["\']og:image["\'][^>]*content=["\'](.*?)["\'][^>]*>/i', $html, $matches);
-        if (!empty($matches[1])) {
+        if (! empty($matches[1])) {
             $metadata['image'] = $matches[1];
         }
 
         // Twitter image (fallback)
         if (empty($metadata['image'])) {
             preg_match('/<meta[^>]*name=["\']twitter:image["\'][^>]*content=["\'](.*?)["\'][^>]*>/i', $html, $matches);
-            if (!empty($matches[1])) {
+            if (! empty($matches[1])) {
                 $metadata['image'] = $matches[1];
             }
         }
@@ -177,11 +176,11 @@ class LinkPreviewController extends Controller
         $metadata = [
             'title' => '',
             'description' => '',
-            'image' => null
+            'image' => null,
         ];
 
         // Use DOMDocument for more accurate parsing
-        $doc = new DOMDocument();
+        $doc = new DOMDocument;
 
         // Suppress errors from malformed HTML
         libxml_use_internal_errors(true);
@@ -232,7 +231,7 @@ class LinkPreviewController extends Controller
                 if (($width > 0 && $height > 0) && ($width * $height > $largestArea) && ($width >= 100 && $height >= 100)) {
                     $largestArea = $width * $height;
                     $largestImage = $src;
-                } elseif (!$largestImage && strpos(strtolower($src), 'logo') === false) {
+                } elseif (! $largestImage && strpos(strtolower($src), 'logo') === false) {
                     // Fallback to first non-logo image if we can't determine size
                     $largestImage = $src;
                 }
@@ -257,6 +256,7 @@ class LinkPreviewController extends Controller
         $text = trim($text);
         $text = html_entity_decode($text, ENT_QUOTES | ENT_HTML5, 'UTF-8');
         $text = preg_replace('/\s+/', ' ', $text); // Remove extra whitespace
+
         return $text;
     }
 
@@ -271,7 +271,7 @@ class LinkPreviewController extends Controller
     {
         // If it's a protocol-relative URL (starts with //)
         if (substr($relativeUrl, 0, 2) === '//') {
-            return parse_url($baseUrl, PHP_URL_SCHEME) . ':' . $relativeUrl;
+            return parse_url($baseUrl, PHP_URL_SCHEME).':'.$relativeUrl;
         }
 
         // If it's already absolute
@@ -281,7 +281,7 @@ class LinkPreviewController extends Controller
 
         // Parse base URL
         $parsedUrl = parse_url($baseUrl);
-        $scheme = isset($parsedUrl['scheme']) ? $parsedUrl['scheme'] . '://' : 'https://';
+        $scheme = isset($parsedUrl['scheme']) ? $parsedUrl['scheme'].'://' : 'https://';
         $host = isset($parsedUrl['host']) ? $parsedUrl['host'] : '';
         $path = isset($parsedUrl['path']) ? $parsedUrl['path'] : '';
 
@@ -291,10 +291,10 @@ class LinkPreviewController extends Controller
         // Handle different types of relative URLs
         if (substr($relativeUrl, 0, 1) === '/') {
             // Absolute path
-            return $scheme . $host . $relativeUrl;
+            return $scheme.$host.$relativeUrl;
         } else {
             // Relative path
-            return $scheme . $host . $path . $relativeUrl;
+            return $scheme.$host.$path.$relativeUrl;
         }
     }
 }

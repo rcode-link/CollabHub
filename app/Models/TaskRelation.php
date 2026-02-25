@@ -16,6 +16,7 @@ use Illuminate\Support\Carbon;
  * @property string $name
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
+ *
  * @method static TaskRelationFactory factory($count = null, $state = [])
  * @method static Builder|TaskRelation newModelQuery()
  * @method static Builder|TaskRelation newQuery()
@@ -24,10 +25,15 @@ use Illuminate\Support\Carbon;
  * @method static Builder|TaskRelation whereId($value)
  * @method static Builder|TaskRelation whereName($value)
  * @method static Builder|TaskRelation whereUpdatedAt($value)
+ *
  * @property int $can_parent_be_closed
+ *
  * @method static Builder|TaskRelation whereCanParentBeClosed($value)
+ *
  * @property int|null $project_id
+ *
  * @method static Builder|TaskRelation whereProjectId($value)
+ *
  * @mixin Eloquent
  */
 class TaskRelation extends Model

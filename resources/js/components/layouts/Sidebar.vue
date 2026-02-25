@@ -22,7 +22,7 @@ import SunIcon from '@/components/shared/icons/SunIcon.vue'
 import MoonIcon from '@/components/shared/icons/MoonIcon.vue'
 import ComputerIcon from '@/components/shared/icons/ComputerIcon.vue'
 import MenuIcon from '@/components/shared/icons/MenuIcon.vue'
-import { debounce } from 'lodash'
+import { debounce } from '@/functions/debounce'
 
 const { can } = useAbility()
 const userStore = useUserStore()

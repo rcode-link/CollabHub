@@ -24,6 +24,7 @@ class CustomerCompanyRequest extends FormRequest
     public function rules(): array
     {
         $company = Company::whereId(request()->get('id'))->first();
+
         return [
             'name' => ['required'],
             'prefix' => [Rule::requiredIf($company ? $company->is_costumer_company : true), Rule::unique('companies', 'prefix')->ignore(request()->get('id'))],

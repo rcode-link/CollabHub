@@ -22,7 +22,7 @@ class VacationRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'status' => ['in:accept,decline']
+            'status' => ['in:accept,decline'],
         ];
     }
 }

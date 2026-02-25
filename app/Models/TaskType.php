@@ -17,6 +17,7 @@ use Illuminate\Support\Carbon;
  * @property string|null $colour
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
+ *
  * @method static TaskTypeFactory factory($count = null, $state = [])
  * @method static Builder|TaskType newModelQuery()
  * @method static Builder|TaskType newQuery()
@@ -26,6 +27,7 @@ use Illuminate\Support\Carbon;
  * @method static Builder|TaskType whereId($value)
  * @method static Builder|TaskType whereTitle($value)
  * @method static Builder|TaskType whereUpdatedAt($value)
+ *
  * @mixin Eloquent
  */
 class TaskType extends Model

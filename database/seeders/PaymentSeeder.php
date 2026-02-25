@@ -2,7 +2,6 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
 class PaymentSeeder extends Seeder
@@ -10,7 +9,7 @@ class PaymentSeeder extends Seeder
     /**
      * Run the database seeds.
      */
-        public function run(): void
+    public function run(): void
     {
         //
     }

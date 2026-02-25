@@ -25,7 +25,7 @@ class UpdateTaskStatusesRequest extends FormRequest
             'order' => 'int',
             'title' => ['string'],
             'color' => ['nullable', 'string', 'max:7'],
-            'open' => ['bool']
+            'open' => ['bool'],
         ];
     }
 }
