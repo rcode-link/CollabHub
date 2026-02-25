@@ -34,8 +34,10 @@ COPY . .
 RUN chown -R unit:unit storage bootstrap/cache && chmod -R 775 storage bootstrap/cache
 
 RUN composer install --prefer-dist --optimize-autoloader --no-interaction
+ENV PUPPETEER_SKIP_DOWNLOAD=true
 RUN npm install
 RUN npm run build
+RUN mkdir -p /var/www/html/storage/app/puppeteer && chown -R unit:unit /var/www/html/storage/app/puppeteer
 
 COPY unit.json /docker-entrypoint.d/unit.json
 
