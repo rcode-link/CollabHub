@@ -35,7 +35,7 @@ class ChatUpdate implements ShouldBroadcast
         $this->message = [
             'text' => $messageData,
             'created_at' => $message?->created_at,
-            'user' => $message?->user?->name,
+            'user' => $message?->user?->name ?? ($message?->webhook_meta['username'] ?? 'Webhook'),
             'userId' => $message?->user?->id,
         ];
     }

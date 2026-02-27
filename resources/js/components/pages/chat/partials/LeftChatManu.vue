@@ -7,8 +7,10 @@ import { useRoute, useRouter } from 'vue-router'
 import { chatDetails } from '@/store/chatStore.js'
 import ChatUsersItem from '@/components/pages/chat/partials/ChatUsersItem.vue'
 import CreateChat from '@/components/pages/chat/partials/CreateChat.vue'
+import CreateWebhook from '@/components/pages/chat/partials/CreateWebhook.vue'
 import UsersListHeader from '@/components/pages/chat/partials/UsersListHeader.vue'
 import PlusSquare from '@/components/shared/icons/PlusSquare.vue'
+import WebhookIcon from '@/components/shared/icons/WebhookIcon.vue'
 
 const chatState = chatDetails()
 const { can } = useAbility()
@@ -18,6 +20,7 @@ const router = useRouter()
 const userState = useUserStore()
 
 const createTaskModal = ref(null)
+const createWebhookModal = ref(null)
 const search = ref('')
 
 const load = () => {
@@ -50,18 +53,31 @@ onMounted(() => {
 const showModal = () => {
   createTaskModal.value.modal.toggleModal()
 }
+
+const showWebhookModal = () => {
+  createWebhookModal.value.modal.toggleModal()
+}
 </script>
 
 <template>
   <div>
     <UsersListHeader>
-      <button
-        @click="showModal"
-        class="inline-flex items-center justify-center w-8 h-8 rounded-lg text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
-        title="New chat"
-      >
-        <PlusSquare class="w-5 h-5" />
-      </button>
+      <div class="flex items-center gap-1">
+        <button
+          @click="showWebhookModal"
+          class="inline-flex items-center justify-center w-8 h-8 rounded-lg text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+          title="New webhook"
+        >
+          <WebhookIcon class="w-4 h-4" />
+        </button>
+        <button
+          @click="showModal"
+          class="inline-flex items-center justify-center w-8 h-8 rounded-lg text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+          title="New chat"
+        >
+          <PlusSquare class="w-5 h-5" />
+        </button>
+      </div>
     </UsersListHeader>
 
     <!-- Search -->
@@ -89,4 +105,5 @@ const showModal = () => {
     </Card>
   </div>
   <CreateChat ref="createTaskModal" @update="load" />
+  <CreateWebhook ref="createWebhookModal" @update="load" />
 </template>

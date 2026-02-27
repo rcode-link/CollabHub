@@ -5,6 +5,7 @@ import SquaresIcon from '@/components/shared/icons/SquaresIcon.vue'
 import ChatIcon from '@/components/shared/icons/ChatIcon.vue'
 import UsersIcon from '@/components/shared/icons/UsersIcon.vue'
 import ArrowDownTray from '@/components/shared/icons/ArrowDownTray.vue'
+import WebhookIcon from '@/components/shared/icons/WebhookIcon.vue'
 
 const router = useRouter()
 const route = useRoute()
@@ -14,7 +15,7 @@ const changeChatFilter = (type) => {
 }
 
 const activeTab = computed(() => {
-  return ['user', 'group', 'system'].includes(route.query.type) ? route.query.type : 'all'
+  return ['user', 'group', 'system', 'webhook'].includes(route.query.type) ? route.query.type : 'all'
 })
 
 const tabs = [
@@ -22,6 +23,7 @@ const tabs = [
   { key: 'user',   icon: ChatIcon,      filter: 'user' },
   { key: 'group',  icon: UsersIcon,     filter: 'group' },
   { key: 'system', icon: ArrowDownTray, filter: 'system' },
+  { key: 'webhook', icon: WebhookIcon, filter: 'webhook' },
 ]
 </script>
 

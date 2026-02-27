@@ -7,4 +7,5 @@ enum ChatTypes: string
     case GROUP = 'group';
     case USER = 'user';
     case SYSTEM = 'system';
+    case WEBHOOK = 'webhook';
 }

@@ -67,6 +67,7 @@ onUnmounted(async () => {
       <template v-for="(obj, index) in chatStore.messages" :key="obj">
         <show-user
           :user="obj.user"
+          :webhook-meta="obj.webhook_meta"
           :messageId="obj.id"
           :messageDateTime="obj.createdAt"
         />

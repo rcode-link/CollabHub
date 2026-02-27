@@ -57,6 +57,7 @@ class ChatMessage extends Model implements HasMedia
 
     protected $casts = [
         'message' => 'json',
+        'webhook_meta' => 'json',
     ];
 
     public function user(): BelongsTo

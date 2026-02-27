@@ -5,6 +5,7 @@ import { useRoute } from 'vue-router'
 import UserIcon from '@/components/shared/UserIcon.vue'
 import Task from '@/components/shared/icons/Task.vue'
 import EarthIcon from '@/components/shared/icons/EarthIcon.vue'
+import WebhookIcon from '@/components/shared/icons/WebhookIcon.vue'
 import { useUserStore } from '@/store/user'
 
 const userStore = useUserStore()
@@ -33,19 +34,21 @@ const daysAgo = computed(() => {
     <!-- Avatar -->
     <div class="flex-shrink-0">
       <UserIcon v-if="['user', 'group'].includes(obj.type)" :user="obj" class="w-9 h-9" />
-      <template v-else>
-        <Task v-if="obj.type === 'app\\models\\task'" class="w-9 h-9" />
-        <img
-          v-else-if="obj.type === 'app\\models\\company' && userStore.company.avatar"
-          :src="userStore.company.avatar"
-          class="w-9 h-9 rounded-full object-cover"
-        />
-        <div
-          v-else-if="obj.type === 'app\\models\\company'"
-          class="w-9 h-9 rounded-full bg-blue-500 flex items-center justify-center text-white text-sm font-bold"
-        >{{ (obj.title || '?')[0].toUpperCase() }}</div>
-        <EarthIcon v-if="obj.type === 'app\\models\\event'" class="w-9 h-9" />
-      </template>
+      <div
+        v-else-if="obj.type === 'webhook' || obj.type === 'app\\models\\webhook'"
+        class="w-9 h-9 rounded-full bg-orange-500 flex items-center justify-center text-white"
+      ><WebhookIcon class="w-5 h-5" /></div>
+      <Task v-else-if="obj.type === 'app\\models\\task'" class="w-9 h-9" />
+      <img
+        v-else-if="obj.type === 'app\\models\\company' && userStore.company.avatar"
+        :src="userStore.company.avatar"
+        class="w-9 h-9 rounded-full object-cover"
+      />
+      <div
+        v-else-if="obj.type === 'app\\models\\company'"
+        class="w-9 h-9 rounded-full bg-blue-500 flex items-center justify-center text-white text-sm font-bold"
+      >{{ (obj.title || '?')[0].toUpperCase() }}</div>
+      <EarthIcon v-else-if="obj.type === 'app\\models\\event'" class="w-9 h-9" />
     </div>
 
     <!-- Content -->

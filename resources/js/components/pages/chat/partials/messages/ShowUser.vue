@@ -3,42 +3,80 @@ import { FwbAvatar, FwbP } from 'flowbite-vue'
 import { DateTime } from 'luxon'
 import { computed } from 'vue'
 import { chatDetails } from '@/store/chatStore.js'
-const { user, messageId } = defineProps({
-  user: null,
+import WebhookIcon from '@/components/shared/icons/WebhookIcon.vue'
+
+const props = defineProps({
+  user: { type: Object, default: null },
+  webhookMeta: { type: Object, default: null },
   messageId: null,
   messageDateTime: null,
 })
 const chatStore = chatDetails()
 
+const isWebhook = computed(() => !props.user && !!props.webhookMeta)
+
+const displayName = computed(() => {
+  if (props.user) return props.user.name
+  if (props.webhookMeta) return props.webhookMeta.username || props.webhookMeta.webhook_name || 'Webhook'
+  return 'Unknown'
+})
+
 const showUser = computed(() => {
-  const prevMessage = chatStore.messages.findIndex(obj => obj.id == messageId)
-  // if the message index is zero that means its first message in the list
+  const prevMessage = chatStore.messages.findIndex(obj => obj.id == props.messageId)
   if (prevMessage === 0) {
     return true
   }
 
-  const isSameUser = user.id === chatStore.messages[prevMessage - 1].user.id
+  const prevMsg = chatStore.messages[prevMessage - 1]
+  const currentUserId = props.user?.id ?? null
+  const prevUserId = prevMsg?.user?.id ?? null
 
-  if (!isSameUser) {
+  // If both are webhook messages with no user, compare webhook names
+  if (currentUserId === null && prevUserId === null) {
+    const currentWebhookName = props.webhookMeta?.webhook_name
+    const prevWebhookName = prevMsg?.webhook_meta?.webhook_name
+    if (currentWebhookName === prevWebhookName) {
+      const currentMessageDateTime = DateTime.fromISO(chatStore.messages[prevMessage].createdAt)
+      const previusMessageDateTime = DateTime.fromISO(prevMsg.createdAt)
+      const diff = currentMessageDateTime.diff(previusMessageDateTime, ['minute']).toObject()
+      return diff.minutes > 1
+    }
     return true
   }
 
-  const currentMessageDateTime = DateTime.fromISO(
-    chatStore.messages[prevMessage].createdAt,
-  )
-  const previusMessageDateTime = DateTime.fromISO(
-    chatStore.messages[prevMessage - 1].createdAt,
-  )
-  const diff = currentMessageDateTime
-    .diff(previusMessageDateTime, ['minute'])
-    .toObject()
+  if (currentUserId !== prevUserId) {
+    return true
+  }
+
+  const currentMessageDateTime = DateTime.fromISO(chatStore.messages[prevMessage].createdAt)
+  const previusMessageDateTime = DateTime.fromISO(prevMsg.createdAt)
+  const diff = currentMessageDateTime.diff(previusMessageDateTime, ['minute']).toObject()
 
   return diff.minutes > 1
 })
 </script>
 <template>
+  <!-- Webhook message sender -->
+  <div
+    v-if="showUser && isWebhook"
+    class="mb-1 mt-2 ml-4 flex gap-1 items-center"
+  >
+    <div class="w-8 h-8 rounded-full bg-orange-500 flex items-center justify-center text-white flex-shrink-0">
+      <WebhookIcon class="w-4 h-4" />
+    </div>
+    <div class="font-bold">
+      <div class="text-sm text-gray-900 dark:text-white">
+        {{ displayName }}
+      </div>
+      <div class="text-xs text-gray-600 mb-auto">
+        {{ DateTime.fromISO(messageDateTime).toLocaleString(DateTime.DATETIME_SHORT) }}
+      </div>
+    </div>
+  </div>
+
+  <!-- Regular user sender -->
   <router-link
-    v-if="showUser"
+    v-else-if="showUser && user"
     :to="`/user/${user.id}`"
     :class="{ 'mb-1 mt-2 ml-4 flex gap-1 items-center': true }"
   >

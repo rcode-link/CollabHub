@@ -45,6 +45,8 @@ use App\Http\Controllers\VacationGroupUserController;
 use App\Http\Controllers\VacationRequestController;
 use App\Http\Controllers\VacationStatsController;
 use App\Http\Controllers\VideoCallController;
+use App\Http\Controllers\WebhookController;
+use App\Http\Controllers\WebhookIngestController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -100,7 +102,10 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::put('/video-call/{slug}/request/{id}/approve', [VideoCallController::class, 'approveRequest'])->name('api.videoCall.approveRequest');
     Route::put('/video-call/{slug}/request/{id}/deny', [VideoCallController::class, 'denyRequest'])->name('api.videoCall.denyRequest');
     Route::apiResource('/messages/reactions', MessageReactionController::class);
+    Route::get('/chats/{chat}/users', [ChatController::class, 'users'])->name('api.chats.users');
     Route::apiResource('/chats', ChatController::class);
+    Route::apiResource('/webhooks', WebhookController::class)->only(['store', 'show', 'update', 'destroy']);
+    Route::post('/webhooks/{webhook}/regenerate-token', [WebhookController::class, 'regenerateToken'])->name('api.webhooks.regenerateToken');
     Route::apiResource('/projects', ProjectController::class);
     Route::apiResource('/task-types', TaskTypeController::class);
     Route::get('/task/load/{task}/relations/', [TaskController::class, 'getRelations'])->name('api.getRelations');
@@ -189,4 +194,5 @@ Route::get('/video-call/{video}/join', [VideoCallController::class, 'getVideoCal
 Route::put('/video-call/{video}/join', [VideoCallController::class, 'getVideoCallToken'])->name('api.put.getVideoCallToken');
 Route::post('/video-call/{slug}/request', [VideoCallController::class, 'createJoinRequest'])->name('api.videoCall.createRequest');
 Route::get('/video-call/{slug}/request/{id}', [VideoCallController::class, 'getRequestStatus'])->name('api.videoCall.requestStatus');
+Route::post('/webhooks/ingest/{token}', WebhookIngestController::class)->middleware('throttle:60,1')->name('api.webhooks.ingest');
 Route::post('/webhook', [PusherController::class, 'webhook'])->name('api.webhook');

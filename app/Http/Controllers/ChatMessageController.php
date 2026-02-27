@@ -95,7 +95,7 @@ class ChatMessageController extends Controller
     public function destroy(Request $request, $id)
     {
         $chatMessage = ChatMessage::query()->where('id', $id)->firstOrFail();
-        abort_if($chatMessage->user_id !== Auth::id(), Response::HTTP_FORBIDDEN, 'You can delete only your messages');
+        abort_if($chatMessage->user_id !== null && $chatMessage->user_id !== Auth::id(), Response::HTTP_FORBIDDEN, 'You can delete only your messages');
         $chatId = $chatMessage->chat_id;
         $chatMessage->videocalls()->delete();
         $chatMessage->messageReactions()->delete();

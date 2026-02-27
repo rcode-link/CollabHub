@@ -7,6 +7,7 @@ use App\Models\ChatMessage;
 use App\Models\MessageReaction;
 use App\Models\Task;
 use App\Models\User;
+use App\Models\Webhook;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
@@ -74,7 +75,7 @@ class ChatResource extends JsonResource
                 return [
                     'text' => $message,
                     'created_at' => $this->last_message->created_at,
-                    'user' => $this->last_message->user->name,
+                    'user' => $this->last_message->user?->name ?? ($this->last_message->webhook_meta['username'] ?? 'Webhook'),
                 ];
             }),
         ];
@@ -96,11 +97,13 @@ class ChatResource extends JsonResource
             ];
         }
 
+        $type = $this->chatable_type === User::class ? ChatTypes::GROUP->value : Str::lower(\Str::replace('\\App\\Models\\', '', $this->chatable_type));
+
         return [
             'title' => $this->title,
-            'type' => $this->chatable_type === User::class ? ChatTypes::GROUP->value : Str::lower(\Str::replace('\\App\\Models\\', '', $this->chatable_type)),
+            'type' => $type,
             'avatar' => '',
-            'chatable_id' => null,
+            'chatable_id' => $type === ChatTypes::WEBHOOK->value ? $this->chatable_id : null,
         ];
     }
 

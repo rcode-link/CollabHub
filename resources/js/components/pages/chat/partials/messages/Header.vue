@@ -1,15 +1,22 @@
 <script setup>
+import { ref } from 'vue'
 import { chatDetails } from '@/store/chatStore.js'
 import { useRoute, useRouter } from 'vue-router'
 import PhoneIcon from '@/components/shared/icons/PhoneIcon.vue'
 import UserIcon from '@/components/shared/UserIcon.vue'
 import Task from '@/components/shared/icons/Task.vue'
 import EarthIcon from '@/components/shared/icons/EarthIcon.vue'
+import WebhookIcon from '@/components/shared/icons/WebhookIcon.vue'
+import CogsIcon from '@/components/shared/icons/CogsIcon.vue'
+import ChatSettings from '@/components/pages/chat/partials/ChatSettings.vue'
 
-const emit = defineEmits(['toggleSearch'])
+const emit = defineEmits(['toggleSearch', 'chatUpdated'])
 const chatStore = chatDetails()
 const route = useRoute()
 const router = useRouter()
+const chatSettingsModal = ref(null)
+
+const isWebhook = (type) => type === 'webhook' || type === 'app\\models\\webhook'
 
 const startCall = () => {
   axios.post(`/api/v1/video-call/${route.params.chatId}/start`).then((res) => {
@@ -45,15 +52,17 @@ const makeLink = () => {
         :user="chatStore.activeChat"
         class="w-9 h-9"
       />
-      <template v-else>
-        <Task v-if="chatStore.activeChat.type === 'app\\models\\task'" class="w-9 h-9" />
-        <img
-          v-else-if="chatStore.activeChat.type === 'app\\models\\company' && chatStore.activeChat.avatar"
-          :src="chatStore.activeChat.avatar"
-          class="w-9 h-9 rounded-full object-cover"
-        />
-        <EarthIcon v-if="chatStore.activeChat.type === 'app\\models\\event'" class="w-9 h-9" />
-      </template>
+      <div
+        v-else-if="isWebhook(chatStore.activeChat.type)"
+        class="w-9 h-9 rounded-full bg-orange-500 flex items-center justify-center text-white"
+      ><WebhookIcon class="w-5 h-5" /></div>
+      <Task v-else-if="chatStore.activeChat.type === 'app\\models\\task'" class="w-9 h-9" />
+      <img
+        v-else-if="chatStore.activeChat.type === 'app\\models\\company' && chatStore.activeChat.avatar"
+        :src="chatStore.activeChat.avatar"
+        class="w-9 h-9 rounded-full object-cover"
+      />
+      <EarthIcon v-else-if="chatStore.activeChat.type === 'app\\models\\event'" class="w-9 h-9" />
     </div>
 
     <!-- Title -->
@@ -83,6 +92,20 @@ const makeLink = () => {
       >
         <PhoneIcon class="w-4 h-4" />
       </button>
+
+      <button
+        class="inline-flex items-center justify-center w-8 h-8 rounded-lg text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+        title="Chat settings"
+        @click="chatSettingsModal.modal.toggleModal()"
+      >
+        <CogsIcon class="w-4 h-4" />
+      </button>
     </div>
+
+    <ChatSettings
+      ref="chatSettingsModal"
+      :chat="chatStore.activeChat"
+      @updated="emit('chatUpdated')"
+    />
   </header>
 </template>

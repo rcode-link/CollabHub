@@ -9,6 +9,7 @@ use App\Http\Resources\ChatResource;
 use App\Models\Chat;
 use App\Models\ChatMessage;
 use App\Models\User;
+use App\Models\Webhook;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -43,7 +44,10 @@ class ChatController extends Controller
                 $query->having('users_count', '>', 2);
             })
             ->when($request->get('type') == ChatTypes::SYSTEM->value, function (Builder $query) {
-                $query->whereNot('chatable_type', User::class);
+                $query->whereNot('chatable_type', User::class)->whereNot('chatable_type', Webhook::class);
+            })
+            ->when($request->get('type') == ChatTypes::WEBHOOK->value, function (Builder $query) {
+                $query->where('chatable_type', Webhook::class);
             })
             ->orderByDesc(ChatMessage::query()->select('created_at')->whereColumn('chat_messages.chat_id', 'chats.id')->orderByDesc('created_at')->limit(1));
 
@@ -109,6 +113,16 @@ class ChatController extends Controller
 
     }
 
+    public function users(Chat $chat): JsonResponse
+    {
+        return response()->json(['data' => $chat->users()->get()->map(fn ($u) => [
+            'id' => $u->id,
+            'name' => $u->name,
+            'email' => $u->email,
+            'avatar' => mediaUrl($u->getFirstMedia('avatar')),
+        ])]);
+    }
+
     public function present($id): Response
     {
 
@@ -143,16 +157,43 @@ class ChatController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateChatRequest $request, Chat $chat): void
+    public function update(UpdateChatRequest $request, Chat $chat): JsonResponse
     {
-        //
+        if ($request->has('title')) {
+            $chat->update(['title' => $request->title]);
+        }
+
+        if ($request->has('user_ids')) {
+            $userIds = collect($request->user_ids)->push(Auth::id())->unique();
+            $chat->users()->sync($userIds->map(fn ($id) => ['user_id' => $id]));
+        }
+
+        $chat->load([
+            'users' => fn ($q) => $q->whereNot('user_id', Auth::id()),
+            'chatable',
+        ])->loadCount('users');
+
+        return response()->json(['data' => new ChatResource($chat)]);
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Chat $chat): void
+    public function destroy(Chat $chat): Response
     {
-        //
+        $chat->messages()->each(function ($message) {
+            $message->messageReactions()->delete();
+            $message->media()->each(fn ($m) => $m->delete());
+            $message->delete();
+        });
+        $chat->users()->detach();
+
+        if ($chat->chatable_type === Webhook::class) {
+            Webhook::find($chat->chatable_id)?->delete();
+        }
+
+        $chat->delete();
+
+        return response()->noContent();
     }
 }
