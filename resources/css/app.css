@@ -97,140 +97,154 @@ h5 {
   overflow-x: hidden;
 }
 
-.ProseMirror pre {
-  background: #0d0d0d;
-  color: #fff;
-  font-family: 'JetBrainsMono', monospace;
-  padding: 0.75rem 1rem;
-  border-radius: 0.5rem;
-  overflow-x: auto;
-  max-width: 100%;
+/* ── Inline code (backtick `code`) ── */
+.ProseMirror code:not(pre code) {
+  @apply text-[0.8rem] px-1.5 py-0.5 rounded-md
+         bg-gray-100 dark:bg-gray-800
+         text-pink-600 dark:text-pink-400
+         border border-gray-200 dark:border-gray-700;
+  font-family: 'JetBrainsMono', 'Fira Code', ui-monospace, monospace;
 }
 
-.ProseMirror pre code {
-  color: inherit;
-  padding: 0;
-  background: none;
-  font-size: 0.8rem;
-}
-
-.ProseMirror pre .hljs-comment,
-.ProseMirror pre .hljs-quote {
-  color: #616161;
-}
-
-.ProseMirror pre .hljs-variable,
-.ProseMirror pre .hljs-template-variable,
-.ProseMirror pre .hljs-attribute,
-.ProseMirror pre .hljs-tag,
-.ProseMirror pre .hljs-name,
-.ProseMirror pre .hljs-regexp,
-.ProseMirror pre .hljs-link,
-.ProseMirror pre .hljs-selector-id,
-.ProseMirror pre .hljs-selector-class {
-  color: #f98181;
-}
-
-.ProseMirror pre .hljs-number,
-.ProseMirror pre .hljs-meta,
-.ProseMirror pre .hljs-built_in,
-.ProseMirror pre .hljs-builtin-name,
-.ProseMirror pre .hljs-literal,
-.ProseMirror pre .hljs-type,
-.ProseMirror pre .hljs-params {
-  color: #fbbc88;
-}
-
-.ProseMirror pre .hljs-string,
-.ProseMirror pre .hljs-symbol,
-.ProseMirror pre .hljs-bullet {
-  color: #b9f18d;
-}
-
-.ProseMirror pre .hljs-title,
-.ProseMirror pre .hljs-section {
-  color: #faf594;
-}
-
-.ProseMirror pre .hljs-keyword,
-.ProseMirror pre .hljs-selector-tag {
-  color: #70cff8;
-}
-
-.ProseMirror pre .hljs-emphasis {
-  font-style: italic;
-}
-
-.ProseMirror pre .hljs-strong {
-  font-weight: 700;
-}
-
+/* ── Code block wrapper ── */
+.ProseMirror pre,
 pre {
-  background: #0d0d0d;
-  color: #fff;
-  font-family: 'JetBrainsMono', monospace;
-  padding: 0.75rem 1rem;
-  border-radius: 0.5rem;
-  overflow-x: auto;
+  position: relative;
+  background: #1e1e2e;
+  color: #cdd6f4;
+  font-family: 'JetBrainsMono', 'Fira Code', ui-monospace, monospace;
+  padding: 0;
+  border-radius: 0.75rem;
+  overflow: hidden;
   max-width: 100%;
+  margin: 0.5rem 0;
+  border: 1px solid rgba(255, 255, 255, 0.06);
 }
 
+/* Language label header */
+.ProseMirror pre::before,
+pre::before {
+  content: attr(data-language);
+  display: block;
+  padding: 0.4rem 0.75rem;
+  font-size: 0.7rem;
+  font-family: inherit;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #7f849c;
+  background: rgba(255, 255, 255, 0.03);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+/* Hide empty language label */
+.ProseMirror pre:not([data-language])::before,
+pre:not([data-language])::before,
+.ProseMirror pre[data-language=""]::before,
+pre[data-language=""]::before {
+  content: 'code';
+}
+
+.ProseMirror pre code,
 pre code {
+  display: block;
+  padding: 0.75rem 1rem;
+  overflow-x: auto;
   color: inherit;
-  padding: 0;
   background: none;
   font-size: 0.8rem;
+  line-height: 1.6;
 }
 
-pre .hljs-comment,
-pre .hljs-quote {
-  color: #616161;
+/* Copy button injected by RenderMessage */
+.code-copy-btn {
+  position: absolute;
+  top: 0.25rem;
+  right: 0.5rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.25rem 0.5rem;
+  font-size: 0.65rem;
+  font-family: inherit;
+  color: #7f849c;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 0.375rem;
+  cursor: pointer;
+  transition: all 0.15s;
+  z-index: 2;
 }
 
-pre .hljs-variable,
-pre .hljs-template-variable,
-pre .hljs-attribute,
-pre .hljs-tag,
-pre .hljs-name,
-pre .hljs-regexp,
-pre .hljs-link,
-pre .hljs-name,
-pre .hljs-selector-id,
-pre .hljs-selector-class {
-  color: #f98181;
+.code-copy-btn:hover {
+  color: #cdd6f4;
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.1);
 }
 
-pre .hljs-number,
-pre .hljs-meta,
-pre .hljs-built_in,
-pre .hljs-builtin-name,
-pre .hljs-literal,
-pre .hljs-type,
-pre .hljs-params {
-  color: #fbbc88;
+.code-copy-btn.copied {
+  color: #a6e3a1;
 }
 
-pre .hljs-string,
-pre .hljs-symbol,
-pre .hljs-bullet {
-  color: #b9f18d;
-}
-
-pre .hljs-title,
-pre .hljs-section {
-  color: #faf594;
-}
-
-pre .hljs-keyword,
-pre .hljs-selector-tag {
-  color: #70cff8;
-}
-
-pre .hljs-emphasis {
+/* ── Syntax highlighting — Catppuccin Mocha ── */
+.hljs-comment,
+.hljs-quote {
+  color: #6c7086;
   font-style: italic;
 }
 
-pre .hljs-strong {
+.hljs-variable,
+.hljs-template-variable,
+.hljs-attribute,
+.hljs-tag,
+.hljs-name,
+.hljs-regexp,
+.hljs-link,
+.hljs-selector-id,
+.hljs-selector-class {
+  color: #f38ba8;
+}
+
+.hljs-number,
+.hljs-meta,
+.hljs-built_in,
+.hljs-builtin-name,
+.hljs-literal,
+.hljs-type,
+.hljs-params {
+  color: #fab387;
+}
+
+.hljs-string,
+.hljs-symbol,
+.hljs-bullet {
+  color: #a6e3a1;
+}
+
+.hljs-title,
+.hljs-section {
+  color: #f9e2af;
+}
+
+.hljs-keyword,
+.hljs-selector-tag {
+  color: #89b4fa;
+}
+
+.hljs-addition {
+  color: #a6e3a1;
+  background: rgba(166, 227, 161, 0.1);
+}
+
+.hljs-deletion {
+  color: #f38ba8;
+  background: rgba(243, 139, 168, 0.1);
+}
+
+.hljs-emphasis {
+  font-style: italic;
+}
+
+.hljs-strong {
   font-weight: 700;
 }
 

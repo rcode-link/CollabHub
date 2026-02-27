@@ -6,7 +6,7 @@ import StarterKit from '@tiptap/starter-kit'
 import { Link } from '@tiptap/extension-link'
 import { ref, computed } from 'vue'
 import { createLowlight } from 'lowlight'
-import CodeBlockLowlight from '@tiptap/extension-code-block-lowlight'
+import { EnhancedCodeBlock } from '@/functions/editor/EnhancedCodeBlock'
 import drawIoExtension from '@rcode-link/tiptap-drawio'
 import { TableRow } from '@tiptap/extension-table-row'
 import { TableHeader } from '@tiptap/extension-table-header'
@@ -36,8 +36,6 @@ const props = defineProps({
   placeholder: { type: String, default: '' },
 })
 
-const pressedKeys = ref([])
-
 const textToLinkStore = useTextToLinkStore()
 const textToLink = useConvertTextToLink(textToLinkStore.items, router.push)
 const emit = defineEmits(['update:modelValue', 'submitted'])
@@ -51,42 +49,23 @@ hljs.listLanguages().forEach(async lang => {
 
 const suggestion = useSuggestion()
 
-const shouldISubmit = () => {
-  if (
-    props.submitOnEnter &&
-    pressedKeys.value.indexOf('Enter') > -1 &&
-    pressedKeys.value.indexOf('Shift') === -1
-  ) {
-    return true
-  }
-
-  if (!props.submitOnEnter && pressedKeys.value.join('-') === 'Control-Enter') {
-    return true
-  }
-  return false
-}
-
 const editor = useEditor({
   content: props.model ?? props.modelValue,
   editable: props.editable,
   editorProps: {
-    handleDOMEvents: {
-      keydown: (view, event) => {
-        if (['Control', 'Enter', 'Shift'].indexOf(event.key) > -1) {
-          pressedKeys.value.push(event.key)
-        }
-        if (shouldISubmit()) {
-          event.preventDefault()
+    handleKeyDown: (view, event) => {
+      if (event.key !== 'Enter') return false
+      if (event.shiftKey) return false
 
-          emit('update:modelValue', editor.value?.getJSON())
-          emit('submitted', true)
-        }
-      },
-      keyup(view, event) {
-        pressedKeys.value = pressedKeys.value.filter(key => key !== event.key)
-      },
+      if (!props.submitOnEnter && !event.ctrlKey) return false
+
+      event.preventDefault()
+      emit('update:modelValue', editor.value?.getJSON())
+      emit('submitted', true)
+      return true
+    },
+    handleDOMEvents: {
       blur(view, event) {
-        // Update the model value when focus leaves the editor
         emit('update:modelValue', editor.value?.getJSON())
       },
       click(view, event) {
@@ -110,7 +89,7 @@ const editor = useEditor({
     },
   },
   extensions: [
-    StarterKit,
+    StarterKit.configure({ codeBlock: false }),
     Mention.configure({
       HTMLAttributes: {
         class: 'mention',
@@ -138,7 +117,7 @@ const editor = useEditor({
         }
       },
     })]),
-    CodeBlockLowlight.configure({
+    EnhancedCodeBlock.configure({
       lowlight,
     }),
     vacation,

@@ -11,7 +11,7 @@ import { TableHeader } from '@tiptap/extension-table-header'
 import { TableCell } from '@tiptap/extension-table-cell'
 import tableExtension from '@/functions/editor/TableExtension'
 import { createLowlight } from 'lowlight'
-import CodeBlockLowlight from '@tiptap/extension-code-block-lowlight'
+import { EnhancedCodeBlockRender } from '@/functions/editor/EnhancedCodeBlock'
 import hljs from 'highlight.js'
 import vacation from '@/components/shared/vacationPlugin/vacation'
 import { SmilieReplacer } from '@/functions/smilieReplacer'
@@ -28,7 +28,7 @@ hljs.listLanguages().forEach(lang => {
 
 export const renderExtensions = [
     StarterKit.configure({ codeBlock: false }),
-    CodeBlockLowlight.configure({ lowlight }),
+    EnhancedCodeBlockRender.configure({ lowlight }),
     Mention.configure({ HTMLAttributes: { class: 'mention' } }),
     Link.configure({ openOnClick: false }),
     tableExtension.configure({ resizable: false, allowTableNodeSelection: false }),

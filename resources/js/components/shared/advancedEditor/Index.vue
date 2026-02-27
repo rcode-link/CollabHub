@@ -7,7 +7,7 @@ import { ReplaceStep } from '@tiptap/pm/transform'
 import { Link } from '@tiptap/extension-link'
 import { ref, watch, computed } from 'vue'
 import { createLowlight } from 'lowlight'
-import CodeBlockLowlight from '@tiptap/extension-code-block-lowlight'
+import { EnhancedCodeBlock } from '@/functions/editor/EnhancedCodeBlock'
 import drawIoExtension from '@rcode-link/tiptap-drawio'
 import { useRoute } from 'vue-router'
 import EditorHeader from '@/components/shared/advancedEditor/EditorHeader.vue'
@@ -274,7 +274,7 @@ const getExtensions = () => {
       suggestion,
     }),
     Link.configure({}),
-    CodeBlockLowlight.configure({
+    EnhancedCodeBlock.configure({
       lowlight,
     }),
     SmilieReplacer,

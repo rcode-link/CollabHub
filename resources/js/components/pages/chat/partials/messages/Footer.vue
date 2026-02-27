@@ -124,6 +124,13 @@ function onSelectEmoji(emoji) {
           </label>
         </div>
 
+        <span class="hidden sm:inline text-[11px] text-gray-400 dark:text-gray-500 select-none">
+          <kbd class="px-1 py-0.5 rounded bg-gray-100 dark:bg-gray-700 text-[10px] font-mono">Shift</kbd>
+          +
+          <kbd class="px-1 py-0.5 rounded bg-gray-100 dark:bg-gray-700 text-[10px] font-mono">Enter</kbd>
+          new line
+        </span>
+
         <!-- Send button -->
         <button
           type="submit"
