@@ -17,15 +17,19 @@ class WebhookIngestController extends Controller
         $webhook = Webhook::where('token', $token)->where('is_active', true)->firstOrFail();
         $chat = $webhook->chat;
 
-        $request->validate(['text' => 'required|string']);
+        $request->validate([
+            'text' => 'required_without:attachments|nullable|string',
+            'attachments' => 'sometimes|array',
+        ]);
 
         $converter = new SlackMrkdwnConverter;
-        $tiptapDoc = $converter->convert($request->input('text'));
+        $tiptapDoc = $converter->convertPayload($request->all());
 
         $webhookMeta = [
             'webhook_name' => $webhook->name,
             'username' => $request->input('username', $webhook->name),
             'icon_url' => $request->input('icon_url'),
+            'icon_emoji' => $request->input('icon_emoji'),
         ];
 
         $message = ChatMessage::create([

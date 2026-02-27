@@ -2,10 +2,41 @@
 
 namespace App\Service;
 
+use Symfony\Component\Emoji\EmojiTransliterator;
+
 class SlackMrkdwnConverter
 {
+    private ?EmojiTransliterator $emojiTransliterator = null;
+
+    /**
+     * Build a TipTap doc from Slack-format payload.
+     * Accepts either raw mrkdwn text, or structured blocks from attachments.
+     */
+    public function convertPayload(array $payload): array
+    {
+        $paragraphs = [];
+
+        // Extract blocks from attachments (Uptime Kuma rich messages)
+        $blocks = $this->extractBlocks($payload);
+
+        if (! empty($blocks)) {
+            $paragraphs = $this->convertBlocks($blocks);
+        }
+
+        // Fall back to plain text field
+        if (empty($paragraphs) && ! empty($payload['text'])) {
+            return $this->convert($payload['text']);
+        }
+
+        return ['type' => 'doc', 'content' => $paragraphs ?: [['type' => 'paragraph']]];
+    }
+
+    /**
+     * Convert a plain mrkdwn string to TipTap JSON doc.
+     */
     public function convert(string $slackText): array
     {
+        $slackText = $this->replaceEmojis($slackText);
         $lines = explode("\n", $slackText);
         $paragraphs = [];
         $inCodeBlock = false;
@@ -59,6 +90,136 @@ class SlackMrkdwnConverter
         }
 
         return ['type' => 'doc', 'content' => $paragraphs ?: [['type' => 'paragraph']]];
+    }
+
+    /**
+     * Extract blocks from Slack attachments or top-level blocks.
+     */
+    private function extractBlocks(array $payload): array
+    {
+        // Top-level blocks
+        if (! empty($payload['blocks'])) {
+            return $payload['blocks'];
+        }
+
+        // Blocks inside attachments (Uptime Kuma style)
+        if (! empty($payload['attachments'])) {
+            $blocks = [];
+            foreach ($payload['attachments'] as $attachment) {
+                if (! empty($attachment['blocks'])) {
+                    array_push($blocks, ...$attachment['blocks']);
+                }
+                // Simple attachment fallback text
+                if (empty($attachment['blocks']) && ! empty($attachment['text'])) {
+                    $blocks[] = ['type' => 'section', 'text' => ['type' => 'mrkdwn', 'text' => $attachment['text']]];
+                }
+            }
+
+            return $blocks;
+        }
+
+        return [];
+    }
+
+    /**
+     * Convert Slack Block Kit blocks to TipTap paragraphs.
+     */
+    private function convertBlocks(array $blocks): array
+    {
+        $paragraphs = [];
+
+        foreach ($blocks as $block) {
+            switch ($block['type'] ?? '') {
+                case 'header':
+                    $text = $block['text']['text'] ?? '';
+                    $text = $this->replaceEmojis($text);
+                    $paragraphs[] = [
+                        'type' => 'heading',
+                        'attrs' => ['level' => 3],
+                        'content' => [['type' => 'text', 'text' => $text, 'marks' => [['type' => 'bold']]]],
+                    ];
+                    break;
+
+                case 'section':
+                    // Section with fields (e.g. Uptime Kuma Message + Time)
+                    if (! empty($block['fields'])) {
+                        foreach ($block['fields'] as $field) {
+                            $mrkdwn = $field['text'] ?? '';
+                            $mrkdwn = $this->replaceEmojis($mrkdwn);
+                            $lines = explode("\n", $mrkdwn);
+                            foreach ($lines as $line) {
+                                if ($line === '') {
+                                    continue;
+                                }
+                                $paragraphs[] = [
+                                    'type' => 'paragraph',
+                                    'content' => $this->parseInline($line),
+                                ];
+                            }
+                        }
+                    }
+                    // Section with single text
+                    if (! empty($block['text']['text'])) {
+                        $mrkdwn = $this->replaceEmojis($block['text']['text']);
+                        $lines = explode("\n", $mrkdwn);
+                        foreach ($lines as $line) {
+                            if ($line === '') {
+                                continue;
+                            }
+                            $paragraphs[] = [
+                                'type' => 'paragraph',
+                                'content' => $this->parseInline($line),
+                            ];
+                        }
+                    }
+                    break;
+
+                case 'context':
+                    if (! empty($block['elements'])) {
+                        foreach ($block['elements'] as $el) {
+                            $text = $el['text'] ?? '';
+                            $text = $this->replaceEmojis($text);
+                            $paragraphs[] = [
+                                'type' => 'paragraph',
+                                'content' => $this->parseInline($text),
+                            ];
+                        }
+                    }
+                    break;
+
+                case 'actions':
+                    // Convert action buttons to links
+                    foreach ($block['elements'] ?? [] as $el) {
+                        if (($el['type'] ?? '') === 'button' && ! empty($el['url'])) {
+                            $label = $el['text']['text'] ?? $el['url'];
+                            $paragraphs[] = [
+                                'type' => 'paragraph',
+                                'content' => [[
+                                    'type' => 'text',
+                                    'text' => $label,
+                                    'marks' => [['type' => 'link', 'attrs' => ['href' => (string) $el['url'], 'target' => '_blank']]],
+                                ]],
+                            ];
+                        }
+                    }
+                    break;
+
+                case 'divider':
+                    $paragraphs[] = ['type' => 'horizontalRule'];
+                    break;
+            }
+        }
+
+        return $paragraphs;
+    }
+
+    private function replaceEmojis(string $text): string
+    {
+        if ($this->emojiTransliterator === null) {
+            $this->emojiTransliterator = EmojiTransliterator::create('slack', true);
+        }
+
+        return $this->emojiTransliterator->transliterate($text);
     }
 
     private function parseInline(string $text): array
