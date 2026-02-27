@@ -70,10 +70,11 @@ class LinkPreviewController extends Controller
      */
     protected function fetchMetadata($url)
     {
-        // Set a reasonable timeout to prevent long-running requests
         $response = Http::timeout(5)
             ->withHeaders([
-                'User-Agent' => 'Mozilla/5.0 (compatible; LinkPreviewBot/1.0; +http://yourdomain.com)',
+                'User-Agent' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+                'Accept' => 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+                'Accept-Language' => 'en-US,en;q=0.5',
             ])
             ->get($url);
 
@@ -83,13 +84,19 @@ class LinkPreviewController extends Controller
 
         $html = $response->body();
 
-        // First try to extract metadata from Open Graph tags and Twitter cards
+        // Extract from OG / Twitter meta tags first
         $metadata = $this->extractOpenGraphMetadata($html);
 
-        // If not found, fall back to basic HTML tags
-        if (empty($metadata['title']) && empty($metadata['description']) && empty($metadata['image'])) {
-            $basicMetadata = $this->extractBasicMetadata($html, $url);
-            $metadata = array_merge($metadata, $basicMetadata);
+        // Fill any gaps with basic HTML fallbacks
+        $basicMetadata = $this->extractBasicMetadata($html, $url);
+        if (empty($metadata['title'])) {
+            $metadata['title'] = $basicMetadata['title'] ?? '';
+        }
+        if (empty($metadata['description'])) {
+            $metadata['description'] = $basicMetadata['description'] ?? '';
+        }
+        if (empty($metadata['image'])) {
+            $metadata['image'] = $basicMetadata['image'] ?? null;
         }
 
         // Clean up data
@@ -118,46 +125,41 @@ class LinkPreviewController extends Controller
             'image' => null,
         ];
 
-        // Extract using regex for better performance than loading full DOM
-        // Open Graph title
-        preg_match('/<meta[^>]*property=["\']og:title["\'][^>]*content=["\'](.*?)["\'][^>]*>/i', $html, $matches);
-        if (! empty($matches[1])) {
-            $metadata['title'] = $matches[1];
-        }
+        // Extract all <meta> tags then inspect attributes — handles any attribute order
+        preg_match_all('/<meta\s[^>]+>/i', $html, $metaTags);
 
-        // Twitter title (fallback)
-        if (empty($metadata['title'])) {
-            preg_match('/<meta[^>]*name=["\']twitter:title["\'][^>]*content=["\'](.*?)["\'][^>]*>/i', $html, $matches);
-            if (! empty($matches[1])) {
-                $metadata['title'] = $matches[1];
+        foreach ($metaTags[0] ?? [] as $tag) {
+            $property = '';
+            $name = '';
+            $content = '';
+
+            if (preg_match('/property=["\']([^"\']+)["\']/i', $tag, $m)) {
+                $property = strtolower($m[1]);
             }
-        }
-
-        // Open Graph description
-        preg_match('/<meta[^>]*property=["\']og:description["\'][^>]*content=["\'](.*?)["\'][^>]*>/i', $html, $matches);
-        if (! empty($matches[1])) {
-            $metadata['description'] = $matches[1];
-        }
-
-        // Twitter description (fallback)
-        if (empty($metadata['description'])) {
-            preg_match('/<meta[^>]*name=["\']twitter:description["\'][^>]*content=["\'](.*?)["\'][^>]*>/i', $html, $matches);
-            if (! empty($matches[1])) {
-                $metadata['description'] = $matches[1];
+            if (preg_match('/name=["\']([^"\']+)["\']/i', $tag, $m)) {
+                $name = strtolower($m[1]);
             }
-        }
+            if (preg_match('/content=["\']([^"\']*?)["\']/i', $tag, $m)) {
+                $content = $m[1];
+            }
 
-        // Open Graph image
-        preg_match('/<meta[^>]*property=["\']og:image["\'][^>]*content=["\'](.*?)["\'][^>]*>/i', $html, $matches);
-        if (! empty($matches[1])) {
-            $metadata['image'] = $matches[1];
-        }
+            if ($content === '') {
+                continue;
+            }
 
-        // Twitter image (fallback)
-        if (empty($metadata['image'])) {
-            preg_match('/<meta[^>]*name=["\']twitter:image["\'][^>]*content=["\'](.*?)["\'][^>]*>/i', $html, $matches);
-            if (! empty($matches[1])) {
-                $metadata['image'] = $matches[1];
+            // OG title
+            if (empty($metadata['title']) && ($property === 'og:title' || $name === 'twitter:title')) {
+                $metadata['title'] = $content;
+            }
+
+            // OG description
+            if (empty($metadata['description']) && ($property === 'og:description' || $name === 'twitter:description' || $name === 'description')) {
+                $metadata['description'] = $content;
+            }
+
+            // OG image
+            if (empty($metadata['image']) && ($property === 'og:image' || $name === 'twitter:image' || $name === 'twitter:image:src')) {
+                $metadata['image'] = $content;
             }
         }
 

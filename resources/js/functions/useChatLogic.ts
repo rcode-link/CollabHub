@@ -15,7 +15,8 @@ export default (chatIdParam, messageContainerRef) => {
     const chatId = ref(0);
     const scrollToLastMessage = ref(false);
     const showScrollToBottom = ref(0);
-    const lastMessageId = ref(null)
+    const lastMessageId = ref(null);
+    const isLoadingMore = ref(false);
 
     const listenForMessages = () => {
 
@@ -39,13 +40,15 @@ export default (chatIdParam, messageContainerRef) => {
     };
 
     const loadMessages = () => {
+        if (isLoadingMore.value) return;
+
         page.value += 1;
 
         if (maxPage.value != 0 && page.value > maxPage.value) {
             return;
         }
 
-
+        isLoadingMore.value = true;
         const scrollHeightBefore = messageContainerRef.value && messageContainerRef.value.scrollHeight;
         window.axios
             .get(`/api/v1/chats/${chatId.value}/messages?page=${page.value}`)
@@ -76,21 +79,32 @@ export default (chatIdParam, messageContainerRef) => {
                 }
             }).then(res => {
                 if (!res) {
+                    isLoadingMore.value = false;
                     return;
                 }
                 nextTick(() => {
+                    const el = messageContainerRef.value;
                     if (page.value === 1) {
-                        scrollToBottom()
+                        el.scrollTop = el.scrollHeight;
+                        isLoadingMore.value = false;
                         return;
                     }
-                    const scrollHeightAfter = messageContainerRef.value.scrollHeight;
-                    messageContainerRef.value.scrollTop = scrollHeightAfter - scrollHeightBefore;
+                    // Restore scroll position without animation
+                    const scrollHeightAfter = el.scrollHeight;
+                    el.style.scrollBehavior = 'auto';
+                    el.scrollTop = scrollHeightAfter - scrollHeightBefore;
+                    // Re-enable smooth scroll on next frame
+                    requestAnimationFrame(() => {
+                        el.style.scrollBehavior = '';
+                        isLoadingMore.value = false;
+                    });
                 });
             });
     };
 
     const resetMessages = () => {
         page.value = 0;
+        isLoadingMore.value = false;
         chatStore.resetMessages()
     };
 
@@ -105,7 +119,7 @@ export default (chatIdParam, messageContainerRef) => {
             showScrollToBottom.value = 0;
         }
 
-        if (scrollTop === 0) {
+        if (scrollTop < 50 && !isLoadingMore.value) {
             loadMessages();
         }
     };
@@ -121,6 +135,7 @@ export default (chatIdParam, messageContainerRef) => {
         scrollToLastMessage,
         scrollToBottom,
         loadMessages,
+        isLoadingMore,
         page,
         resetMessages,
         scrolled,

@@ -1,12 +1,15 @@
 <script setup>
-import { computed } from 'vue'
+import { computed, ref, onMounted } from 'vue'
 import { generateHTML } from '@tiptap/core'
 import { renderExtensions } from '@/functions/editor/renderExtensions'
 import VacationCard from '@/components/shared/vacationPlugin/VacationCard.vue'
+import LinkTooltip from '@/components/shared/LinkTooltip.vue'
 
 const props = defineProps({
     content: { type: [Object, String], default: null },
 })
+
+const containerRef = ref(null)
 
 const parsed = computed(() => {
     if (!props.content) return { html: '', vacationNodes: [] }
@@ -42,12 +45,13 @@ const parsed = computed(() => {
 </script>
 
 <template>
-    <div>
+    <div ref="containerRef">
         <div v-if="parsed.html" class="ProseMirror" v-html="parsed.html" />
         <VacationCard
             v-for="eventId in parsed.vacationNodes"
             :key="eventId"
             :event-id="eventId"
         />
+        <LinkTooltip v-if="containerRef" :container="containerRef" />
     </div>
 </template>

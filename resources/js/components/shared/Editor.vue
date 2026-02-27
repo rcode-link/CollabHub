@@ -117,17 +117,19 @@ const editor = useEditor({
       },
       suggestion: suggestion.plugin,
     }),
-    Link.configure({}),
-    LinkPreviewExtension.configure({
-      defaultShowPreview: props.editable !== true, // Links start with previews disabled
-
-      // Replace the fetchMetadata function to use our Laravel backend
+    Link.configure({
+      openOnClick: false,
+      autolink: true,
+    }),
+    // Only use LinkPreviewExtension in document editors, not chat composer.
+    // In chat, the Link extension handles URLs as marks; RenderMessage + LinkTooltip
+    // handle display and hover previews.
+    ...(props.submitOnEnter ? [] : [LinkPreviewExtension.configure({
+      defaultShowPreview: props.editable !== true,
       fetchMetadata: async url => {
         const data = await window.axios
           .post('/api/v1/link-preview', { url })
           .then(res => res.data)
-        console.log(data)
-
         return {
           url: data.url,
           title: data.title || url,
@@ -135,7 +137,7 @@ const editor = useEditor({
           image: data.image || null,
         }
       },
-    }),
+    })]),
     CodeBlockLowlight.configure({
       lowlight,
     }),

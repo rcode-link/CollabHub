@@ -17,6 +17,7 @@ import vacation from '@/components/shared/vacationPlugin/vacation'
 import { SmilieReplacer } from '@/functions/smilieReplacer'
 import drawIoExtension from '@rcode-link/tiptap-drawio'
 import { ResizableImage } from '@/functions/editor/blocks/imageNode/ImageNode'
+import { LinkPreviewBlock } from '@/functions/editor/LinkPreviewExtension.js'
 
 const lowlight = createLowlight()
 hljs.listLanguages().forEach(lang => {
@@ -38,4 +39,5 @@ export const renderExtensions = [
     SmilieReplacer,
     drawIoExtension,
     ResizableImage,
+    LinkPreviewBlock,
 ]
