@@ -102,7 +102,7 @@ const editForm = reactive({
 
 const loadCurrencies = () => {
   window.axios.get('/api/v1/currency').then((res) => {
-    currencies.value = res.data
+    currencies.value = res.data.data ?? res.data
   })
 }
 
