@@ -82,5 +82,13 @@ watch(
             <Label forInput="billing_country">Country</Label>
             <Text name="billing_country" v-model="modelValue.billing_country" />
         </div>
+
+        <h3 class="text-base font-semibold text-gray-900 dark:text-white pt-2">Invoice settings</h3>
+
+        <div>
+            <Label forInput="invoice_cc_emails">Send copy of invoices to</Label>
+            <Text name="invoice_cc_emails" v-model="modelValue.invoice_cc_emails" placeholder="email1@example.com, email2@example.com" />
+            <p class="mt-1 text-xs text-gray-400 dark:text-gray-500">Comma-separated email addresses that will receive a copy of every sent invoice</p>
+        </div>
     </div>
 </template>

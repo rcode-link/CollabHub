@@ -21,8 +21,10 @@ const modalRef = ref()
 const form = reactive({
     name: '',
     prefix: '',
+    email: '',
     currency_id: '',
     default_vat_rate: '',
+    invoice_locale: 'en',
     address: '',
     city: '',
     zip: '',
@@ -36,8 +38,10 @@ const form = reactive({
 const resetForm = () => {
     form.name = ''
     form.prefix = ''
+    form.email = ''
     form.currency_id = ''
     form.default_vat_rate = ''
+    form.invoice_locale = 'en'
     form.address = ''
     form.city = ''
     form.zip = ''
@@ -201,6 +205,19 @@ onMounted(() => {
                             <Label forInput="prefix">Prefix</Label>
                             <Text v-model="form.prefix" name="prefix" placeholder="e.g. ACME" />
                             <p class="mt-1 text-xs text-gray-400">(used for invoice number)</p>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <Label forInput="email">Email</Label>
+                            <Text v-model="form.email" name="email" type="email" placeholder="billing@example.com" />
+                        </div>
+                        <div>
+                            <Label forInput="invoice_locale">Invoice Language</Label>
+                            <UiSelect v-model="form.invoice_locale">
+                                <option value="en">English</option>
+                                <option value="bs">Bosanski</option>
+                            </UiSelect>
                         </div>
                     </div>
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">

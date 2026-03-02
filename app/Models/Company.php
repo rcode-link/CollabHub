@@ -89,6 +89,9 @@ class Company extends Model implements HasMedia
         'is_costumer_company',
         'currency_id',
         'default_vat_rate',
+        'email',
+        'invoice_locale',
+        'invoice_cc_emails',
     ];
 
     /**

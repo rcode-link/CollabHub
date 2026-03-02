@@ -86,8 +86,10 @@ const capitalize = (str) => {
 const editForm = reactive({
   name: '',
   prefix: '',
+  email: '',
   currency_id: '',
   default_vat_rate: '',
+  invoice_locale: 'en',
   address: '',
   city: '',
   zip: '',
@@ -108,8 +110,10 @@ const openEditModal = () => {
   if (!customer.value) return
   editForm.name = customer.value.name ?? ''
   editForm.prefix = customer.value.prefix ?? ''
+  editForm.email = customer.value.email ?? ''
   editForm.currency_id = customer.value.currency?.id ?? ''
   editForm.default_vat_rate = customer.value.default_vat_rate ?? ''
+  editForm.invoice_locale = customer.value.invoice_locale ?? 'en'
   editForm.address = customer.value.address ?? ''
   editForm.city = customer.value.city ?? ''
   editForm.zip = customer.value.zip ?? ''
@@ -222,13 +226,19 @@ onMounted(() => {
             </div>
           </div>
 
-          <!-- Currency & VAT -->
-          <div class="flex items-center gap-4 mt-4">
+          <!-- Currency, VAT, Email & Language -->
+          <div class="flex flex-wrap items-center gap-4 mt-4">
+            <p v-if="customer.email" class="text-xs text-gray-400 dark:text-gray-500">
+              Email: {{ customer.email }}
+            </p>
             <p v-if="customer.currency" class="text-xs text-gray-400 dark:text-gray-500">
               Currency: {{ customer.currency.currency }}
             </p>
             <p v-if="customer.default_vat_rate > 0" class="text-xs text-gray-400 dark:text-gray-500">
               Default VAT: {{ customer.default_vat_rate }}%
+            </p>
+            <p class="text-xs text-gray-400 dark:text-gray-500">
+              Invoice Language: {{ customer.invoice_locale === 'bs' ? 'Bosanski' : 'English' }}
             </p>
           </div>
         </div>
@@ -392,6 +402,19 @@ onMounted(() => {
               <Label forInput="edit-prefix">Prefix</Label>
               <Text v-model="editForm.prefix" name="edit-prefix" placeholder="e.g. ACME" />
               <p class="mt-1 text-xs text-gray-400">(used for invoice number)</p>
+            </div>
+          </div>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <Label forInput="edit-email">Email</Label>
+              <Text v-model="editForm.email" name="edit-email" type="email" placeholder="billing@example.com" />
+            </div>
+            <div>
+              <Label forInput="edit-invoice_locale">Invoice Language</Label>
+              <UiSelect v-model="editForm.invoice_locale">
+                <option value="en">English</option>
+                <option value="bs">Bosanski</option>
+              </UiSelect>
             </div>
           </div>
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">

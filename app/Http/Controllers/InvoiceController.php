@@ -3,14 +3,17 @@
 namespace App\Http\Controllers;
 
 use App\Events\InvoiceItemsUpdate;
+use App\Http\Requests\SendInvoiceRequest;
 use App\Http\Requests\StoreInvoiceRequest;
 use App\Http\Requests\UpdateInvoiceRequest;
 use App\Http\Resources\InvoiceResource;
+use App\Mail\InvoiceMail;
 use App\Models\Company;
 use App\Models\Invoice;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 
 class InvoiceController extends Controller
 {
@@ -138,9 +141,46 @@ class InvoiceController extends Controller
 
         $invoice->load('items', 'items.billingItem', 'company', 'company.currency');
         $company = Company::whereIsCostumerCompany(false)->firstOrFail();
+
+        $locale = $invoice->company?->invoice_locale ?? 'en';
+        $previousLocale = app()->getLocale();
+        app()->setLocale($locale);
+
         $pdf = Pdf::loadView('pdf.invoice', ['model' => $invoice, 'company' => $company]);
 
+        app()->setLocale($previousLocale);
+
         return $pdf->stream($invoice->number.'.pdf');
+    }
+
+    public function send(SendInvoiceRequest $request, Invoice $invoice)
+    {
+        Auth::user()->authorize('can-create-invoice', Auth::user()->company()->first());
+
+        $invoice->load('company');
+
+        $mail = Mail::to($request->email);
+
+        // CC organization's invoice_cc_emails if configured
+        $orgCompany = Company::whereIsCostumerCompany(false)->first();
+        if ($orgCompany?->invoice_cc_emails) {
+            $ccEmails = array_filter(array_map('trim', explode(',', $orgCompany->invoice_cc_emails)));
+            if (! empty($ccEmails)) {
+                $mail->cc($ccEmails);
+            }
+        }
+
+        $mail->send(new InvoiceMail(
+            invoice: $invoice,
+            emailSubject: $request->subject,
+            emailMessage: $request->message,
+        ));
+
+        if (! $invoice->sent) {
+            $invoice->update(['sent' => true]);
+        }
+
+        return response()->json(['message' => 'Invoice sent successfully.']);
     }
 
     /**

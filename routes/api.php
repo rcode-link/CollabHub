@@ -162,6 +162,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::apiResource('/invoices-items', InvoiceItemController::class);
     Route::get('/invoices/next-number', [InvoiceController::class, 'nextNumber'])->name('api.invoiceNextNumber');
     Route::get('/invoices/{invoice}/download', [InvoiceController::class, 'download'])->name('api.invoiceDownload');
+    Route::post('/invoices/{invoice}/send', [InvoiceController::class, 'send'])->name('api.invoiceSend');
     Route::apiResource('/invoices', InvoiceController::class);
     Route::apiResource('/payments', PaymentController::class);
     Route::apiResource('/currency', CurrencyController::class);

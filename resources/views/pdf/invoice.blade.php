@@ -1,4 +1,4 @@
-<html lang="en">
+<html lang="{{ app()->getLocale() }}">
 
 <head>
     <meta charset="UTF-8">
@@ -6,13 +6,8 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>{{$model->number}}</title>
     <style>
-        @font-face {
-            font-family: 'Open';
-            src: url({{ storage_path('fonts/OpenSans-VariableFont_wdth.ttf') }});
-        }
-
         * {
-            font-family: 'Open', sans-serif;
+            font-family: 'DejaVu Sans', sans-serif;
             font-size: 12px;
             text-align: justify;
         }
@@ -136,20 +131,20 @@ line-height: 1px;
                 </td>
                 <td width='50%'>
                     <p class="mb-10" style="margin-left: auto">
-                        <b>Invoice number</b> : {{ $model->number }}
+                        <b>{{ __('invoice.invoice_number') }}</b> : {{ $model->number }}
                     </p>
                     <p class="mb-10" style="margin-left: auto">
-                        <b>Invoice date</b> : {{ Carbon\Carbon::parse($model->date)->format('M d Y') }}
+                        <b>{{ __('invoice.invoice_date') }}</b> : {{ Carbon\Carbon::parse($model->date)->format(__('invoice.date_format')) }}
                     </p>
                     <p class="mb-10" style="margin-left: auto">
-                        <b>Invoice due date</b> : {{ Carbon\Carbon::parse($model->due_date)->format('M d Y') }}
+                        <b>{{ __('invoice.invoice_due_date') }}</b> : {{ Carbon\Carbon::parse($model->due_date)->format(__('invoice.date_format')) }}
                     </p>
                 </td>
             </tr>
         </table>
         <br>
         <br>
-        <p >Bill to:</p>
+        <p >{{ __('invoice.bill_to') }}</p>
         <h3>{{ $model->company->name }}</h3>
         <p style="width: 33.333%">
             {{ $model->company->billing_address ?? $model->company->address }}
@@ -164,14 +159,14 @@ line-height: 1px;
         <table class="w-full table">
             <thead>
                 <tr>
-                    <th>Order no.</th>
-                    <th>Name</th>
-                    <th>Price</th>
-                    <th>Qty</th>
-                    <th>Total</th>
-                    <th>VAT %</th>
-                    <th>VAT</th>
-                    <th>Total + VAT</th>
+                    <th>{{ __('invoice.order_no') }}</th>
+                    <th>{{ __('invoice.name') }}</th>
+                    <th>{{ __('invoice.price') }}</th>
+                    <th>{{ __('invoice.qty') }}</th>
+                    <th>{{ __('invoice.total') }}</th>
+                    <th>{{ __('invoice.vat_percent') }}</th>
+                    <th>{{ __('invoice.vat') }}</th>
+                    <th>{{ __('invoice.total_with_vat') }}</th>
                 </tr>
             </thead>
             <tbody>
@@ -231,7 +226,7 @@ line-height: 1px;
             <tfoot>
                 <tr>
                     <th colspan="4"></th>
-                    <th>Subtotal</th>
+                    <th>{{ __('invoice.subtotal') }}</th>
                     <th colspan="2"></th>
                     <th>
                         @if ($model->company?->currency)
@@ -244,7 +239,7 @@ line-height: 1px;
                 @if ($vatTotal > 0)
                 <tr>
                     <th colspan="4"></th>
-                    <th>VAT Total</th>
+                    <th>{{ __('invoice.vat_total') }}</th>
                     <th colspan="2"></th>
                     <th>
                         @if ($model->company?->currency)
@@ -257,7 +252,7 @@ line-height: 1px;
                 @endif
                 <tr>
                     <th colspan="4"></th>
-                    <th>Total</th>
+                    <th>{{ __('invoice.total') }}</th>
                     <th colspan="2"></th>
                     <th>
                         @if ($model->company?->currency)
@@ -270,7 +265,7 @@ line-height: 1px;
             </tfoot>
         </table>
         <div style="width: 50%" class="note">
-            <h5>Note</h5>
+            <h5>{{ __('invoice.note') }}</h5>
             <x-markdown>
                 {!! $model->note !!}
             </x-markdown>

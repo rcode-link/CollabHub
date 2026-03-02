@@ -33,5 +33,12 @@ function formatMoney($val, $currency = null, $format = null)
     $numberFormatter = new NumberFormatter($format ?? 'en_US', NumberFormatter::CURRENCY);
     $moneyFormatter = new IntlMoneyFormatter($numberFormatter, $currencies);
 
-    echo $moneyFormatter->format($money);
+    $formatted = $moneyFormatter->format($money);
+
+    $currencyMap = __('invoice.currency_map');
+    if (is_array($currencyMap) && isset($currencyMap[$currency])) {
+        $formatted = str_replace($currency, $currencyMap[$currency], $formatted);
+    }
+
+    echo $formatted;
 }

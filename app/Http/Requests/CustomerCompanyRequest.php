@@ -23,11 +23,12 @@ class CustomerCompanyRequest extends FormRequest
      */
     public function rules(): array
     {
-        $company = Company::whereId(request()->get('id'))->first();
+        $id = $this->route('customer') ?? request()->get('id');
+        $company = $id ? Company::whereId($id)->first() : null;
 
         return [
             'name' => ['required'],
-            'prefix' => [Rule::requiredIf($company ? $company->is_costumer_company : true), Rule::unique('companies', 'prefix')->ignore(request()->get('id'))],
+            'prefix' => [Rule::requiredIf((bool) ($company ? $company->is_costumer_company : true)), Rule::unique('companies', 'prefix')->ignore($id)],
             'address' => ['required'],
             'currency_id' => ['required', 'exists:currencies,id'],
             'city' => ['required'],
@@ -38,6 +39,9 @@ class CustomerCompanyRequest extends FormRequest
             'billing_zip' => ['nullable', 'string'],
             'billing_country' => ['nullable', 'string'],
             'default_vat_rate' => ['nullable', 'numeric', 'min:0', 'max:100'],
+            'email' => ['nullable', 'email'],
+            'invoice_locale' => ['nullable', 'in:en,bs'],
+            'invoice_cc_emails' => ['nullable', 'string'],
         ];
     }
 }

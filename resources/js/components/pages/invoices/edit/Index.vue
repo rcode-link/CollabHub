@@ -54,6 +54,15 @@ const paymentModel = ref({
   date: '',
 })
 
+// ── Send modal ───────────────────────────────────────────────
+const sendModalRef = ref(null)
+const sending = ref(false)
+const sendForm = ref({
+  email: '',
+  subject: '',
+  message: '',
+})
+
 // ── Item price/qty/vat refs for debounced updates ──────────────
 const itemPrices = ref({})
 const itemQtys = ref({})
@@ -223,6 +232,27 @@ const submitPayment = () => {
   })
 }
 
+// ── Send invoice ─────────────────────────────────────────────
+const openSendModal = () => {
+  sendForm.value.email = invoiceData.value?.company?.email ?? ''
+  sendForm.value.subject = invoiceData.value?.number ?? ''
+  sendForm.value.message = ''
+  sendModalRef.value?.toggleModal()
+}
+
+const sendInvoice = () => {
+  sending.value = true
+  window.axios
+    .post(`/api/v1/invoices/${route.params.inv_id}/send`, sendForm.value)
+    .then(() => {
+      sendModalRef.value?.closeModal()
+      loadInvoice()
+    })
+    .finally(() => {
+      sending.value = false
+    })
+}
+
 // ── Watch route param to load/reload ──────────────────────────
 watch(
   () => route.params.inv_id,
@@ -234,8 +264,12 @@ watch(
       'InvoiceItemsUpdate',
       (payload) => {
         if (invoiceData.value) {
-          invoiceData.value.items = payload.items
-          syncItemRefs(payload.items)
+          // payload.items is the full InvoiceResource, not just the items array
+          const invoice = payload.items
+          invoiceData.value.items = invoice.items
+          invoiceData.value.total = invoice.total
+          invoiceData.value.due_amount = invoice.due_amount
+          syncItemRefs(invoice.items)
         }
       },
     )
@@ -327,6 +361,10 @@ const mappedBillingItems = () =>
               <Button variant="primary" @click="submitPayment">Save</Button>
             </template>
           </Modal>
+
+          <Button variant="soft" size="sm" @click="openSendModal">
+            Send
+          </Button>
 
           <Button
             v-if="!invoiceData.sent"
@@ -570,5 +608,43 @@ const mappedBillingItems = () =>
         </div>
       </Card>
     </div>
+
+    <!-- Send invoice modal -->
+    <Modal ref="sendModalRef">
+      <template #header>
+        <h2 class="text-base font-semibold">Send Invoice</h2>
+      </template>
+      <template #body>
+        <div class="space-y-4">
+          <div>
+            <Label forInput="send-email">Recipient Email</Label>
+            <Text v-model="sendForm.email" name="send-email" type="email" placeholder="recipient@example.com" />
+          </div>
+          <div>
+            <Label forInput="send-subject">Subject</Label>
+            <Text v-model="sendForm.subject" name="send-subject" placeholder="Invoice subject" />
+          </div>
+          <div>
+            <Label forInput="send-message">Message (optional)</Label>
+            <textarea
+              v-model="sendForm.message"
+              name="send-message"
+              rows="4"
+              placeholder="Add a message..."
+              class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
+            />
+          </div>
+        </div>
+      </template>
+      <template #footer>
+        <Button
+          variant="primary"
+          :disabled="!sendForm.email || !sendForm.subject || sending"
+          @click="sendInvoice"
+        >
+          {{ sending ? 'Sending...' : 'Send' }}
+        </Button>
+      </template>
+    </Modal>
   </Auth>
 </template>

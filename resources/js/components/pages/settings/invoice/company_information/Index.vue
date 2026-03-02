@@ -43,6 +43,7 @@ watch(
             billing_zip: userStore.company.billing_zip ?? undefined,
             billing_country: userStore.company.billing_country ?? undefined,
             prefix: userStore.company.prefix ?? undefined,
+            invoice_cc_emails: userStore.company.invoice_cc_emails ?? '',
         };
     },
     {
