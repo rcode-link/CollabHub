@@ -33,6 +33,7 @@ watch(
         model.value = {
             id: userStore.company.id,
             name: userStore.company.name,
+            billing_info: userStore.company.billing_info ?? undefined,
             currency_id: userStore.company.currency_id?.toString() ?? undefined,
             address: userStore.company.address ?? undefined,
             city: userStore.company.city ?? undefined,

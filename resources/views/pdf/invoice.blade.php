@@ -22,7 +22,7 @@
             font-size: 2rem;
         }
         .note {
-line-height: 1px;
+            line-height: 1.6;
         }
         .mb-10 {
             margin-bottom: 10px;
@@ -118,6 +118,9 @@ line-height: 1px;
                     <h3 class="mb-10">
                         {{ $company->name }}
                     </h3>
+                    @if($company->billing_info)
+                        <p>{!! nl2br(e($company->billing_info)) !!}</p>
+                    @endif
                 <div>
                         <p>
                             {{ $company->billing_address ?? $company->address }}
@@ -146,6 +149,9 @@ line-height: 1px;
         <br>
         <p >{{ __('invoice.bill_to') }}</p>
         <h3>{{ $model->company->name }}</h3>
+        @if($model->company->billing_info)
+            <p>{!! nl2br(e($model->company->billing_info)) !!}</p>
+        @endif
         <p style="width: 33.333%">
             {{ $model->company->billing_address ?? $model->company->address }}
             <br />

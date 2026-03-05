@@ -77,6 +77,7 @@ class Company extends Model implements HasMedia
 
     protected $fillable = [
         'name',
+        'billing_info',
         'prefix',
         'address',
         'city',

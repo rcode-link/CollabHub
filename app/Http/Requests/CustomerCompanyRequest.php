@@ -28,6 +28,7 @@ class CustomerCompanyRequest extends FormRequest
 
         return [
             'name' => ['required'],
+            'billing_info' => ['nullable', 'string'],
             'prefix' => [Rule::requiredIf((bool) ($company ? $company->is_costumer_company : true)), Rule::unique('companies', 'prefix')->ignore($id)],
             'address' => ['required'],
             'currency_id' => ['required', 'exists:currencies,id'],

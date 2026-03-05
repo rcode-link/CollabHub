@@ -85,6 +85,7 @@ const capitalize = (str) => {
 // ── Edit form ───────────────────────────────────────────────
 const editForm = reactive({
   name: '',
+  billing_info: '',
   prefix: '',
   email: '',
   currency_id: '',
@@ -109,6 +110,7 @@ const loadCurrencies = () => {
 const openEditModal = () => {
   if (!customer.value) return
   editForm.name = customer.value.name ?? ''
+  editForm.billing_info = customer.value.billing_info ?? ''
   editForm.prefix = customer.value.prefix ?? ''
   editForm.email = customer.value.email ?? ''
   editForm.currency_id = customer.value.currency?.id ?? ''
@@ -192,7 +194,9 @@ onMounted(() => {
             </Button>
           </div>
 
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <p v-if="customer.billing_info" class="text-sm text-gray-500 dark:text-gray-400 mt-1 whitespace-pre-line">{{ customer.billing_info }}</p>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
             <!-- Address -->
             <div>
               <h4 class="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">Address</h4>
@@ -403,6 +407,16 @@ onMounted(() => {
               <Text v-model="editForm.prefix" name="edit-prefix" placeholder="e.g. ACME" />
               <p class="mt-1 text-xs text-gray-400">(used for invoice number)</p>
             </div>
+          </div>
+          <div>
+            <Label forInput="edit-billing_info">Billing Info</Label>
+            <textarea
+              v-model="editForm.billing_info"
+              name="edit-billing_info"
+              rows="3"
+              placeholder="Tax ID, registration number, etc."
+              class="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
+            />
           </div>
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>

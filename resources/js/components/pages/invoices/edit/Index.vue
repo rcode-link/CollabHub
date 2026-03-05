@@ -306,6 +306,7 @@ const mappedBillingItems = () =>
         <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
           {{ invoiceData.company?.name }}
         </h3>
+        <p v-if="invoiceData.company?.billing_info" class="text-sm text-gray-500 dark:text-gray-400 mt-1 whitespace-pre-line">{{ invoiceData.company?.billing_info }}</p>
         <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">
           {{
             invoiceData.company?.billing_address ??
