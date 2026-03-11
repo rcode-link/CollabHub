@@ -22,7 +22,7 @@
             font-size: 2rem;
         }
         .note {
-            line-height: 1;
+            line-height: 0.5em;
         }
         .mb-10 {
             margin-bottom: 10px;
