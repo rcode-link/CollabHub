@@ -37,6 +37,24 @@ export default () => {
     initCapacitor()
     textToLinkStore.load()
 
+    // Configure Android native bridge for notifications
+    if (window.CollabHubAndroid) {
+        try {
+            const token = localStorage.getItem('token')
+            const serverUrl = window.location.origin
+            if (token && serverUrl) {
+                window.CollabHubAndroid.saveCredentials(serverUrl, token)
+
+                // Fetch ntfy config and start the SSE listener for push notifications
+                window.axios.get('/api/v1/ntfy/config').then(res => {
+                    if (res.data.enabled && res.data.server && res.data.topic) {
+                        window.CollabHubAndroid.startNtfy(res.data.server, res.data.topic)
+                    }
+                }).catch(() => {})
+            }
+        } catch (e) { /* bridge not available */ }
+    }
+
     window.axios
         .get('/api/v1/companies')
         .then(response => userState.setCompany(response.data))

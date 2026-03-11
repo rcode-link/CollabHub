@@ -31,6 +31,12 @@ return [
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
 
+    'ntfy' => [
+        'enabled' => env('NTFY_ENABLED', false),
+        'url' => env('NTFY_URL', 'http://ntfy:80'),           // internal (server → ntfy)
+        'public_url' => env('NTFY_PUBLIC_URL', null),           // external (mobile app → ntfy)
+    ],
+
     'browsershot' => [
         'ws_endpoint' => env('BROWSERSHOT_WS_ENDPOINT'),
         'node_binary' => env('BROWSERSHOT_NODE_BINARY', 'node'),

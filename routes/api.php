@@ -68,6 +68,17 @@ Route::get('/shared/b/{token}', [BoardController::class, 'showShared'])->name('a
 
 Route::middleware(['auth:sanctum'])->group(function () {
 
+    // ntfy push notification config for mobile apps
+    Route::get('/ntfy/config', function () {
+        $user = auth()->user();
+
+        return response()->json([
+            'enabled' => (bool) config('services.ntfy.enabled'),
+            'server' => config('services.ntfy.public_url', config('services.ntfy.url')),
+            'topic' => \App\Service\NtfyService::topicForUser($user->id),
+        ]);
+    })->name('api.ntfy.config');
+
     Route::apiResource('/push-notification', PushNotificationController::class);
     Route::post('/link-preview', [LinkPreviewController::class, 'fetch']);
 

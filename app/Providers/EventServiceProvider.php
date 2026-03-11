@@ -2,6 +2,9 @@
 
 namespace App\Providers;
 
+use App\Events\ChatUpdate;
+use App\Events\StartVideoCall;
+use App\Listeners\SendNtfyNotification;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
@@ -20,12 +23,10 @@ class EventServiceProvider extends ServiceProvider
         ],
     ];
 
-    /**
-     * Register any events for your application.
-     */
     public function boot(): void
     {
-        //
+        Event::listen(ChatUpdate::class, [SendNtfyNotification::class, 'handleChatUpdate']);
+        Event::listen(StartVideoCall::class, [SendNtfyNotification::class, 'handleVideoCall']);
     }
 
     /**

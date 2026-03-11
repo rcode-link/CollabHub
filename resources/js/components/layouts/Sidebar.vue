@@ -234,6 +234,9 @@ const logout = (e) => {
     e.preventDefault()
     window.Echo.disconnect()
     localStorage.removeItem('token')
+    if (window.CollabHubAndroid) {
+        try { window.CollabHubAndroid.clearCredentials() } catch (e) {}
+    }
     window.axios.post('/api/v1/logout').then(() => {
         router.push({ name: 'login' })
     })

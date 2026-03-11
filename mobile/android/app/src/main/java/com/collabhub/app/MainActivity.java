@@ -3,6 +3,7 @@ package com.collabhub.app;
 import android.Manifest;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
@@ -11,16 +12,19 @@ import android.webkit.PermissionRequest;
 import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
+
 import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 import androidx.core.content.ContextCompat;
+
 import com.getcapacitor.BridgeActivity;
 
 public class MainActivity extends BridgeActivity {
 
     private static final int PERMISSION_REQUEST_CODE = 1001;
     private static final String CHANNEL_ID = "collabhub_notifications";
+    private static final String PREFS_NAME = "collabhub_prefs";
     private int notificationId = 1000;
 
     @Override
@@ -29,6 +33,7 @@ public class MainActivity extends BridgeActivity {
 
         createNotificationChannel();
         requestAppPermissions();
+        startNtfyListener();
 
         WebView webView = getBridge().getWebView();
 
@@ -51,15 +56,37 @@ public class MainActivity extends BridgeActivity {
     }
 
     /**
+     * Start the ntfy SSE listener service if configured.
+     */
+    private void startNtfyListener() {
+        SharedPreferences prefs = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
+        String server = prefs.getString("ntfyServer", null);
+        String topic = prefs.getString("ntfyTopic", null);
+
+        if (server != null && topic != null) {
+            android.content.Intent intent = new android.content.Intent(this, NtfyListenerService.class);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                startForegroundService(intent);
+            } else {
+                startService(intent);
+            }
+        }
+    }
+
+    private void stopNtfyListener() {
+        stopService(new android.content.Intent(this, NtfyListenerService.class));
+    }
+
+    /**
      * JavaScript interface exposed to the web page as window.CollabHubAndroid
      */
     public class CollabHubBridge {
 
         @JavascriptInterface
         public void showNotification(String title, String body) {
-            if (ActivityCompat.checkSelfPermission(MainActivity.this,
-                    Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED
-                    && Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU
+                    && ActivityCompat.checkSelfPermission(MainActivity.this,
+                    Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
                 return;
             }
 
@@ -91,6 +118,44 @@ public class MainActivity extends BridgeActivity {
                         new String[]{Manifest.permission.POST_NOTIFICATIONS},
                         PERMISSION_REQUEST_CODE);
             }
+        }
+
+        /**
+         * Save server URL and auth token.
+         */
+        @JavascriptInterface
+        public void saveCredentials(String serverUrl, String authToken) {
+            getSharedPreferences(PREFS_NAME, MODE_PRIVATE)
+                    .edit()
+                    .putString("serverUrl", serverUrl)
+                    .putString("authToken", authToken)
+                    .apply();
+        }
+
+        /**
+         * Configure and start the ntfy SSE listener for push notifications.
+         * Call from JS: CollabHubAndroid.startNtfy(ntfyServer, ntfyTopic)
+         */
+        @JavascriptInterface
+        public void startNtfy(String ntfyServer, String ntfyTopic) {
+            getSharedPreferences(PREFS_NAME, MODE_PRIVATE)
+                    .edit()
+                    .putString("ntfyServer", ntfyServer)
+                    .putString("ntfyTopic", ntfyTopic)
+                    .apply();
+            startNtfyListener();
+        }
+
+        /**
+         * Clear stored credentials and stop ntfy listener (call on logout).
+         */
+        @JavascriptInterface
+        public void clearCredentials() {
+            stopNtfyListener();
+            getSharedPreferences(PREFS_NAME, MODE_PRIVATE)
+                    .edit()
+                    .clear()
+                    .apply();
         }
 
         @JavascriptInterface
