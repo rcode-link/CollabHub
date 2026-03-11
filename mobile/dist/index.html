@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
+  <meta name="color-scheme" content="dark">
+  <title>CollabHub</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body { height: 100%; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, sans-serif;
+      background: #1a1a2e;
+      color: #e0e0e0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+    }
+
+    .container {
+      text-align: center;
+      max-width: 380px;
+      width: 100%;
+      padding: 2rem 1.5rem;
+    }
+
+    .logo {
+      width: 72px;
+      height: 72px;
+      background: linear-gradient(135deg, #FFA500, #4A90E2);
+      border-radius: 18px;
+      margin: 0 auto 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.75rem;
+      font-weight: 700;
+      color: white;
+    }
+
+    h1 {
+      font-size: 1.375rem;
+      font-weight: 600;
+      margin-bottom: 0.375rem;
+      color: #fff;
+    }
+
+    p { color: #888; margin-bottom: 1.75rem; font-size: 0.875rem; line-height: 1.4; }
+
+    .input-group { display: flex; flex-direction: column; gap: 0.75rem; }
+
+    input {
+      width: 100%;
+      padding: 0.875rem 1rem;
+      border: 1px solid #333;
+      border-radius: 12px;
+      background: #16213e;
+      color: #e0e0e0;
+      font-size: 1rem;
+      outline: none;
+      transition: border-color 0.2s;
+      -webkit-appearance: none;
+    }
+
+    input:focus { border-color: #4A90E2; }
+    input::placeholder { color: #555; }
+
+    button {
+      width: 100%;
+      padding: 0.875rem 1rem;
+      border: none;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #FFA500, #e69500);
+      color: #fff;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: opacity 0.2s;
+      -webkit-appearance: none;
+    }
+
+    button:active { opacity: 0.85; transform: scale(0.98); }
+    button:disabled { opacity: 0.5; }
+
+    .error { color: #ff6b6b; font-size: 0.8rem; margin-top: 0.5rem; display: none; }
+    .hint { color: #555; font-size: 0.75rem; margin-top: 1.25rem; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="logo">CH</div>
+    <h1>Welcome to CollabHub</h1>
+    <p>Enter your team's server URL to get started</p>
+
+    <div class="input-group">
+      <input
+        type="url"
+        id="serverUrl"
+        placeholder="https://your-team.collabhub.com"
+        autocapitalize="none"
+        autocorrect="off"
+        spellcheck="false"
+      />
+      <button id="connectBtn">Connect</button>
+    </div>
+
+    <p class="error" id="error"></p>
+    <p class="hint">Example: https://acme.collabhub.com</p>
+  </div>
+
+  <script type="module">
+    import { Preferences } from 'https://cdn.jsdelivr.net/npm/@capacitor/preferences@6/+esm'
+
+    const input = document.getElementById('serverUrl')
+    const btn = document.getElementById('connectBtn')
+    const error = document.getElementById('error')
+
+    // Check if already connected
+    async function checkExisting() {
+      const { value } = await Preferences.get({ key: 'serverUrl' })
+      if (value) {
+        window.location.href = value
+      }
+    }
+    checkExisting()
+
+    btn.addEventListener('click', connect)
+    input.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') connect()
+    })
+
+    async function connect() {
+      const url = input.value.trim()
+      error.style.display = 'none'
+
+      if (!url) { showError('Please enter a server URL'); return }
+
+      try { new URL(url) } catch {
+        showError('Please enter a valid URL'); return
+      }
+
+      if (!url.startsWith('https://') && !url.startsWith('http://')) {
+        showError('URL must start with https://'); return
+      }
+
+      btn.disabled = true
+      btn.textContent = 'Connecting...'
+
+      try {
+        const normalized = url.replace(/\/+$/, '')
+        await Preferences.set({ key: 'serverUrl', value: normalized })
+        window.location.href = normalized
+      } catch (err) {
+        btn.disabled = false
+        btn.textContent = 'Connect'
+        showError('Failed to connect. Check the URL and try again.')
+      }
+    }
+
+    function showError(msg) {
+      error.textContent = msg
+      error.style.display = 'block'
+    }
+  </script>

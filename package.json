@@ -55,7 +55,14 @@
         "vue-tippy": "^6.5.0",
         "vue3-emoji-picker": "^1.1.8",
         "vue3-toastify": "^0.2.4",
-        "ziggy-js": "^2.6.1"
+        "ziggy-js": "^2.6.1",
+        "@capacitor/core": "^8.2.0",
+        "@capacitor/app": "^8.0.0",
+        "@capacitor/local-notifications": "^8.0.2",
+        "@capacitor/preferences": "^8.0.0",
+        "@capacitor/splash-screen": "^8.0.0",
+        "@capacitor/status-bar": "^8.0.0",
+        "@capacitor/haptics": "^8.0.0"
     },
     "devDependencies": {
         "@rollup/plugin-alias": "^5.1.1",

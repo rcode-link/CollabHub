@@ -1,0 +1,3 @@
+node_modules/
+android/keystore.properties
+android/app/*.keystore

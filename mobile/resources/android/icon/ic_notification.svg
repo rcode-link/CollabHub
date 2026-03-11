@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96">
+  <!-- Android notification icon: white silhouette, transparent bg -->
+  <circle cx="35" cy="30" r="10" fill="white"/>
+  <path d="M20 55 c0-8.3 6.7-15 15-15 8.3 0 15 6.7 15 15 v5 H20 Z" fill="white"/>
+  <circle cx="61" cy="30" r="10" fill="white"/>
+  <path d="M46 55 c0-8.3 6.7-15 15-15 8.3 0 15 6.7 15 15 v5 H46 Z" fill="white"/>
+  <path d="M27 70 Q48 80 69 70" stroke="white" stroke-width="4" fill="none" stroke-linecap="round"/>
+  <circle cx="48" cy="76" r="3" fill="white"/>
+</svg>

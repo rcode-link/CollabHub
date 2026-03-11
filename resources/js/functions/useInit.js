@@ -11,7 +11,8 @@ import { toast } from 'vue3-toastify'
 import { useRouter } from 'vue-router'
 import VideoToast from '@/components/shared/video/VideoToast.vue'
 import { initAxios } from '@/axios.js'
-import { initElectron, setElectronBadge, isElectron, showElectronNotification } from '@/functions/useElectron.js'
+import { initElectron, setElectronBadge, showElectronNotification } from '@/functions/useElectron.js'
+import { initCapacitor, showCapacitorNotification, setCapacitorBadge } from '@/functions/useCapacitor.js'
 import { useNotificationSettings, getPlatform } from '@/functions/useNotificationSettings.js'
 
 const isWindowFocused = ref(
@@ -33,6 +34,7 @@ export default () => {
     initEcho()
     initAxios()
     initElectron()
+    initCapacitor()
     textToLinkStore.load()
 
     window.axios
@@ -96,14 +98,20 @@ export default () => {
 
     const UpdateChatForUser = async data => {
         loadNumberOfUnreadMessages()
-        showAppNotification({
-            type: 'message',
-            title: `${data.message.user} messaged you`,
-            body: data.message.text,
-        })
+        const isCurrentUserSender = userState.user.name === data.message.user
+        if (!isCurrentUserSender) {
+            showAppNotification({
+                type: 'message',
+                title: `${data.message.user} messaged you`,
+                body: data.message.text,
+            })
+        }
     }
 
     const videoCallNotification = data => {
+        const isCurrentUserCaller = data.callId.user.id === userState.user.id
+        if (isCurrentUserCaller) return
+
         toast(VideoToast, {
             data: {
                 callerName: data.callId.user.name,
@@ -122,7 +130,7 @@ export default () => {
      * Unified notification dispatcher.
      * Checks user preferences, then routes to the right native API:
      * - Electron → electronAPI.showNotification
-     * - Capacitor → (future) local notification plugin
+     * - Capacitor → LocalNotifications.schedule
      * - Browser → Notification API
      */
     const showAppNotification = ({ type, title, body }) => {
@@ -133,8 +141,7 @@ export default () => {
         if (platform === 'electron') {
             showElectronNotification({ title, body })
         } else if (platform === 'capacitor') {
-            // Future: Capacitor local notifications
-            // LocalNotifications.schedule({ notifications: [{ title, body, id: Date.now() }] })
+            showCapacitorNotification({ title, body })
         } else {
             // Browser: use the Notification API directly
             if ('Notification' in window && Notification.permission === 'granted') {
@@ -168,6 +175,7 @@ export default () => {
         (count) => {
             updatePageTitle()
             setElectronBadge(count)
+            setCapacitorBadge(count)
         },
     )
 }

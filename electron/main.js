@@ -23,6 +23,8 @@ const store = new Store({
 
 let mainWindow = null
 let tray = null
+let trayIconNormal = null
+let trayIconBadge = null
 
 function createWindow() {
   const { width, height } = store.get('windowBounds')
@@ -97,8 +99,40 @@ function loadApp() {
   }
 }
 
+function buildTrayIcon(variant) {
+  // variant: 'normal' or 'badge'
+  const suffix = variant === 'badge' ? '-badge' : ''
+  const iconPath = path.join(__dirname, 'icons', `tray-icon${suffix}.png`)
+
+  if (process.platform === 'linux') {
+    // Linux StatusNotifierItem needs absolute file path
+    return iconPath
+  }
+
+  // macOS/Windows: use nativeImage with HiDPI
+  const icon1x = path.join(__dirname, 'icons', `tray-icon${suffix}@1x.png`)
+  const icon2x = path.join(__dirname, 'icons', `tray-icon${suffix}@2x.png`)
+  let icon
+  try {
+    icon = nativeImage.createFromPath(icon1x)
+    const hiDpi = nativeImage.createFromPath(icon2x)
+    icon.addRepresentation({ scaleFactor: 2.0, buffer: hiDpi.toPNG() })
+  } catch {
+    icon = nativeImage.createFromPath(iconPath)
+  }
+  if (process.platform === 'darwin') {
+    icon.setTemplateImage(false) // Keep color for badge visibility
+  }
+  return icon
+}
+
+function updateTrayIcon(hasUnread) {
+  if (!tray) return
+  const icon = hasUnread ? trayIconBadge : trayIconNormal
+  tray.setImage(icon)
+}
+
 function createTray() {
-  // Build absolute icon path and verify it exists
   const iconPath = path.join(__dirname, 'icons', 'tray-icon.png')
 
   if (!fs.existsSync(iconPath)) {
@@ -106,27 +140,11 @@ function createTray() {
     return
   }
 
-  // On Linux, Tray works best with an absolute file path string
-  // rather than a nativeImage object (required for StatusNotifierItem/DBus)
-  if (process.platform === 'linux') {
-    tray = new Tray(iconPath)
-  } else {
-    // macOS/Windows: use nativeImage with HiDPI support
-    const icon1x = path.join(__dirname, 'icons', 'tray-icon@1x.png')
-    const icon2x = path.join(__dirname, 'icons', 'tray-icon@2x.png')
-    let trayIcon
-    try {
-      trayIcon = nativeImage.createFromPath(icon1x)
-      const hiDpi = nativeImage.createFromPath(icon2x)
-      trayIcon.addRepresentation({ scaleFactor: 2.0, buffer: hiDpi.toPNG() })
-    } catch {
-      trayIcon = nativeImage.createFromPath(iconPath)
-    }
-    if (process.platform === 'darwin') {
-      trayIcon.setTemplateImage(true)
-    }
-    tray = new Tray(trayIcon)
-  }
+  // Pre-build both icon variants
+  trayIconNormal = buildTrayIcon('normal')
+  trayIconBadge = buildTrayIcon('badge')
+
+  tray = new Tray(trayIconNormal)
 
   tray.setToolTip('CollabHub')
 
@@ -211,6 +229,8 @@ ipcMain.handle('set-badge-count', (_event, count) => {
   } else if (process.platform === 'linux') {
     app.setBadgeCount(count)
   }
+  // Swap tray icon: red dot when unread, normal when clear
+  updateTrayIcon(count > 0)
   // Update tray tooltip
   if (tray) {
     tray.setToolTip(count > 0 ? `CollabHub (${count} unread)` : 'CollabHub')

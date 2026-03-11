@@ -16,8 +16,10 @@ export function getPlatform() {
 }
 
 function getDefaults() {
+  const platform = getPlatform()
   return {
-    enabled: false,
+    // Native apps (Electron/Capacitor) have notifications on by default
+    enabled: platform === 'electron' || platform === 'capacitor',
     messages: true,
     videoCalls: true,
     soundEnabled: true,
