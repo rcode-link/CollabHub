@@ -78,5 +78,7 @@ const initials = computed(() => {
 .player {
     aspect-ratio: 16/9;
     max-height: 100%;
+    min-width: 16rem;
+    flex: 1 1 auto;
 }
 </style>

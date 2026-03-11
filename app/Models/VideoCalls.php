@@ -95,7 +95,12 @@ class VideoCalls extends Model
         $current = Carbon::parse($currentTime)->setTimezone('UTC');
 
         $data = $this->getRoom($this->slug);
-        $listOfUsers = $data->listParticipants($this->slug);
+        try {
+            $listOfUsers = $data->listParticipants($this->slug);
+        } catch (\Throwable $e) {
+            // Room doesn't exist yet on LiveKit — that's fine, first joiner creates it
+            $listOfUsers = [];
+        }
 
         switch ($this->callable::class) {
             case Event::class:

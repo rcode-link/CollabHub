@@ -18,6 +18,8 @@ import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 import androidx.core.content.ContextCompat;
 
+import androidx.core.view.WindowCompat;
+
 import com.getcapacitor.BridgeActivity;
 
 public class MainActivity extends BridgeActivity {
@@ -30,6 +32,11 @@ public class MainActivity extends BridgeActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // Disable Capacitor 8's default edge-to-edge rendering
+        // so content doesn't go behind the status bar
+        WindowCompat.setDecorFitsSystemWindows(getWindow(), true);
+        getWindow().setStatusBarColor(android.graphics.Color.parseColor("#1a1a2e"));
 
         createNotificationChannel();
         requestAppPermissions();

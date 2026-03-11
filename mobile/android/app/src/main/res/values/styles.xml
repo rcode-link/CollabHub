@@ -19,5 +19,7 @@
 
     <style name="AppTheme.NoActionBarLaunch" parent="Theme.SplashScreen">
         <item name="android:background">@drawable/splash</item>
+        <item name="android:windowFullscreen">false</item>
+        <item name="android:fitsSystemWindows">true</item>
     </style>
 </resources>

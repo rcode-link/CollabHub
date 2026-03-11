@@ -32,6 +32,10 @@ const config: CapacitorConfig = {
     StatusBar: {
       style: 'dark',
       backgroundColor: '#1a1a2e',
+      overlaysWebView: false,
+    },
+    SystemBars: {
+      insetsHandling: 'disable',
     },
   },
   android: {
