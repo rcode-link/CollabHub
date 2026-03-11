@@ -2,7 +2,7 @@
 import { useUserStore } from "@/store/user";
 import { computed, ref, watch } from "vue";
 import { useErrorsStore } from "@/store/errors";
-import { debounce, find, toNumber } from "lodash";
+import { debounce } from "@/functions/debounce";
 import UserIcon from "@/components/shared/UserIcon.vue";
 import Text from "@/components/shared/Text.vue";
 import { useRoute } from "vue-router";
@@ -65,7 +65,7 @@ const handleItemClick = (obj) => {
 };
 
 const selectedUser = computed(() => {
-    return find(users.value?.data, { id: toNumber(currentValue.value) });
+    return users.value?.data?.find(obj => obj.id === Number(currentValue.value));
 });
 
 const unSelectUser = () => {

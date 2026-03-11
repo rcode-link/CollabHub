@@ -8,7 +8,7 @@ import {
     sendableSteps,
 } from "prosemirror-collab";
 import { useUserStore } from "@/store/user.js";
-import { debounce } from "lodash";
+import { debounce } from "@/functions/debounce";
 
 /**
  * Enhanced collaboration extension for TipTap editor

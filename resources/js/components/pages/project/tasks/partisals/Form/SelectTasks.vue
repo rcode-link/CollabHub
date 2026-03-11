@@ -2,7 +2,6 @@
 import AutoComplete from "@/components/shared/AutoComplete.vue";
 import { ref, watch } from "vue";
 import { useRoute } from "vue-router";
-import { toNumber, find } from "lodash";
 
 const emit = defineEmits(["update"]);
 const route = useRoute();
@@ -24,7 +23,7 @@ const getTaskRelations = () => {
 
 const itemSelected = (id) => {
     selectedItems.value.push({
-        task: find(relatedTasks.value.data, { id: toNumber(id) }),
+        task: relatedTasks.value.data.find(obj => obj.id === Number(id)),
     });
 };
 

@@ -1,9 +1,7 @@
 import { chatDetails } from "@/store/chatStore.js";
-import { toNumber } from "lodash";
 import { useUserStore } from "@/store/user.js";
 import { ref, nextTick } from "vue";
 import { useRoute } from "vue-router";
-import * as _ from "lodash";
 
 
 export default (chatIdParam, messageContainerRef) => {
@@ -58,7 +56,7 @@ export default (chatIdParam, messageContainerRef) => {
                 maxPage.value = response.data.meta.last_page;
                 chatStore.addMessages(items);
                 const numOfUnread = chatStore.chatList.find(
-                    (obj: any) => obj.id === toNumber(route.params.chatId)
+                    (obj: any) => obj.id === Number(route.params.chatId)
                 );
 
 

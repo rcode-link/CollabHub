@@ -1,5 +1,4 @@
 import { defineStore } from "pinia";
-import _ from "lodash";
 
 const NOT_FOUND_IN_ARRAY = -1;
 export const chatDetails = defineStore("chatDetails", {
@@ -26,7 +25,7 @@ export const chatDetails = defineStore("chatDetails", {
             this.chatList = list;
         },
         setChatOnTopOfTheList(id) {
-            const chat = _.find(this.chatList, (obj) => {
+            const chat = this.chatList.find((obj) => {
                 return obj.id === Number(id);
             });
 
@@ -40,9 +39,7 @@ export const chatDetails = defineStore("chatDetails", {
             this.chatList.unshift(chat);
         },
         updateChatListMessage(data) {
-            const index = _.findIndex(this.chatList, {
-                id: _.toNumber(data.chatId),
-            });
+            const index = this.chatList.findIndex(obj => obj.id === Number(data.chatId));
 
             if (index === NOT_FOUND_IN_ARRAY) {
                 return;
@@ -55,9 +52,7 @@ export const chatDetails = defineStore("chatDetails", {
             this.chatList.splice(index, 1, item);
         },
         updateUnreadMessages(data) {
-            const index = _.findIndex(this.chatList, {
-                id: _.toNumber(data.id),
-            });
+            const index = this.chatList.findIndex(obj => obj.id === Number(data.id));
             if (index === NOT_FOUND_IN_ARRAY) {
                 return;
             }
@@ -86,21 +81,17 @@ export const chatDetails = defineStore("chatDetails", {
         },
         addMessages(messages) {
 
-            this.messages = _.uniq([...messages, ...this.messages]);
+            this.messages = [...new Set([...messages, ...this.messages])];
         },
         updateMessage(message) {
-            const index = _.findIndex(this.messages, {
-                id: _.toNumber(message.id),
-            });
+            const index = this.messages.findIndex(obj => obj.id === Number(message.id));
             if (index === NOT_FOUND_IN_ARRAY) {
                 return;
             }
             this.messages.splice(index, 1, message);
         },
         deleteMessage(message) {
-            const index = _.findIndex(this.messages, {
-                id: _.toNumber(message.id),
-            });
+            const index = this.messages.findIndex(obj => obj.id === Number(message.id));
             if (index === NOT_FOUND_IN_ARRAY) {
                 return;
             }

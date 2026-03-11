@@ -3,7 +3,6 @@ import { watch, ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { DateTime } from "luxon";
 import { useCalendarStore } from "@/store/calendarStore";
-import { find, toNumber } from "lodash";
 import {
     FwbModal,
     FwbButton,
@@ -43,9 +42,7 @@ watch(
     () => [route.query.event, calendar.calendar],
     () => {
         if (route.query.event) {
-            event.value = find(calendar.calendar, {
-                id: toNumber(route.query.event),
-            });
+            event.value = calendar.calendar.find(obj => obj.id === Number(route.query.event));
 
             console.log(event.value);
         }

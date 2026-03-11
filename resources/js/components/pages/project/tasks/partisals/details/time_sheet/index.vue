@@ -2,7 +2,6 @@
 import { onMounted, reactive, ref, computed } from "vue";
 import { DateTime } from "luxon";
 import { useRoute } from "vue-router";
-import { groupBy, sumBy } from "lodash";
 import UserTimeSheet from "@/components/pages/project/tasks/partisals/details/time_sheet/UserTimeSheet.vue";
 import Button from "@/components/shared/Button.vue";
 import Text from "@/components/shared/Text.vue";
@@ -24,8 +23,8 @@ const canSubmit = computed(() => {
 
 const totalHours = computed(() => {
     const all = Object.values(model.value).flat();
-    return sumBy(all, obj =>
-        Number(DateTime.fromISO(obj.end).diff(DateTime.fromISO(obj.start), ["hours"]).hours)
+    return all.reduce((sum, obj) =>
+        sum + Number(DateTime.fromISO(obj.end).diff(DateTime.fromISO(obj.start), ["hours"]).hours), 0
     ).toFixed(2);
 });
 
@@ -52,7 +51,7 @@ const load = () => {
         .get("/api/v1/time-sheet", {
             params: { project_id: route.params.project, task_id: props.taskId },
         })
-        .then((res) => (model.value = groupBy(res.data, "user_id")));
+        .then((res) => (model.value = res.data.reduce((groups, item) => { const k = item["user_id"]; (groups[k] = groups[k] || []).push(item); return groups; }, {})));
 };
 
 onMounted(() => { load(); });

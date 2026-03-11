@@ -105,7 +105,6 @@ import SelectSprintHeader from "@/components/pages/project/board/partials/Select
 import Modal from "@/components/shared/Modal.vue";
 import BoardForm from "@/components/pages/project/board/partials/Form.vue";
 import CogsIcon from "@/components/shared/icons/CogsIcon.vue";
-import _ from "lodash";
 import { useAbility } from "@casl/vue";
 
 const route = useRoute();
@@ -122,7 +121,7 @@ const shouldSprintSelectionBeVisible = computed(
 );
 
 const setActiveBoard = ({ id }) => {
-    if (_.toNumber(id) === _.toNumber(route.params.board)) return;
+    if (Number(id) === Number(route.params.board)) return;
     const routeData = { ...route.params };
     delete routeData["sprint"];
     routeData["board"] = id;

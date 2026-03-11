@@ -1,7 +1,6 @@
 <script setup lang="js">
 import { FwbAvatar } from "flowbite-vue";
 import { useUserStore } from "@/store/user";
-import { toNumber } from "lodash";
 const userState = useUserStore();
 
 const props = defineProps({
@@ -29,7 +28,7 @@ const getUserStatus = () => {
     if (props.user && "chatable_id" in props.user) {
         usersOnlineLength = userState.onlineUsers.filter(
             (obj) =>
-                obj.id === toNumber((props.user)?.chatable_id)
+                obj.id === Number((props.user)?.chatable_id)
         ).length;
     }
 

@@ -3,7 +3,7 @@ import { useBoardsState } from "@/store/boards";
 import { computed, onBeforeUnmount, onMounted, provide, reactive, ref, watch } from "vue";
 import { useRoute } from "vue-router";
 import StatusRow from "@/components/pages/project/board/view/StatusRow.vue";
-import { debounce, findIndex } from "lodash";
+import { debounce } from "@/functions/debounce";
 import { useBreadcrumbStore } from "@/store/breadcrumb";
 import { useDropdown } from "@/composables/useDropdown";
 import UserIcon from "@/components/shared/UserIcon.vue";
@@ -102,12 +102,12 @@ onMounted(() => {
 
 function manageBreadcrumb() {
     if (
-        findIndex(breadcrumbStore.links, { title: boardState.activeBoard?.title }) === -1
+        breadcrumbStore.links.findIndex(obj => obj.title === boardState.activeBoard?.title) === -1
     ) {
         breadcrumbStore.addEntry([{ link: "", title: boardState.activeBoard?.title }]);
     }
     if (
-        findIndex(breadcrumbStore.links, { title: boardState.activeSprint?.title }) === -1 &&
+        breadcrumbStore.links.findIndex(obj => obj.title === boardState.activeSprint?.title) === -1 &&
         boardState.activeBoard?.type === "scrum"
     ) {
         breadcrumbStore.addEntry([

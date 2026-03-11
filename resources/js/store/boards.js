@@ -1,7 +1,6 @@
 import { defineStore } from "pinia";
 import { computed, ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
-import { findIndex, toNumber, find } from "lodash";
 
 export const useBoardsState = defineStore("boards", () => {
     const boards = ref([]);
@@ -32,9 +31,7 @@ export const useBoardsState = defineStore("boards", () => {
     }
 
     function addSprintToBoard(sprint) {
-        const indexOfBoard = findIndex(boards.value, {
-            id: toNumber(activeBoard.value?.id),
-        });
+        const indexOfBoard = boards.value.findIndex(obj => obj.id === Number(activeBoard.value?.id));
         boards.value[indexOfBoard].sprint.push(sprint);
     }
 
@@ -48,9 +45,7 @@ export const useBoardsState = defineStore("boards", () => {
         };
         taskStatuses.value.forEach((status) => {
             if (
-                find(boardTasks.value[status.title], {
-                    id: toNumber(task.id),
-                })
+                boardTasks.value[status.title].find(obj => obj.id === Number(task.id))
             ) {
                 statusTitle.title = status.title;
             }
@@ -58,9 +53,7 @@ export const useBoardsState = defineStore("boards", () => {
         if (statusTitle.title === "") {
             return;
         }
-        const index = findIndex(boardTasks.value[statusTitle.title], {
-            id: task.id,
-        });
+        const index = boardTasks.value[statusTitle.title].findIndex(obj => obj.id === task.id);
         if (index === -1) {
             return;
         }
@@ -97,9 +90,7 @@ export const useBoardsState = defineStore("boards", () => {
             if (!boards.value.length || !route.params.board) {
                 return;
             }
-            activeBoard.value = find(boards.value, {
-                id: toNumber(route.params.board),
-            });
+            activeBoard.value = boards.value.find(obj => obj.id === Number(route.params.board));
         },
         {
             immediate: true,
@@ -110,9 +101,8 @@ export const useBoardsState = defineStore("boards", () => {
     watch(
         () => [activeBoard.value],
         () => {
-            const data = find(
-                activeBoard.value?.sprint,
-                (obj) => obj.id === toNumber(route.params.sprint)
+            const data = activeBoard.value?.sprint?.find(
+                (obj) => obj.id === Number(route.params.sprint)
             );
 
             if (route.params.sprint && data) {
@@ -120,7 +110,7 @@ export const useBoardsState = defineStore("boards", () => {
                 return;
             }
             let sprintToBeActive =
-                find(activeBoard.value?.sprint, (obj) => obj.is_active) ??
+                activeBoard.value?.sprint?.find((obj) => obj.is_active) ??
                 activeBoard.value?.sprint[0];
 
             if (!sprintToBeActive) {
@@ -141,9 +131,8 @@ export const useBoardsState = defineStore("boards", () => {
             if (!route.params.sprint) {
                 return;
             }
-            const sprint = find(
-                activeBoard.value?.sprint,
-                (obj) => obj.id === toNumber(route.params.sprint)
+            const sprint = activeBoard.value?.sprint?.find(
+                (obj) => obj.id === Number(route.params.sprint)
             );
             if (sprint) {
                 activeSprint.value = sprint;

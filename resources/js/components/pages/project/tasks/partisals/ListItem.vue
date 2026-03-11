@@ -1,6 +1,5 @@
 <script setup>
 import { useRoute } from "vue-router";
-import { isArray } from "lodash";
 
 const route = useRoute();
 defineProps({
@@ -36,7 +35,7 @@ defineProps({
 
         <span class="text-xs font-medium text-gray-900 dark:text-white truncate">{{ obj.name }}</span>
 
-        <div v-if="obj.status && !isArray(obj.status)" class="flex items-center gap-1.5">
+        <div v-if="obj.status && !Array.isArray(obj.status)" class="flex items-center gap-1.5">
           <div class="w-2 h-2 rounded-full flex-shrink-0" :style="{ backgroundColor: obj.status.color || '#6B7280' }"></div>
           <span class="text-xs text-gray-600 dark:text-gray-400 truncate">{{ obj.status.title }}</span>
         </div>

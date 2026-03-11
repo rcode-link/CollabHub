@@ -25,7 +25,6 @@ import flatPickr from "vue-flatpickr-component";
 import { useErrorsStore } from "@/store/errors";
 import InteractiveToast from "@/components/shared/InteractiveToast.vue";
 import { useRoute } from "vue-router";
-import { find, toNumber } from "lodash";
 import { DateTime } from "luxon";
 import { useVacationGroupStore } from "@/store/vacationGroupStore";
 import { onMounted } from "vue";
@@ -50,9 +49,7 @@ watch(
             return;
         }
         if (route.query.edit === "true") {
-            const obj = find(calendar.calendar, {
-                id: toNumber(route.query.event),
-            });
+            const obj = calendar.calendar.find(o => o.id === Number(route.query.event));
 
             calendar.setItem(obj);
         }

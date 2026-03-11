@@ -10,7 +10,6 @@ import { useErrorsStore } from "@/store/errors";
 import SelectTasks from "@/components/pages/project/tasks/partisals/Form/SelectTasks.vue";
 import DatePicker from "@/components/shared/DatePicker.vue";
 import { DateTime } from "luxon";
-import _ from "lodash";
 import { toast } from "vue3-toastify";
 import router from "@/router/router.js";
 import { setFormData } from "@/components/pages/project/tasks/formLogic";
@@ -156,7 +155,7 @@ const submit = () => {
     }
     if (!route.query.task) createNewTask();
     if (route.name === "project.tasks") {
-        const withoutNulls = _.omitBy(route.query, _.isNull);
+        const withoutNulls = Object.fromEntries(Object.entries(route.query).filter(([, v]) => v !== null));
         withoutNulls.project_id = route.params.project;
         tasksStore.loadTasks(withoutNulls);
     }

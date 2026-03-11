@@ -15,7 +15,6 @@
     </div>
 </template>
 <script setup lang="js">
-import { find } from "lodash";
 import { DateTime } from "luxon";
 import { useUserStore } from "@/store/user";
 import { computed } from "vue";
@@ -50,7 +49,7 @@ const open = () => {
 };
 
 const myStatus = () => {
-    const me = find(props.obj.attendance, { id: userStore.user.id });
+    const me = props.obj.attendance?.find(obj => obj.id === userStore.user.id);
     return me?.attending;
 };
 

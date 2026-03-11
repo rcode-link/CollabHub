@@ -1,5 +1,5 @@
 <script lang="js" setup>
-import { debounce } from "lodash";
+import { debounce } from "@/functions/debounce";
 import Text from "@/components/shared/Text.vue";
 import { ref, watch } from "vue";
 

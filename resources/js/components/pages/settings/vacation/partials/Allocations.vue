@@ -6,7 +6,7 @@ import Text from "@/components/shared/Text.vue";
 import UserIcon from "@/components/shared/UserIcon.vue";
 import { useVacationGroupStore } from "@/store/vacationGroupStore";
 import { useUserStore } from "@/store/user";
-import { debounce } from "lodash";
+import { debounce } from "@/functions/debounce";
 
 const props = defineProps({
     group: { type: Object, required: true },

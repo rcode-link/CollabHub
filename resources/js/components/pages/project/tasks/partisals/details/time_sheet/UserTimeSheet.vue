@@ -1,7 +1,6 @@
 <script setup>
 import { DateTime } from "luxon";
 import { computed, ref, watch } from "vue";
-import { sumBy, remove } from "lodash";
 import UserIcon from "@/components/shared/UserIcon.vue";
 import Badge from "@/components/shared/ui/Badge.vue";
 import Button from "@/components/shared/Button.vue";
@@ -19,8 +18,8 @@ const user = computed(() => items.value[0]?.user ?? null);
 const userName = computed(() => user.value?.name ?? "Unknown");
 
 const totalHours = computed(() =>
-    sumBy(items.value, (obj) =>
-        Number(DateTime.fromISO(obj.end).diff(DateTime.fromISO(obj.start), ["hours"]).hours)
+    items.value.reduce((sum, obj) =>
+        sum + Number(DateTime.fromISO(obj.end).diff(DateTime.fromISO(obj.start), ["hours"]).hours), 0
     ).toFixed(2)
 );
 
@@ -31,7 +30,8 @@ const getHours = (obj) =>
 
 const removeEntry = (id) => {
     window.axios.delete(`/api/v1/time-sheet/${id}`).then(() => {
-        remove(items.value, { id });
+        const idx = items.value.findIndex(obj => obj.id === id);
+        if (idx !== -1) items.value.splice(idx, 1);
         confirmDeleteId.value = null;
         emit("deleted");
     });

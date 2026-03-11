@@ -1,7 +1,7 @@
 <script setup>
 import { computed, ref, watch } from "vue";
 import { useErrorsStore } from "@/store/errors";
-import _ from "lodash";
+import { debounce } from "@/functions/debounce";
 import UserIcon from "@/components/shared/UserIcon.vue";
 import Text from "@/components/shared/Text.vue";
 import { useRoute } from "vue-router";
@@ -31,7 +31,7 @@ const users = ref([]);
 const showItems = ref(false);
 const searchUsers = ref("");
 const timer = ref(null);
-const loadUsers = _.debounce(() => {
+const loadUsers = debounce(() => {
     // Use projectId prop if provided, otherwise fallback to route.params.project
     const projectId = props.projectId || route.params.project;
 
@@ -61,7 +61,7 @@ const handleItemClick = ({ id }) => {
 };
 
 const selectedUser = computed(() => {
-    return _.find(users.value.data, { id: _.toNumber(currentValue.value) });
+    return users.value.data?.find(obj => obj.id === Number(currentValue.value));
 });
 
 const unSelectUser = (e) => {
