@@ -8,5 +8,6 @@ Please find the invoice attached to this email.
 @endif
 
 Thanks,<br>
-{{ config('app.name') }}
+{{ $companyName }}
+
 </x-mail::message>

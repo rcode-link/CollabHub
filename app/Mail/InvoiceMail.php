@@ -31,11 +31,14 @@ class InvoiceMail extends Mailable
 
     public function content(): Content
     {
+        $company = Company::whereIsCostumerCompany(false)->first();
+
         return new Content(
             markdown: 'mail.invoices.send',
             with: [
                 'messageBody' => $this->emailMessage,
                 'invoiceNumber' => $this->invoice->number,
+                'companyName' => $company?->name ?? config('app.name'),
             ],
         );
     }

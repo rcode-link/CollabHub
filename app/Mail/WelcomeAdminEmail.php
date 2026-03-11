@@ -2,6 +2,7 @@
 
 namespace App\Mail;
 
+use App\Models\Company;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
@@ -35,8 +36,13 @@ class WelcomeAdminEmail extends Mailable
      */
     public function content(): Content
     {
+        $company = Company::whereIsCostumerCompany(false)->first();
+
         return new Content(
             markdown: 'mail.users.admin-welcome',
+            with: [
+                'companyName' => $company?->name ?? config('app.name'),
+            ],
         );
     }
 
