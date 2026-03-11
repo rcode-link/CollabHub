@@ -6,20 +6,22 @@ const STORAGE_KEY = 'notification-settings'
 /**
  * Detect the current platform.
  * - 'electron' — Electron desktop app
- * - 'capacitor' — Capacitor mobile app (future)
+ * - 'capacitor' — Capacitor mobile app (local assets with bridge)
+ * - 'android' — Android WebView loading remote URL (native bridge via CollabHubAndroid)
  * - 'browser' — regular browser tab
  */
 export function getPlatform() {
   if (isElectron()) return 'electron'
   if (window.Capacitor?.isNativePlatform?.()) return 'capacitor'
+  if (window.CollabHubAndroid) return 'android'
   return 'browser'
 }
 
 function getDefaults() {
   const platform = getPlatform()
   return {
-    // Native apps (Electron/Capacitor) have notifications on by default
-    enabled: platform === 'electron' || platform === 'capacitor',
+    // Native apps (Electron/Capacitor/Android) have notifications on by default
+    enabled: platform === 'electron' || platform === 'capacitor' || platform === 'android',
     messages: true,
     videoCalls: true,
     soundEnabled: true,
@@ -48,7 +50,7 @@ export function useNotificationSettings() {
     typeof Notification !== 'undefined' ? Notification.permission : 'default',
   )
 
-  const isNativeApp = computed(() => platform === 'electron' || platform === 'capacitor')
+  const isNativeApp = computed(() => platform === 'electron' || platform === 'capacitor' || platform === 'android')
 
   const canNotify = computed(() => {
     if (isNativeApp.value) {

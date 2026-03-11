@@ -142,6 +142,13 @@ export default () => {
             showElectronNotification({ title, body })
         } else if (platform === 'capacitor') {
             showCapacitorNotification({ title, body })
+        } else if (platform === 'android') {
+            // Use native Android bridge injected by MainActivity
+            try {
+                window.CollabHubAndroid.showNotification(title, body || '')
+            } catch (e) {
+                console.error('Android notification failed:', e)
+            }
         } else {
             // Browser: use the Notification API directly
             if ('Notification' in window && Notification.permission === 'granted') {

@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
   <meta name="color-scheme" content="dark">
   <title>CollabHub</title>
   <style>
@@ -111,53 +111,23 @@
   </div>
 
   <script>
-    // Use native Capacitor bridge directly (no CDN imports needed)
-    function getCapacitor() {
-      return window.Capacitor
-    }
-
-    // Hide splash screen immediately
-    function hideSplash() {
-      try {
-        var cap = getCapacitor()
-        if (cap && cap.Plugins && cap.Plugins.SplashScreen) {
-          cap.Plugins.SplashScreen.hide()
-        }
-      } catch(e) {}
-    }
-
-    // Preferences helper using native bridge
-    function prefsGet(key) {
-      var cap = getCapacitor()
-      if (cap && cap.Plugins && cap.Plugins.Preferences) {
-        return cap.Plugins.Preferences.get({ key: key })
+    // Hide splash screen
+    try {
+      var cap = window.Capacitor
+      if (cap && cap.Plugins && cap.Plugins.SplashScreen) {
+        cap.Plugins.SplashScreen.hide()
       }
-      // Fallback to localStorage
-      return Promise.resolve({ value: localStorage.getItem(key) })
-    }
-
-    function prefsSet(key, value) {
-      var cap = getCapacitor()
-      if (cap && cap.Plugins && cap.Plugins.Preferences) {
-        return cap.Plugins.Preferences.set({ key: key, value: value })
-      }
-      localStorage.setItem(key, value)
-      return Promise.resolve()
-    }
-
-    // Hide splash as soon as possible
-    hideSplash()
+    } catch(e) {}
 
     var input = document.getElementById('serverUrl')
     var btn = document.getElementById('connectBtn')
     var error = document.getElementById('error')
 
-    // Check if already connected
-    prefsGet('serverUrl').then(function(result) {
-      if (result && result.value) {
-        window.location.href = result.value
-      }
-    })
+    // Check if already connected — redirect via the server URL
+    var saved = localStorage.getItem('capacitor_server_url')
+    if (saved) {
+      window.location.href = saved
+    }
 
     btn.addEventListener('click', connect)
     input.addEventListener('keydown', function(e) {
@@ -182,13 +152,8 @@
       btn.textContent = 'Connecting...'
 
       var normalized = url.replace(/\/+$/, '')
-      prefsSet('serverUrl', normalized).then(function() {
-        window.location.href = normalized
-      }).catch(function() {
-        btn.disabled = false
-        btn.textContent = 'Connect'
-        showError('Failed to connect. Check the URL and try again.')
-      })
+      localStorage.setItem('capacitor_server_url', normalized)
+      window.location.href = normalized
     }
 
     function showError(msg) {
@@ -196,3 +161,5 @@
       error.style.display = 'block'
     }
   </script>
+</body>
+</html>
