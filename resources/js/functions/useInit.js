@@ -11,6 +11,8 @@ import { toast } from 'vue3-toastify'
 import { useRouter } from 'vue-router'
 import VideoToast from '@/components/shared/video/VideoToast.vue'
 import { initAxios } from '@/axios.js'
+import { initElectron, setElectronBadge, isElectron, showElectronNotification } from '@/functions/useElectron.js'
+import { useNotificationSettings, getPlatform } from '@/functions/useNotificationSettings.js'
 
 const isWindowFocused = ref(
     typeof document !== 'undefined' ? document.hasFocus() : true,
@@ -26,8 +28,11 @@ export default () => {
     }
 
     const textToLinkStore = useTextToLinkStore()
+    const { shouldNotify } = useNotificationSettings()
+
     initEcho()
     initAxios()
+    initElectron()
     textToLinkStore.load()
 
     window.axios
@@ -91,7 +96,11 @@ export default () => {
 
     const UpdateChatForUser = async data => {
         loadNumberOfUnreadMessages()
-        sendNotificationEvent(data)
+        showAppNotification({
+            type: 'message',
+            title: `${data.message.user} messaged you`,
+            body: data.message.text,
+        })
     }
 
     const videoCallNotification = data => {
@@ -102,16 +111,43 @@ export default () => {
             },
             type: 'info',
         })
-        sendNotificationEvent(data)
-    }
-    const sendNotificationEvent = data => {
-        const event = new CustomEvent('customEvent', {
-            detail: {
-                title: `${data.message.user} messaged you`,
-                body: data.message.text,
-            },
+        showAppNotification({
+            type: 'videoCall',
+            title: `${data.callId.user.name} is calling you`,
+            body: 'Incoming video call',
         })
-        document.dispatchEvent(event)
+    }
+
+    /**
+     * Unified notification dispatcher.
+     * Checks user preferences, then routes to the right native API:
+     * - Electron → electronAPI.showNotification
+     * - Capacitor → (future) local notification plugin
+     * - Browser → Notification API
+     */
+    const showAppNotification = ({ type, title, body }) => {
+        if (!shouldNotify(type)) return
+
+        const platform = getPlatform()
+
+        if (platform === 'electron') {
+            showElectronNotification({ title, body })
+        } else if (platform === 'capacitor') {
+            // Future: Capacitor local notifications
+            // LocalNotifications.schedule({ notifications: [{ title, body, id: Date.now() }] })
+        } else {
+            // Browser: use the Notification API directly
+            if ('Notification' in window && Notification.permission === 'granted') {
+                const notification = new Notification(title, {
+                    body,
+                    icon: '/img/android/android-launchericon-512-512.png',
+                })
+                notification.onclick = () => {
+                    window.focus()
+                    notification.close()
+                }
+            }
+        }
     }
 
     const loadNumberOfUnreadMessages = () => {
@@ -126,11 +162,12 @@ export default () => {
         })
     }
 
-    // Watch for changes in message count to update title
+    // Watch for changes in message count to update title and badge
     watch(
         () => userState.newMessages,
-        () => {
+        (count) => {
             updatePageTitle()
+            setElectronBadge(count)
         },
     )
 }

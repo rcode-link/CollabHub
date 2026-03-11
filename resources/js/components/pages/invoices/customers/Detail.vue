@@ -66,7 +66,7 @@ const loadPayments = (page = 1) => {
 
 const formatDate = (dateStr) => {
   if (!dateStr) return '-'
-  return DateTime.fromISO(dateStr).toFormat('dd/MM/yyyy')
+  return DateTime.fromSQL(dateStr).toFormat('dd/MM/yyyy')
 }
 
 const formatCurrency = (amount) => {

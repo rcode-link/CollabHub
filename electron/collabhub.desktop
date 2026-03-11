@@ -1,0 +1,9 @@
+[Desktop Entry]
+Name=CollabHub
+Comment=Team Collaboration Platform
+Exec=collabhub %U
+Icon=collabhub
+Type=Application
+Categories=Network;InstantMessaging;
+StartupWMClass=CollabHub
+MimeType=x-scheme-handler/collabhub;

@@ -1,0 +1,59 @@
+{
+  "name": "collabhub-desktop",
+  "version": "1.0.0",
+  "description": "CollabHub Desktop - Team Collaboration Platform",
+  "main": "main.js",
+  "author": {
+    "name": "CollabHub",
+    "email": "info@collabhub.com"
+  },
+  "homepage": "https://collabhub.com",
+  "license": "UNLICENSED",
+  "scripts": {
+    "start": "electron .",
+    "dev": "electron . --dev",
+    "build:linux": "electron-builder --linux",
+    "build:mac": "electron-builder --mac",
+    "build:win": "electron-builder --win",
+    "build:all": "electron-builder --linux --mac --win"
+  },
+  "dependencies": {
+    "electron-store": "^8.2.0"
+  },
+  "devDependencies": {
+    "electron": "^33.2.0",
+    "electron-builder": "^25.1.8"
+  },
+  "build": {
+    "appId": "com.collabhub.desktop",
+    "productName": "CollabHub",
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "main.js",
+      "preload.js",
+      "connect.html",
+      "icons/**/*"
+    ],
+    "linux": {
+      "target": ["AppImage", "deb"],
+      "category": "Network",
+      "icon": "icons",
+      "maintainer": "CollabHub <info@collabhub.com>",
+      "desktop": {
+        "StartupWMClass": "CollabHub",
+        "MimeType": "x-scheme-handler/collabhub"
+      }
+    },
+    "mac": {
+      "target": ["dmg"],
+      "category": "public.app-category.productivity",
+      "icon": "icons/icon.png"
+    },
+    "win": {
+      "target": ["nsis"],
+      "icon": "icons/icon.ico"
+    }
+  }
+}

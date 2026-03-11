@@ -18,3 +18,5 @@ yarn-error.log
 /.idea
 /.vscode
 .null-ls*
+electron/node_modules
+electron/dist

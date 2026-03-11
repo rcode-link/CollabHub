@@ -98,7 +98,7 @@ const deletePayment = (id) => {
 
 const formatDate = (dateStr) => {
   if (!dateStr) return '-'
-  return DateTime.fromISO(dateStr).toFormat('dd/MM/yyyy')
+  return DateTime.fromSQL(dateStr).toFormat('dd/MM/yyyy')
 }
 
 const formatCurrency = (amount) => {
@@ -111,7 +111,7 @@ const formatCurrency = (amount) => {
 
 const formatInvoiceOption = (invoice) => {
   const num = invoice.number ?? '-'
-  const date = invoice.date ? DateTime.fromISO(invoice.date).toFormat('dd/MM/yyyy') : '-'
+  const date = invoice.date ? DateTime.fromSQL(invoice.date).toFormat('dd/MM/yyyy') : '-'
   const total = invoice.total != null
     ? parseFloat(invoice.total).toLocaleString('en-US', { style: 'currency', currency: 'USD' })
     : '-'

@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CollabHub - Connect</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #1a1a2e;
+      color: #e0e0e0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      -webkit-app-region: drag;
+    }
+
+    .container {
+      -webkit-app-region: no-drag;
+      text-align: center;
+      max-width: 420px;
+      width: 100%;
+      padding: 2rem;
+    }
+
+    .logo {
+      width: 80px;
+      height: 80px;
+      background: linear-gradient(135deg, #FFA500, #4A90E2);
+      border-radius: 20px;
+      margin: 0 auto 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem;
+      font-weight: bold;
+      color: white;
+    }
+
+    h1 {
+      font-size: 1.5rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      color: #fff;
+    }
+
+    p {
+      color: #888;
+      margin-bottom: 2rem;
+      font-size: 0.9rem;
+    }
+
+    .input-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    input {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      border: 1px solid #333;
+      border-radius: 8px;
+      background: #16213e;
+      color: #e0e0e0;
+      font-size: 1rem;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    input:focus {
+      border-color: #4A90E2;
+    }
+
+    input::placeholder {
+      color: #555;
+    }
+
+    button {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      border: none;
+      border-radius: 8px;
+      background: linear-gradient(135deg, #FFA500, #e69500);
+      color: #fff;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: opacity 0.2s;
+    }
+
+    button:hover { opacity: 0.9; }
+    button:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    .error {
+      color: #ff6b6b;
+      font-size: 0.85rem;
+      margin-top: 0.5rem;
+      display: none;
+    }
+
+    .hint {
+      color: #666;
+      font-size: 0.8rem;
+      margin-top: 1rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="logo">CH</div>
+    <h1>Welcome to CollabHub</h1>
+    <p>Enter your team's CollabHub server URL to get started</p>
+
+    <div class="input-group">
+      <input
+        type="url"
+        id="serverUrl"
+        placeholder="https://your-team.collabhub.com"
+        autofocus
+      />
+      <button id="connectBtn" onclick="connect()">Connect</button>
+    </div>
+
+    <p class="error" id="error"></p>
+    <p class="hint">Example: https://acme.collabhub.com or https://collabhub.yourcompany.com</p>
+  </div>
+
+  <script>
+    const input = document.getElementById('serverUrl')
+    const btn = document.getElementById('connectBtn')
+    const error = document.getElementById('error')
+
+    input.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') connect()
+    })
+
+    async function connect() {
+      const url = input.value.trim()
+      error.style.display = 'none'
+
+      if (!url) {
+        showError('Please enter a server URL')
+        return
+      }
+
+      try {
+        new URL(url)
+      } catch {
+        showError('Please enter a valid URL (e.g. https://your-team.collabhub.com)')
+        return
+      }
+
+      if (!url.startsWith('https://') && !url.startsWith('http://')) {
+        showError('URL must start with https:// or http://')
+        return
+      }
+
+      btn.disabled = true
+      btn.textContent = 'Connecting...'
+
+      try {
+        await window.electronAPI.setServerUrl(url)
+      } catch (err) {
+        btn.disabled = false
+        btn.textContent = 'Connect'
+        showError('Failed to connect. Please check the URL and try again.')
+      }
+    }
+
+    function showError(msg) {
+      error.textContent = msg
+      error.style.display = 'block'
+    }
+  </script>
+</body>
+</html>
