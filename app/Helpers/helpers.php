@@ -11,16 +11,16 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media;
  * Uses a temporary presigned URL for S3-based disks,
  * falls back to getUrl() for local disks.
  */
-function mediaUrl(?Media $media, string $fallback = ''): string
+function mediaUrl(?Media $media, string $fallback = '', string $conversion = ''): string
 {
     if (! $media) {
         return $fallback ?: config('app.url').'/storage/images/avatar.png';
     }
 
     try {
-        return $media->getTemporaryUrl(now()->addMinutes(60));
+        return $media->getTemporaryUrl(now()->addMinutes(60), $conversion ?: '');
     } catch (\Exception) {
-        return $media->getUrl();
+        return $media->getUrl($conversion ?: '');
     }
 }
 

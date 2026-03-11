@@ -40,7 +40,7 @@ class CustomerResource extends JsonResource
                 'name' => $this->name,
                 'billing_info' => $this->billing_info,
                 'prefix' => $this->prefix,
-                'logo' => mediaUrl($this->getFirstMedia('avatar')),
+                'logo' => mediaUrl($this->getFirstMedia('avatar'), '', 'thumb'),
                 'created_at' => $this->when(! request()->routeIs('apicustomers.index'), $this->created_at),
                 'updated_at' => $this->when(! request()->routeIs('apicustomers.index'), $this->updated_at),
                 'address' => $this->when(! request()->routeIs('apicustomers.index'), $this->address),

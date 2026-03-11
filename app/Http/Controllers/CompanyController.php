@@ -55,7 +55,7 @@ class CompanyController extends Controller
 
         return array_merge(
             $company->toArray(),
-            ['avatar' => mediaUrl($company->getFirstMedia('avatar'))]
+            ['avatar' => mediaUrl($company->getFirstMedia('avatar'), '', 'thumb')]
         );
     }
 

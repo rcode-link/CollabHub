@@ -13,7 +13,7 @@ class VacationGroupUserResource extends JsonResource
             'id' => $this->id,
             'name' => $this->name,
             'email' => $this->email,
-            'avatar' => mediaUrl($this->getFirstMedia('avatar')),
+            'avatar' => mediaUrl($this->getFirstMedia('avatar'), '', 'thumb'),
             'days_allocated' => $this->pivot->days_allocated,
         ];
     }

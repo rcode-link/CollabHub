@@ -261,6 +261,19 @@ class User extends Authenticatable implements HasMedia
             ->useFallbackPath(public_path('storage/images/asailvatar.png'));
     }
 
+    public function registerMediaConversions(?Media $media = null): void
+    {
+        $this
+            ->addMediaConversion('thumb')
+            ->width(200)
+            ->height(200)
+            ->sharpen(10)
+            ->format('webp')
+            ->quality(80)
+            ->performOnCollections('avatar')
+            ->nonQueued();
+    }
+
     public function roles(): BelongsToMany
     {
         return $this->belongsToMany(Role::class, 'user_role');

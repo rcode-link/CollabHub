@@ -116,6 +116,19 @@ class Company extends Model implements HasMedia
             ->useFallbackPath(public_path('storage/images/avatar.png'));
     }
 
+    public function registerMediaConversions(?Media $media = null): void
+    {
+        $this
+            ->addMediaConversion('thumb')
+            ->width(300)
+            ->height(300)
+            ->sharpen(10)
+            ->format('webp')
+            ->quality(80)
+            ->performOnCollections('avatar')
+            ->nonQueued();
+    }
+
     public function users(): BelongsToMany
     {
         return $this->belongsToMany(User::class, 'user_company');
