@@ -53,6 +53,7 @@
         "prosemirror-view": "^1.35.0",
         "puppeteer": "^24.37.5",
         "pusher-js": "^8.3.0",
+        "terser": "^5.46.0",
         "tiptap-markdown": "^0.8.10",
         "uuid": "^9.0.1",
         "vue": "^3.3.7",
