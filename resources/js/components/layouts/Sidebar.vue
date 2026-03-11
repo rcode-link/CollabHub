@@ -261,7 +261,7 @@ const changeTheme = (theme) => {
     />
 
     <!-- Mobile header bar -->
-    <header class="fixed top-0 left-0 right-0 z-40 h-14 lg:hidden flex items-center gap-3 px-4 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
+    <header class="fixed top-0 left-0 right-0 z-40 lg:hidden flex items-center gap-3 px-4 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700" style="padding-top: env(safe-area-inset-top, 0px); height: calc(3.5rem + env(safe-area-inset-top, 0px))">
         <router-link :to="{ name: 'home' }" class="flex items-center gap-2 no-underline min-w-0" @click="closeSidebar">
             <fwb-avatar :img="userStore.company.avatar" size="sm" />
             <span class="font-extrabold text-gray-900 dark:text-white truncate text-sm">
@@ -290,6 +290,7 @@ const changeTheme = (theme) => {
             'fixed inset-y-0 left-0 z-50 w-64 flex flex-col bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 transition-transform duration-200',
             sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
         ]"
+        style="padding-top: env(safe-area-inset-top, 0px)"
     >
         <!-- Logo / Company -->
         <div class="flex items-center gap-3 px-4 py-4 border-b border-gray-200 dark:border-gray-700 flex-shrink-0">

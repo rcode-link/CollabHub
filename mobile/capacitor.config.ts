@@ -9,10 +9,14 @@ const config: CapacitorConfig = {
   },
   plugins: {
     SplashScreen: {
-      launchAutoHide: false,
+      launchAutoHide: true,
+      launchShowDuration: 2000,
+      launchFadeOutDuration: 300,
       backgroundColor: '#1a1a2e',
       showSpinner: true,
       spinnerColor: '#FFA500',
+      splashImmersive: false,
+      splashFullScreen: false,
     },
     LocalNotifications: {
       smallIcon: 'ic_notification',
@@ -32,7 +36,7 @@ const config: CapacitorConfig = {
   },
   android: {
     allowMixedContent: false,
-    webContentsDebuggingEnabled: false,
+    webContentsDebuggingEnabled: true,
   },
   ios: {
     contentInset: 'automatic',

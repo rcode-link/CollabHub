@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
   <meta name="color-scheme" content="dark">
   <title>CollabHub</title>
   <style>
@@ -110,34 +110,67 @@
     <p class="hint">Example: https://acme.collabhub.com</p>
   </div>
 
-  <script type="module">
-    import { Preferences } from 'https://cdn.jsdelivr.net/npm/@capacitor/preferences@6/+esm'
+  <script>
+    // Use native Capacitor bridge directly (no CDN imports needed)
+    function getCapacitor() {
+      return window.Capacitor
+    }
 
-    const input = document.getElementById('serverUrl')
-    const btn = document.getElementById('connectBtn')
-    const error = document.getElementById('error')
+    // Hide splash screen immediately
+    function hideSplash() {
+      try {
+        var cap = getCapacitor()
+        if (cap && cap.Plugins && cap.Plugins.SplashScreen) {
+          cap.Plugins.SplashScreen.hide()
+        }
+      } catch(e) {}
+    }
+
+    // Preferences helper using native bridge
+    function prefsGet(key) {
+      var cap = getCapacitor()
+      if (cap && cap.Plugins && cap.Plugins.Preferences) {
+        return cap.Plugins.Preferences.get({ key: key })
+      }
+      // Fallback to localStorage
+      return Promise.resolve({ value: localStorage.getItem(key) })
+    }
+
+    function prefsSet(key, value) {
+      var cap = getCapacitor()
+      if (cap && cap.Plugins && cap.Plugins.Preferences) {
+        return cap.Plugins.Preferences.set({ key: key, value: value })
+      }
+      localStorage.setItem(key, value)
+      return Promise.resolve()
+    }
+
+    // Hide splash as soon as possible
+    hideSplash()
+
+    var input = document.getElementById('serverUrl')
+    var btn = document.getElementById('connectBtn')
+    var error = document.getElementById('error')
 
     // Check if already connected
-    async function checkExisting() {
-      const { value } = await Preferences.get({ key: 'serverUrl' })
-      if (value) {
-        window.location.href = value
+    prefsGet('serverUrl').then(function(result) {
+      if (result && result.value) {
+        window.location.href = result.value
       }
-    }
-    checkExisting()
+    })
 
     btn.addEventListener('click', connect)
-    input.addEventListener('keydown', (e) => {
+    input.addEventListener('keydown', function(e) {
       if (e.key === 'Enter') connect()
     })
 
-    async function connect() {
-      const url = input.value.trim()
+    function connect() {
+      var url = input.value.trim()
       error.style.display = 'none'
 
       if (!url) { showError('Please enter a server URL'); return }
 
-      try { new URL(url) } catch {
+      try { new URL(url) } catch(e) {
         showError('Please enter a valid URL'); return
       }
 
@@ -148,15 +181,14 @@
       btn.disabled = true
       btn.textContent = 'Connecting...'
 
-      try {
-        const normalized = url.replace(/\/+$/, '')
-        await Preferences.set({ key: 'serverUrl', value: normalized })
+      var normalized = url.replace(/\/+$/, '')
+      prefsSet('serverUrl', normalized).then(function() {
         window.location.href = normalized
-      } catch (err) {
+      }).catch(function() {
         btn.disabled = false
         btn.textContent = 'Connect'
         showError('Failed to connect. Check the URL and try again.')
-      }
+      })
     }
 
     function showError(msg) {
