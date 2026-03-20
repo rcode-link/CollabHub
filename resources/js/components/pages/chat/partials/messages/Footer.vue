@@ -9,7 +9,11 @@ import InteractiveToast from '@/components/shared/InteractiveToast.vue'
 import 'vue3-emoji-picker/css'
 import Emoji from '@/components/shared/Emoji.vue'
 
-const props = defineProps({ chatId: null })
+const props = defineProps({
+  chatId: { type: [Number, String], default: null },
+  pendingComment: { type: Object, default: null },
+})
+const emit = defineEmits(['comment-sent'])
 const chatMessageStore = chatDetails()
 const route = useRoute()
 const editorRef = ref()
@@ -33,11 +37,18 @@ const submit = () => {
   if (chatMessageStore.reply_to_message_id !== null) {
     form.append('parent_id', chatMessageStore.reply_to_message_id)
   }
+  if (props.pendingComment) {
+    form.append('comment_id', props.pendingComment.commentId)
+    form.append('quoted_text', props.pendingComment.quotedText)
+  }
   axios.post(`/api/v1/chats/${chatId}/message`, form)
   editorRef.value.editor.commands.setContent('')
   chatMessageStore.resetMessageForm()
   chatMessageStore.setReplyToMessageId(null)
   chatMessageStore.setChatOnTopOfTheList(route.params.chatId)
+  if (props.pendingComment) {
+    emit('comment-sent')
+  }
 }
 
 function onSelectEmoji(emoji) {

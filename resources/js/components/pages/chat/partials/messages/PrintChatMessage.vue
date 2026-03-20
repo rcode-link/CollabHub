@@ -23,6 +23,15 @@ const reactions = computed(() =>
     :id="`message-${message.id}`"
   >
     <div class="flex-1 p-1">
+      <!-- Quoted text for inline comments -->
+      <div
+        v-if="message.quoted_text"
+        class="mb-1.5 px-2.5 py-1.5 rounded-md bg-amber-50/60 dark:bg-amber-900/10 border-l-2 border-amber-400 dark:border-amber-600"
+      >
+        <p class="text-[10px] uppercase tracking-wider text-amber-600 dark:text-amber-400 font-semibold mb-0.5">Selected text</p>
+        <p class="text-xs text-gray-600 dark:text-gray-400 italic line-clamp-3">"{{ message.quoted_text }}"</p>
+      </div>
+
       <!-- Reply-to -->
       <div v-if="message.parent" class="text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">
         <RenderMessage class="reply-editor-class opacity-60" :content="message.parent.text" />

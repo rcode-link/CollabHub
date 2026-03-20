@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Events\ManagePermissionsEvent;
+use App\Helpers\HasChat;
 use Eloquent;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -155,6 +156,7 @@ use Kalnoy\Nestedset\QueryBuilder;
  */
 class File extends Model
 {
+    use HasChat;
     use HasFactory;
     use NodeTrait;
 

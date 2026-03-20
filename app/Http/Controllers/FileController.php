@@ -125,11 +125,43 @@ class FileController extends Controller
      */
     public function show($files)
     {
-        $file = File::whereId($files)->orWhere('file_id', $files)->firstOrFail();
+        $file = File::with('chat')
+            ->whereId($files)
+            ->orWhere('file_id', $files)
+            ->firstOrFail();
 
         $this->authorizeFile($file, 'can-read-document');
 
-        return response()->json($file);
+        $data = $file->toArray();
+        $data['chat_id'] = $file->chat?->id;
+
+        return response()->json($data);
+    }
+
+    /**
+     * Get or create a chat for this document (lazy creation on first comment).
+     */
+    public function chat(File $file): JsonResponse
+    {
+        $this->authorizeFile($file, 'can-read-document');
+
+        $chat = $file->chat;
+
+        if (! $chat) {
+            $chat = $file->chat()->create([
+                'title' => $file->title,
+            ]);
+            $chat->users()->sync([
+                ['user_id' => Auth::id()],
+            ]);
+        } else {
+            // Ensure current user is a participant
+            $chat->users()->syncWithoutDetaching([
+                Auth::id() => [],
+            ]);
+        }
+
+        return response()->json(['chat_id' => $chat->id]);
     }
 
     /**

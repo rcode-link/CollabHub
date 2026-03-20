@@ -5,6 +5,7 @@ namespace App\Http\Resources;
 use App\Helpers\Enums\ChatTypes;
 use App\Models\ChatMessage;
 use App\Models\MessageReaction;
+use App\Models\File;
 use App\Models\Task;
 use App\Models\User;
 use App\Models\Webhook;
@@ -112,6 +113,10 @@ class ChatResource extends JsonResource
 
         if ($this->chatable_type === Task::class && $this->chatable) {
             return $this->chatable->task_id;
+        }
+
+        if ($this->chatable_type === File::class && $this->chatable) {
+            return $this->chatable->file_id ?? (string) $this->chatable->id;
         }
 
         return '';

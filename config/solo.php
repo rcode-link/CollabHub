@@ -74,6 +74,12 @@ return [
         'Vite' => 'npm run dev',
         'Soketi' => "soketi start --config='./soketi.config.example.js'",
         'CroneJob' => 'php artisan queue:work',
+        'Collab' => sprintf(
+            'cd collaboration-server && NODE_TLS_REJECT_UNAUTHORIZED=0 LARAVEL_URL=%s COLLAB_SECRET=%s COLLAB_PORT=%s npm run dev',
+            env('COLLAB_LARAVEL_URL', env('APP_URL', 'http://localhost')),
+            env('COLLAB_SECRET', 'collab-secret'),
+            env('COLLAB_PORT', '6002'),
+        ),
         'SeaweedFS' => sprintf(
             'weed mini -dir=%s -master.port=%s -volume.port=%s -filer.port=%s -s3.port=%s -s3.config=%s',
             $seaweedDir,

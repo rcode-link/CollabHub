@@ -8,7 +8,11 @@ import CodeIcon from '@/components/shared/icons/CodeIcon.vue'
 import ToolbarBtn from '@/components/shared/advancedEditor/toolbar/ToolbarBtn.vue'
 import ToolbarSep from '@/components/shared/advancedEditor/toolbar/ToolbarSep.vue'
 
-const props = defineProps({ editor: Object })
+const props = defineProps({
+  editor: Object,
+  collaborative: { type: Boolean, default: false },
+})
+const emit = defineEmits(['add-comment', 'remove-comment'])
 
 const activeTextType = computed(() => {
   if (!props.editor) return 'P'
@@ -24,6 +28,11 @@ const textTypes = [
   { label: 'Heading 2', short: 'H2', cmd: () => props.editor.chain().focus().toggleHeading({ level: 2 }).run() },
   { label: 'Heading 3', short: 'H3', cmd: () => props.editor.chain().focus().toggleHeading({ level: 3 }).run() },
 ]
+
+const hasCommentMark = computed(() => {
+  if (!props.editor) return false
+  return props.editor.isActive('comment')
+})
 
 const tippyOptions = { duration: 100, maxWidth: 'none', placement: 'top-start' }
 </script>
@@ -82,6 +91,35 @@ const tippyOptions = { duration: 100, maxWidth: 'none', placement: 'top-start' }
           <path stroke-linecap="round" stroke-linejoin="round" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"/>
         </svg>
       </ToolbarBtn>
+
+      <!-- Comment actions (only in collaborative mode) -->
+      <template v-if="collaborative">
+        <ToolbarSep />
+
+        <!-- Add comment -->
+        <ToolbarBtn
+          v-if="!hasCommentMark"
+          title="Add comment"
+          @click="emit('add-comment')"
+        >
+          <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+            <path d="M12 8v4M10 10h4"/>
+          </svg>
+        </ToolbarBtn>
+
+        <!-- Remove comment highlight -->
+        <ToolbarBtn
+          v-if="hasCommentMark"
+          title="Remove comment highlight"
+          @click="emit('remove-comment')"
+        >
+          <svg class="w-3.5 h-3.5 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+            <path d="M9 10h6"/>
+          </svg>
+        </ToolbarBtn>
+      </template>
 
     </div>
   </BubbleMenu>

@@ -74,6 +74,7 @@ services:
             SOKETI_DEFAULT_APP_ID: '${PUSHER_APP_ID}'
             SOKETI_DEFAULT_APP_KEY: '${PUSHER_APP_KEY}'
             SOKETI_DEFAULT_APP_SECRET: '${PUSHER_APP_SECRET}'
+            SOKETI_DEFAULT_APP_ENABLE_CLIENT_MESSAGES: 'true'
         ports:
             - '${SOKETI_PORT:-6001}:6001'
             - '${SOKETI_METRICS_SERVER_PORT:-9601}:9601'

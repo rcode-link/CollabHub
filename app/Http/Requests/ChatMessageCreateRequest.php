@@ -25,6 +25,8 @@ class ChatMessageCreateRequest extends FormRequest
         return [
             'message' => [Rule::requiredIf(request()->files->count() == 0)],
             'parent_id' => ['nullable', 'exists:chat_messages,id'],
+            'comment_id' => ['nullable', 'string', 'max:36'],
+            'quoted_text' => ['nullable', 'string', 'max:1000'],
             'files.*' => [
                 'file',
             ],

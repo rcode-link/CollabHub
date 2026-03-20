@@ -6,6 +6,7 @@ use App\Http\Controllers\BoardController;
 use App\Http\Controllers\CalendarController;
 use App\Http\Controllers\ChatController;
 use App\Http\Controllers\ChatMessageController;
+use App\Http\Controllers\CollaborationController;
 use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\CompanyUsersController;
 use App\Http\Controllers\CurrencyController;
@@ -136,6 +137,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::apiResource('/sprints', SprintController::class);
     Route::post('/file-to-pdf', [FileController::class, 'exportPDF'])->name('api.toPdf');
     Route::post('/files/{file}/export-pdf', [FileController::class, 'exportAsPdf'])->name('api.files.exportPdf');
+    Route::post('/files/{file}/chat', [FileController::class, 'chat'])->name('api.files.chat');
     Route::post('/files/{file}/share', [FileController::class, 'share'])->name('api.files.share');
     Route::delete('/files/{file}/share', [FileController::class, 'unshare'])->name('api.files.unshare');
     Route::apiResource('/files', FileController::class);
@@ -180,6 +182,9 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::apiResource('/billing-items', BillingItemController::class);
     Route::apiResource('/invoice/data', InvoiceDataController::class);
 
+    // Hocuspocus auth (user's Bearer token) — must be before the wildcard route
+    Route::post('/collaboration/auth', [CollaborationController::class, 'auth'])->name('api.collab.auth');
+
     Route::post('/collaboration/{document}', function ($document) {
         EditorCollabEvent::dispatch(request()->all(), $document);
 
@@ -197,6 +202,10 @@ Route::middleware(['auth:sanctum'])->group(function () {
         return response()->noContent();
     })->name('api.logout');
 });
+// Hocuspocus server-to-server (X-Collab-Secret header)
+Route::get('/collaboration/documents/{id}', [CollaborationController::class, 'fetchDocument'])->name('api.collab.fetch');
+Route::put('/collaboration/documents/{id}', [CollaborationController::class, 'storeDocument'])->name('api.collab.store');
+
 Route::post('/register', RegisterController::class)->name('api.register');
 Route::post('/login', LoginController::class)->name('api.login');
 Route::post('/forgot-password', ForgotPasswordController::class)->name('api.forgot-password');
@@ -208,3 +217,4 @@ Route::post('/video-call/{slug}/request', [VideoCallController::class, 'createJo
 Route::get('/video-call/{slug}/request/{id}', [VideoCallController::class, 'getRequestStatus'])->name('api.videoCall.requestStatus');
 Route::post('/webhooks/ingest/{token}', WebhookIngestController::class)->middleware('throttle:60,1')->name('api.webhooks.ingest');
 Route::post('/webhook', [PusherController::class, 'webhook'])->name('api.webhook');
+

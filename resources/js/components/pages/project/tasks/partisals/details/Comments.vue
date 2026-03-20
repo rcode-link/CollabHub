@@ -1,5 +1,5 @@
 <script setup>
-import { computed, onBeforeUnmount, ref, onMounted } from "vue";
+import { computed, onBeforeUnmount, ref, onMounted, watch } from "vue";
 import useChatLogic from "@/functions/useChatLogic";
 import ChatMessage from "@/components/pages/chat/partials/messages/ChatMessage.vue";
 
@@ -9,8 +9,11 @@ import MessagesFooter from "@/components/pages/chat/partials/messages/Footer.vue
 
 const messageContainerRef = ref(null)
 const props = defineProps({
-    chatId: 0,
+    chatId: { type: [Number, String], default: 0 },
+    pendingComment: { type: Object, default: null },
+    activeCommentId: { type: String, default: null },
 });
+const emit = defineEmits(['comment-sent']);
 const chatLogic = useChatLogic(props.chatId, messageContainerRef);
 const chatStore = chatDetails();
 
@@ -29,6 +32,16 @@ onMounted(() => {
 onBeforeUnmount(() => {
     Echo.leave(`chat.${props.chatId}`);
 });
+
+// Scroll to the message with the active comment_id
+watch(() => props.activeCommentId, (cId) => {
+    if (!cId || !messageContainerRef.value) return
+    const msg = chatStore.messages.find(m => m.comment_id === cId)
+    if (msg) {
+        const el = messageContainerRef.value.querySelector(`[data-message-id="${msg.id}"]`)
+        if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' })
+    }
+})
 </script>
 
 <template>
@@ -51,7 +64,11 @@ onBeforeUnmount(() => {
             <!-- Add invisible marker at the end for scrolling to bottom -->
             <div class="h-1 w-full" id="messages-end"></div>
         </main>
-        <MessagesFooter :chat-id="chatId" />
+        <MessagesFooter
+            :chat-id="chatId"
+            :pending-comment="pendingComment"
+            @comment-sent="emit('comment-sent')"
+        />
     </div>
 </template>
 

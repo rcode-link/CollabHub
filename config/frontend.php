@@ -8,4 +8,5 @@ return [
     'VITE_PUSHER_SCHEME' => env('VITE_PUSHER_SCHEME', null),
     'VITE_PUSHER_APP_CLUSTER' => env('VITE_PUSHER_APP_CLUSTER', null),
     'VITE_LIVEKIT_URL' => env('VITE_LIVEKIT_URL', null),
+    'VITE_COLLAB_URL' => env('VITE_COLLAB_URL', 'ws://localhost:6002'),
 ];

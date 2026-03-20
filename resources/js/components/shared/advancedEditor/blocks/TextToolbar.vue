@@ -72,6 +72,35 @@
         </svg>
       </button>
     </div>
+
+    <!-- Comment (only when comment mark is available) -->
+    <template v-if="hasCommentMark">
+      <div class="ctrl-sep" />
+      <div class="ctrl-group">
+        <button
+          v-if="!editor.isActive('comment')"
+          class="ctrl-btn"
+          title="Add comment"
+          @mousedown.prevent="emitCommentEvent('editor:add-comment')"
+        >
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+            <path d="M12 8v4M10 10h4"/>
+          </svg>
+        </button>
+        <button
+          v-else
+          class="ctrl-btn"
+          title="Remove comment"
+          @mousedown.prevent="emitCommentEvent('editor:remove-comment')"
+        >
+          <svg viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+            <path d="M9 10h6"/>
+          </svg>
+        </button>
+      </div>
+    </template>
   </div>
 </template>
 
@@ -82,6 +111,19 @@ const props = defineProps({
   editor: { type: Object, required: true },
   node: { type: Object, required: true },
   isFocused: { type: Boolean, default: false },
+})
+const emit = defineEmits(['add-comment', 'remove-comment'])
+
+const emitCommentEvent = (type) => {
+  // Dispatch a custom DOM event that bubbles up to the AdvancedEditor
+  props.editor.view.dom.dispatchEvent(new CustomEvent(type, { bubbles: true }))
+}
+
+const hasCommentMark = computed(() => {
+  if (!props.editor) return false
+  try {
+    return !!props.editor.schema.marks.comment
+  } catch { return false }
 })
 
 const showTypeGroup = computed(() => {

@@ -44,4 +44,8 @@ return [
         'app_url' => env('BROWSERSHOT_APP_URL'),
     ],
 
+    'collaboration' => [
+        'secret' => env('COLLAB_SECRET', 'collab-secret'),
+    ],
+
 ];

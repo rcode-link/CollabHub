@@ -15,6 +15,10 @@ export const initAxios = () => {
             : '?XDEBUG_SESSION_START=PHPSTORM'
       }
     }
+    // Send socket ID so Laravel can exclude the sender from broadcasts
+    if (window.Echo?.socketId()) {
+      config.headers['X-Socket-ID'] = window.Echo.socketId()
+    }
     errorsStore.setErrors([], '')
     return config
   }

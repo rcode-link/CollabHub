@@ -24,6 +24,8 @@ class ChatMessageResource extends JsonResource
             'webhook_meta' => $this->webhook_meta,
             'videocall' => $this->whenLoaded('user', $this->videocalls),
             'parent_id' => $this->parent_id,
+            'comment_id' => $this->comment_id,
+            'quoted_text' => $this->quoted_text,
             'reactions' => $this->whenLoaded('messageReactions', MessageReactionResouce::collection($this->messageReactions)),
             'parent' => $this->whenLoaded('parent', function () {
                 return [

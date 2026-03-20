@@ -6,6 +6,7 @@ import UserIcon from '@/components/shared/UserIcon.vue'
 import Task from '@/components/shared/icons/Task.vue'
 import EarthIcon from '@/components/shared/icons/EarthIcon.vue'
 import WebhookIcon from '@/components/shared/icons/WebhookIcon.vue'
+import FileFile from '@/components/shared/icons/FileFile.vue'
 import { useUserStore } from '@/store/user'
 
 const userStore = useUserStore()
@@ -49,6 +50,10 @@ const daysAgo = computed(() => {
         class="w-9 h-9 rounded-full bg-blue-500 flex items-center justify-center text-white text-sm font-bold"
       >{{ (obj.title || '?')[0].toUpperCase() }}</div>
       <EarthIcon v-else-if="obj.type === 'app\\models\\event'" class="w-9 h-9" />
+      <div
+        v-else-if="obj.type === 'app\\models\\file'"
+        class="w-9 h-9 rounded-full bg-amber-500 flex items-center justify-center text-white"
+      ><FileFile class="w-5 h-5" /></div>
     </div>
 
     <!-- Content -->

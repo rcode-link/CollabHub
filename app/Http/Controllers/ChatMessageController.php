@@ -40,6 +40,8 @@ class ChatMessageController extends Controller
     {
         $data['message'] = json_decode($request->get('message'));
         $data['parent_id'] = $request->get('parent_id');
+        $data['comment_id'] = $request->get('comment_id');
+        $data['quoted_text'] = $request->get('quoted_text');
         $data['user_id'] = Auth::id();
         $data['chat_id'] = $chat->id;
 

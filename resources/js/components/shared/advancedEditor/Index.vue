@@ -5,7 +5,7 @@ import { VueNodeViewRenderer } from '@tiptap/vue-3'
 import { NodeSelection, TextSelection, Plugin } from '@tiptap/pm/state'
 import { ReplaceStep } from '@tiptap/pm/transform'
 import { Link } from '@tiptap/extension-link'
-import { ref, watch, computed } from 'vue'
+import { ref, watch, computed, toRaw } from 'vue'
 import { createLowlight } from 'lowlight'
 import { EnhancedCodeBlock } from '@/functions/editor/EnhancedCodeBlock'
 import drawIoExtension from '@rcode-link/tiptap-drawio'
@@ -50,16 +50,21 @@ import HorizontalRuleNodeView from '@/components/shared/advancedEditor/blocks/Ty
 import TableNodeView from '@/components/shared/advancedEditor/blocks/table/TableNodeView.vue'
 
 import Placeholder from '@tiptap/extension-placeholder'
+import Collaboration from '@tiptap/extension-collaboration'
+import CollaborationCursor from '@tiptap/extension-collaboration-cursor'
 
+import { CommentMark } from '@/functions/editor/marks/CommentMark.js'
 import { MoveNode } from '@/functions/editor/extensions/MoveBlock.js'
 import { Extension } from '@tiptap/core'
 import CustomImage from '@/functions/editor/blocks/imageNode/ImageNode.js'
 import { useTextToLinkStore } from '@/store/textToLinkStore'
 import { useRouter } from 'vue-router'
+import { useUserStore } from '@/store/user'
 
 const props = defineProps({
   modelValue: {
-    type: String,
+    type: [String, Object],
+    default: null,
   },
   editable: {
     type: Boolean,
@@ -72,6 +77,14 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
+  ydoc: {
+    type: null, // Y.Doc — use null type to avoid Vue reactivity wrapping
+    default: null,
+  },
+  provider: {
+    type: null, // HocuspocusProvider — use null type to avoid Vue reactivity wrapping
+    default: null,
+  },
   notion: {
     type: Boolean,
     default: false,
@@ -79,6 +92,7 @@ const props = defineProps({
 })
 
 const textToLinkStore = useTextToLinkStore()
+const userStore = useUserStore()
 const lowlight = createLowlight()
 const router = useRouter()
 
@@ -87,7 +101,7 @@ hljs.listLanguages().forEach(async lang => {
 })
 
 const route = useRoute()
-const emit = defineEmits(['update:modelValue', 'submitted', 'ready'])
+const emit = defineEmits(['update:modelValue', 'submitted', 'ready', 'add-comment', 'remove-comment'])
 
 const pressedKeys = ref([])
 const textToLink = useConvertTextToLink(textToLinkStore.items, router.push)
@@ -245,9 +259,10 @@ const getExtensions = () => {
     Bold,
     Italic,
     Strike,
+    CommentMark,
     HardBreak,
     CustomHorizontalRule,
-    History,
+    ...(props.collaborative && props.ydoc ? [] : [History]),
     CustomImage.configure({
       inline: false,
       allowBase64: true,
@@ -289,16 +304,66 @@ const getExtensions = () => {
     }),
     MoveNode,
     Markdown,
-    // Collaboration.configure({
-    //   documentId: `test`,
-    //   // Optional configuration
-    //   debounce: 150,
-    //   maxRetries: 5,
-    //   retryDelay: 300,
-    // }),
-    // Cursors.configure({
-    //   labelDuration: 2000,
-    // }),
+    ...(props.collaborative && props.ydoc
+      ? [
+          Collaboration.configure({ document: toRaw(props.ydoc) }),
+          ...(props.provider
+            ? [
+                CollaborationCursor.configure({
+                  provider: toRaw(props.provider),
+                  user: {
+                    name: userStore.user?.name || 'Unknown',
+                    avatar: userStore.user?.avatar || null,
+                    color: userStore.user?.id ? getUserColor(userStore.user.id) : '#6B7280',
+                  },
+                  render: (user) => {
+                    const cursor = document.createElement('span')
+                    cursor.classList.add('collaboration-cursor__caret')
+                    cursor.style.borderColor = user.color
+                    cursor.style.backgroundColor = user.color
+
+                    const label = document.createElement('div')
+                    label.classList.add('collaboration-cursor__label')
+                    label.setAttribute('title', user.name || 'Unknown')
+
+                    const appendInitial = () => {
+                      const initial = document.createElement('span')
+                      initial.classList.add('collaboration-cursor__initial')
+                      initial.style.backgroundColor = user.color
+                      initial.textContent = (user.name || '?').charAt(0).toUpperCase()
+                      label.prepend(initial)
+                    }
+
+                    if (user.avatar) {
+                      const img = document.createElement('img')
+                      img.src = user.avatar
+                      img.alt = user.name || ''
+                      img.classList.add('collaboration-cursor__avatar')
+                      img.style.borderColor = user.color
+                      img.onerror = () => {
+                        img.remove()
+                        appendInitial()
+                      }
+                      label.appendChild(img)
+                    } else {
+                      appendInitial()
+                    }
+
+                    // Name tooltip — hidden by default, shown on hover
+                    const nameEl = document.createElement('span')
+                    nameEl.classList.add('collaboration-cursor__name')
+                    nameEl.style.backgroundColor = user.color
+                    nameEl.textContent = user.name || 'Unknown'
+                    label.appendChild(nameEl)
+
+                    cursor.appendChild(label)
+                    return cursor
+                  },
+                }),
+              ]
+            : []),
+        ]
+      : []),
 
     // Ensure a paragraph always follows block nodes like images/diagrams,
     // so the user can always click after them to type.
@@ -387,11 +452,9 @@ const getExtensions = () => {
   return extensions
 }
 
-// Custom table extension with node view
 const editor = useEditor({
   content: cleanTiptapJson(props.modelValue),
   editable: props.editable,
-  debug: true,
   editorProps: {
     handleDOMEvents: {
       keydown: (view, event) => {
@@ -414,10 +477,35 @@ const editor = useEditor({
 watch(
   editor,
   e => {
-    if (e) emit('ready', e)
+    if (e) {
+      // If collaborative with Y.doc, populate from content if Y.doc is empty (first time)
+      if (props.collaborative && props.ydoc && props.modelValue) {
+        const fragment = toRaw(props.ydoc).getXmlFragment('default')
+        if (fragment.length === 0) {
+          const cleaned = cleanTiptapJson(props.modelValue)
+          if (cleaned?.content?.length > 0) {
+            e.commands.setContent(cleaned)
+          }
+        }
+      }
+      emit('ready', e)
+
+      // Listen for comment events from nested node views (TextToolbar)
+      e.view.dom.addEventListener('editor:add-comment', () => emit('add-comment'))
+      e.view.dom.addEventListener('editor:remove-comment', () => emit('remove-comment'))
+    }
   },
   { immediate: true },
 )
+
+defineExpose({ editor })
+
+function getUserColor(id) {
+  const hash = String(id)
+    .split('')
+    .reduce((acc, char) => char.charCodeAt(0) + ((acc << 5) - acc), 0)
+  return `hsl(${Math.abs(hash) % 360}, 70%, 60%)`
+}
 
 function cleanTiptapJson(rawData) {
   const json = { ...rawData }
@@ -481,7 +569,7 @@ function cleanTiptapJson(rawData) {
       <slot name="before-content" />
     </div>
 
-    <editor-content class="editor-content" :editor="editor" />
+    <editor-content v-if="editor" class="editor-content" :editor="editor" />
   </div>
 </template>
 
@@ -598,39 +686,86 @@ table {
   z-index: 2;
 }
 
-/* Collaboration styling */
-.collab-status {
-  font-size: 0.75rem;
-  line-height: 1rem;
-}
-
-/* Additional collaboration cursor styles */
-.collaboration-cursor {
-  position: relative;
+/* Collaboration cursor styles */
+.collaboration-cursor__caret {
   border-left: 2px solid;
   margin-left: -1px;
-  height: 1.2em;
-  display: inline-block;
+  margin-right: -1px;
   pointer-events: none;
+  position: relative;
+  word-break: normal;
 }
 
-.collaboration-cursor-label {
+.collaboration-cursor__label {
   position: absolute;
   top: -1.4em;
   left: -1px;
-  font-size: 0.75rem;
-  border-radius: 3px;
-  padding: 0 4px;
-  white-space: nowrap;
-  color: white;
-  font-weight: 500;
-  pointer-events: none;
   user-select: none;
+  pointer-events: auto;
+  display: flex;
+  align-items: center;
+  gap: 0;
+  z-index: 10;
 }
 
-.collaboration-selection {
-  background-color: rgba(0, 100, 255, 0.1);
-  border-radius: 2px;
-  pointer-events: none;
+.collaboration-cursor__avatar {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 2px solid;
+  object-fit: cover;
+  display: block;
+  flex-shrink: 0;
+}
+
+.collaboration-cursor__initial {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-size: 10px;
+  font-weight: 700;
+  flex-shrink: 0;
+  line-height: 1;
+}
+
+.collaboration-cursor__name {
+  display: none;
+  color: #fff;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 2px 6px;
+  border-radius: 0 4px 4px 0;
+  white-space: nowrap;
+  line-height: 16px;
+}
+
+.collaboration-cursor__label:hover .collaboration-cursor__name {
+  display: block;
+}
+
+/* Inline comment highlights */
+.comment-highlight {
+  background-color: rgba(255, 213, 79, 0.3);
+  border-bottom: 2px solid rgba(255, 165, 0, 0.6);
+  cursor: pointer;
+  transition: background-color 0.15s;
+}
+
+.comment-highlight:hover {
+  background-color: rgba(255, 213, 79, 0.5);
+}
+
+.comment-highlight[data-resolved="true"] {
+  background-color: transparent;
+  border-bottom: 1px dashed rgba(156, 163, 175, 0.4);
+}
+
+.comment-highlight.active {
+  background-color: rgba(255, 165, 0, 0.4);
+  border-bottom-color: rgba(255, 165, 0, 0.9);
 }
 </style>

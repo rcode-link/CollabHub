@@ -1,11 +1,13 @@
 <script setup>
 import { ref, computed, watch, nextTick } from 'vue'
 import AdvancedEditor from '@/components/shared/advancedEditor/Index.vue'
+import Comments from '@/components/pages/project/tasks/partisals/details/Comments.vue'
 import { useRoute } from 'vue-router'
 import { useBreadcrumbStore } from '@/store/breadcrumb'
 import { useAbility } from '@casl/vue'
 import { useUserStore } from '@/store/user'
 import { DateTime } from 'luxon'
+import { useCollaboration } from '@/functions/editor/colab/useCollaboration'
 
 const { can } = useAbility()
 const userStore = useUserStore()
@@ -17,10 +19,20 @@ const shareOpen = ref(false)
 const shareLoading = ref(false)
 const copied = ref(false)
 const exporting = ref(false)
+const avatarErrors = ref({})
+const commentsOpen = ref(false)
+const chatId = ref(null)
+const chatLoading = ref(false)
+const editorRef = ref(null)
+const pendingComment = ref(null)
+const activeCommentId = ref(null)
 const route = useRoute()
 const breadcrumbStore = useBreadcrumbStore()
 
 const canUpdate = computed(() => can(`can-update-document.${document.value.id}`, ''))
+
+// Initialize collaboration during setup (so lifecycle hooks work)
+const collab = useCollaboration({ documentId: route.params.id })
 
 const relativeTime = computed(() =>
   document.value.updated_at
@@ -37,6 +49,7 @@ const shareUrl = computed(() =>
 const load = () => {
   axios.get(`/api/v1/files/${route.params.id}`).then((response) => {
     document.value = response.data
+    chatId.value = response.data.chat_id || null
     breadcrumbStore.addEntry([
       {
         link: { name: 'project.documents', params: { project: route.params.project } },
@@ -95,6 +108,92 @@ const copyLink = () => {
   })
 }
 
+const ensureChat = async () => {
+  if (chatId.value) return chatId.value
+  chatLoading.value = true
+  try {
+    const { data } = await axios.post(`/api/v1/files/${document.value.id}/chat`)
+    chatId.value = data.chat_id
+    return data.chat_id
+  } finally {
+    chatLoading.value = false
+  }
+}
+
+const openComments = async () => {
+  if (commentsOpen.value) {
+    commentsOpen.value = false
+    return
+  }
+  await ensureChat()
+  commentsOpen.value = true
+}
+
+const addInlineComment = async () => {
+  const editor = editorRef.value?.editor
+  if (!editor) return
+
+  const { from, to, empty } = editor.state.selection
+  if (empty) return
+
+  const selectedText = editor.state.doc.textBetween(from, to, ' ')
+  if (!selectedText.trim()) return
+
+  const commentId = crypto.randomUUID()
+
+  // Apply the comment mark to the selected text
+  editor.chain().focus().setMark('comment', { commentId }).run()
+
+  await ensureChat()
+  commentsOpen.value = true
+  pendingComment.value = { commentId, quotedText: selectedText }
+}
+
+const onEditorReady = (editor) => {
+  // Listen for clicks on comment marks in the editor
+  editor.view.dom.addEventListener('click', (e) => {
+    const commentEl = e.target.closest('.comment-highlight')
+    if (!commentEl) {
+      activeCommentId.value = null
+      return
+    }
+    const cId = commentEl.getAttribute('data-comment-id')
+    if (cId) {
+      activeCommentId.value = cId
+      commentsOpen.value = true
+      ensureChat()
+    }
+  })
+}
+
+const cancelPendingComment = () => {
+  // Remove the mark that was applied
+  if (pendingComment.value && editorRef.value?.editor) {
+    const editor = editorRef.value.editor
+    const { doc } = editor.state
+    // Find and remove the mark with this commentId
+    doc.descendants((node, pos) => {
+      const mark = node.marks.find(
+        m => m.type.name === 'comment' && m.attrs.commentId === pendingComment.value.commentId
+      )
+      if (mark) {
+        editor.chain().setTextSelection({ from: pos, to: pos + node.nodeSize }).unsetMark('comment').run()
+      }
+    })
+  }
+  pendingComment.value = null
+}
+
+const onCommentSent = () => {
+  pendingComment.value = null
+}
+
+const removeCommentMark = () => {
+  const editor = editorRef.value?.editor
+  if (!editor) return
+  editor.chain().focus().unsetMark('comment').run()
+}
+
 const exportPdf = () => {
   exporting.value = true
   axios.post(`/api/v1/files/${document.value.id}/export-pdf`, null, { responseType: 'blob' })
@@ -118,16 +217,49 @@ load()
     <!-- Sticky document header -->
     <div class="sticky top-0 z-30 flex items-center gap-3 px-5 h-11 bg-white/95 dark:bg-gray-900/95 backdrop-blur-sm border-b border-gray-100 dark:border-gray-800 shrink-0">
 
-      <!-- Title -->
-      <span class="font-semibold text-sm text-gray-800 dark:text-white truncate min-w-0 flex-1">
-        {{ document.title || 'Untitled' }}
-      </span>
+      <!-- Editable title -->
+      <input
+        v-model="document.title"
+        :readonly="!canUpdate"
+        class="font-semibold text-sm text-gray-800 dark:text-white truncate min-w-0 flex-1 bg-transparent border-none outline-none placeholder-gray-300 dark:placeholder-gray-600"
+        placeholder="Untitled"
+      />
 
       <!-- File ID badge -->
       <span
         v-if="document.file_id"
         class="font-mono text-[10px] bg-gray-100 dark:bg-gray-800 text-gray-400 rounded px-1.5 py-0.5 shrink-0"
       >{{ document.file_id }}</span>
+
+      <!-- Collaborators avatars -->
+      <div v-if="collab.connectedUsers.value?.length > 1" class="flex items-center -space-x-1.5 shrink-0">
+        <template v-for="u in collab.connectedUsers.value.filter(u => u.id !== userStore.user.id)" :key="u.id">
+          <img
+            v-if="u.avatar && !avatarErrors[u.id]"
+            :src="u.avatar"
+            :alt="u.name"
+            :title="u.name"
+            class="w-6 h-6 rounded-full border-2 border-white dark:border-gray-900 object-cover"
+            @error="avatarErrors[u.id] = true"
+          />
+          <div
+            v-else
+            class="w-6 h-6 rounded-full border-2 border-white dark:border-gray-900 flex items-center justify-center text-[10px] font-semibold text-white"
+            :style="{ backgroundColor: u.color || '#6B7280' }"
+            :title="u.name"
+          >
+            {{ (u.name || '?').charAt(0).toUpperCase() }}
+          </div>
+        </template>
+      </div>
+
+      <!-- Connection status -->
+      <div class="flex items-center gap-1 shrink-0">
+        <span
+          class="w-1.5 h-1.5 rounded-full"
+          :class="collab.isConnected.value ? 'bg-green-500' : 'bg-red-500'"
+        ></span>
+      </div>
 
       <!-- Save status -->
       <div class="flex items-center gap-1.5 shrink-0 text-xs">
@@ -147,6 +279,24 @@ load()
           <span class="text-gray-400">Edited {{ relativeTime }}</span>
         </template>
       </div>
+
+      <!-- Toggle comments panel -->
+      <button
+        class="inline-flex items-center justify-center gap-1.5 text-xs px-2.5 py-1 rounded-md border transition-colors shrink-0 disabled:opacity-50"
+        :class="commentsOpen
+          ? 'border-blue-200 dark:border-blue-800 bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400'
+          : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700'"
+        :disabled="chatLoading"
+        @click="openComments"
+      >
+        <svg v-if="chatLoading" class="w-3.5 h-3.5 shrink-0 animate-spin" viewBox="0 0 24 24" fill="none">
+          <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="3" stroke-dasharray="15 45" stroke-linecap="round"/>
+        </svg>
+        <svg v-else class="w-3.5 h-3.5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+        </svg>
+        Comments
+      </button>
 
       <!-- Export PDF button -->
       <button
@@ -265,26 +415,74 @@ load()
       <div class="h-4 bg-gray-100 dark:bg-gray-800 rounded w-4/6"></div>
     </div>
 
-    <!-- Editor -->
-    <div v-else class="max-w-3xl mx-auto w-full flex flex-col gap-3 py-4">
-      <AdvancedEditor
-        :key="document.id"
-        v-model="document.content"
-        :editable="canUpdate"
-        :notion="true"
-        @submitted="save"
+    <!-- Editor + Comments layout -->
+    <div v-else class="flex flex-1 min-h-0">
+      <!-- Editor -->
+      <div class="flex-1 min-w-0 overflow-y-auto">
+        <div class="max-w-3xl mx-auto w-full flex flex-col gap-3 py-4">
+          <AdvancedEditor
+            ref="editorRef"
+            :key="document.id"
+            v-model="document.content"
+            :editable="canUpdate"
+            :notion="true"
+            :collaborative="true"
+            :ydoc="collab.ydoc"
+            :provider="collab.provider"
+            :document-id="document.id"
+            @submitted="save"
+            @ready="onEditorReady"
+            @add-comment="addInlineComment"
+            @remove-comment="removeCommentMark"
+          />
+        </div>
+      </div>
+
+      <!-- Comments side panel -->
+      <Transition
+        enter-active-class="transition ease-out duration-200"
+        enter-from-class="translate-x-full"
+        enter-to-class="translate-x-0"
+        leave-active-class="transition ease-in duration-150"
+        leave-from-class="translate-x-0"
+        leave-to-class="translate-x-full"
       >
-        <template #before-content>
-          <div class="px-10 pt-8 pb-2 border-b border-gray-100 dark:border-gray-800">
-            <input
-              v-model="document.title"
-              :readonly="!canUpdate"
-              class="block w-full text-3xl font-bold bg-transparent border-none outline-none text-gray-900 dark:text-white placeholder-gray-300 dark:placeholder-gray-600 caret-gray-900 dark:caret-white"
-              placeholder="Untitled"
+        <div
+          v-if="commentsOpen && chatId"
+          class="w-96 shrink-0 border-l border-gray-100 dark:border-gray-800 bg-white dark:bg-gray-900 flex flex-col overflow-hidden"
+        >
+          <div class="flex items-center justify-between px-4 h-10 border-b border-gray-100 dark:border-gray-800 shrink-0">
+            <span class="text-sm font-semibold text-gray-800 dark:text-white">Comments</span>
+            <button
+              class="p-1 rounded-md text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+              @click="commentsOpen = false"
+            >
+              <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+              </svg>
+            </button>
+          </div>
+
+          <!-- Pending inline comment context -->
+          <div v-if="pendingComment" class="px-4 py-3 border-b border-gray-100 dark:border-gray-800 bg-amber-50/50 dark:bg-amber-900/10 shrink-0">
+            <p class="text-[10px] uppercase tracking-wider text-amber-600 dark:text-amber-400 font-semibold mb-1">Commenting on</p>
+            <p class="text-xs text-gray-700 dark:text-gray-300 italic line-clamp-3">"{{ pendingComment.quotedText }}"</p>
+            <button
+              class="mt-2 text-[10px] text-gray-400 hover:text-red-500 transition-colors"
+              @click="cancelPendingComment"
+            >Cancel</button>
+          </div>
+
+          <div class="flex-1 overflow-hidden">
+            <Comments
+              :chat-id="chatId"
+              :pending-comment="pendingComment"
+              :active-comment-id="activeCommentId"
+              @comment-sent="onCommentSent"
             />
           </div>
-        </template>
-      </AdvancedEditor>
+        </div>
+      </Transition>
     </div>
 
   </div>
