@@ -39,6 +39,7 @@ const form = reactive({
 
 const showForm = ref(false);
 const statuses = ref([]);
+const existingRelations = ref([]);
 const tasksStore = useTasksStore();
 const projects = ref();
 const boards = ref([]);
@@ -78,6 +79,16 @@ const loadData = () => {
         window.axios
             .get(`/api/v1/tasks-statuses/`, { params: { project_id: route.params.project } })
             .then((res) => { statuses.value = res.data.data; });
+
+        window.axios
+            .get(`/api/v1/task/load/${route.query.task}/relations`, { params: { project_id: route.params.project } })
+            .then((res) => {
+                existingRelations.value = (res.data.data || []).map((obj) => ({
+                    task: { id: obj.id, task_id: obj.task_id, name: obj.name },
+                    task_relation_id: obj.relation?.id?.toString() ?? "",
+                }));
+                form.related_tasks = existingRelations.value;
+            });
     }
 
     if (!route.query.task) {
@@ -95,6 +106,7 @@ const resetForm = () => {
     form.status_id = "";
     form.due_date = null;
     form.related_tasks = [];
+    existingRelations.value = [];
     form.tags = [];
     form.sprint_id = "";
 };
@@ -347,7 +359,7 @@ const labelClass = "block text-xs font-medium text-gray-500 dark:text-gray-400 m
                                 <!-- Related tasks -->
                                 <div class="mt-3">
                                     <label :class="labelClass">Related to</label>
-                                    <SelectTasks @update="(value) => { form.related_tasks = value; }" />
+                                    <SelectTasks :initial-items="existingRelations" @update="(value) => { form.related_tasks = value; }" />
                                     <Errors name="related_tasks" />
                                 </div>
                             </div>

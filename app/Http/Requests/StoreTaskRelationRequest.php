@@ -23,6 +23,7 @@ class StoreTaskRelationRequest extends FormRequest
     {
         return [
             'name' => 'required|string|max:255',
+            'direction' => 'required|in:parent,child',
             'project_id' => 'required|exists:projects,id',
             'can_parent_be_closed' => 'nullable|boolean',
         ];

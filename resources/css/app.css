@@ -2,6 +2,9 @@
 @tailwind components;
 @tailwind utilities;
 
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
 @theme {
   /* Custom Colors */
   --color-primary-50: #2d8dff;

@@ -3,11 +3,14 @@ import AutoComplete from "@/components/shared/AutoComplete.vue";
 import { ref, watch } from "vue";
 import { useRoute } from "vue-router";
 
+const props = defineProps({
+    initialItems: { type: Array, default: () => [] },
+});
 const emit = defineEmits(["update"]);
 const route = useRoute();
 const taskRelations = ref({ data: [] });
 const relatedTasks = ref({ data: [] });
-const selectedItems = ref([]);
+const selectedItems = ref([...props.initialItems]);
 
 const searchTasks = (value) => {
     window.axios
@@ -33,6 +36,12 @@ const removeItem = (index) => {
 
 getTaskRelations();
 
+watch(() => props.initialItems, (val) => {
+    if (val.length && !selectedItems.value.length) {
+        selectedItems.value = [...val];
+    }
+});
+
 watch(selectedItems, () => { emit("update", selectedItems); }, { deep: true });
 </script>
 
@@ -50,7 +59,6 @@ watch(selectedItems, () => { emit("update", selectedItems); }, { deep: true });
                 class="flex items-center gap-2 p-2 rounded-lg bg-gray-50 dark:bg-gray-800 border border-gray-100 dark:border-gray-700"
             >
                 <select
-                    :key="obj.task_relation_id"
                     v-model="obj.task_relation_id"
                     class="rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-2 py-1 text-xs text-gray-900 dark:text-white focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 flex-shrink-0"
                 >

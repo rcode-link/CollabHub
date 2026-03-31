@@ -121,12 +121,13 @@ class Task extends Model implements HasMedia
 
     public function parents(): BelongsToMany
     {
-        return $this->belongsToMany(Task::class, 'task_task', 'task_id');
+        return $this->belongsToMany(Task::class, 'task_task', 'task_id', 'parent_id')
+            ->withPivot('task_relation_id');
     }
 
     public function children(): BelongsToMany
     {
-        return $this->belongsToMany(Task::class, 'task_task', 'parent_id')
+        return $this->belongsToMany(Task::class, 'task_task', 'parent_id', 'task_id')
             ->withPivot('task_relation_id');
     }
 

@@ -14,10 +14,16 @@ class TaskRelationsSeeder extends Seeder
     {
         TaskRelation::insert([
             [
-                'name' => 'Blocked by',
+                'name' => 'Parent of',
+                'direction' => 'parent',
             ],
             [
-                'name' => 'Related to',
+                'name' => 'Child of',
+                'direction' => 'child',
+            ],
+            [
+                'name' => 'Blocked by',
+                'direction' => 'child',
             ],
         ]);
     }

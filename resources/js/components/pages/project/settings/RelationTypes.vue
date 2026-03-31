@@ -7,6 +7,7 @@ const route = useRoute();
 
 const relations = ref([]);
 const addRelationName = ref("");
+const addRelationDirection = ref("child");
 const addingRelation = ref(false);
 const savingRelationId = ref(null);
 const deletingRelationId = ref(null);
@@ -24,10 +25,12 @@ const createRelation = () => {
     addingRelation.value = true;
     window.axios.post(`/api/v1/task/relations`, {
         name: addRelationName.value,
+        direction: addRelationDirection.value,
         project_id: route.params.project,
     }).then(() => {
         loadRelations();
         addRelationName.value = "";
+        addRelationDirection.value = "child";
     }).finally(() => { addingRelation.value = false; });
 };
 
@@ -35,6 +38,7 @@ const updateRelation = (item) => {
     savingRelationId.value = item.id;
     window.axios.put(`/api/v1/task/relations/${item.id}`, {
         name: item.name,
+        direction: item.direction,
         can_parent_be_closed: item.can_parent_be_closed,
     }).finally(() => { savingRelationId.value = null; });
 };
@@ -72,6 +76,17 @@ loadRelations();
                 :key="item.id"
                 class="flex items-center gap-3 px-5 py-3 group"
             >
+                <!-- Direction -->
+                <select
+                    v-model="item.direction"
+                    @change="updateRelation(item)"
+                    class="flex-shrink-0 rounded-lg border border-transparent bg-transparent px-2 py-1 text-xs font-medium hover:border-gray-200 dark:hover:border-gray-600 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none transition-colors"
+                    :class="item.direction === 'parent' ? 'text-blue-500' : 'text-orange-500'"
+                >
+                    <option value="parent">Parent</option>
+                    <option value="child">Child</option>
+                </select>
+
                 <!-- Name -->
                 <input
                     v-model="item.name"
@@ -126,6 +141,13 @@ loadRelations();
 
         <!-- Add new relation -->
         <div class="flex items-center gap-2 px-5 py-3 border-t border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-700/30">
+            <select
+                v-model="addRelationDirection"
+                class="flex-shrink-0 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-2 py-1.5 text-xs font-medium text-gray-900 dark:text-white focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+            >
+                <option value="parent">Parent</option>
+                <option value="child">Child</option>
+            </select>
             <input
                 v-model="addRelationName"
                 type="text"

@@ -23,6 +23,7 @@ class UpdateTaskRelationRequest extends FormRequest
     {
         return [
             'name' => 'string|max:255',
+            'direction' => 'nullable|in:parent,child',
             'can_parent_be_closed' => 'nullable|boolean',
         ];
     }

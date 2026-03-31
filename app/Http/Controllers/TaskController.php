@@ -49,24 +49,31 @@ class TaskController extends Controller
     {
         Auth::user()->authorize('can-view-project', intval($request->get('project_id')));
 
-        // task is parent to its children, and vise versa
-        $task = Task::whereTaskId($taskId)->with('children',
-            'children.type', 'children.owner', 'children.project',
-            'children.taskSprintData.status.board', 'children.taskSprintData.sprint',
+        $eager = ['type', 'owner', 'project', 'taskSprintData.status.board', 'taskSprintData.sprint'];
+
+        $task = Task::whereTaskId($taskId)->with(
+            array_merge(
+                array_map(fn ($r) => "children.$r", $eager),
+                array_map(fn ($r) => "parents.$r", $eager),
+            )
         )->firstOrFail();
-        $relationIds = [];
-        foreach ($task->children as $obj) {
-            $relationIds[] = $obj->pivot->task_relation_id;
-        }
+
+        $relationIds = $task->children->pluck('pivot.task_relation_id')
+            ->merge($task->parents->pluck('pivot.task_relation_id'))
+            ->filter()->unique();
         $relations = TaskRelation::whereIn('id', $relationIds)->get();
 
         $children = $task->children->map(function (Task $obj) use ($relations) {
             $obj->relation = $relations->where('id', $obj->pivot->task_relation_id)->first();
-
             return $obj;
         });
 
-        return TaskResource::collection($children);
+        $parents = $task->parents->map(function (Task $obj) use ($relations) {
+            $obj->relation = $relations->where('id', $obj->pivot->task_relation_id)->first();
+            return $obj;
+        });
+
+        return TaskResource::collection($children->merge($parents));
     }
 
     public function search(Request $request)
@@ -102,7 +109,25 @@ class TaskController extends Controller
         $data['description'] = json_decode($data['description']);
         $data['task_id'] = $project->key.'-'.Task::query()->where('project_id', $project->id)->count() + 1;
         $model = Task::create($data);
-        $model->children()->attach($request->validated('related_tasks'));
+        $relatedTasks = $request->validated('related_tasks') ?? [];
+        $childAttach = [];
+        $parentAttach = [];
+        $relationIds = collect($relatedTasks)->pluck('task_relation_id')->filter()->unique();
+        $relations = TaskRelation::whereIn('id', $relationIds)->get()->keyBy('id');
+        foreach ($relatedTasks as $rel) {
+            $relation = $relations->get($rel['task_relation_id']);
+            if (! $relation) {
+                continue;
+            }
+            $pivot = ['task_relation_id' => $relation->id];
+            if ($relation->direction === 'parent') {
+                $childAttach[$rel['task_id']] = $pivot;
+            } else {
+                $parentAttach[$rel['task_id']] = $pivot;
+            }
+        }
+        $model->children()->attach($childAttach);
+        $model->parents()->attach($parentAttach);
 
         if ($request->hasFile('file')) {
             foreach ($request->file('file') as $file) {
@@ -215,6 +240,7 @@ class TaskController extends Controller
         $data = $request->validated();
         unset($data['related_tasks']);
         unset($data['sprint_id']);
+        unset($data['status_id']);
         if (isset($data['due_date'])) {
             $data['due_date'] = Carbon::parse($data['due_date']);
         }
@@ -225,7 +251,25 @@ class TaskController extends Controller
         }
 
         if ($request->has('related_tasks')) {
-            $task->children()->sync($request->validated('related_tasks'));
+            $relatedTasks = $request->validated('related_tasks') ?? [];
+            $childAttach = [];
+            $parentAttach = [];
+            $relationIds = collect($relatedTasks)->pluck('task_relation_id')->filter()->unique();
+            $relations = TaskRelation::whereIn('id', $relationIds)->get()->keyBy('id');
+            foreach ($relatedTasks as $rel) {
+                $relation = $relations->get($rel['task_relation_id']);
+                if (! $relation) {
+                    continue;
+                }
+                $pivot = ['task_relation_id' => $relation->id];
+                if ($relation->direction === 'parent') {
+                    $childAttach[$rel['task_id']] = $pivot;
+                } else {
+                    $parentAttach[$rel['task_id']] = $pivot;
+                }
+            }
+            $task->children()->sync($childAttach);
+            $task->parents()->sync($parentAttach);
         }
 
         $sendTask = Task::query()
