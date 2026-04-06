@@ -5,9 +5,13 @@ import DispleyIcon from "@/components/shared/icons/DispleyIcon.vue";
 const liveKit = useLiveKit();
 
 const toggleScreenShare = async () => {
-    await liveKit.room?.localParticipant.setScreenShareEnabled(
-        liveKit.videoShareTrack.length === 0
-    );
+    try {
+        await liveKit.room?.localParticipant.setScreenShareEnabled(
+            liveKit.videoShareTrack.length === 0
+        );
+    } catch (e) {
+        console.error('Screen share failed:', e);
+    }
 };
 </script>
 

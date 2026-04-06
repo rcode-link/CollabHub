@@ -1,0 +1,97 @@
+services:
+  laravel:
+    build:
+      context: .
+      dockerfile: ./Dockerfile.production
+    environment:
+      - SERVICE_FQDN_LARAVEL=collabhub.rcode.link
+      - APP_DEBUG=${APP_DEBUG:-false}
+      - APP_ENV=${APP_ENV:-production}
+      - APP_KEY=${APP_KEY}
+      - APP_NAME=${APP_NAME:-CollabHub}
+      - APP_URL=https://${SERVICE_FQDN_LARAVEL}
+      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+      - AWS_BUCKET=${AWS_BUCKET}
+      - AWS_DEFAULT_REGION=${AWS_DEFAULT_REGION}
+      - AWS_ENDPOINT=${AWS_ENDPOINT}
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+      - AWS_URL=${AWS_URL}
+      - AWS_USE_PATH_STYLE_ENDPOINT=${AWS_USE_PATH_STYLE_ENDPOINT:-true}
+      - BROADCAST_DRIVER=${BROADCAST_DRIVER:-pusher}
+      - BROWSERSHOT_APP_URL=https://${SERVICE_FQDN_LARAVEL}
+      - BROWSERSHOT_NODE_BINARY=/usr/bin/node
+      - BROWSERSHOT_NPM_BINARY=/usr/bin/npm
+      - BROWSERSHOT_WS_ENDPOINT=${BROWSERSHOT_WS_ENDPOINT}
+      - DB_CONNECTION=${DB_CONNECTION:-mysql}
+      - DB_DATABASE=${DB_DATABASE}
+      - DB_HOST=${DB_HOST}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_PORT=${DB_PORT:-3306}
+      - DB_USERNAME=${DB_USERNAME}
+      - FILESYSTEM_DISK=${FILESYSTEM_DISK:-s3}
+      - LIVEKIT_API_KEY=${LIVEKIT_API_KEY}
+      - LIVEKIT_API_SECRET=${LIVEKIT_API_SECRET}
+      - LIVEKIT_HOST=${LIVEKIT_HOST}
+      - LOG_CHANNEL=${LOG_CHANNEL:-stack}
+      - LOG_DEPRECATIONS_CHANNEL=${LOG_DEPRECATIONS_CHANNEL}
+      - LOG_LEVEL=${LOG_LEVEL:-debug}
+      - LOG_STACK=${LOG_STACK:-single}
+      - MAIL_DRIVER=${MAIL_DRIVER:-smtp}
+      - MAIL_ENCRYPTION=${MAIL_ENCRYPTION:-tls}
+      - MAIL_FROM_ADDRESS=${MAIL_FROM_ADDRESS}
+      - MAIL_FROM_NAME=${APP_NAME:-CollabHub}
+      - MAIL_HOST=${MAIL_HOST}
+      - MAIL_PASSWORD=${MAIL_PASSWORD}
+      - MAIL_PORT=${MAIL_PORT:-587}
+      - MAIL_USERNAME=${MAIL_USERNAME}
+      - MEDIA_DISK=${MEDIA_DISK:-s3}
+      - NTFY_ENABLED=${NTFY_ENABLED:-true}
+      - NTFY_PUBLIC_URL=${NTFY_PUBLIC_URL}
+      - NTFY_URL=${NTFY_URL}
+      - PUSHER_APP_CLUSTER=${PUSHER_APP_CLUSTER:-mt1}
+      - PUSHER_APP_ID=${PUSHER_APP_ID}
+      - PUSHER_APP_KEY=${PUSHER_APP_KEY}
+      - PUSHER_APP_SECRET=${PUSHER_APP_SECRET}
+      - PUSHER_HOST=${PUSHER_HOST}
+      - PUSHER_PORT=${PUSHER_PORT:-443}
+      - PUSHER_SCHEME=${PUSHER_SCHEME:-https}
+      - REDIS_HOST=${REDIS_HOST}
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
+      - REDIS_PORT=${REDIS_PORT:-6379}
+      - VAPID_PRIVATE_KEY=${VAPID_PRIVATE_KEY}
+      - VAPID_PUBLIC_KEY=${VAPID_PUBLIC_KEY}
+      - VITE_APP_NAME=${APP_NAME:-CollabHub}
+      - VITE_LIVEKIT_URL=${VITE_LIVEKIT_URL}
+      - VITE_PUSHER_APP_CLUSTER=${PUSHER_APP_CLUSTER:-mt1}
+      - VITE_PUSHER_APP_KEY=${PUSHER_APP_KEY}
+      - VITE_PUSHER_HOST=${PUSHER_HOST}
+      - VITE_PUSHER_PORT=${PUSHER_PORT:-443}
+      - VITE_PUSHER_SCHEME=${PUSHER_SCHEME:-https}
+      - VITE_COLLAB_URL=wss://${SERVICE_FQDN_COLLAB}
+      - COLLAB_SECRET=${SERVICE_BASE64_COLLAB}
+      - COLLAB_PORT=${COLLAB_PORT:-6002}
+    ports:
+      - '${APP_PORT:-80}:80'
+    depends_on:
+      - collaboration-server
+    networks:
+      - collabhub
+
+  collaboration-server:
+    build:
+      context: ./collaboration-server
+      dockerfile: Dockerfile
+    environment:
+      - SERVICE_FQDN_COLLAB=collab-server.rcode.link
+      - COLLAB_SECRET=${SERVICE_BASE64_COLLAB}
+      - COLLAB_PORT=${COLLAB_PORT:-6002}
+      # Laravel is reachable via its service name on the internal network
+      - LARAVEL_URL=http://laravel:80
+    ports:
+      - '${COLLAB_PORT:-6002}:${COLLAB_PORT:-6002}'
+    networks:
+      - collabhub
+
+networks:
+  collabhub:
+    driver: bridge

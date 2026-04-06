@@ -15,7 +15,8 @@
     "build:linux": "electron-builder --linux",
     "build:mac": "electron-builder --mac",
     "build:win": "electron-builder --win",
-    "build:all": "electron-builder --linux --mac --win"
+    "build:all": "electron-builder --linux --mac --win",
+    "build:flatpak": "electron-builder --linux flatpak"
   },
   "dependencies": {
     "electron-store": "^8.2.0"
@@ -37,7 +38,7 @@
       "icons/**/*"
     ],
     "linux": {
-      "target": ["AppImage", "deb"],
+      "target": ["AppImage", "deb", "flatpak"],
       "category": "Network",
       "icon": "icons",
       "maintainer": "CollabHub <info@collabhub.com>",
@@ -45,6 +46,22 @@
         "StartupWMClass": "CollabHub",
         "MimeType": "x-scheme-handler/collabhub"
       }
+    },
+    "flatpak": {
+      "runtimeVersion": "24.08",
+      "baseVersion": "24.08",
+      "finishArgs": [
+        "--share=ipc",
+        "--socket=x11",
+        "--socket=wayland",
+        "--socket=pulseaudio",
+        "--share=network",
+        "--device=all",
+        "--talk-name=org.freedesktop.Notifications",
+        "--talk-name=org.kde.StatusNotifierWatcher",
+        "--talk-name=org.freedesktop.portal.Desktop",
+        "--filesystem=xdg-run/pipewire-0"
+      ]
     },
     "mac": {
       "target": ["dmg"],

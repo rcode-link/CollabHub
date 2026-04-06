@@ -1,4 +1,4 @@
-const { app, BrowserWindow, Notification, ipcMain, Tray, Menu, nativeImage, shell } = require('electron')
+const { app, BrowserWindow, Notification, ipcMain, Tray, Menu, nativeImage, shell, session, desktopCapturer } = require('electron')
 const path = require('path')
 const Store = require('electron-store')
 const fs = require('fs')
@@ -6,11 +6,13 @@ const fs = require('fs')
 // Force Unity/AppIndicator on Linux for system tray support
 // This is required for COSMIC, GNOME, KDE with StatusNotifierItem
 if (process.platform === 'linux') {
-  app.commandLine.appendSwitch('enable-features', 'StatusNotifierItem')
+  app.commandLine.appendSwitch('enable-features', 'StatusNotifierItem,WebRTCPipeWireCapturer')
+  app.commandLine.appendSwitch('disable-features', 'SpareRendererForSitePerProcess')
 
   // Check for XDG_SESSION_TYPE to set proper Ozone platform
   if (process.env.XDG_SESSION_TYPE === 'wayland' || process.env.WAYLAND_DISPLAY) {
     app.commandLine.appendSwitch('ozone-platform-hint', 'auto')
+    app.commandLine.appendSwitch('enable-wayland-ime')
   }
 }
 
@@ -52,6 +54,24 @@ function createWindow() {
   mainWindow.on('resize', () => {
     const bounds = mainWindow.getBounds()
     store.set('windowBounds', { width: bounds.width, height: bounds.height })
+  })
+
+  // Allow screen sharing via getDisplayMedia()
+  // On Wayland this uses PipeWire + xdg-desktop-portal to show the native picker
+  session.defaultSession.setDisplayMediaRequestHandler((request, callback) => {
+    desktopCapturer.getSources({ types: ['screen', 'window'] }).then((sources) => {
+      // If PipeWire portal is available (Wayland), Electron handles it natively
+      // Pass the first source to grant access — the portal picker already filtered it
+      callback({ video: sources[0], audio: 'loopback' })
+    }).catch(() => {
+      callback({})
+    })
+  })
+
+  // Allow permission requests for media (camera, mic, screen)
+  session.defaultSession.setPermissionRequestHandler((webContents, permission, callback) => {
+    const allowedPermissions = ['media', 'display-capture', 'mediaKeySystem']
+    callback(allowedPermissions.includes(permission))
   })
 
   // Show when ready to avoid white flash
