@@ -36,6 +36,7 @@ const config: CapacitorConfig = {
     },
     SystemBars: {
       insetsHandling: 'disable',
+      style: 'DARK',
     },
   },
   android: {

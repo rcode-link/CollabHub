@@ -13,12 +13,16 @@ import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 
+import android.view.View;
+import android.view.ViewGroup;
+
 import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 import androidx.core.content.ContextCompat;
-
-import androidx.core.view.WindowCompat;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 
 import com.getcapacitor.BridgeActivity;
 
@@ -33,16 +37,28 @@ public class MainActivity extends BridgeActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // Disable Capacitor 8's default edge-to-edge rendering
-        // so content doesn't go behind the status bar
-        WindowCompat.setDecorFitsSystemWindows(getWindow(), true);
-        getWindow().setStatusBarColor(android.graphics.Color.parseColor("#1a1a2e"));
-
         createNotificationChannel();
         requestAppPermissions();
         startNtfyListener();
 
         WebView webView = getBridge().getWebView();
+
+        // Apply window insets so WebView content stays below the status bar
+        // and above the navigation bar (required for SDK 35+ edge-to-edge)
+        View webViewParent = (View) webView.getParent();
+        ViewCompat.setOnApplyWindowInsetsListener(webViewParent, (v, insets) -> {
+            Insets systemBars = insets.getInsets(
+                WindowInsetsCompat.Type.systemBars() | WindowInsetsCompat.Type.displayCutout()
+            );
+            ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) v.getLayoutParams();
+            params.topMargin = systemBars.top;
+            params.bottomMargin = systemBars.bottom;
+            params.leftMargin = systemBars.left;
+            params.rightMargin = systemBars.right;
+            v.setLayoutParams(params);
+            return WindowInsetsCompat.CONSUMED;
+        });
+        webViewParent.requestApplyInsets();
 
         // Enable media playback and getUserMedia for video calls
         WebSettings settings = webView.getSettings();
