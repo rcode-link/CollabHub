@@ -83,8 +83,16 @@ export default (chatIdParam, messageContainerRef) => {
                 nextTick(() => {
                     const el = messageContainerRef.value;
                     if (page.value === 1) {
+                        // Disable smooth scroll so it jumps instantly
+                        el.style.scrollBehavior = 'auto';
                         el.scrollTop = el.scrollHeight;
-                        isLoadingMore.value = false;
+                        // Retry after layout settles (images, flex/grid reflow)
+                        setTimeout(() => {
+                            el.scrollTop = el.scrollHeight;
+                            scrollToLastMessage.value = true;
+                            el.style.scrollBehavior = '';
+                            isLoadingMore.value = false;
+                        }, 150);
                         return;
                     }
                     // Restore scroll position without animation
