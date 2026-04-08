@@ -25,7 +25,7 @@ watch(
 
 <template>
   <Auth>
-    <div class="flex flex-col lg:flex-row gap-2 h-[calc(100vh-86px)] relative">
+    <div class="flex flex-col lg:flex-row gap-2 h-[calc(100vh-86px)] lg:h-[calc(100vh-2rem)] relative">
       <!-- Chat list panel -->
       <div
         :class="[
@@ -37,7 +37,7 @@ watch(
       </div>
 
       <!-- Conversation panel -->
-      <Card class="flex-col flex-1 min-w-0 gap-6 relative">
+      <Card class="flex-col flex-1 min-w-0 gap-6 relative h-full overflow-hidden">
         <router-view />
       </Card>
     </div>
