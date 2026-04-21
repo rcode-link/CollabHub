@@ -163,9 +163,7 @@ const load = () => {
         })
         .catch((error) => {
             joining.value = false;
-            toast.error(error.response?.data?.message ?? 'Failed to join call', {
-                onClick: () => { window.location.href = "/"; },
-            });
+            toast.error(error.response?.data?.message ?? 'Failed to join call');
         });
 };
 

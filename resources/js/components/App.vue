@@ -2,7 +2,7 @@
   <div id="print" class="tiptap ProseMirror printOnly"></div>
   <router-view></router-view>
   <div id="append-container"></div>
-  <VideoCall v-if="videoStore.videoId" />
+  <VideoCall v-if="videoStore.videoId && route.name !== 'video-call'" />
 </template>
 <script setup lang="js">
 

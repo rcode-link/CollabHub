@@ -4,8 +4,8 @@
             "name": "admin",
             "credentials": [
                 {
-                    "accessKey": "2XYBWD4ZF8HT2QTFBQX7",
-                    "secretKey": "E1ThoRqbcBJ1jmk49XSJ1MoU7ZqUzYfHQnoy2pM1"
+                    "accessKey": "any",
+                    "secretKey": "any"
                 }
             ],
             "actions": [

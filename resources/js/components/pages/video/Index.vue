@@ -1,6 +1,7 @@
 <script setup lang="js">
 import { useLiveKit } from "@/functions/liveKit";
 import { useVideoCallStore } from '@/store/videoCallStore'
+import { useUserStore } from '@/store/user'
 //@ts-ignore
 import { reactive } from "vue";
 
@@ -15,6 +16,7 @@ import JoinRequests from "@/components/pages/video/partials/JoinRequests.vue";
 
 const liveKit = useLiveKit();
 const videoCall = useVideoCallStore();
+const userStore = useUserStore();
 const model = reactive({
     name: null,
     enableMicrophone: true,
@@ -48,7 +50,7 @@ const start = async (obj) => {
             <PrintTracks :class="{
                 'opacity-0 pointer-events-none': videoCall.size !== 'fullScreen',
             }" />
-            <JoinRequests />
+            <JoinRequests v-if="userStore.user?.id" />
             <VideoOptions />
         </div>
     </div>

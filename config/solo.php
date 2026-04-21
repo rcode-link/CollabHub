@@ -72,7 +72,16 @@ return [
         'About' => 'php artisan solo:about',
         'Logs' => EnhancedTailCommand::file(storage_path('logs/laravel.log')),
         'Vite' => 'npm run dev',
-        'Soketi' => "soketi start --config='./soketi.config.example.js'",
+        'Soketi' => sprintf(
+            'docker run --rm --name soketi -p %s:6001 -p 9601:9601 '
+            .'-e SOKETI_DEBUG=1 -e SOKETI_DEFAULT_APP_ID=%s '
+            .'-e SOKETI_DEFAULT_APP_KEY=%s -e SOKETI_DEFAULT_APP_SECRET=%s '
+            .'quay.io/soketi/soketi:latest-16-alpine',
+            env('PUSHER_PORT', '6001'),
+            env('PUSHER_APP_ID', 'app-id'),
+            env('PUSHER_APP_KEY', 'app-key'),
+            env('PUSHER_APP_SECRET', 'app-secret'),
+        ),
         'CroneJob' => 'php artisan queue:work',
         'Collab' => sprintf(
             'cd collaboration-server && NODE_TLS_REJECT_UNAUTHORIZED=0 LARAVEL_URL=%s COLLAB_SECRET=%s COLLAB_PORT=%s npm run dev',
