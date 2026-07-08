@@ -212,7 +212,7 @@ load()
 </script>
 
 <template>
-  <div class="min-h-full flex flex-col">
+  <div class="flex flex-col h-[calc(100vh-86px)] lg:h-[calc(100vh-2rem)]">
 
     <!-- Sticky document header -->
     <div class="sticky top-0 z-30 flex items-center gap-3 px-5 h-11 bg-white/95 dark:bg-gray-900/95 backdrop-blur-sm border-b border-gray-100 dark:border-gray-800 shrink-0">
@@ -419,9 +419,10 @@ load()
     <div v-else class="flex flex-1 min-h-0">
       <!-- Editor -->
       <div class="flex-1 min-w-0 overflow-y-auto">
-        <div class="max-w-3xl mx-auto w-full flex flex-col gap-3 py-4">
+        <div class="max-w-3xl mx-auto w-full min-h-full flex flex-col gap-3 py-4">
           <AdvancedEditor
             ref="editorRef"
+            class="flex-1 min-h-0 flex flex-col"
             :key="document.id"
             v-model="document.content"
             :editable="canUpdate"
@@ -463,27 +464,25 @@ load()
             </button>
           </div>
 
-          <!-- Pending inline comment context -->
-          <div v-if="pendingComment" class="px-4 py-3 border-b border-gray-100 dark:border-gray-800 bg-amber-50/50 dark:bg-amber-900/10 shrink-0">
-            <p class="text-[10px] uppercase tracking-wider text-amber-600 dark:text-amber-400 font-semibold mb-1">Commenting on</p>
-            <p class="text-xs text-gray-700 dark:text-gray-300 italic line-clamp-3">"{{ pendingComment.quotedText }}"</p>
-            <button
-              class="mt-2 text-[10px] text-gray-400 hover:text-red-500 transition-colors"
-              @click="cancelPendingComment"
-            >Cancel</button>
-          </div>
-
-          <div class="flex-1 overflow-hidden">
-            <Comments
-              :chat-id="chatId"
-              :pending-comment="pendingComment"
-              :active-comment-id="activeCommentId"
-              @comment-sent="onCommentSent"
-            />
-          </div>
+          <Comments
+            class="flex-1 min-h-0"
+            :chat-id="chatId"
+            :pending-comment="pendingComment"
+            :active-comment-id="activeCommentId"
+            @comment-sent="onCommentSent"
+            @cancel-pending="cancelPendingComment"
+          />
         </div>
       </Transition>
     </div>
 
   </div>
 </template>
+
+<style scoped>
+:deep(.editor-content) {
+  flex: 1 1 0%;
+  display: flex;
+  flex-direction: column;
+}
+</style>

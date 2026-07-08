@@ -61,7 +61,7 @@ const showUser = computed(() => {
     v-if="showUser && isWebhook"
     class="mb-1 mt-2 ml-4 flex gap-1 items-center"
   >
-    <div class="w-8 h-8 rounded-full bg-orange-500 flex items-center justify-center text-white flex-shrink-0">
+    <div class="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center text-white flex-shrink-0">
       <WebhookIcon class="w-4 h-4" />
     </div>
     <div class="font-bold">

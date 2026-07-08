@@ -55,7 +55,7 @@ const initials = computed(() => {
         <!-- Camera off: show initials avatar -->
         <div v-if="isVideoDisabled" class="absolute inset-0 flex items-center justify-center bg-gray-800">
             <div
-                class="flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-br from-orange-500 to-blue-600 text-lg font-bold text-white select-none shadow-lg"
+                class="flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-br from-blue-500 to-blue-700 text-lg font-bold text-white select-none shadow-lg"
             >
                 {{ initials }}
             </div>

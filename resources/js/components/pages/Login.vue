@@ -49,7 +49,7 @@ const login = () => {
 <template>
   <div class="min-h-screen flex">
     <!-- Left branding panel -->
-    <div class="hidden lg:flex lg:w-1/2 flex-col justify-between p-12 bg-gradient-to-br from-orange-400 via-orange-500 to-blue-500 text-white">
+    <div class="hidden lg:flex lg:w-1/2 flex-col justify-between p-12 bg-gradient-to-br from-blue-500 via-blue-600 to-blue-800 text-white">
       <div>
         <img src="@/assets/logo.svg" alt="CollabHub" class="h-10 brightness-0 invert" />
       </div>
@@ -57,10 +57,10 @@ const login = () => {
         <h1 class="text-4xl font-bold leading-tight">
           Your team's<br />collaboration hub
         </h1>
-        <p class="text-orange-100 text-lg">
+        <p class="text-blue-100 text-lg">
           Everything your team needs — chat, projects, documents, and more — in one place.
         </p>
-        <ul class="space-y-3 text-orange-50">
+        <ul class="space-y-3 text-blue-50">
           <li class="flex items-center gap-3">
             <svg class="w-5 h-5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
               <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
@@ -87,7 +87,7 @@ const login = () => {
           </li>
         </ul>
       </div>
-      <p class="text-orange-200 text-sm">© {{ new Date().getFullYear() }} CollabHub. All rights reserved.</p>
+      <p class="text-blue-200 text-sm">© {{ new Date().getFullYear() }} CollabHub. All rights reserved.</p>
     </div>
 
     <!-- Right form panel -->

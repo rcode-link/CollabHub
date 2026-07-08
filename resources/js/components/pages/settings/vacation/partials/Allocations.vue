@@ -109,7 +109,7 @@ const updateDays = (userId, days) => {
                             type="checkbox"
                             :checked="isAllocated(user.id)"
                             @change="toggleUser(user)"
-                            class="w-4 h-4 rounded border-gray-300 text-orange-500 focus:ring-orange-500 dark:border-gray-600 dark:bg-gray-700 cursor-pointer"
+                            class="w-4 h-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 cursor-pointer"
                         />
 
                         <!-- Avatar + name -->
@@ -138,7 +138,7 @@ const updateDays = (userId, days) => {
                             <span class="text-xs text-gray-400">days</span>
                             <span
                                 v-if="saving[user.id]"
-                                class="w-3 h-3 border-2 border-orange-500 border-t-transparent rounded-full animate-spin"
+                                class="w-3 h-3 border-2 border-blue-600 border-t-transparent rounded-full animate-spin"
                             />
                         </div>
 

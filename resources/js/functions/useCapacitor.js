@@ -4,6 +4,8 @@
  * notifications, badge counts, and app lifecycle via Capacitor plugins.
  */
 
+import { colors as brandColors } from '@/brand-tokens.js'
+
 export function isCapacitor() {
   return !!(window.Capacitor && window.Capacitor.isNativePlatform && window.Capacitor.isNativePlatform())
 }
@@ -88,7 +90,7 @@ export async function showCapacitorNotification({ title, body }) {
         title: title || 'CollabHub',
         body: body || '',
         smallIcon: 'ic_notification',
-        iconColor: '#FFA500',
+        iconColor: brandColors.evergreen,
         sound: 'default',
       },
     ],

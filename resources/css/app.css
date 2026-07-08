@@ -5,37 +5,12 @@
 .no-scrollbar::-webkit-scrollbar { display: none; }
 .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
-@theme {
-  /* Custom Colors */
-  --color-primary-50: #2d8dff;
-  --color-primary-100: #378ef4;
-  --color-primary-200: #428fe9;
-  --color-primary-300: #4c90df;
-  --color-primary-400: #5791d4;
-  --color-primary-500: #4a90e2;
-  --color-primary-600: #969696;
-  --color-primary-700: #8b95a0;
-  --color-primary-800: #8194ab;
-  --color-primary-900: #7693b5;
-  --color-primary-950: #6c92c0;
-  /* Custom Fonts */
-  --font-sans: 'Roboto', 'Helvetica', 'Arial', 'ui-sans-serif', 'system-ui',
-    '-apple-system', 'Segoe UI', 'Noto Sans', 'sans-serif', 'Apple Color Emoji',
-    'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
-  --font-body: 'Roboto', 'Helvetica', 'Arial', 'ui-sans-serif', 'system-ui',
-    '-apple-system', 'Segoe UI', 'Noto Sans', 'sans-serif', 'Apple Color Emoji',
-    'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
-
-  /* Font Sizes */
-  --font-size-heading: 24px;
-  --font-size-subheading: 18px;
-  --font-size-body: 14px;
-
-  /* Font Weights */
-  --font-weight-bold: 700;
-  --font-weight-semibold: 600;
-  --font-weight-regular: 400;
-}
+/*
+ * All brand tokens (colors, fonts, type scale, radii) live in
+ * resources/js/brand-tokens.js. They are exposed here as utility classes
+ * and :root CSS variables (--brand-*, --green-*, --neutral-*) via
+ * tailwind.config.js — do not hardcode brand values in this file.
+ */
 
 /* Sidebar width variable */
 :root {
@@ -83,7 +58,8 @@ h2,
 h3,
 h4,
 h5 {
-  @apply font-extrabold leading-none tracking-tight text-gray-900 dark:text-white;
+  /* Space Grotesk 600, tight tracking per Brand Standards 04 — Typography */
+  @apply font-display font-semibold leading-none tracking-tight text-gray-900 dark:text-white;
 }
 
 .input.big-input > .tiptap.ProseMirror {
@@ -106,7 +82,7 @@ h5 {
          bg-gray-100 dark:bg-gray-800
          text-pink-600 dark:text-pink-400
          border border-gray-200 dark:border-gray-700;
-  font-family: 'JetBrainsMono', 'Fira Code', ui-monospace, monospace;
+  font-family: 'IBM Plex Mono', 'JetBrainsMono', 'Fira Code', ui-monospace, monospace;
 }
 
 /* ── Code block wrapper ── */
@@ -115,7 +91,7 @@ pre {
   position: relative;
   background: #1e1e2e;
   color: #cdd6f4;
-  font-family: 'JetBrainsMono', 'Fira Code', ui-monospace, monospace;
+  font-family: 'IBM Plex Mono', 'JetBrainsMono', 'Fira Code', ui-monospace, monospace;
   padding: 0;
   border-radius: 0.75rem;
   overflow: hidden;
@@ -357,8 +333,7 @@ pre code {
 }
 
 .node-wrapper:hover::before {
-  background-color: #3b82f6;
-  /* Tailwind blue-500 */
+  background-color: var(--brand-evergreen);
 }
 
 /* Container for the action buttons */
@@ -392,10 +367,8 @@ pre code {
   height: 28px;
   border-radius: 4px;
   background-color: white;
-  border: 1px solid #e5e7eb;
-  /* Tailwind gray-200 */
-  color: #6b7280;
-  /* Tailwind gray-500 */
+  border: 1px solid var(--neutral-200);
+  color: var(--neutral-500);
   cursor: pointer;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
   transition: all 0.2s ease;
@@ -403,10 +376,8 @@ pre code {
 }
 
 .node-wrapper-action:hover {
-  background-color: #f3f4f6;
-  /* Tailwind gray-100 */
-  color: #374151;
-  /* Tailwind gray-700 */
+  background-color: var(--neutral-100);
+  color: var(--neutral-700);
 }
 
 .node-wrapper-action svg {
@@ -416,14 +387,12 @@ pre code {
 
 /* Move Up button */
 .node-wrapper-action.move-up:hover {
-  color: #2563eb;
-  /* Tailwind blue-600 */
+  color: var(--brand-evergreen);
 }
 
 /* Move Down button */
 .node-wrapper-action.move-down:hover {
-  color: #2563eb;
-  /* Tailwind blue-600 */
+  color: var(--brand-evergreen);
 }
 
 /* Delete button */
@@ -434,25 +403,19 @@ pre code {
 
 /* Dark mode support */
 .dark .node-wrapper-action {
-  background-color: #1f2937;
-  /* Tailwind gray-800 */
-  border-color: #374151;
-  /* Tailwind gray-700 */
-  color: #9ca3af;
-  /* Tailwind gray-400 */
+  background-color: var(--neutral-800);
+  border-color: var(--neutral-700);
+  color: var(--neutral-400);
 }
 
 .dark .node-wrapper-action:hover {
-  background-color: #111827;
-  /* Tailwind gray-900 */
-  color: #e5e7eb;
-  /* Tailwind gray-200 */
+  background-color: var(--neutral-900);
+  color: var(--neutral-200);
 }
 
 /* Specific styling for different node types */
 .heading-wrapper::before {
-  background-color: #3b82f6;
-  /* Tailwind blue-500 */
+  background-color: var(--brand-evergreen);
 }
 
 .bulletList-wrapper::before,

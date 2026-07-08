@@ -90,13 +90,16 @@ return [
             env('COLLAB_PORT', '6002'),
         ),
         'SeaweedFS' => sprintf(
-            'weed mini -dir=%s -master.port=%s -volume.port=%s -filer.port=%s -s3.port=%s -s3.config=%s',
-            $seaweedDir,
+            'docker run --rm --name collabhub-seaweedfs '
+            .'-p %s:9333 -p %s:8080 -p %s:8888 -p %s:8333 '
+            .'-v %s:/data '
+            .'chrislusf/seaweedfs:latest server '
+            .'-dir=/data -s3 -s3.config=/data/s3.json -master.volumeSizeLimitMB=1024',
             env('SEAWEEDFS_MASTER_PORT', '9333'),
             env('SEAWEEDFS_VOLUME_PORT', '8080'),
             env('SEAWEEDFS_FILER_PORT', '8888'),
             env('SEAWEEDFS_S3_PORT', '8333'),
-            $s3ConfigPath,
+            $seaweedDir,
         ),
     ],
 

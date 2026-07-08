@@ -9,7 +9,8 @@
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.bunny.net">
-    <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet"/>
+    {{-- Brand fonts (see resources/js/brand-tokens.js): IBM Plex Sans (body/UI), Space Grotesk (headings), IBM Plex Mono (code/labels) --}}
+    <link href="https://fonts.bunny.net/css?family=ibm-plex-sans:400,500,600|ibm-plex-mono:400,500,600|space-grotesk:500,600,700&display=swap" rel="stylesheet"/>
 
     <!-- Scripts -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])

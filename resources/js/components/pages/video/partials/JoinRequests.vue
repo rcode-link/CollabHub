@@ -90,7 +90,7 @@ onUnmounted(() => {
                         class="flex items-center justify-between gap-3 rounded-lg bg-gray-700/50 px-3 py-2.5"
                     >
                         <div class="flex items-center gap-2.5 min-w-0">
-                            <div class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-orange-500 to-blue-600 text-xs font-bold text-white">
+                            <div class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-blue-500 to-blue-700 text-xs font-bold text-white">
                                 {{ (req.name ?? '?').split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2) }}
                             </div>
                             <span class="truncate text-sm font-medium text-white">{{ req.name }}</span>

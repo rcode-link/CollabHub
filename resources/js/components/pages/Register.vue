@@ -57,7 +57,7 @@ const register = () => {
 <template>
   <div class="min-h-screen flex">
     <!-- Left branding panel -->
-    <div class="hidden lg:flex lg:w-1/2 flex-col justify-between p-12 bg-gradient-to-br from-orange-400 via-orange-500 to-blue-500 text-white">
+    <div class="hidden lg:flex lg:w-1/2 flex-col justify-between p-12 bg-gradient-to-br from-blue-500 via-blue-600 to-blue-800 text-white">
       <div>
         <img src="@/assets/logo.svg" alt="CollabHub" class="h-10 brightness-0 invert" />
       </div>
@@ -65,11 +65,11 @@ const register = () => {
         <h1 class="text-4xl font-bold leading-tight">
           Join your team<br />on CollabHub
         </h1>
-        <p class="text-orange-100 text-lg">
+        <p class="text-blue-100 text-lg">
           Create your account and start collaborating with your team today.
         </p>
       </div>
-      <p class="text-orange-200 text-sm">© {{ new Date().getFullYear() }} CollabHub. All rights reserved.</p>
+      <p class="text-blue-200 text-sm">© {{ new Date().getFullYear() }} CollabHub. All rights reserved.</p>
     </div>
 
     <!-- Right form panel -->

@@ -37,7 +37,7 @@ const daysAgo = computed(() => {
       <UserIcon v-if="['user', 'group'].includes(obj.type)" :user="obj" class="w-9 h-9" />
       <div
         v-else-if="obj.type === 'webhook' || obj.type === 'app\\models\\webhook'"
-        class="w-9 h-9 rounded-full bg-orange-500 flex items-center justify-center text-white"
+        class="w-9 h-9 rounded-full bg-blue-600 flex items-center justify-center text-white"
       ><WebhookIcon class="w-5 h-5" /></div>
       <Task v-else-if="obj.type === 'app\\models\\task'" class="w-9 h-9" />
       <img

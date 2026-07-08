@@ -182,13 +182,13 @@ const retryJoin = () => {
     <div class="relative flex h-screen w-screen items-center justify-center bg-gray-900 overflow-hidden">
         <!-- Ambient glow blobs -->
         <div class="pointer-events-none absolute -top-40 -left-40 h-96 w-96 rounded-full bg-blue-600/20 blur-3xl"></div>
-        <div class="pointer-events-none absolute -bottom-40 -right-40 h-96 w-96 rounded-full bg-orange-500/20 blur-3xl"></div>
+        <div class="pointer-events-none absolute -bottom-40 -right-40 h-96 w-96 rounded-full bg-blue-500/20 blur-3xl"></div>
 
         <!-- Waiting for approval overlay -->
         <div v-if="waitingRoom === 'waiting'"
             class="relative z-10 flex flex-col items-center gap-6 text-center px-4">
-            <div class="flex h-20 w-20 items-center justify-center rounded-full bg-gradient-to-br from-orange-500/20 to-blue-600/20 backdrop-blur-sm">
-                <svg class="h-10 w-10 animate-spin text-orange-400" fill="none" viewBox="0 0 24 24">
+            <div class="flex h-20 w-20 items-center justify-center rounded-full bg-gradient-to-br from-blue-500/20 to-blue-700/20 backdrop-blur-sm">
+                <svg class="h-10 w-10 animate-spin text-blue-400" fill="none" viewBox="0 0 24 24">
                     <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
                     <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
                 </svg>
@@ -234,7 +234,7 @@ const retryJoin = () => {
                 <button
                     type="button"
                     @click="retryJoin"
-                    class="rounded-xl bg-gradient-to-r from-orange-500 to-blue-600 px-6 py-2.5 text-sm font-semibold text-white transition hover:opacity-90"
+                    class="rounded-xl bg-gradient-to-r from-blue-500 to-blue-700 px-6 py-2.5 text-sm font-semibold text-white transition hover:opacity-90"
                 >
                     Try again
                 </button>
@@ -286,7 +286,7 @@ const retryJoin = () => {
                         <!-- Camera off: initials avatar -->
                         <div v-show="!model.enableCamera"
                             class="absolute inset-0 flex items-center justify-center bg-gray-800">
-                            <div class="flex h-20 w-20 items-center justify-center rounded-full bg-gradient-to-br from-orange-500 to-blue-600 text-2xl font-bold text-white select-none shadow-lg">
+                            <div class="flex h-20 w-20 items-center justify-center rounded-full bg-gradient-to-br from-blue-500 to-blue-700 text-2xl font-bold text-white select-none shadow-lg">
                                 {{ initials() }}
                             </div>
                         </div>
@@ -310,7 +310,7 @@ const retryJoin = () => {
             <div class="w-full lg:w-80">
                 <!-- Header -->
                 <div class="mb-5 text-center lg:text-left">
-                    <div class="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-orange-500 to-blue-600 shadow-lg lg:mx-0">
+                    <div class="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-blue-500 to-blue-700 shadow-lg lg:mx-0">
                         <svg class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
                                 d="M15 10l4.553-2.069A1 1 0 0121 8.87v6.26a1 1 0 01-1.447.894L15 14M3 8a2 2 0 012-2h10a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2V8z" />
@@ -376,7 +376,7 @@ const retryJoin = () => {
                         type="button"
                         :disabled="joining"
                         @click="load"
-                        class="w-full rounded-xl bg-gradient-to-r from-orange-500 to-blue-600 py-3 text-sm font-semibold text-white shadow-lg transition hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-gray-800 disabled:opacity-60 disabled:cursor-not-allowed"
+                        class="w-full rounded-xl bg-gradient-to-r from-blue-500 to-blue-700 py-3 text-sm font-semibold text-white shadow-lg transition hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-gray-800 disabled:opacity-60 disabled:cursor-not-allowed"
                     >
                         <span v-if="joining" class="flex items-center justify-center gap-2">
                             <svg class="h-4 w-4 animate-spin" fill="none" viewBox="0 0 24 24">

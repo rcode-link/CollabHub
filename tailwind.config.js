@@ -1,6 +1,7 @@
 import defaultTheme from 'tailwindcss/defaultTheme'
 import forms from '@tailwindcss/forms'
 import flowbite from 'flowbite/plugin'
+import brand from './resources/js/brand-tokens.js'
 
 /** @type {import('tailwindcss').Config} */
 export default {
@@ -16,37 +17,60 @@ export default {
   theme: {
     extend: {
       colors: {
+        /*
+         * Brand & Design Standards v1.0 (see resources/js/brand-tokens.js).
+         * `blue` → Evergreen scale and `gray` → warm neutrals so every
+         * existing blue/gray utility (and Flowbite's defaults) renders
+         * on-brand without touching each component.
+         */
+        blue: brand.greenScale,
+        gray: brand.neutralScale,
         primary: {
-          orange: '#FFA500',
-          blue: '#4A90E2',
+          DEFAULT: brand.colors.evergreen,
+          hover: brand.colors.leaf,
+          mint: brand.colors.mint,
+          wash: brand.colors.wash,
         },
-        secondary: {
-          darkBlue: '#003366',
-          lightBlue: '#ADD8E6',
-        },
+        brand: brand.colors,
         background: {
-          dark: '#121212',
+          dark: brand.colors.ink,
         },
         text: {
-          light: '#FFFFFF',
-          dark: '#121212',
+          light: brand.colors.paper,
+          dark: brand.colors.ink,
         },
       },
       fontFamily: {
-        sans: ['Roboto', 'Helvetica', 'Arial', ...defaultTheme.fontFamily.sans],
+        sans: [...brand.fonts.sans, ...defaultTheme.fontFamily.sans],
+        display: [...brand.fonts.display, ...defaultTheme.fontFamily.sans],
+        mono: [...brand.fonts.mono, ...defaultTheme.fontFamily.mono],
       },
-      fontSize: {
-        heading: '24px',
-        subheading: '18px',
-        body: '14px',
-      },
+      fontSize: brand.fontSize,
       fontWeight: {
         bold: '700',
         semibold: '600',
         regular: '400',
       },
+      borderRadius: brand.radius,
     },
   },
 
-  plugins: [forms, flowbite],
+  plugins: [
+    forms,
+    flowbite,
+    /* Expose brand tokens as CSS variables for plain-CSS use (app.css etc.). */
+    function ({ addBase }) {
+      const vars = {}
+      for (const [name, value] of Object.entries(brand.colors)) {
+        vars[`--brand-${name}`] = value
+      }
+      for (const [step, value] of Object.entries(brand.greenScale)) {
+        vars[`--green-${step}`] = value
+      }
+      for (const [step, value] of Object.entries(brand.neutralScale)) {
+        vars[`--neutral-${step}`] = value
+      }
+      addBase({ ':root': vars })
+    },
+  ],
 }

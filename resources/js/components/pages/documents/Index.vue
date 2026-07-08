@@ -45,10 +45,10 @@ onMounted(() => store.loadDocuments())
 
 <template>
     <Auth>
-        <div class="rounded-2xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 shadow-sm overflow-hidden">
+        <div class="flex flex-col rounded-2xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 shadow-sm overflow-hidden h-[calc(100vh-86px)] lg:h-[calc(100vh-2rem)]">
 
             <!-- Header with search -->
-            <div class="flex items-center gap-3 border-b border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-700/40 px-4 py-2">
+            <div class="flex items-center gap-3 border-b border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-700/40 px-4 py-2 flex-shrink-0">
                 <div class="flex items-center gap-3 flex-1 text-xs font-medium uppercase tracking-wide text-gray-400">
                     <div class="w-3.5 flex-shrink-0" />
                     <div class="w-5 flex-shrink-0" />
@@ -70,7 +70,9 @@ onMounted(() => store.loadDocuments())
                 </div>
             </div>
 
-            <DocumentPrintTree :parent_id="null" :root="true" />
+            <div class="flex-1 min-h-0 overflow-auto">
+                <DocumentPrintTree :parent_id="null" :root="true" />
+            </div>
         </div>
     </Auth>
 </template>

@@ -13,7 +13,7 @@ const props = defineProps({
     pendingComment: { type: Object, default: null },
     activeCommentId: { type: String, default: null },
 });
-const emit = defineEmits(['comment-sent']);
+const emit = defineEmits(['comment-sent', 'cancel-pending']);
 const chatLogic = useChatLogic(props.chatId, messageContainerRef);
 const chatStore = chatDetails();
 
@@ -45,9 +45,9 @@ watch(() => props.activeCommentId, (cId) => {
 </script>
 
 <template>
-    <div class="-mx-5">
+    <div class="flex flex-col min-h-0">
         <main ref="messageContainerRef" @scroll="chatLogic.scrolled"
-            class="overflow-auto max-w-full pb-2 message-container">
+            class="flex-1 min-h-0 overflow-auto max-w-full pt-3 pb-2 message-container">
             <!-- Loading indicator at top when loading older messages -->
             <div v-if="chatLogic.isLoadingMore" class="text-center p-2 text-gray-500">
                 Loading older messages...
@@ -64,7 +64,19 @@ watch(() => props.activeCommentId, (cId) => {
             <!-- Add invisible marker at the end for scrolling to bottom -->
             <div class="h-1 w-full" id="messages-end"></div>
         </main>
+
+        <!-- Pending inline comment context: pinned above the composer -->
+        <div v-if="pendingComment" class="px-4 py-3 border-t border-gray-100 dark:border-gray-800 bg-amber-50/50 dark:bg-amber-900/10 shrink-0">
+            <p class="text-[10px] uppercase tracking-wider text-amber-600 dark:text-amber-400 font-semibold mb-1">Commenting on</p>
+            <p class="text-xs text-gray-700 dark:text-gray-300 italic line-clamp-3">"{{ pendingComment.quotedText }}"</p>
+            <button
+                class="mt-2 text-[10px] text-gray-400 hover:text-red-500 transition-colors"
+                @click="emit('cancel-pending')"
+            >Cancel</button>
+        </div>
+
         <MessagesFooter
+            class="shrink-0"
             :chat-id="chatId"
             :pending-comment="pendingComment"
             @comment-sent="emit('comment-sent')"

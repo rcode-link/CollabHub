@@ -4,8 +4,8 @@
     "description": "Collaboration platform",
     "start_url": "/",
     "display": "standalone",
-    "background_color": "#ffffff",
-    "theme_color": "#4f46e5",
+    "background_color": "#F7F6F2",
+    "theme_color": "#1F6E43",
     "icons": [
         {
             "src": "/img/windows11/SmallTile.scale-100.png",

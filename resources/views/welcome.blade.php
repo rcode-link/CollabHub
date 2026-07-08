@@ -9,11 +9,13 @@
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.bunny.net">
-    <link href="https://fonts.bunny.net/css?family=figtree:400,600&display=swap" rel="stylesheet" />
+    {{-- Brand fonts (see resources/js/brand-tokens.js): IBM Plex Sans (body/UI), Space Grotesk (headings), IBM Plex Mono (code/labels) --}}
+    <link href="https://fonts.bunny.net/css?family=ibm-plex-sans:400,500,600|ibm-plex-mono:400,500,600|space-grotesk:500,600,700&display=swap" rel="stylesheet" />
     <link rel="manifest" href="/manifest.json" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="apple-touch-icon" href="/favicon.svg" />
-    <meta name="theme-color" content="#FF9500">
+    {{-- Evergreen — value from resources/js/brand-tokens.js --}}
+    <meta name="theme-color" content="#1F6E43">
 <script src="http://localhost:8098"></script>
     {{-- @production
         @php
