@@ -1,4 +1,4 @@
-import { VueRenderer } from '@tiptap/vue-3'
+import { h, render } from 'vue'
 import { tippy } from 'vue-tippy'
 
 import MentionList from '@/functions/editor/mention/MentionList.vue'
@@ -9,27 +9,38 @@ export default function useSuggestion() {
   const userState = useUserStore();
   const plugin = {
     items: async ({ query }) => {
-      return await axios.get(`/api/v1/company/users/${userState.company.id}`, {
+      if (!userState.company?.id) return [];
+
+      return await window.axios.get(`/api/v1/company/users/${userState.company.id}`, {
         params: {
           'user': query,
         }
-      }).then(res => res.data.data);
+      }).then(res => (res.data.data ?? []).slice(0, 8)).catch(() => []);
     },
 
     render: () => {
-      let component
-      let popup
+      let holder = null
+      let popup = null
+      let listInstance = null
+
+      // MentionList is pure-props, so it can be mounted standalone — no
+      // dependency on the editor's Vue app context (VueRenderer needs the
+      // EditorContent's contentComponent, which is fragile across editors).
+      const draw = (props) => {
+        render(
+          h(MentionList, {
+            items: props.items,
+            command: props.command,
+            ref: inst => { listInstance = inst },
+          }),
+          holder,
+        )
+      }
 
       return {
-        onSelect(props) {
-          console.log(props);
-
-        },
         onStart: props => {
-          component = new VueRenderer(MentionList, {
-            props,
-            editor: props.editor,
-          })
+          holder = document.createElement('div')
+          draw(props)
 
           if (!props.clientRect) {
             return
@@ -38,18 +49,22 @@ export default function useSuggestion() {
           popup = tippy('body', {
             getReferenceClientRect: props.clientRect,
             appendTo: () => document.body,
-            content: component.element,
+            content: holder,
             showOnCreate: true,
             interactive: true,
             trigger: 'manual',
-            placement: 'bottom-start',
+            placement: 'auto-start',
+            maxWidth: 'none',
+            zIndex: 99999,
+            theme: 'mention',
+            arrow: false,
           })
         },
 
         onUpdate(props) {
-          component.updateProps(props)
+          if (holder) draw(props)
 
-          if (!props.clientRect) {
+          if (!props.clientRect || !popup) {
             return
           }
 
@@ -60,17 +75,20 @@ export default function useSuggestion() {
 
         onKeyDown(props) {
           if (props.event.key === 'Escape') {
-            popup[0].hide()
+            popup?.[0].hide()
 
             return true
           }
 
-          return component.ref?.onKeyDown(props)
+          return listInstance?.onKeyDown(props) ?? false
         },
 
         onExit() {
-          popup[0].destroy()
-          component.destroy()
+          popup?.[0].destroy()
+          if (holder) render(null, holder)
+          popup = null
+          holder = null
+          listInstance = null
         },
       }
     },

@@ -15,7 +15,7 @@ import DrawIONodeView from '@/components/shared/advancedEditor/blocks/drawio/Dra
 import hljs from 'highlight.js'
 import MobileMenu from '@/components/shared/advancedEditor/MobileMenu.vue'
 import Mention from '@tiptap/extension-mention'
-import suggestion from '@/functions/editor/mention/suggestion'
+import useSuggestion from '@/functions/editor/mention/suggestion'
 import { SmilieReplacer } from '@/functions/smilieReplacer'
 import { useConvertTextToLink } from '@/functions/editor/convertTextToLink'
 import { Image } from '@tiptap/extension-image'
@@ -286,7 +286,7 @@ const getExtensions = () => {
       HTMLAttributes: {
         class: 'mention',
       },
-      suggestion,
+      suggestion: useSuggestion().plugin,
     }),
     Link.configure({}),
     EnhancedCodeBlock.configure({

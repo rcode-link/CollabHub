@@ -80,7 +80,25 @@ class ChatController extends Controller
         $data['chatable_type'] = User::class;
         $data['chatable_id'] = Auth::id();
 
-        $users = collect($request->get('user_id'))->push(Auth::id());
+        $users = collect($request->get('user_id'))->push(Auth::id())->map(fn ($id) => (int) $id)->unique()->values();
+
+        // Untitled 1-on-1 chats are direct messages — reuse the existing one instead of creating a duplicate
+        if ($users->count() === 2 && blank($data['title'] ?? null)) {
+            $existing = Chat::query()
+                ->where('chatable_type', User::class)
+                ->where(fn ($q) => $q->whereNull('title')->orWhere('title', ''))
+                ->whereHas('users', fn ($q) => $q->where('users.id', $users[0]))
+                ->whereHas('users', fn ($q) => $q->where('users.id', $users[1]))
+                ->has('users', '=', 2)
+                ->first();
+
+            if ($existing) {
+                $existing->load('users');
+                $existing->loadCount('users');
+
+                return response()->json(['data' => new ChatResource($existing)], 200);
+            }
+        }
 
         $chat = Chat::create($data);
 

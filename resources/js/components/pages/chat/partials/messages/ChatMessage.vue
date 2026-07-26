@@ -20,8 +20,13 @@ const props = defineProps({
 
 <template>
     <div class="flex flex-col mx-4 relative">
-        <PrintChatMessage :message="message" @mouseenter="() => { chatStore.setSelectedMessage(message.id); }"
-            @mouseleave="() => { chatStore.setSelectedMessage(null); }" />
+        <PrintChatMessage :message="message"
+            @mouseenter="() => { if (chatStore.selectedMessage !== message.id) chatStore.setSelectedMessage(message.id); }"
+            @mouseleave="() => {
+                // Keep the options bar (and its teleported emoji popup) alive while the picker is open
+                if (document.querySelector('[data-tippy-root] .v3-emoji-picker')) return;
+                chatStore.setSelectedMessage(null);
+            }" />
 
 
     </div>

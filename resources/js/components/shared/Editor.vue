@@ -27,12 +27,12 @@ import { debounce } from '@/functions/debounce'
 const chatStore = chatDetails()
 const router = useRouter()
 const props = defineProps({
-  modelValue: '',
-  model: '',
-  cssClass: '',
-  defaultShowPreview: true,
-  editable: true,
-  submitOnEnter: false,
+  modelValue: { default: '' },
+  model: { default: '' },
+  cssClass: { default: '' },
+  defaultShowPreview: { type: Boolean, default: true },
+  editable: { type: Boolean, default: true },
+  submitOnEnter: { type: Boolean, default: false },
   placeholder: { type: String, default: '' },
 })
 
@@ -56,6 +56,9 @@ const editor = useEditor({
     handleKeyDown: (view, event) => {
       if (event.key !== 'Enter') return false
       if (event.shiftKey) return false
+
+      // While the mention autocomplete popup is open, Enter selects the user
+      if (document.querySelector('[data-tippy-root] .mention-items')) return false
 
       if (!props.submitOnEnter && !event.ctrlKey) return false
 

@@ -4,6 +4,7 @@ import { DateTime } from 'luxon'
 import { computed } from 'vue'
 import { chatDetails } from '@/store/chatStore.js'
 import WebhookIcon from '@/components/shared/icons/WebhookIcon.vue'
+import UserHoverCard from '@/components/shared/UserHoverCard.vue'
 
 const props = defineProps({
   user: { type: Object, default: null },
@@ -75,23 +76,24 @@ const showUser = computed(() => {
   </div>
 
   <!-- Regular user sender -->
-  <router-link
-    v-else-if="showUser && user"
-    :to="`/user/${user.id}`"
-    :class="{ 'mb-1 mt-2 ml-4 flex gap-1 items-center': true }"
-  >
-    <fwb-avatar :img="user.avatar" />
-    <fwb-p class="font-bold">
-      <div>
-        {{ user.name }}
-      </div>
-      <div class="text-xs text-gray-600 mb-auto">
-        {{
-          DateTime.fromISO(messageDateTime).toLocaleString(
-            DateTime.DATETIME_SHORT,
-          )
-        }}
-      </div>
-    </fwb-p>
-  </router-link>
+  <UserHoverCard v-else-if="showUser && user" :user="user" class="block">
+    <router-link
+      :to="`/user/${user.id}`"
+      :class="{ 'mb-1 mt-2 ml-4 flex gap-1 items-center': true }"
+    >
+      <fwb-avatar :img="user.avatar" />
+      <fwb-p class="font-bold">
+        <div>
+          {{ user.name }}
+        </div>
+        <div class="text-xs text-gray-600 mb-auto">
+          {{
+            DateTime.fromISO(messageDateTime).toLocaleString(
+              DateTime.DATETIME_SHORT,
+            )
+          }}
+        </div>
+      </fwb-p>
+    </router-link>
+  </UserHoverCard>
 </template>

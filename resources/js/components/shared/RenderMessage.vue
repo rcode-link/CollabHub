@@ -4,6 +4,7 @@ import { generateHTML } from '@tiptap/core'
 import { renderExtensions } from '@/functions/editor/renderExtensions'
 import VacationCard from '@/components/shared/vacationPlugin/VacationCard.vue'
 import LinkTooltip from '@/components/shared/LinkTooltip.vue'
+import UserHoverCard from '@/components/shared/UserHoverCard.vue'
 
 const props = defineProps({
     content: { type: [Object, String], default: null },
@@ -87,5 +88,6 @@ watch(() => parsed.value.html, () => nextTick(enhanceCodeBlocks))
             :event-id="eventId"
         />
         <LinkTooltip v-if="containerRef" :container="containerRef" />
+        <UserHoverCard v-if="containerRef" :container="containerRef" />
     </div>
 </template>

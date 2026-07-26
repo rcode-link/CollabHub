@@ -1,25 +1,54 @@
 <script setup>
 import EmojiPicker from 'vue3-emoji-picker'
-import { ref } from 'vue'
+import { h, ref, render, onMounted, onBeforeUnmount } from 'vue'
+import { tippy } from 'vue-tippy'
 
 const emits = defineEmits(['select'])
 
+const trigger = ref(null)
+let instance = null
+let holder = null
+
 const onSelectEmoji = e => {
     emits('select', e)
-    showPicker.value = false
+    instance?.hide()
 }
 
-const showPicker = ref(false)
+onMounted(() => {
+    holder = document.createElement('div')
+    render(
+        h(EmojiPicker, {
+            native: true,
+            theme: localStorage.getItem('color-theme') === 'dark' ? 'dark' : 'light',
+            onSelect: onSelectEmoji,
+        }),
+        holder,
+    )
+
+    instance = tippy(trigger.value, {
+        content: holder,
+        appendTo: () => document.body,
+        interactive: true,
+        trigger: 'click',
+        placement: 'auto-end',
+        theme: 'mention',
+        arrow: false,
+        maxWidth: 'none',
+        zIndex: 99999,
+    })
+})
+
+onBeforeUnmount(() => {
+    instance?.destroy()
+    if (holder) render(null, holder)
+    instance = null
+    holder = null
+})
 </script>
 
 <template>
     <div class="relative flex justify-center items-center">
-        <label class="cursor-pointer" @click="
-            e => {
-                e.preventDefault()
-                showPicker = !showPicker
-            }
-        ">
+        <label ref="trigger" class="cursor-pointer" @click.prevent>
             <svg class="w-4 h-4" aria-hidden="true" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path
                     d="M10 19C14.9706 19 19 14.9706 19 10C19 5.02944 14.9706 1 10 1C5.02944 1 1 5.02944 1 10C1 14.9706 5.02944 19 10 19Z"
@@ -34,8 +63,6 @@ const showPicker = ref(false)
                     fill="currentColor" />
             </svg>
         </label>
-        <EmojiPicker :native="true" v-show="showPicker" @select="onSelectEmoji"
-            class="absolute z-50 bottom-0 right-0" />
     </div>
 </template>
 

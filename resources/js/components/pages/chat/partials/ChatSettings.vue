@@ -4,6 +4,7 @@ import Button from '@/components/shared/Button.vue'
 import Text from '@/components/shared/Text.vue'
 import Label from '@/components/shared/Label.vue'
 import UserIcon from '@/components/shared/UserIcon.vue'
+import UserHoverCard from '@/components/shared/UserHoverCard.vue'
 import CheckBox from '@/components/shared/CheckBox.vue'
 import CopyIcon from '@/components/shared/icons/CopyIcon.vue'
 import TrashIcon from '@/components/shared/icons/TrashIcon.vue'
@@ -266,12 +267,14 @@ defineExpose({ modal })
                 @update="selectionUpdated"
                 :value="obj.id"
               />
-              <label :for="`chat_user_${obj.id}`" class="flex gap-2 items-center cursor-pointer">
-                <UserIcon :status="false" :user="obj" />
-                <div>
-                  <div class="text-sm font-medium text-gray-900 dark:text-white">{{ obj.name }}</div>
-                  <div class="text-xs text-gray-500 dark:text-gray-400">{{ obj.email }}</div>
-                </div>
+              <label :for="`chat_user_${obj.id}`" class="cursor-pointer">
+                <UserHoverCard :user="obj" class="flex gap-2 items-center">
+                  <UserIcon :status="false" :user="obj" />
+                  <div>
+                    <div class="text-sm font-medium text-gray-900 dark:text-white">{{ obj.name }}</div>
+                    <div class="text-xs text-gray-500 dark:text-gray-400">{{ obj.email }}</div>
+                  </div>
+                </UserHoverCard>
               </label>
             </li>
           </ul>
