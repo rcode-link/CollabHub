@@ -11,6 +11,7 @@ const props = defineProps({
 const store = useVacationGroupStore();
 
 const loadStats = () => {
+    if (!props.userId) return;
     store.loadUserStats(props.userId);
 };
 

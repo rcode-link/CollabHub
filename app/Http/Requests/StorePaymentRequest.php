@@ -23,7 +23,7 @@ class StorePaymentRequest extends FormRequest
     {
         return [
             'invoice_id' => ['required', 'exists:invoices,id'],
-            'value' => ['int'],
+            'value' => ['required', 'numeric', 'min:0'],
             'date' => ['date'],
         ];
     }

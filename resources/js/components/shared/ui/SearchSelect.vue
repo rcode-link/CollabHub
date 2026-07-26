@@ -1,5 +1,6 @@
 <script setup>
-import { ref, computed, watch, nextTick } from 'vue'
+import { ref, computed, nextTick } from 'vue'
+import { useDropdownPanel } from '@/functions/useDropdownPanel'
 
 const props = defineProps({
     modelValue: { default: '' },
@@ -16,6 +17,11 @@ const isOpen = ref(false)
 const search = ref('')
 const searchInput = ref(null)
 const container = ref(null)
+const panel = ref(null)
+
+const { panelStyle } = useDropdownPanel(isOpen, container, panel, () => {
+    isOpen.value = false
+})
 
 const filteredOptions = computed(() => {
     if (!search.value) return props.options
@@ -49,19 +55,6 @@ const clear = () => {
     search.value = ''
 }
 
-const onClickOutside = (e) => {
-    if (container.value && !container.value.contains(e.target)) {
-        isOpen.value = false
-    }
-}
-
-watch(isOpen, (val) => {
-    if (val) {
-        document.addEventListener('mousedown', onClickOutside)
-    } else {
-        document.removeEventListener('mousedown', onClickOutside)
-    }
-})
 </script>
 
 <template>
@@ -105,10 +98,13 @@ watch(isOpen, (val) => {
             </div>
         </button>
 
-        <div
-            v-show="isOpen"
-            class="absolute z-50 mt-1 w-full bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg shadow-lg overflow-hidden"
-        >
+        <Teleport to="body">
+            <div
+                v-show="isOpen"
+                ref="panel"
+                :style="panelStyle"
+                class="z-[100] bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg shadow-lg overflow-hidden"
+            >
             <div class="p-2">
                 <input
                     ref="searchInput"
@@ -145,6 +141,7 @@ watch(isOpen, (val) => {
                     No results found
                 </div>
             </div>
-        </div>
+            </div>
+        </Teleport>
     </div>
 </template>

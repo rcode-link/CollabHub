@@ -6,6 +6,7 @@ import { debounce } from "@/functions/debounce";
 import UserIcon from "@/components/shared/UserIcon.vue";
 import Text from "@/components/shared/Text.vue";
 import { useRoute } from "vue-router";
+import { useDropdownPanel } from "@/functions/useDropdownPanel";
 
 const errors = useErrorsStore();
 const userState = useUserStore();
@@ -37,10 +38,17 @@ const emit = defineEmits(["update:modelValue", 'selectedUser']);
 
 const currentValue = ref(props.modelValue);
 const users = ref({
-    data: {}
+    data: []
 });
 const showItems = ref(false);
 const searchUsers = ref("");
+const trigger = ref(null);
+const panel = ref(null);
+
+const { panelStyle } = useDropdownPanel(showItems, trigger, panel, () => {
+    showItems.value = false;
+});
+
 const loadUsers = debounce(
     () =>
         window.axios
@@ -65,7 +73,8 @@ const handleItemClick = (obj) => {
 };
 
 const selectedUser = computed(() => {
-    return users.value?.data?.find(obj => obj.id === Number(currentValue.value));
+    const list = Array.isArray(users.value?.data) ? users.value.data : [];
+    return list.find(obj => obj.id === Number(currentValue.value));
 });
 
 const unSelectUser = () => {
@@ -95,7 +104,7 @@ watch(
 
 <template>
     <div class="relative">
-        <div :id="name" @click="() => (showItems = !showItems)" :class="{
+        <div ref="trigger" :id="name" @click="() => (showItems = !showItems)" :class="{
             'w-full cursor-pointer flex gap-3 items-center w-full': true,
             'bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-[0.4rem] dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500':
                 !errors.errors.hasOwnProperty(name),
@@ -105,7 +114,7 @@ watch(
             <template v-if="selectedUser">
                 <UserIcon avatar-size="xs" :user="selectedUser" />
                 {{ selectedUser.name }}
-                <div class="ml-auto p-2" v-if="showCleanInput" @click="unSelectUser">
+                <div class="ml-auto p-2" v-if="showCleanInput" @click.stop="unSelectUser">
                     <svg class="w-2 h-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
                         viewBox="0 0 14 14">
                         <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -118,18 +127,23 @@ watch(
                 Select user
             </template>
         </div>
-        <div v-show="showItems && !disabled" class="absolute w-full z-50 bg-white dark:bg-gray-700 shadow">
-            <div class="m-2">
-                <Text type="title" v-model="searchUsers" placeholder="Search for users" />
+        <Teleport to="body">
+            <div v-show="showItems && !disabled" ref="panel" :style="panelStyle"
+                class="z-[100] bg-white dark:bg-gray-700 shadow-lg rounded-lg border border-gray-200 dark:border-gray-600 overflow-hidden">
+                <div class="m-2">
+                    <Text type="title" v-model="searchUsers" placeholder="Search for users" />
+                </div>
+                <div class="max-h-60 overflow-y-auto">
+                    <div v-for="obj in users?.data" @click="() => handleItemClick(obj)" :key="`user_${obj.id}`"
+                        class="flex gap-3 items-center text-gray-900 dark:text-white w-full px-4 py-2 border-b border-gray-200 dark:border-gray-600 hover:bg-gray-200 hover:dark:bg-gray-500 cursor-pointer">
+                        <UserIcon :user="obj" />
+                        <p>
+                            {{ obj.name }}
+                        </p>
+                    </div>
+                </div>
             </div>
-            <div v-for="obj in users?.data" @click="() => handleItemClick(obj)" :key="`user_${obj.id}`"
-                class="flex gap-3 items-center text-gray-900 dark:text-white w-full px-4 py-2 border-b border-gray-200 dark:border-gray-600 hover:bg-gray-200 hover:dark:bg-gray-500 cursor-pointer">
-                <UserIcon :user="obj" />
-                <p>
-                    {{ obj.name }}
-                </p>
-            </div>
-        </div>
+        </Teleport>
     </div>
 </template>
 

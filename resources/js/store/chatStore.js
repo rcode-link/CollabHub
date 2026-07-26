@@ -1,4 +1,5 @@
 import { defineStore } from "pinia";
+import { compressImages } from "@/functions/compressImage";
 
 const NOT_FOUND_IN_ARRAY = -1;
 export const chatDetails = defineStore("chatDetails", {
@@ -67,8 +68,8 @@ export const chatDetails = defineStore("chatDetails", {
         setPreviousDate(date) {
             this.previousDate = date;
         },
-        addFiles(value) {
-            this.files.push(...value);
+        async addFiles(value) {
+            this.files.push(...(await compressImages(value)));
         },
         setVideoCallToken(token) {
             this.videoCallToken = token;

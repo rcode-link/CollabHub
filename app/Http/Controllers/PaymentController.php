@@ -36,7 +36,7 @@ class PaymentController extends Controller
 
         $data = $request->validated();
         $data['date'] = Carbon::parse($data['date']);
-        $data['value'] = $data['value'] * 100;
+        $data['value'] = (int) round($data['value'] * 100);
         $payment = Payment::create($data);
 
         return new PaymentResource($payment->load('invoice'));

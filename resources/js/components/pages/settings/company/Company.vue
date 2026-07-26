@@ -10,6 +10,7 @@ import Errors from "@/components/shared/Errors.vue";
 import { reactive, ref, watch } from "vue";
 import { useUserStore } from "@/store/user";
 import useInit from "@/functions/useInit";
+import { compressImage } from "@/functions/compressImage";
 import { useAbility } from "@casl/vue";
 import { toast } from "vue3-toastify";
 const { can } = useAbility();
@@ -48,9 +49,9 @@ breadcrumb.setLinks([
     },
 ]);
 
-const uploadImage = (event) => {
-    form.avatar = event.target.files[0];
-    form.company.avatar = useObjectUrl(event.target.files[0]);
+const uploadImage = async (event) => {
+    form.avatar = await compressImage(event.target.files[0], { maxDimension: 1024 });
+    form.company.avatar = useObjectUrl(form.avatar);
 };
 
 const submit = () => {

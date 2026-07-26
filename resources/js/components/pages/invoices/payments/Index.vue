@@ -11,7 +11,7 @@ import InteractiveToast from '@/components/shared/InteractiveToast.vue'
 import TabNav from '../partials/TabNav.vue'
 import { TailwindPagination } from 'laravel-vue-pagination'
 import { useBreadcrumbStore } from '@/store/breadcrumb'
-import { ref, reactive, watch, onMounted } from 'vue'
+import { ref, reactive, computed, watch, onMounted } from 'vue'
 import { DateTime } from 'luxon'
 
 const breadcrumb = useBreadcrumbStore()
@@ -76,11 +76,17 @@ const openCreateModal = () => {
   modalRef.value.toggleModal()
 }
 
+// Amount parsed with either "." or "," as decimal separator (e.g. "1,7" -> 1.7)
+const parsedAmount = computed(() => {
+  const num = parseFloat(String(newPayment.value).trim().replace(',', '.'))
+  return Number.isFinite(num) && num > 0 ? num : null
+})
+
 const createPayment = () => {
-  if (!newPayment.invoice_id || !newPayment.value) return
+  if (!newPayment.invoice_id || !parsedAmount.value) return
   saving.value = true
   window.axios
-    .post('/api/v1/payments', { ...newPayment })
+    .post('/api/v1/payments', { ...newPayment, value: parsedAmount.value })
     .then(() => {
       modalRef.value.toggleModal()
       load()
@@ -315,7 +321,8 @@ onMounted(() => {
             <Text
               v-model="newPayment.value"
               name="value"
-              type="number"
+              type="text"
+              inputmode="decimal"
               placeholder="0.00"
             />
           </div>
@@ -329,7 +336,7 @@ onMounted(() => {
         <Button
           variant="primary"
           @click="createPayment"
-          :disabled="!newPayment.invoice_id || !newPayment.value || saving"
+          :disabled="!newPayment.invoice_id || !parsedAmount || saving"
         >
           {{ saving ? 'Saving...' : 'Save' }}
         </Button>

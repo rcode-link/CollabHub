@@ -662,15 +662,16 @@ const changeTheme = (theme) => {
                         </div>
 
                         <!-- Task search + selection -->
-                        <div v-if="stopProjectId">
+                        <div>
                             <label class="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">Task</label>
                             <input
                                 v-model="stopTaskSearch"
                                 type="text"
-                                placeholder="Search tasks..."
-                                class="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-3 py-2 text-sm text-gray-900 dark:text-white placeholder-gray-400 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 mb-2"
+                                :disabled="!stopProjectId"
+                                :placeholder="stopProjectId ? 'Search tasks...' : 'Select a project first'"
+                                class="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-3 py-2 text-sm text-gray-900 dark:text-white placeholder-gray-400 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 mb-2 disabled:opacity-50 disabled:cursor-not-allowed"
                             />
-                            <div class="max-h-48 overflow-y-auto rounded-lg border border-gray-200 dark:border-gray-700">
+                            <div class="h-48 overflow-y-auto rounded-lg border border-gray-200 dark:border-gray-700">
                                 <button
                                     v-for="task in stopTasks"
                                     :key="task.id"
@@ -686,7 +687,9 @@ const changeTheme = (theme) => {
                                         <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
                                     </svg>
                                 </button>
-                                <p v-if="!stopTasks.length" class="text-xs text-gray-400 dark:text-gray-500 px-3 py-3 text-center">No tasks found</p>
+                                <p v-if="!stopTasks.length" class="text-xs text-gray-400 dark:text-gray-500 px-3 py-3 text-center">
+                                    {{ stopProjectId ? 'No tasks found' : 'Tasks will appear here once you pick a project' }}
+                                </p>
                             </div>
                         </div>
                     </div>

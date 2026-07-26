@@ -508,6 +508,11 @@ function getUserColor(id) {
 }
 
 function cleanTiptapJson(rawData) {
+  // HTML string content is passed through untouched
+  if (typeof rawData === 'string') return rawData
+  // null / missing type (e.g. a brand-new document) -> let TipTap create an empty doc
+  if (!rawData || !rawData.type) return ''
+
   const json = { ...rawData }
   // Recursively clean the content
   function cleanContent(content) {
@@ -531,6 +536,9 @@ function cleanTiptapJson(rawData) {
   try {
     // Clean the top-level content
     json.content = cleanContent(json?.content ?? [])
+
+    // A doc whose content was cleaned away entirely is invalid — use an empty doc instead
+    if (!json.content.length) return ''
 
     return json
   } catch (e) {

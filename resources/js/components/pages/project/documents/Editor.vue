@@ -29,7 +29,14 @@ const activeCommentId = ref(null)
 const route = useRoute()
 const breadcrumbStore = useBreadcrumbStore()
 
-const canUpdate = computed(() => can(`can-update-document.${document.value.id}`, ''))
+const canUpdate = computed(() => {
+  if (!document.value.id) return false
+  // Personal documents (no project) are editable by their creator
+  if (!document.value.entity_id) {
+    return Number(document.value.created_by) === Number(userStore.user?.id)
+  }
+  return can(`can-update-document.${document.value.id}`, '')
+})
 
 // Initialize collaboration during setup (so lifecycle hooks work)
 const collab = useCollaboration({ documentId: route.params.id })

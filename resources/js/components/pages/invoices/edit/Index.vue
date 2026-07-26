@@ -223,8 +223,18 @@ const markAsSent = () => {
 }
 
 // ── Record payment ────────────────────────────────────────────
+// Amount parsed with either "." or "," as decimal separator (e.g. "1,7" -> 1.7)
+const parsedPaymentAmount = computed(() => {
+  const num = parseFloat(String(paymentModel.value.value).trim().replace(',', '.'))
+  return Number.isFinite(num) && num > 0 ? num : null
+})
+
 const submitPayment = () => {
-  window.axios.post('/api/v1/payments', paymentModel.value).then(() => {
+  if (!parsedPaymentAmount.value) return
+  window.axios.post('/api/v1/payments', {
+    ...paymentModel.value,
+    value: parsedPaymentAmount.value,
+  }).then(() => {
     paymentModalRef.value?.closeModal()
     paymentModel.value.value = ''
     paymentModel.value.date = ''
@@ -345,7 +355,9 @@ const mappedBillingItems = () =>
                   <Label forInput="payment-amount">Amount</Label>
                   <Text
                     name="payment-amount"
-                    type="number"
+                    type="text"
+                    inputmode="decimal"
+                    placeholder="0.00"
                     v-model="paymentModel.value"
                   />
                 </div>
@@ -359,7 +371,7 @@ const mappedBillingItems = () =>
               </form>
             </template>
             <template #footer>
-              <Button variant="primary" @click="submitPayment">Save</Button>
+              <Button variant="primary" :disabled="!parsedPaymentAmount" @click="submitPayment">Save</Button>
             </template>
           </Modal>
 

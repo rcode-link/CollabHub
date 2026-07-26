@@ -235,7 +235,7 @@ class FileController extends Controller
      */
     private function authorizeFile(File $file, string $permission): void
     {
-        Auth::user()->authorize($permission, $file->id);
+        $this->authorizeFileAccess($file, $permission);
     }
 
     /**

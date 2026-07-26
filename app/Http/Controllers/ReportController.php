@@ -208,9 +208,9 @@ class ReportController extends Controller
                 'id' => $customer->id,
                 'name' => $customer->name,
                 'invoices_count' => $count,
-                'total_invoiced' => round((float) $totalInvoiced, 2),
-                'total_paid' => round((float) $totalPaid, 2),
-                'outstanding' => round((float) $outstanding, 2),
+                'total_invoiced' => round((float) $totalInvoiced / 100, 2),
+                'total_paid' => round((float) $totalPaid / 100, 2),
+                'outstanding' => round((float) $outstanding / 100, 2),
                 'payment_rate' => $paymentRate,
             ];
         })->filter(fn ($c) => $c['invoices_count'] > 0)->values();

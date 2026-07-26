@@ -20,7 +20,7 @@ class CollaborationController extends Controller
         $user = Auth::user();
         $file = File::findOrFail($request->document_id);
 
-        $user->authorize('can-read-document', $file->id);
+        $this->authorizeFileAccess($file, 'can-read-document');
 
         return response()->json([
             'user' => [

@@ -4,6 +4,7 @@ import { useUserStore } from '@/store/user'
 import Button from '@/components/shared/Button.vue'
 import { useObjectUrl } from '@vueuse/core'
 import useInit from '@/functions/useInit.js'
+import { compressImage } from '@/functions/compressImage'
 import { toast } from 'vue3-toastify'
 
 const userStore = useUserStore()
@@ -14,9 +15,9 @@ const form = reactive({
     preview: null,
 })
 
-const uploadImage = event => {
-    form.avatar = event.target.files[0]
-    form.preview = useObjectUrl(event.target.files[0])
+const uploadImage = async event => {
+    form.avatar = await compressImage(event.target.files[0], { maxDimension: 1024 })
+    form.preview = useObjectUrl(form.avatar)
 }
 
 const submit = () => {
