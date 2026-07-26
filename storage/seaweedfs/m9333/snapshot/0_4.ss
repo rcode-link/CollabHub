@@ -1,2 +1,0 @@
-7ed3bd2f
-{"lastIndex":4,"lastTerm":0,"peers":[{"name":"172.17.0.3:9333.19333","connectionString":"172.17.0.3:19333"}],"state":"eyJtYXhWb2x1bWVJZCI6MCwidG9wb2xvZ3lJZCI6ImMxZjYwNjZhLWI4OTMtNDA3MC1hOWZlLTBkYTY3NDIyOGEyYSJ9","path":"/data/m9333/snapshot/0_4.ss"}
