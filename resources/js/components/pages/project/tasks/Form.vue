@@ -237,7 +237,7 @@ const labelClass = "block text-xs font-medium text-gray-500 dark:text-gray-400 m
                 />
 
                 <!-- Drawer panel -->
-                <div class="panel w-full sm:w-[680px] flex flex-col bg-white dark:bg-gray-900 shadow-2xl border-l border-gray-100 dark:border-gray-800 overflow-hidden">
+                <div class="panel w-full sm:w-[680px] flex flex-col bg-white dark:bg-gray-900 text-gray-900 dark:text-white shadow-2xl border-l border-gray-100 dark:border-gray-800 overflow-hidden">
 
                     <!-- Header -->
                     <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100 dark:border-gray-800 flex-shrink-0">

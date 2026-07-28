@@ -55,7 +55,7 @@ onUnmounted(async () => {
       class="overflow-auto max-w-full pb-2 message-container"
     >
       <div
-        v-if="chatLogic.isLoadingMore.value"
+        v-if="chatLogic.isLoadingOlder.value"
         class="text-center py-3 text-xs text-gray-400"
       >
         <svg class="animate-spin h-4 w-4 mx-auto text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">

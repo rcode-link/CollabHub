@@ -35,7 +35,7 @@ defineExpose({ toggleModal, closeModal: close, isShowModal: isOpen })
 
         <!-- Panel -->
         <div :class="[
-          'relative w-full bg-white dark:bg-gray-900 rounded-2xl shadow-xl border border-gray-100 dark:border-gray-800 flex flex-col max-h-[90vh]',
+          'relative w-full bg-white dark:bg-gray-900 text-gray-900 dark:text-white rounded-2xl shadow-xl border border-gray-100 dark:border-gray-800 flex flex-col max-h-[90vh]',
           { 'max-w-md': size === 'md', 'max-w-lg': size === 'lg', 'max-w-xl': size === 'xl', 'max-w-2xl': size === '2xl', 'max-w-3xl': size === '3xl' }
         ]">
           <!-- Header -->

@@ -49,7 +49,7 @@ watch(() => props.activeCommentId, (cId) => {
         <main ref="messageContainerRef" @scroll="chatLogic.scrolled"
             class="flex-1 min-h-0 overflow-auto max-w-full pt-3 pb-2 message-container">
             <!-- Loading indicator at top when loading older messages -->
-            <div v-if="chatLogic.isLoadingMore" class="text-center p-2 text-gray-500">
+            <div v-if="chatLogic.isLoadingOlder.value" class="text-center p-2 text-gray-500">
                 Loading older messages...
             </div>
 

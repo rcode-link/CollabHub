@@ -5,6 +5,19 @@
 .no-scrollbar::-webkit-scrollbar { display: none; }
 .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
+@layer base {
+  /* Paint the canvas (incl. overscroll and the area below short pages)
+   * directly on the root element instead of relying on body propagation. */
+  /* `dark:` can't be used here — the variant needs a `.dark` ancestor,
+   * and <html> is the element carrying the class itself. */
+  html {
+    @apply bg-gray-100;
+  }
+  html.dark {
+    @apply bg-gray-900;
+  }
+}
+
 /*
  * All brand tokens (colors, fonts, type scale, radii) live in
  * resources/js/brand-tokens.js. They are exposed here as utility classes

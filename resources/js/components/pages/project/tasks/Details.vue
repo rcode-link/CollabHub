@@ -104,7 +104,7 @@ const isLoaded = computed(() => Boolean(data.value.id));
                 <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" @click="closeTask" />
 
                 <!-- Panel -->
-                <div class="task-panel relative w-full h-full sm:max-w-6xl bg-white dark:bg-gray-900 sm:rounded-2xl shadow-2xl sm:border border-gray-100 dark:border-gray-800 flex flex-col overflow-hidden">
+                <div class="task-panel relative w-full h-full sm:max-w-6xl bg-white dark:bg-gray-900 text-gray-900 dark:text-white sm:rounded-2xl shadow-2xl sm:border border-gray-100 dark:border-gray-800 flex flex-col overflow-hidden">
 
                     <!-- Header -->
                     <div class="flex items-center gap-2 sm:gap-3 px-3 sm:px-5 py-3 sm:py-3.5 border-b border-gray-100 dark:border-gray-800 flex-shrink-0 min-w-0">

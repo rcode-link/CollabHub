@@ -1,6 +1,6 @@
 import { chatDetails } from "@/store/chatStore.js";
 import { useUserStore } from "@/store/user.js";
-import { ref, nextTick } from "vue";
+import { ref, computed, nextTick } from "vue";
 import { useRoute } from "vue-router";
 
 
@@ -15,6 +15,9 @@ export default (chatIdParam, messageContainerRef) => {
     const showScrollToBottom = ref(0);
     const lastMessageId = ref(null);
     const isLoadingMore = ref(false);
+    // Only true while fetching a page of *older* messages — stays false on the
+    // initial load and once every page has been fetched.
+    const isLoadingOlder = computed(() => isLoadingMore.value && page.value > 1);
 
     const listenForMessages = () => {
 
@@ -40,11 +43,11 @@ export default (chatIdParam, messageContainerRef) => {
     const loadMessages = () => {
         if (isLoadingMore.value) return;
 
-        page.value += 1;
-
-        if (maxPage.value != 0 && page.value > maxPage.value) {
+        if (maxPage.value != 0 && page.value >= maxPage.value) {
             return;
         }
+
+        page.value += 1;
 
         isLoadingMore.value = true;
         const scrollHeightBefore = messageContainerRef.value && messageContainerRef.value.scrollHeight;
@@ -142,6 +145,7 @@ export default (chatIdParam, messageContainerRef) => {
         scrollToBottom,
         loadMessages,
         isLoadingMore,
+        isLoadingOlder,
         page,
         resetMessages,
         scrolled,
