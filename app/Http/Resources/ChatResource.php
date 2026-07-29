@@ -4,11 +4,10 @@ namespace App\Http\Resources;
 
 use App\Helpers\Enums\ChatTypes;
 use App\Models\ChatMessage;
-use App\Models\MessageReaction;
 use App\Models\File;
+use App\Models\MessageReaction;
 use App\Models\Task;
 use App\Models\User;
-use App\Models\Webhook;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
@@ -56,6 +55,7 @@ class ChatResource extends JsonResource
             'chatable_id' => $response['chatable_id'],
             'item_key' => $this->whenLoaded('chatable', $this->getChattableKey()),
             'unreadMessages' => $this->number_of_unread_messages_count,
+            'is_muted' => (bool) ($this->muted_until && now()->lt($this->muted_until)),
             'message' => $this->whenLoaded('last_message', function () {
 
                 $message = '';

@@ -15,12 +15,14 @@ class ProfileController extends Controller
 
     public function update(Request $request)
     {
-        $request->validate([
-            'name' => ['string', 'required'],
-            'email' => ['email', 'unique:users,email,'.Auth::id()],
+        $data = $request->validate([
+            'name' => ['sometimes', 'string', 'required'],
+            'email' => ['sometimes', 'email', 'unique:users,email,'.Auth::id()],
+            'subscribe_to_all_tasks' => ['sometimes', 'boolean'],
         ]);
 
-        \auth()->user()->update($request->only('name', 'email'));
+        \auth()->user()->update($data);
+        cache()->forget('user_'.Auth::id());
 
         return response()->noContent();
     }

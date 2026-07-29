@@ -65,11 +65,13 @@ class TaskController extends Controller
 
         $children = $task->children->map(function (Task $obj) use ($relations) {
             $obj->relation = $relations->where('id', $obj->pivot->task_relation_id)->first();
+
             return $obj;
         });
 
         $parents = $task->parents->map(function (Task $obj) use ($relations) {
             $obj->relation = $relations->where('id', $obj->pivot->task_relation_id)->first();
+
             return $obj;
         });
 
@@ -229,6 +231,33 @@ class TaskController extends Controller
             ->where('task_id', $task_id);
 
         return new TaskResource($task->firstOrFail());
+    }
+
+    /**
+     * Subscribe the authenticated user to a task's notifications.
+     * Membership in the task's chat is what every notification channel
+     * (WebPush, ntfy, Echo, unread counts) fans out to.
+     */
+    public function subscribe($task_id)
+    {
+        $task = Task::query()->with('chat')->where('task_id', $task_id)->firstOrFail();
+
+        $chat = $task->chat ?? $task->chat()->create(['title' => $task->name]);
+        $chat->users()->syncWithoutDetaching([Auth::id()]);
+
+        return response()->json(['subscribed' => true]);
+    }
+
+    /**
+     * Unsubscribe the authenticated user from a task's notifications.
+     */
+    public function unsubscribe($task_id)
+    {
+        $task = Task::query()->with('chat')->where('task_id', $task_id)->firstOrFail();
+
+        $task->chat?->users()->detach(Auth::id());
+
+        return response()->json(['subscribed' => false]);
     }
 
     /**

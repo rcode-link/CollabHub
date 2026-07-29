@@ -59,6 +59,10 @@ export default () => {
         .get('/api/v1/companies')
         .then(response => userState.setCompany(response.data))
 
+    window.axios.get('/api/v1/chats/muted').then(res => {
+        userState.setMutedChats(res.data.data)
+    })
+
     window.axios.get('/api/v1/user').then(res => {
         userState.setUser(res.data)
         loadNumberOfUnreadMessages()
@@ -117,7 +121,7 @@ export default () => {
     const UpdateChatForUser = async data => {
         loadNumberOfUnreadMessages()
         const isCurrentUserSender = userState.user.name === data.message.user
-        if (!isCurrentUserSender) {
+        if (!isCurrentUserSender && !userState.isChatMuted(data.chatId)) {
             showAppNotification({
                 type: 'message',
                 title: `${data.message.user} messaged you`,

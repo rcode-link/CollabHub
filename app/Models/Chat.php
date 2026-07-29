@@ -59,7 +59,18 @@ class Chat extends Model
 
     public function users(): BelongsToMany
     {
-        return $this->belongsToMany(User::class)->withTrashed();
+        return $this->belongsToMany(User::class)->withPivot('muted_until')->withTrashed();
+    }
+
+    /**
+     * IDs of members who currently have this chat muted.
+     */
+    public function mutedUserIds(): \Illuminate\Support\Collection
+    {
+        return \DB::table('chat_user')
+            ->where('chat_id', $this->id)
+            ->where('muted_until', '>', now())
+            ->pluck('user_id');
     }
 
     public function chatable()

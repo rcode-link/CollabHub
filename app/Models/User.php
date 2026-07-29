@@ -112,6 +112,7 @@ class User extends Authenticatable implements HasMedia
         'start_work_time',
         'end_work_time',
         'manager_id',
+        'subscribe_to_all_tasks',
     ];
 
     /**
@@ -133,6 +134,7 @@ class User extends Authenticatable implements HasMedia
     protected $casts = [
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
+        'subscribe_to_all_tasks' => 'boolean',
     ];
 
     /**

@@ -26,6 +26,13 @@ class ChatController extends Controller
     public function index(Request $request): AnonymousResourceCollection
     {
         $chat = Chat::query()
+            ->select('chats.*')
+            ->addSelect(['muted_until' => \DB::table('chat_user')
+                ->select('muted_until')
+                ->whereColumn('chat_id', 'chats.id')
+                ->where('user_id', Auth::id())
+                ->limit(1),
+            ])
             ->with([
                 'users' => function ($builder) {
                     $builder->whereNot('user_id', Auth::id());
@@ -127,8 +134,53 @@ class ChatController extends Controller
         ])
             ->loadCount('users');
 
+        $chat->setAttribute('muted_until', \DB::table('chat_user')
+            ->where('chat_id', $chat->id)
+            ->where('user_id', Auth::id())
+            ->value('muted_until'));
+
         return new ChatResource($chat);
 
+    }
+
+    /**
+     * Chat IDs the authenticated user has muted. Loaded once at app init so
+     * in-app toasts/sounds can be suppressed on any page.
+     */
+    public function mutedChats(): JsonResponse
+    {
+        return response()->json([
+            'data' => \DB::table('chat_user')
+                ->where('user_id', Auth::id())
+                ->where('muted_until', '>', now())
+                ->pluck('chat_id'),
+        ]);
+    }
+
+    /**
+     * Mute a chat for the authenticated user. Optional `minutes` for a
+     * temporary mute; without it the chat is muted indefinitely.
+     */
+    public function mute(Request $request, Chat $chat): JsonResponse
+    {
+        abort_unless($chat->users()->where('user_id', Auth::id())->exists(), 403);
+
+        $request->validate(['minutes' => ['sometimes', 'integer', 'min:1']]);
+
+        $mutedUntil = $request->filled('minutes')
+            ? now()->addMinutes((int) $request->get('minutes'))
+            : \Carbon\Carbon::create(9999);
+
+        $chat->users()->updateExistingPivot(Auth::id(), ['muted_until' => $mutedUntil]);
+
+        return response()->json(['muted' => true, 'muted_until' => $mutedUntil]);
+    }
+
+    public function unmute(Chat $chat): JsonResponse
+    {
+        $chat->users()->updateExistingPivot(Auth::id(), ['muted_until' => null]);
+
+        return response()->json(['muted' => false]);
     }
 
     public function users(Chat $chat): JsonResponse

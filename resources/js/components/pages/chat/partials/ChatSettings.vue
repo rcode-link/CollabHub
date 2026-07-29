@@ -40,6 +40,27 @@ const webhook = ref(null)
 const loadingWebhook = ref(false)
 const copied = ref(false)
 
+// Mute (per-user, server-side — silences push/ntfy/toasts, keeps unread counts)
+const isMuted = ref(false)
+const muteBusy = ref(false)
+
+const toggleMute = () => {
+  if (muteBusy.value) return
+  muteBusy.value = true
+  const request = isMuted.value
+    ? axios.delete(`/api/v1/chats/${props.chat.id}/mute`)
+    : axios.post(`/api/v1/chats/${props.chat.id}/mute`)
+  request
+    .then((res) => {
+      isMuted.value = res.data.muted
+      userState.setChatMuted(props.chat.id, res.data.muted)
+      const listItem = chatStore.chatList.find(obj => obj.id === props.chat.id)
+      if (listItem) listItem.is_muted = res.data.muted
+      if (chatStore.activeChat?.id === props.chat.id) chatStore.activeChat.is_muted = res.data.muted
+    })
+    .finally(() => { muteBusy.value = false })
+}
+
 const isGroup = computed(() => props.chat.type === 'group')
 const isWebhook = computed(() => props.chat.type === 'webhook' || props.chat.type === 'app\\models\\webhook')
 const canManageUsers = computed(() => isGroup.value || isWebhook.value)
@@ -50,6 +71,7 @@ const loadData = () => {
 
   title.value = props.chat.title || ''
   confirmDelete.value = false
+  isMuted.value = props.chat.is_muted ?? userState.isChatMuted(props.chat.id)
 
   if (canManageUsers.value) {
     loadingUsers.value = true
@@ -180,6 +202,29 @@ defineExpose({ modal })
     <template #header>Chat Settings</template>
     <template #body>
       <div class="flex flex-col gap-5">
+
+        <!-- Mute notifications -->
+        <div class="flex items-center justify-between">
+          <div>
+            <span class="text-sm text-gray-700 dark:text-gray-300">Mute notifications</span>
+            <p class="text-xs text-gray-400 dark:text-gray-500">No push or sound alerts from this chat. Unread counts still show.</p>
+          </div>
+          <button
+            @click="toggleMute"
+            :disabled="muteBusy"
+            :class="[
+              'relative inline-flex h-6 w-11 items-center rounded-full transition-colors',
+              isMuted ? 'bg-blue-600' : 'bg-gray-300 dark:bg-gray-600'
+            ]"
+          >
+            <span
+              :class="[
+                'inline-block h-4 w-4 transform rounded-full bg-white transition-transform',
+                isMuted ? 'translate-x-6' : 'translate-x-1'
+              ]"
+            />
+          </button>
+        </div>
 
         <!-- Rename -->
         <div v-if="canRename">

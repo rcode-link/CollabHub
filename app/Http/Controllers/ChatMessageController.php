@@ -9,6 +9,7 @@ use App\Http\Requests\ChatMessageCreateRequest;
 use App\Http\Resources\ChatMessageResource;
 use App\Models\Chat;
 use App\Models\ChatMessage;
+use App\Models\Task;
 use App\Notifications\PushNotification;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
@@ -59,6 +60,12 @@ class ChatMessageController extends Controller
                 });
         }
 
+        // Commenting on a task subscribes you to it: task-chat membership is
+        // the audience for all task notifications.
+        if ($chat->chatable_type === Task::class && ! $chat->users()->where('user_id', Auth::id())->exists()) {
+            $chat->users()->attach(Auth::id());
+        }
+
         $chat->load('users', 'users.pushSubscriptions');
         $message->messageViews()->insert($chat->users->pluck('id')->map(function ($user_id) use ($message) {
             return [
@@ -70,7 +77,11 @@ class ChatMessageController extends Controller
 
         $message->load('user', 'media', 'videocalls', 'parent', 'messageReactions');
         ChatUpdate::dispatch($chat->users->toArray(), $message);
-        Notification::send($chat->users->filter(fn ($user) => $user->id != auth()->id()), new PushNotification($message));
+        Notification::send(
+            $chat->users->filter(fn ($user) => $user->id != auth()->id()
+                && ! ($user->pivot->muted_until && now()->lt($user->pivot->muted_until))),
+            new PushNotification($message)
+        );
         ChatMessageCreated::dispatch($message);
 
         return response()->noContent();

@@ -13,6 +13,8 @@ import { DateTime } from "luxon";
 import { Tippy } from "vue-tippy";
 import TimeSheet from "@/components/pages/project/tasks/partisals/details/time_sheet/index.vue";
 import CopyIcon from "@/components/shared/icons/CopyIcon.vue";
+import BellIcon from "@/components/shared/icons/BellIcon.vue";
+import BellSlashIcon from "@/components/shared/icons/BellSlashIcon.vue";
 import TaskPrintStatus from "@/components/pages/project/tasks/partisals/details/TaskPrintStatus.vue";
 import PencilIcon from "@/components/shared/icons/PencilIcon.vue";
 import UiSelect from "@/components/shared/ui/Select.vue";
@@ -43,6 +45,7 @@ const getTask = () => {
         .get(`/api/v1/tasks/${route.query.task}`, { params: { board_id: route.params.board } })
         .then((res) => {
             data.value = res.data.data;
+            isSubscribed.value = Boolean(res.data.data.is_subscribed);
             activeUser.value = res.data.data.user ? res.data.data.user.id : null;
             sprintId.value = res.data.data.status?.sprint?.id?.toString() ?? "";
             if (res.data.data.project_id) {
@@ -75,6 +78,22 @@ watch(sprintId, (newVal, oldVal) => {
         axios.put("/api/v1/sprint/tasks", { task_id: data.value.id, sprint_id: newVal });
     }
 });
+
+// Kept outside `data` — the task-updated broadcast replaces `data` wholesale
+// with a payload rendered for the editing user, so its is_subscribed can't be
+// trusted for this user.
+const isSubscribed = ref(false);
+const subscriptionBusy = ref(false);
+const toggleSubscription = () => {
+    if (subscriptionBusy.value) return;
+    subscriptionBusy.value = true;
+    const request = isSubscribed.value
+        ? axios.delete(`/api/v1/tasks/${route.query.task}/subscription`)
+        : axios.post(`/api/v1/tasks/${route.query.task}/subscription`);
+    request
+        .then((res) => { isSubscribed.value = res.data.subscribed; })
+        .finally(() => { subscriptionBusy.value = false; });
+};
 
 const tippyMessage = ref("Click to copy link");
 const addToClipboard = async () => {
@@ -122,6 +141,18 @@ const isLoaded = computed(() => Boolean(data.value.id));
                                     class="p-1.5 rounded-lg text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
                                 >
                                     <CopyIcon class="w-4 h-4" />
+                                </button>
+                            </tippy>
+                            <tippy :content="isSubscribed ? 'Unsubscribe from notifications' : 'Subscribe to notifications'">
+                                <button
+                                    @click="toggleSubscription"
+                                    class="p-1.5 rounded-lg transition-colors"
+                                    :class="isSubscribed
+                                        ? 'text-blue-500 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-gray-100 dark:hover:bg-gray-800'
+                                        : 'text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800'"
+                                >
+                                    <BellIcon v-if="isSubscribed" class="w-4 h-4" />
+                                    <BellSlashIcon v-else class="w-4 h-4" />
                                 </button>
                             </tippy>
                             <button

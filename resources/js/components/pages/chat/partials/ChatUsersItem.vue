@@ -7,6 +7,7 @@ import Task from '@/components/shared/icons/Task.vue'
 import EarthIcon from '@/components/shared/icons/EarthIcon.vue'
 import WebhookIcon from '@/components/shared/icons/WebhookIcon.vue'
 import FileFile from '@/components/shared/icons/FileFile.vue'
+import BellSlashIcon from '@/components/shared/icons/BellSlashIcon.vue'
 import { useUserStore } from '@/store/user'
 
 const userStore = useUserStore()
@@ -59,10 +60,14 @@ const daysAgo = computed(() => {
     <!-- Content -->
     <div class="flex-1 min-w-0">
       <div class="flex items-center justify-between gap-2">
-        <span class="text-sm font-medium text-gray-900 dark:text-white truncate">{{ obj.title }}</span>
+        <span class="flex items-center gap-1.5 min-w-0 text-sm font-medium text-gray-900 dark:text-white">
+          <span class="truncate">{{ obj.title }}</span>
+          <BellSlashIcon v-if="obj.is_muted" class="w-3.5 h-3.5 flex-shrink-0 text-gray-400 dark:text-gray-500" />
+        </span>
         <div
           v-if="obj.unreadMessages"
-          class="flex-shrink-0 min-w-[1.25rem] h-5 px-1 bg-red-500 text-white flex items-center justify-center rounded-full text-xs font-bold"
+          class="flex-shrink-0 min-w-[1.25rem] h-5 px-1 flex items-center justify-center rounded-full text-xs font-bold"
+          :class="obj.is_muted ? 'bg-gray-300 dark:bg-gray-600 text-gray-700 dark:text-gray-200' : 'bg-red-500 text-white'"
         >{{ obj.unreadMessages }}</div>
       </div>
 

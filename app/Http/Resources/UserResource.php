@@ -57,6 +57,7 @@ class UserResource extends JsonResource
             'avatar' => mediaUrl($this->getFirstMedia('avatar'), '', 'thumb'),
             'start_work_time' => $this->start_work_time,
             'end_work_time' => $this->end_work_time,
+            'subscribe_to_all_tasks' => (bool) $this->subscribe_to_all_tasks,
             'deleted_at' => $this->deleted_at,
             'manager' => $this->whenLoaded('manager', fn () => new UserResource($this->manager)),
             'view_profile' => $this->when(\request()->routeIs('apiusers.show'), function () {

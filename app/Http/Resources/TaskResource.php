@@ -74,6 +74,11 @@ class TaskResource extends JsonResource
             'chat_id' => $this->whenLoaded('chat', function () {
                 return $this->chat->id;
             }),
+            'is_subscribed' => $this->when(\request()->routeIs('apitasks.show'), function () {
+                return $this->chat
+                    ? $this->chat->users()->where('user_id', auth()->id())->exists()
+                    : false;
+            }),
             'due_date' => $this->due_date === null ? null : Carbon::parse($this->due_date),
             'tags' => $this->tags,
             'parent_task' => $this->when(\request()->get('group_by') === 'parent', function () {

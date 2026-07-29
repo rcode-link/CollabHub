@@ -1,6 +1,8 @@
 <script setup>
+import { onMounted, ref } from 'vue'
 import Card from '@/components/shared/Card.vue'
 import { useNotificationSettings } from '@/functions/useNotificationSettings.js'
+import { useUserStore } from '@/store/user.js'
 
 const {
   platform,
@@ -13,6 +15,31 @@ const {
   disable,
   toggle,
 } = useNotificationSettings()
+
+const userStore = useUserStore()
+
+// Server-side preference (applies to every device, unlike the local settings above)
+const subscribeToAllTasks = ref(false)
+const subscribeBusy = ref(false)
+
+onMounted(() => {
+  axios.get('/api/v1/user').then((res) => {
+    subscribeToAllTasks.value = Boolean(res.data.data.subscribe_to_all_tasks)
+  })
+})
+
+const toggleSubscribeToAllTasks = () => {
+  if (subscribeBusy.value) return
+  subscribeBusy.value = true
+  const next = !subscribeToAllTasks.value
+  axios
+    .put('/api/v1/user', { subscribe_to_all_tasks: next })
+    .then(() => {
+      subscribeToAllTasks.value = next
+      if (userStore.user) userStore.user.subscribe_to_all_tasks = next
+    })
+    .finally(() => { subscribeBusy.value = false })
+}
 
 const platformLabel = {
   electron: 'Desktop App',
@@ -147,6 +174,34 @@ async function handleEnable() {
                 :class="[
                   'pointer-events-none inline-block h-4 w-4 rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out',
                   settings.soundEnabled ? 'translate-x-4' : 'translate-x-0',
+                ]"
+              />
+            </button>
+          </label>
+        </div>
+
+        <!-- Task subscriptions (server-side, applies on all devices) -->
+        <div class="space-y-3 border-t border-gray-100 dark:border-gray-800 pt-4">
+          <label class="flex items-center justify-between cursor-pointer">
+            <div>
+              <span class="text-sm text-gray-700 dark:text-gray-300">Follow all new tasks</span>
+              <p class="text-xs text-gray-400 dark:text-gray-500">Automatically subscribe to every task created in projects you have access to. You can unsubscribe from individual tasks in the task panel.</p>
+            </div>
+            <button
+              type="button"
+              role="switch"
+              :aria-checked="subscribeToAllTasks"
+              :disabled="subscribeBusy"
+              :class="[
+                'relative inline-flex h-5 w-9 shrink-0 rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-gray-900',
+                subscribeToAllTasks ? 'bg-blue-600' : 'bg-gray-200 dark:bg-gray-700',
+              ]"
+              @click="toggleSubscribeToAllTasks"
+            >
+              <span
+                :class="[
+                  'pointer-events-none inline-block h-4 w-4 rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out',
+                  subscribeToAllTasks ? 'translate-x-4' : 'translate-x-0',
                 ]"
               />
             </button>

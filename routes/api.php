@@ -105,6 +105,9 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('/company/users/invite', [CompanyUsersController::class, 'invite'])->name('api.invite');
     Route::apiResource('/company/invite', InvitationsController::class);
     Route::get('/chats/number-of-unread-messages', [ChatController::class, 'getNumberOfUnreadMessages'])->name('api.getNumberOfUnreadMessages');
+    Route::get('/chats/muted', [ChatController::class, 'mutedChats'])->name('api.chats.muted');
+    Route::post('/chats/{chat}/mute', [ChatController::class, 'mute'])->name('api.chats.mute');
+    Route::delete('/chats/{chat}/mute', [ChatController::class, 'unmute'])->name('api.chats.unmute');
     Route::get('/chats/{chat}/messages', [ChatMessageController::class, 'index'])->name('api.messages.index');
     Route::get('/chats/{chat}/messages/search', [ChatMessageController::class, 'search'])->name('api.messages.search');
     Route::post('/chats/{chat}/message', [ChatMessageController::class, 'store'])->name('api.messages.store');
@@ -127,6 +130,8 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('/sprint/tasks', [TaskController::class, 'tasksForSprint'])->name('api.tasksForSprint');
     Route::put('/tasks/change-status', [TaskController::class, 'changeTaskStatus'])->name('api.changeTaskStatus');
     Route::get('/tasks/search', [TaskController::class, 'search'])->name('api.search');
+    Route::post('/tasks/{task_id}/subscription', [TaskController::class, 'subscribe'])->name('api.tasks.subscribe');
+    Route::delete('/tasks/{task_id}/subscription', [TaskController::class, 'unsubscribe'])->name('api.tasks.unsubscribe');
     Route::apiResource('/tasks', TaskController::class);
     Route::apiResource('/tasks-statuses', TaskStatusesController::class);
     Route::get('/users/project', [ProjectController::class, 'getProjectUsers'])->name('api.getProjectUsers');
@@ -217,4 +222,3 @@ Route::post('/video-call/{slug}/request', [VideoCallController::class, 'createJo
 Route::get('/video-call/{slug}/request/{id}', [VideoCallController::class, 'getRequestStatus'])->name('api.videoCall.requestStatus');
 Route::post('/webhooks/ingest/{token}', WebhookIngestController::class)->middleware('throttle:60,1')->name('api.webhooks.ingest');
 Route::post('/webhook', [PusherController::class, 'webhook'])->name('api.webhook');
-

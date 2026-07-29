@@ -9,6 +9,7 @@ export const useUserStore = defineStore("users", {
         },
         token: null,
         onlineUsers: [],
+        mutedChats: [],
         newMessages: 0,
         showMessageOptions: null,
         originalTitle: document.title, // Store the original title
@@ -24,6 +25,18 @@ export const useUserStore = defineStore("users", {
         },
         setUser(user) {
             this.user = user.data;
+        },
+        setMutedChats(chatIds) {
+            this.mutedChats = chatIds.map(Number);
+        },
+        setChatMuted(chatId, muted) {
+            const id = Number(chatId);
+            this.mutedChats = muted
+                ? [...new Set([...this.mutedChats, id])]
+                : this.mutedChats.filter((obj) => obj !== id);
+        },
+        isChatMuted(chatId) {
+            return this.mutedChats.includes(Number(chatId));
         },
         setOnlineUsers(users) {
             this.onlineUsers = users;

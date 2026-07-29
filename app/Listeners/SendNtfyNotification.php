@@ -16,13 +16,21 @@ class SendNtfyNotification
         $senderId = $event->message['userId'] ?? null;
         $text = $event->message['text'] ?? '';
 
+        // Members who muted this chat still get the websocket event (their
+        // chat list must update) but no ntfy ping.
+        $mutedIds = \DB::table('chat_user')
+            ->where('chat_id', $event->chatId)
+            ->where('muted_until', '>', now())
+            ->pluck('user_id')
+            ->all();
+
         // Extract user IDs from private channel names
         foreach ($event->broadcastOn() as $channel) {
             // PrivateChannel name format: "private-UpdateChatForUser.{userId}"
             $parts = explode('.', $channel->name);
             $userId = (int) end($parts);
 
-            if ($userId && $userId !== $senderId) {
+            if ($userId && $userId !== $senderId && ! in_array($userId, $mutedIds)) {
                 $this->ntfy->notifyMessage($userId, $senderName, $text);
             }
         }
