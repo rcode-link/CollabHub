@@ -34,7 +34,7 @@ const reactions = computed(() =>
 
       <!-- Reply-to -->
       <div v-if="message.parent" class="text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">
-        <RenderMessage class="reply-editor-class opacity-60" :content="message.parent.text" />
+        <RenderMessage class="reply-editor-class opacity-60" :content="message.parent.text" :task-previews="false" />
         <ArrowUpCurvedIcon class="w-3.5 h-3.5 text-gray-400" />
       </div>
 

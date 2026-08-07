@@ -19,6 +19,8 @@ let currentHref = null
 function onMouseOver(e) {
   const link = e.target.closest?.('a[href]')
   if (!link) return
+  // Task keys render their own preview card — no link-preview lookup for them
+  if (link.classList.contains('task-key-link')) return
 
   const href = link.getAttribute('href')
   if (!href || href.startsWith('#') || href.startsWith('javascript:')) return

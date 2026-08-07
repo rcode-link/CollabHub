@@ -83,6 +83,10 @@ h5 {
   @apply text-blue-600 hover:underline dark:text-blue-500 no-underline;
 }
 
+.task-key-link {
+  @apply font-mono font-medium text-blue-600 hover:underline dark:text-blue-400 no-underline cursor-pointer;
+}
+
 .ProseMirror {
   outline: none;
   min-width: 0;
