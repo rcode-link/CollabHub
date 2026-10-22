@@ -1,0 +1,34 @@
+{
+    "mcpServers": {
+        "laravel-boost": {
+            "command": "php",
+            "args": [
+                "artisan",
+                "boost:mcp"
+            ]
+        },
+        "context7": {
+            "transport": "http",
+            "url": "https://mcp.context7.com/mcp",
+            "timeout": 30000,
+            "description": "Up-to-date library docs for packages Boost doesn't cover"
+        },
+        "filesystem": {
+            "transport": "stdio",
+            "command": "npx",
+            "args": [
+                "-y",
+                "@modelcontextprotocol/server-filesystem",
+                "./app",
+                "./routes",
+                "./database",
+                "./config",
+                "./tests"
+            ],
+            "alwaysAllow": [
+                "list_directory",
+                "read_file"
+            ]
+        }
+    }
+}
