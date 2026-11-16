@@ -151,8 +151,8 @@ Vue3 application is standalone integrated in laravel blade. For authentication i
 -   [x] Webhooks
 -   [ ] Git integration
 -   [ ] Mutiliselect tasks on board with options for status change option
--   [ ] Filter tasks in board
--   [ ] Group tasks in board
+-   [x] Filter tasks in board
+-   [x] Group tasks in board
 
 # License
 
