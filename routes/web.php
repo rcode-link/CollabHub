@@ -1,6 +1,5 @@
 <?php
 
-use App\Helpers\GenerateImage;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\CalendarController;
 use App\Http\Controllers\VideoCallController;
@@ -177,17 +176,6 @@ Route::match(['PROPFIND', 'GET'], '/calendar', [CalendarController::class, 'calD
 
 Route::get('/video-call/{video}/join', [VideoCallController::class, 'getVideoCallToken']);
 
-Route::post('/login', function () {});
-Route::get('/test', function () {
-
-    GenerateImage::profileImage('Radan Stupar')->toPng()->save(public_path('foo.png'));
-
-    return 'ok';
-
-    // $company = Company::whereIsCostumerCompany(false)->firstOrFail();
-    // return view('pdf.invoice', ['model' => $invoice, 'company' => $company]);
-});
-
 Route::middleware([\App\Http\Middleware\FrontendEnv::class])->group(function () {
 
     Route::view('/', 'welcome');
@@ -203,6 +191,7 @@ Route::middleware([\App\Http\Middleware\FrontendEnv::class])->group(function () 
     Route::view('/login', 'welcome')->name('login');
 
     Route::fallback(function () {
+
         return view('welcome');
     });
 });

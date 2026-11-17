@@ -23,6 +23,7 @@
         "laravel/breeze": "^2.3.6",
         "laravel/framework": "^12.15.0",
         "laravel/mcp": "*",
+        "laravel/passkeys": "^0.3.0",
         "laravel/sanctum": "^4.1.1",
         "laravel/tinker": "^2.8",
         "league/flysystem-aws-s3-v3": "^3.0",

@@ -3,12 +3,15 @@ import { onMounted, reactive, ref } from 'vue'
 import { useErrorsStore } from '@/store/errors'
 import { useRouter } from 'vue-router'
 import useInit from '@/functions/useInit.js'
+import { Passkeys, UserCancelledError } from '@laravel/passkeys'
 
 const router = useRouter()
 const errorsStore = useErrorsStore()
 
 const globalErrorMessage = ref('')
 const loading = ref(false)
+const passkeyLoading = ref(false)
+const passkeysSupported = Passkeys.isSupported()
 
 const form = reactive({
   email: '',
@@ -43,6 +46,27 @@ const login = () => {
     .finally(() => {
       loading.value = false
     })
+}
+
+const loginWithPasskey = async () => {
+  errorsStore.setErrors({})
+  globalErrorMessage.value = ''
+  passkeyLoading.value = true
+
+  try {
+    const response = await Passkeys.verify({
+      routes: { options: '/api/v1/passkeys/login/options', submit: '/api/v1/passkeys/login' },
+    })
+    localStorage.setItem('token', response.data.plainTextToken)
+    useInit()
+    router.push({ name: 'home' })
+  } catch (error) {
+    if (!(error instanceof UserCancelledError)) {
+      globalErrorMessage.value = error.message
+    }
+  } finally {
+    passkeyLoading.value = false
+  }
 }
 </script>
 
@@ -159,6 +183,23 @@ const login = () => {
             <span v-else>Sign in</span>
           </button>
         </form>
+
+        <template v-if="passkeysSupported">
+          <div class="my-5 flex items-center gap-3 text-xs text-gray-400">
+            <span class="h-px flex-1 bg-gray-200 dark:bg-gray-700" />
+            or
+            <span class="h-px flex-1 bg-gray-200 dark:bg-gray-700" />
+          </div>
+          <button
+            type="button"
+            :disabled="passkeyLoading"
+            @click="loginWithPasskey"
+            class="w-full py-2.5 px-4 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-60 disabled:cursor-not-allowed text-gray-700 dark:text-gray-200 text-sm font-semibold transition focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+          >
+            <span v-if="passkeyLoading">Waiting for passkey…</span>
+            <span v-else>Sign in with a passkey</span>
+          </button>
+        </template>
 
         <p class="mt-6 text-center text-sm text-gray-500 dark:text-gray-400">
           Don't have an account?

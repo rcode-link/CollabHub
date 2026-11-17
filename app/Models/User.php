@@ -22,6 +22,8 @@ use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Gate;
+use Laravel\Passkeys\Contracts\PasskeyUser;
+use Laravel\Passkeys\PasskeyAuthenticatable;
 use Laravel\Sanctum\HasApiTokens;
 use Laravel\Sanctum\PersonalAccessToken;
 use NotificationChannels\WebPush\HasPushSubscriptions;
@@ -89,13 +91,14 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media;
  *
  * @mixin Eloquent
  */
-class User extends Authenticatable implements HasMedia
+class User extends Authenticatable implements HasMedia, PasskeyUser
 {
     use HasApiTokens;
     use HasFactory;
     use HasPushSubscriptions;
     use InteractsWithMedia;
     use Notifiable;
+    use PasskeyAuthenticatable;
     use SoftDeletes;
 
     /**

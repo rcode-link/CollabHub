@@ -23,6 +23,8 @@ use App\Http\Controllers\LinkPreviewController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\MediaProxyController;
 use App\Http\Controllers\MessageReactionController;
+use App\Http\Controllers\PasskeyController;
+use App\Http\Controllers\PasskeyLoginController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\ProfileController;
@@ -60,7 +62,6 @@ use Illuminate\Support\Facades\Route;
 | be assigned to the "api" middleware group. Make something great!
 |
 */
-
 // Public: read-only access to a shared document via share token
 Route::get('/shared/d/{token}', [FileController::class, 'showShared'])->name('api.shared.document');
 
@@ -68,6 +69,11 @@ Route::get('/shared/d/{token}', [FileController::class, 'showShared'])->name('ap
 Route::get('/shared/b/{token}', [BoardController::class, 'showShared'])->name('api.shared.board');
 
 Route::middleware(['auth:sanctum'])->group(function () {
+
+    Route::get('/user/passkeys', [PasskeyController::class, 'index'])->name('api.passkeys.index');
+    Route::get('/user/passkeys/options', [PasskeyController::class, 'options'])->name('api.passkeys.options');
+    Route::post('/user/passkeys', [PasskeyController::class, 'store'])->name('api.passkeys.store');
+    Route::delete('/user/passkeys/{passkey}', [PasskeyController::class, 'destroy'])->name('api.passkeys.destroy');
 
     // ntfy push notification config for mobile apps
     Route::get('/ntfy/config', function () {
@@ -213,6 +219,10 @@ Route::put('/collaboration/documents/{id}', [CollaborationController::class, 'st
 
 Route::post('/register', RegisterController::class)->name('api.register');
 Route::post('/login', LoginController::class)->name('api.login');
+Route::middleware('throttle:10,1')->group(function () {
+    Route::get('/passkeys/login/options', [PasskeyLoginController::class, 'options'])->name('api.passkeys.login.options');
+    Route::post('/passkeys/login', [PasskeyLoginController::class, 'store'])->name('api.passkeys.login');
+});
 Route::post('/forgot-password', ForgotPasswordController::class)->name('api.forgot-password');
 Route::post('/reset-password', ResetPasswordController::class)->name('api.reset-password');
 // Video call public routes (guests + authenticated)

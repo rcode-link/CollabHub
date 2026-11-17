@@ -16,6 +16,7 @@
         "@casl/ability": "^6.7.2",
         "@casl/vue": "^2.2.2",
         "@hocuspocus/provider": "^3.4.4",
+        "@laravel/passkeys": "^0.4.1",
         "@rcode-link/tiptap-drawio": "^1.0.21",
         "@tiptap/extension-bold": "^2.27.2",
         "@tiptap/extension-code-block-lowlight": "^2.27.2",

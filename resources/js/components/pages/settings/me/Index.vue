@@ -9,6 +9,7 @@ import ProfilePicture from '@/components/pages/settings/me/partials/ProfilePictu
 import DeleteAccount from '@/components/pages/settings/me/partials/DeleteAccount.vue'
 import VacationStats from '@/components/pages/settings/me/partials/VacationStats.vue'
 import NotificationSettings from '@/components/pages/settings/me/partials/NotificationSettings.vue'
+import PasskeyManager from '@/components/pages/settings/me/partials/PasskeyManager.vue';
 
 const breadcrumb = useBreadcrumbStore()
 
@@ -53,6 +54,13 @@ breadcrumb.setLinks([
         <div class="p-6">
           <h2 class="text-base font-semibold text-gray-900 dark:text-white mb-5">Change Password</h2>
           <ChangePassword />
+        </div>
+      </Card>
+      <!-- Passkeys -->
+      <Card>
+        <div class="p-6">
+          <h2 class="text-base font-semibold text-gray-900 dark:text-white mb-5">Passkeys</h2>
+          <PasskeyManager />
         </div>
       </Card>
 
